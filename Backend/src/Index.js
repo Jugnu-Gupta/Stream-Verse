@@ -1,4 +1,6 @@
-import pkg from 'dotenv/config.js';
+// import pkg from 'dotenv/config.js';
+import dotenv from "dotenv";
+dotenv.config();
 import connectDB from "./db/connectDB.js";
 
 
@@ -10,7 +12,7 @@ connectDB()
         })
     })
     .catch((err) => {
-        console.log("MONGODB connection Failed!!!");
+        console.log("MONGODB connection Failed2!!!");
     })
 
 
