@@ -1,9 +1,10 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js"
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import jwt from "jsonwebtoken";
+import fs from "fs";
 
 
 export const generateAccessAndRefreshToken = async (userId) => {
@@ -20,6 +21,7 @@ export const generateAccessAndRefreshToken = async (userId) => {
         throw new ApiError(500, "Something went wrong while generating access and refresh tokens");
     }
 }
+
 
 export const registerUser = asyncHandler(async (req, res) => {
 
@@ -40,7 +42,6 @@ export const registerUser = asyncHandler(async (req, res) => {
         throw new ApiError(409, "User with email already exists");
     }
 
-    // console.log("files", req.files);
     const avatarLocalPath = req.files?.avatar?.[0]?.path;
     const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
 
@@ -52,6 +53,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     // uploading images to cloudinay
     const avatar = await uploadOnCloudinary(avatarLocalPath);
     const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+    console.log("avatar", avatar);
 
     // check for images: avator, dp.
     if (!avatar?.url) {
@@ -65,8 +67,14 @@ export const registerUser = asyncHandler(async (req, res) => {
         userName: userName.toLowerCase(),
         email,
         password,
-        avatar: avatar.url,
-        coverImage: coverImage?.url || "",
+        avatar: {
+            publicId: avatar.public_id,
+            url: avatar.url
+        },
+        coverImage: {
+            publicId: coverImage?.public_id || "",
+            url: coverImage?.url || ""
+        }
     });
 
     // check for user creation
@@ -124,6 +132,7 @@ export const loginUser = asyncHandler(async (req, res) => {
             new ApiResponse(200, { user: loggedInUser, accessToken, refreshToken }, "User logged in successful")
         );
 });
+
 
 export const logoutUser = asyncHandler(async (req, res) => {
     await User.findByIdAndUpdate(req.user._id, {
@@ -277,6 +286,17 @@ export const updateUserAvatar = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Avatar file is required");
     }
 
+    // delete the old cover image from cloudinary if exists.
+    if (req?.user?.coverImage?.publicId) {
+        const oldCoverImage = await deleteFromCloudinary(req?.user?.coverImage?.publicId, "image");
+
+        // check if the old cover image is deleted successfully.
+        if (oldCoverImage?.result !== "ok") {
+            fs.unlinkSync(coverImageLocalPath);
+            throw new ApiError(500, "Failed to delete old cover image from cloudinary");
+        }
+    }
+
     const avatar = await uploadOnCloudinary(avatarLocalPath);
 
     if (!avatar?.url) {
@@ -284,13 +304,14 @@ export const updateUserAvatar = asyncHandler(async (req, res) => {
     }
 
     const user = await User.findByIdAndUpdate(req?.user?._id,
-        { $set: { avatar: avatar.url } },
+        { $set: { avatar: { publicId: avatar.public_id, url: avatar.url } } },
         { new: true }).select("-password -refreshToken");
 
     return res.status(200).json(
         ApiResponse(200, { user }, "Avatar updated successfully")
     );
 });
+
 
 export const updateUserCoverImage = asyncHandler(async (req, res) => {
     const coverImageLocalPath = req?.file?.path;
@@ -299,17 +320,27 @@ export const updateUserCoverImage = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Cover Image is required");
     }
 
-    const coverImage = await uploadOnCloudinary(avatarLocalPath);
+    // delete the old cover image from cloudinary if exists.
+    if (req?.user?.coverImage?.publicId) {
+        const oldCoverImage = await deleteFromCloudinary(req?.user?.coverImage?.publicId, "auto");
 
+        // check if the old cover image is deleted successfully.
+        if (oldCoverImage?.result !== "ok") {
+            fs.unlinkSync(coverImageLocalPath);
+            throw new ApiError(500, "Failed to delete old cover image from cloudinary");
+        }
+    }
+
+    const coverImage = await uploadOnCloudinary(coverImageLocalPath);
     if (!coverImage?.url) {
         throw new ApiError(500, "Image upload failed on cloudinary");
     }
 
     const user = await User.findByIdAndUpdate(req?.user?._id,
-        { $set: { coverImage: coverImage.url } },
+        { $set: { coverImage: { publicId: coverImage.public_id, url: coverImage.url } } },
         { new: true }).select("-password -refreshToken");
 
     return res.status(200).json(
-        ApiResponse(200, { user }, "Cover image updated successfully")
+        new ApiResponse(200, { user }, "Cover image updated successfully")
     );
 });

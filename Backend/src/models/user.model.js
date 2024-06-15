@@ -29,11 +29,21 @@ const userSchema = new mongoose.Schema({
         index: true,
     },
     avatar: {
-        type: String,  // cloudinary url
+        // cloudinary: publicId and url
+        type: {
+            publicId: String,
+            url: String
+        },
+        _id: false,
         require: true,
     },
     coverImage: {
-        type: String, // cloudinary url
+        // cloudinary: publicId and url
+        type: {
+            publicId: String,
+            url: String
+        },
+        _id: false
     },
     refreshToken: {
         type: String,
@@ -43,7 +53,7 @@ const userSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "Videos",
         }
-    ]
+    ],
 }, { timestamps: true });
 
 userSchema.pre("save", async function (next) {
