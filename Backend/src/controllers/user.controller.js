@@ -5,10 +5,10 @@ import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
-import fs, { watch } from "fs";
+import fs from "fs";
 
 
-export const generateAccessAndRefreshToken = async (userId) => {
+const generateAccessAndRefreshToken = async (userId) => {
     try {
         const user = await User.findById(userId);
         const accessToken = user.generateAccessToken();
@@ -24,7 +24,7 @@ export const generateAccessAndRefreshToken = async (userId) => {
 }
 
 
-export const registerUser = asyncHandler(async (req, res) => {
+const registerUser = asyncHandler(async (req, res) => {
 
     const { fullName, email, userName, password } = req.body;
 
@@ -90,7 +90,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 });
 
 
-export const loginUser = asyncHandler(async (req, res) => {
+const loginUser = asyncHandler(async (req, res) => {
 
     const { email, password } = req.body;
     // console.log("req.body", req.body);
@@ -133,9 +133,9 @@ export const loginUser = asyncHandler(async (req, res) => {
 });
 
 
-export const logoutUser = asyncHandler(async (req, res) => {
+const logoutUser = asyncHandler(async (req, res) => {
     await User.findByIdAndUpdate(req.user._id, {
-        $set: { refreshToken: undefined }
+        $set: { refreshToken: "" }
     });
 
     const options = {
@@ -150,7 +150,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
 });
 
 
-export const refreshAccessToken = asyncHandler(async (req, res) => {
+const refreshAccessToken = asyncHandler(async (req, res) => {
     try {
         const incomingRefreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
 
@@ -194,11 +194,9 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
     }
 });
 
-export const changeUserPassword = asyncHandler(async (req, res) => {
+const changeUserPassword = asyncHandler(async (req, res) => {
     const { email, oldPassword, newPassword, confirmPassword } = req.body;
-    console.log("req.body", req.body);
-
-    if (!email.trim()) {
+    if (!email?.trim()) {
         throw new ApiError(400, "Email is required");
     }
 
@@ -241,16 +239,16 @@ export const changeUserPassword = asyncHandler(async (req, res) => {
 });
 
 
-export const getCurrentUser = asyncHandler(async (req, res) => {
+const getCurrentUser = asyncHandler(async (req, res) => {
     return res.status(200).json(
         new ApiResponse(200, { user: req?.user }, "User found")
     );
 });
 
 
-export const updateAccountDetails = asyncHandler(async (req, res) => {
+const updateAccountDetails = asyncHandler(async (req, res) => {
     const { fullName, userName } = req.body;
-    if (!fullName.trim() || !userName.trim()) {
+    if (!fullName?.trim() || !userName?.trim()) {
         throw new ApiError(400, "FullName and username are required");
     }
 
@@ -275,7 +273,7 @@ export const updateAccountDetails = asyncHandler(async (req, res) => {
 });
 
 
-export const updateUserAvatar = asyncHandler(async (req, res) => {
+const updateUserAvatar = asyncHandler(async (req, res) => {
     const avatarLocalPath = req?.file?.path;
 
     if (!avatarLocalPath) {
@@ -283,18 +281,17 @@ export const updateUserAvatar = asyncHandler(async (req, res) => {
     }
 
     // delete the old cover image from cloudinary if exists.
-    if (req?.user?.coverImage?.publicId) {
-        const oldCoverImage = await deleteFromCloudinary(req?.user?.coverImage?.publicId, "image");
+    if (req?.user?.avatar?.publicId) {
+        const oldAvatar = await deleteFromCloudinary(req?.user?.avatar?.publicId, "image");
 
         // check if the old cover image is deleted successfully.
-        if (oldCoverImage?.result !== "ok") {
-            fs.unlinkSync(coverImageLocalPath);
+        if (oldAvatar?.result !== "ok") {
+            fs.unlinkSync(avatarLocalPath);
             throw new ApiError(500, "Failed to delete old cover image from cloudinary");
         }
     }
 
     const avatar = await uploadOnCloudinary(avatarLocalPath);
-
     if (!avatar?.url) {
         throw new ApiError(500, "Image upload failed on cloudinary");
     }
@@ -304,12 +301,12 @@ export const updateUserAvatar = asyncHandler(async (req, res) => {
         { new: true }).select("-password -refreshToken");
 
     return res.status(200).json(
-        ApiResponse(200, { user }, "Avatar updated successfully")
+        new ApiResponse(200, { user }, "Avatar updated successfully")
     );
 });
 
 
-export const updateUserCoverImage = asyncHandler(async (req, res) => {
+const updateUserCoverImage = asyncHandler(async (req, res) => {
     const coverImageLocalPath = req?.file?.path;
 
     if (!coverImageLocalPath) {
@@ -342,7 +339,7 @@ export const updateUserCoverImage = asyncHandler(async (req, res) => {
 });
 
 
-export const getChannelPage = asyncHandler(async (req, res) => {
+const getChannelPage = asyncHandler(async (req, res) => {
     const { userName } = req.params;
     if (!userName) {
         throw new ApiError(404, "Username is missing");
@@ -388,7 +385,7 @@ export const getChannelPage = asyncHandler(async (req, res) => {
     );
 });
 
-export const getWatchHistory = asyncHandler(async (req, res) => {
+const getWatchHistory = asyncHandler(async (req, res) => {
     const user = await User.aggregate([
         { $match: { _id: new mongoose.Types.ObjectId(req?.user?._id) } },
         {
@@ -405,7 +402,7 @@ export const getWatchHistory = asyncHandler(async (req, res) => {
                             foreignField: "_id",
                             as: "owner",
                             pipeline: [{
-                                project: {
+                                $project: {
                                     userName: 1,
                                     email: 1,
                                     avatar: 1
@@ -415,11 +412,11 @@ export const getWatchHistory = asyncHandler(async (req, res) => {
                     },
                     // { $addFields: { owner: { $arrayElemAt: ["$owner", 0] } } } // modify
                     // alternative
-                    { project: { owner: { $arrayElemAt: ["$owner", 0] } } }// modify
+                    { $project: { owner: { $arrayElemAt: ["$owner", 0] } } }// modify
                 ]
             }
         },
-        { project: { watchHistory: 1 } }
+        { $project: { watchHistory: 1 } }
     ]);
 
     if (!user?.length) {
@@ -430,3 +427,10 @@ export const getWatchHistory = asyncHandler(async (req, res) => {
         new ApiResponse(200, user[0].watchHistory, "Watch history fetched successfully")
     );
 })
+
+export {
+    registerUser, loginUser, logoutUser, refreshAccessToken,
+    changeUserPassword, getCurrentUser, updateAccountDetails,
+    updateUserCoverImage, updateUserAvatar, getChannelPage,
+    getWatchHistory
+};
