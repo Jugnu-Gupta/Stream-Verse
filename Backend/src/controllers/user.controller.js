@@ -5,6 +5,9 @@ import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import jwt from "jsonwebtoken";
 import fs from "fs";
+import { subscribe } from "diagnostics_channel";
+import { channel } from "process";
+import { lookup } from "dns";
 
 
 export const generateAccessAndRefreshToken = async (userId) => {
@@ -61,7 +64,6 @@ export const registerUser = asyncHandler(async (req, res) => {
     }
 
     // timestamps values will be generated automatically.
-    // Creating entry/document in database.
     const user = await User.create({
         fullName,
         userName: userName.toLowerCase(),
@@ -79,7 +81,6 @@ export const registerUser = asyncHandler(async (req, res) => {
 
     // check for user creation
     const createdUser = await User.findById(user._id)?.select("-password -refreshToken");
-
     if (!createdUser) {
         throw new ApiError(500, "Something went wrong while registering the user");
     }
@@ -162,10 +163,8 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
         // verify the refresh token
         const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET);
 
-        // find the user
+        // find the user and check if the user exists
         const user = await User.findById(decodedToken?._id);
-
-        // check if the user exists
         if (!user) {
             throw new ApiError(401, "Invalid refresh token");
         }
@@ -213,7 +212,6 @@ export const changeUserPassword = asyncHandler(async (req, res) => {
 
     // check password.
     const isPasswordValid = await user.isPasswordCorrect(oldPassword);
-
     if (!isPasswordValid) {
         throw new ApiError(401, "Incorrect password");
     }
@@ -223,6 +221,7 @@ export const changeUserPassword = asyncHandler(async (req, res) => {
         throw new ApiError(400, "New password and confirm password do not match");
     }
 
+    // check if the new password and old password are defferent.
     if (oldPassword === newPassword) {
         throw new ApiError(400, "New password cannot be same as old password");
     }
@@ -253,7 +252,6 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
 
 export const updateAccountDetails = asyncHandler(async (req, res) => {
     const { fullName, userName } = req.body;
-
     if (!fullName.trim() || !userName.trim()) {
         throw new ApiError(400, "FullName and username are required");
     }
@@ -342,5 +340,52 @@ export const updateUserCoverImage = asyncHandler(async (req, res) => {
 
     return res.status(200).json(
         new ApiResponse(200, { user }, "Cover image updated successfully")
+    );
+});
+
+
+export const getChannelPage = asyncHandler(async (req, res) => {
+    const { userName } = req.params;
+    if (!userName) {
+        throw new ApiError(404, "Username is missing");
+    }
+
+    const channel = await User.aggregate([
+        { $match: { userName: userName.toLowerCase() } },
+        { $lookup: { from: "Subscription", localField: "_id", foreignField: "channel", as: "subscribers" } },
+        { $lookup: { from: "Subscription", localField: "_id", foreignField: "subscriber", as: "subscribedTo" } },
+        {
+            $addFields: {
+                subscriberCount: { $size: "$subscribers" },
+                subscribedToCount: { $size: "$subscribedTo" },
+                isSubscribed: {
+                    $cond: {
+                        if: { $in: [req.user?._id, "$subscribers.subscriber"] },
+                        then: true, else: false
+                    }
+                }
+            }
+        },
+        {
+            $project: {
+                fullName: 1,
+                userName: 1,
+                email: 1,
+                avatar: 1,
+                coverImage: 1,
+                subscriberCount: 1,
+                subscribedToCount: 1,
+                isSubscribed: 1,
+            }
+        }
+    ]);
+
+    console.log("channel", channel);
+    if (!channel?.length) {
+        throw new ApiError(404, "Channel does not exists");
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, channel[0], "User channel fetched successfully")
     );
 });

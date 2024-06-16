@@ -1,7 +1,8 @@
 import { uploadImage } from "../middlewares/multer.middleware.js"
 import {
     loginUser, logoutUser, registerUser, refreshAccessToken,
-    changeUserPassword, getCurrentUser, updateUserCoverImage
+    changeUserPassword, getCurrentUser, updateUserCoverImage,
+    getChannelPage
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { Router } from "express";
@@ -21,7 +22,9 @@ router.route("/logout").post(verifyJWT, logoutUser);
 router.route("/refresh-Token").post(refreshAccessToken);
 router.route("/change-password").post(changeUserPassword);
 router.route("/current-user").get(verifyJWT, getCurrentUser);
-router.route("/update-cover-image").post(verifyJWT, uploadImage.single('coverImage'), updateUserCoverImage);
+router.route("/update-cover-image").post(verifyJWT,
+    uploadImage.single('coverImage'), updateUserCoverImage);
+router.route("/get-channel-profile/:userName").post(verifyJWT, getChannelPage);
 
 
 export default router;
