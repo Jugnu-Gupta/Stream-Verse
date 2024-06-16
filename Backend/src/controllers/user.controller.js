@@ -3,11 +3,9 @@ import { User } from "../models/user.model.js"
 import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
+import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
-import fs from "fs";
-import { subscribe } from "diagnostics_channel";
-import { channel } from "process";
-import { lookup } from "dns";
+import fs, { watch } from "fs";
 
 
 export const generateAccessAndRefreshToken = async (userId) => {
@@ -352,8 +350,8 @@ export const getChannelPage = asyncHandler(async (req, res) => {
 
     const channel = await User.aggregate([
         { $match: { userName: userName.toLowerCase() } },
-        { $lookup: { from: "Subscription", localField: "_id", foreignField: "channel", as: "subscribers" } },
-        { $lookup: { from: "Subscription", localField: "_id", foreignField: "subscriber", as: "subscribedTo" } },
+        { $lookup: { from: "Subscription", localField: "_id", foreignField: "channelId", as: "subscribers" } },
+        { $lookup: { from: "Subscription", localField: "_id", foreignField: "subscriberId", as: "subscribedTo" } },
         {
             $addFields: {
                 subscriberCount: { $size: "$subscribers" },
@@ -389,3 +387,46 @@ export const getChannelPage = asyncHandler(async (req, res) => {
         new ApiResponse(200, channel[0], "User channel fetched successfully")
     );
 });
+
+export const getWatchHistory = asyncHandler(async (req, res) => {
+    const user = await User.aggregate([
+        { $match: { _id: new mongoose.Types.ObjectId(req?.user?._id) } },
+        {
+            $lookup: {
+                from: "Videos",
+                localField: "watchHistory",
+                foreignField: "_id",
+                as: "watchHistory",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "User",
+                            localField: "ownerId",
+                            foreignField: "_id",
+                            as: "owner",
+                            pipeline: [{
+                                project: {
+                                    userName: 1,
+                                    email: 1,
+                                    avatar: 1
+                                }
+                            }]
+                        }
+                    },
+                    // { $addFields: { owner: { $arrayElemAt: ["$owner", 0] } } } // modify
+                    // alternative
+                    { project: { owner: { $arrayElemAt: ["$owner", 0] } } }// modify
+                ]
+            }
+        },
+        { project: { watchHistory: 1 } }
+    ]);
+
+    if (!user?.length) {
+        throw new ApiError(404, "Watch history not found");
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, user[0].watchHistory, "Watch history fetched successfully")
+    );
+})
