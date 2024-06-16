@@ -2,7 +2,8 @@ import { uploadImage } from "../middlewares/multer.middleware.js"
 import {
     loginUser, logoutUser, registerUser, refreshAccessToken,
     changeUserPassword, getCurrentUser, updateUserCoverImage,
-    getChannelPage
+    getChannelPage, updateAccountDetails,
+    updateUserAvatar, getWatchHistory
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { Router } from "express";
@@ -21,10 +22,16 @@ router.route("/login").post(loginUser);
 router.route("/logout").post(verifyJWT, logoutUser);
 router.route("/refresh-Token").post(refreshAccessToken);
 router.route("/change-password").post(changeUserPassword);
-router.route("/current-user").get(verifyJWT, getCurrentUser);
-router.route("/update-cover-image").post(verifyJWT,
+
+router.route("/update-account").patch(verifyJWT, updateAccountDetails)
+router.route("/update-avatar").patch(verifyJWT,
+    uploadImage.single('avatar'), updateUserAvatar);
+router.route("/update-cover-image").patch(verifyJWT,
     uploadImage.single('coverImage'), updateUserCoverImage);
-router.route("/get-channel-profile/:userName").post(verifyJWT, getChannelPage);
+
+router.route("/current-user").get(verifyJWT, getCurrentUser);
+router.route("/channel-profile/:userName").get(verifyJWT, getChannelPage);
+router.route("/watch-history").get(verifyJWT, getWatchHistory);
 
 
 export default router;
