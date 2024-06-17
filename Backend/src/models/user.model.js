@@ -51,7 +51,7 @@ const userSchema = new mongoose.Schema({
     watchHistory: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Videos",
+            ref: "Video",
         }
     ],
 }, { timestamps: true });
