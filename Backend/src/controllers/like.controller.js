@@ -304,10 +304,12 @@ const getLikedVideos = asyncHandler(async (req, res) => {
                             ]
                         }
                     },
-                    { $project: { owner: { $arrayElemAt: ["$owner", 0] } } }
+                    { $addFields: { owner: { $arrayElemAt: ["$owner", 0] } } }
                 ]
             },
         },
+        { $addFields: { video: { $arrayElemAt: ["$video", 0] } } }
+        { $sort: { createdAt: -1 } },
         { $project: { video: 1 } }
     ]);
 

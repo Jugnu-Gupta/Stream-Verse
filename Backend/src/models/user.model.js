@@ -50,8 +50,14 @@ const userSchema = new mongoose.Schema({
     },
     watchHistory: [
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Video",
+            videoId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Video",
+            },
+            watchedAt: {
+                type: Date,
+                default: Date.now,
+            }
         }
     ],
 }, { timestamps: true });
@@ -87,5 +93,5 @@ userSchema.methods.generateRefreshToken = function () {
         { expiresIn: process.env.REFRESH_TOKEN_EXPIRY, }
     );
 }
-
+// update queries.
 export const User = mongoose.model("User", userSchema);

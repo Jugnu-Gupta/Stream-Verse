@@ -1,9 +1,10 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js"
-import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js";
+import { uploadOnCloudinary, deleteFromCloudinary }
+    from "../utils/cloudinary.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
-import mongoose from "mongoose";
+import mongoose, { isValidObjectId } from "mongoose";
 import jwt from "jsonwebtoken";
 import fs from "fs";
 
@@ -91,22 +92,20 @@ const registerUser = asyncHandler(async (req, res) => {
 
 
 const loginUser = asyncHandler(async (req, res) => {
-
+    // check if the email and password are given and email is valid.
     const { email, password } = req.body;
-    // console.log("req.body", req.body);
-
     if (!email) {
         throw new ApiError(400, "Email is required");
     }
 
+    // find and check if the user exists.
     const user = await User.findOne({ email });
     if (!user) {
         throw new ApiError(404, "User not found");
     }
 
-    // check password
+    // check password is correct.
     const isPasswordValid = await user.isPasswordCorrect(password);
-
     if (!isPasswordValid) {
         throw new ApiError(401, "Incorrect password");
     }
@@ -114,7 +113,6 @@ const loginUser = asyncHandler(async (req, res) => {
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
 
     let loggedInUser = user.toObject();
-
     // Delete the password and refreshToken properties
     delete loggedInUser.password;
     delete loggedInUser.refreshToken;
@@ -123,7 +121,6 @@ const loginUser = asyncHandler(async (req, res) => {
         httpOnly: true,
         secure: true
     }
-
     return res.status(200)
         .cookie("refreshToken", refreshToken, options)
         .cookie("accessToken", accessToken, options)
@@ -135,7 +132,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
 const logoutUser = asyncHandler(async (req, res) => {
     await User.findByIdAndUpdate(req.user._id, {
-        $set: { refreshToken: "" }
+        $unset: { refreshToken: "" }
     });
 
     const options = {
@@ -194,8 +191,9 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     }
 });
 
+
 const changeUserPassword = asyncHandler(async (req, res) => {
-    const { email, oldPassword, newPassword, confirmPassword } = req.body;
+    const { email, currentPassword, newPassword, confirmPassword } = req.body;
     if (!email?.trim()) {
         throw new ApiError(400, "Email is required");
     }
@@ -207,7 +205,7 @@ const changeUserPassword = asyncHandler(async (req, res) => {
     }
 
     // check password.
-    const isPasswordValid = await user.isPasswordCorrect(oldPassword);
+    const isPasswordValid = await user.isPasswordCorrect(currentPassword);
     if (!isPasswordValid) {
         throw new ApiError(401, "Incorrect password");
     }
@@ -218,7 +216,7 @@ const changeUserPassword = asyncHandler(async (req, res) => {
     }
 
     // check if the new password and old password are defferent.
-    if (oldPassword === newPassword) {
+    if (currentPassword === newPassword) {
         throw new ApiError(400, "New password cannot be same as old password");
     }
 
@@ -275,7 +273,6 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 
 const updateUserAvatar = asyncHandler(async (req, res) => {
     const avatarLocalPath = req?.file?.path;
-
     if (!avatarLocalPath) {
         throw new ApiError(400, "Avatar file is required");
     }
@@ -291,6 +288,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
         }
     }
 
+    // uploading images to cloudinay and updating the user profile.
     const avatar = await uploadOnCloudinary(avatarLocalPath);
     if (!avatar?.url) {
         throw new ApiError(500, "Image upload failed on cloudinary");
@@ -385,13 +383,22 @@ const getChannelPage = asyncHandler(async (req, res) => {
     );
 });
 
+
 const getWatchHistory = asyncHandler(async (req, res) => {
+    // check if the user id is valid.
+    if (!isValidObjectId(req?.user?._id)) {
+        throw new ApiError(400, "Invalid user id");
+    }
+    const userId = new mongoose.Types.ObjectId(req?.user?._id);
+
     const user = await User.aggregate([
-        { $match: { _id: new mongoose.Types.ObjectId(req?.user?._id) } },
+        { $match: { _id: userId } },
+        { $unwind: "$watchHistory" },
+        { $addFields: { watchedAt: { "$watchHistory.watchedAt"} } },
         {
             $lookup: {
-                from: "Videos",
-                localField: "watchHistory",
+                from: "Video",
+                localField: "watchHistory.videoId",
                 foreignField: "_id",
                 as: "watchHistory",
                 pipeline: [
@@ -410,18 +417,22 @@ const getWatchHistory = asyncHandler(async (req, res) => {
                             }]
                         }
                     },
-                    // { $addFields: { owner: { $arrayElemAt: ["$owner", 0] } } } // modify
-                    // alternative
-                    { $project: { owner: { $arrayElemAt: ["$owner", 0] } } }// modify
+                    { $addFields: { owner: { $arrayElemAt: ["$owner", 0] } } },
                 ]
             }
         },
+        { $addFields: { watchHistory: { $arrayElemAt: ["$watchHistory", 0] } } },
+        { $addFields: { 'watchHistory.watchedAt': "$watchedAt" } },
+        { $group: { _id: "$_id", watchHistory: { $push: "$watchHistory" } } },
         { $project: { watchHistory: 1 } }
     ]);
 
     if (!user?.length) {
         throw new ApiError(404, "Watch history not found");
     }
+
+    // sort by watchedAt.
+    user[0].watchHistory.sort((a, b) => new Date(b.watchedAt) - new Date(a.watchedAt));
 
     return res.status(200).json(
         new ApiResponse(200, user[0].watchHistory, "Watch history fetched successfully")
