@@ -13,14 +13,13 @@ const playlistSchema = new mongoose.Schema(
         ownerId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-            unique: true,
+            required: true
         },
-        videoList: [
+        videos: [
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "Video",
                 unique: true,
-                required: true
             }
         ],
     },
