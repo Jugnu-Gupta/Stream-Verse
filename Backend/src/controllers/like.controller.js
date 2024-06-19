@@ -39,7 +39,7 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
     }
     else {
         like.isLiked = true;
-        like.save({ validateBeforeSave: false });
+        await like.save({ validateBeforeSave: false });
 
         return res.status(200).json(
             new ApiResponse(200, { like }, "Video liked")
@@ -83,7 +83,7 @@ const toggleVideoDislike = asyncHandler(async (req, res) => {
     }
     else {
         dislike.isLiked = false;
-        dislike.save({ validateBeforeSave: false });
+        await dislike.save({ validateBeforeSave: false });
 
         return res.status(200).json(
             new ApiResponse(200, { dislike }, "Video liked")
@@ -128,7 +128,7 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
     }
     else {
         like.isLiked = true;
-        like.save({ validateBeforeSave: false });
+        await like.save({ validateBeforeSave: false });
 
         return res.status(200).json(
             new ApiResponse(200, { like }, "Video liked")
@@ -173,7 +173,7 @@ const toggleCommentDislike = asyncHandler(async (req, res) => {
     }
     else {
         dislike.isLiked = false;
-        dislike.save({ validateBeforeSave: false });
+        await dislike.save({ validateBeforeSave: false });
 
         return res.status(200).json(
             new ApiResponse(200, { dislike }, "Comment liked")
@@ -218,7 +218,7 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
     }
     else {
         like.isLiked = true;
-        like.save({ validateBeforeSave: false });
+        await like.save({ validateBeforeSave: false });
 
         return res.status(200).json(
             new ApiResponse(200, { like }, "tweet liked")
@@ -263,7 +263,7 @@ const toggleTweetDislike = asyncHandler(async (req, res) => {
     }
     else {
         dislike.isLiked = false;
-        dislike.save({ validateBeforeSave: false });
+        await dislike.save({ validateBeforeSave: false });
 
         return res.status(200).json(
             new ApiResponse(200, { dislike }, "Tweet liked")
@@ -293,15 +293,13 @@ const getLikedVideos = asyncHandler(async (req, res) => {
                             localField: "ownerId",
                             foreignField: "_id",
                             as: "owner",
-                            pipeline: [
-                                {
-                                    $project: {
-                                        fullName: 1,
-                                        email: 1,
-                                        avatar: 1
-                                    }
+                            pipeline: [{
+                                $project: {
+                                    fullName: 1,
+                                    email: 1,
+                                    avatar: 1
                                 }
-                            ]
+                            }]
                         }
                     },
                     { $addFields: { owner: { $arrayElemAt: ["$owner", 0] } } }

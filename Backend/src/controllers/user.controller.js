@@ -58,7 +58,7 @@ const registerUser = asyncHandler(async (req, res) => {
     console.log("avatar", avatar);
 
     // check for images: avator, dp.
-    if (!avatar?.url) {
+    if (!avatar) {
         throw new ApiError(500, "Image upload failed on cloudinary");
     }
 
@@ -70,11 +70,11 @@ const registerUser = asyncHandler(async (req, res) => {
         password,
         avatar: {
             publicId: avatar.public_id,
-            url: avatar.url
+            url: avatar.secure_url
         },
         coverImage: {
             publicId: coverImage?.public_id || "",
-            url: coverImage?.url || ""
+            url: coverImage?.secure_url || ""
         }
     });
 
@@ -282,20 +282,20 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
         const oldAvatar = await deleteFromCloudinary(req?.user?.avatar?.publicId, "image");
 
         // check if the old cover image is deleted successfully.
-        if (oldAvatar?.result !== "ok") {
+        if (!oldAvatar) {
             fs.unlinkSync(avatarLocalPath);
-            throw new ApiError(500, "Failed to delete old cover image from cloudinary");
+            throw new ApiError(500, "Failed to delete old avatar image from cloudinary");
         }
     }
 
     // uploading images to cloudinay and updating the user profile.
     const avatar = await uploadOnCloudinary(avatarLocalPath);
-    if (!avatar?.url) {
+    if (!avatar) {
         throw new ApiError(500, "Image upload failed on cloudinary");
     }
 
     const user = await User.findByIdAndUpdate(req?.user?._id,
-        { $set: { avatar: { publicId: avatar.public_id, url: avatar.url } } },
+        { $set: { avatar: { publicId: avatar.public_id, url: avatar.secure_url } } },
         { new: true }).select("-password -refreshToken");
 
     return res.status(200).json(
@@ -313,22 +313,22 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
 
     // delete the old cover image from cloudinary if exists.
     if (req?.user?.coverImage?.publicId) {
-        const oldCoverImage = await deleteFromCloudinary(req?.user?.coverImage?.publicId, "auto");
+        const oldCoverImage = await deleteFromCloudinary(req?.user?.coverImage?.publicId, "image");
 
         // check if the old cover image is deleted successfully.
-        if (oldCoverImage?.result !== "ok") {
+        if (!oldCoverImage) {
             fs.unlinkSync(coverImageLocalPath);
             throw new ApiError(500, "Failed to delete old cover image from cloudinary");
         }
     }
 
     const coverImage = await uploadOnCloudinary(coverImageLocalPath);
-    if (!coverImage?.url) {
+    if (!coverImage) {
         throw new ApiError(500, "Image upload failed on cloudinary");
     }
 
     const user = await User.findByIdAndUpdate(req?.user?._id,
-        { $set: { coverImage: { publicId: coverImage.public_id, url: coverImage.url } } },
+        { $set: { coverImage: { publicId: coverImage.public_id, url: coverImage.secure_url } } },
         { new: true }).select("-password -refreshToken");
 
     return res.status(200).json(
@@ -394,7 +394,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
     const user = await User.aggregate([
         { $match: { _id: userId } },
         { $unwind: "$watchHistory" },
-        { $addFields: { watchedAt: { "$watchHistory.watchedAt"} } },
+        { $addFields: { watchedAt: "$watchHistory.watchedAt" } },
         {
             $lookup: {
                 from: "Video",
@@ -410,7 +410,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
                             as: "owner",
                             pipeline: [{
                                 $project: {
-                                    userName: 1,
+                                    fullName: 1,
                                     email: 1,
                                     avatar: 1
                                 }
@@ -438,6 +438,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
         new ApiResponse(200, user[0].watchHistory, "Watch history fetched successfully")
     );
 })
+
 
 export {
     registerUser, loginUser, logoutUser, refreshAccessToken,

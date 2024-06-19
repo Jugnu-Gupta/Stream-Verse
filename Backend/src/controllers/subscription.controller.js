@@ -81,7 +81,7 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
                             userName: 1,
                             avatar: 1,
                             email: 1,
-                            subscriberCount: { $size: "$subscribers" }
+                            totalSubscriber: { $size: "$subscribers" }
                         }
                     }
                 ]
