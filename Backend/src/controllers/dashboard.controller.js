@@ -80,7 +80,7 @@ const getChannelStats = asyncHandler(async (req, res) => {
                 totalVideos: 1,
                 totalViews: 1,
                 totalLikes: 1,
-                totalDislikes: 1
+                totalDislikes: 1,
             }
         }
     ]);

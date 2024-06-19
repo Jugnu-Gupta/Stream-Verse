@@ -274,7 +274,7 @@ const toggleTweetDislike = asyncHandler(async (req, res) => {
 
 
 const getLikedVideos = asyncHandler(async (req, res) => {
-    if (!isValidObjectId(req.user._id)) {
+    if (!isValidObjectId(req.user?._id)) {
         throw new ApiError(400, "Invalid user id");
     }
     const userId = new mongoose.Types.ObjectId(req.user._id);
@@ -297,7 +297,7 @@ const getLikedVideos = asyncHandler(async (req, res) => {
                             pipeline: [{
                                 $project: {
                                     fullName: 1,
-                                    email: 1,
+                                    userName: 1,
                                     avatar: 1
                                 }
                             }]

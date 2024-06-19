@@ -20,7 +20,73 @@ const getVideoComments = asyncHandler(async (req, res) => {
 
     const comments = await Comment.aggregate([
         { $match: { videoId: new mongoose.Types.ObjectId(videoId), parentId } },
+        {
+            $lookup: {
+                from: "User",
+                localField: "userId",
+                foreignField: "_id",
+                as: "owner",
+                pipeline: [{
+                    $project: {
+                        fullName: 1,
+                        userName: 1,
+                        avatar: 1
+                    }
+                }]
+            }
+        },
+        {
+            $lookup: {
+                from: "Comment",
+                localField: "_id",
+                foreignField: "parentId",
+                as: "replies",
+            }
+        },
+        {
+            $lookup: {
+                from: "Like",
+                localField: "_id",
+                foreignField: "commentId",
+                as: "Likes"
+            }
+        },
+        {
+            $addFields: {
+                owner: { $arrayElemAt: ["$owner", 0] },
+                replies: { $size: "$replies" },
+                likes: {
+                    $size: {
+                        $filter: {
+                            input: "$Likes",
+                            as: "like",
+                            cond: { $eq: ["$$like.isLiked", true] }
+                        }
+                    }
+                },
+                likes: {
+                    $size: {
+                        $filter: {
+                            input: "$Likes",
+                            as: "like",
+                            cond: { $eq: ["$$like.isLiked", false] }
+                        }
+                    }
+                }
+            }
+        },
         { $sort: { createdAt: -1 } },
+        {
+            $project: {
+                owner: 1,
+                content: 1,
+                likes: 1,
+                dislikes: 1,
+                replies: 1,
+                createdAt: 1,
+                updatedAt: 1
+            }
+        },
         { $skip: skip },
         { $limit: limitNo },
     ]);
@@ -49,7 +115,73 @@ const getTweetComments = asyncHandler(async (req, res) => {
 
     const comments = await Comment.aggregate([
         { $match: { tweetId: new mongoose.Types.ObjectId(tweetId), parentId } },
+        {
+            $lookup: {
+                from: "User",
+                localField: "userId",
+                foreignField: "_id",
+                as: "owner",
+                pipeline: [{
+                    $project: {
+                        fullName: 1,
+                        userName: 1,
+                        avatar: 1
+                    }
+                }]
+            }
+        },
+        {
+            $lookup: {
+                from: "Comment",
+                localField: "_id",
+                foreignField: "parentId",
+                as: "replies",
+            }
+        },
+        {
+            $lookup: {
+                from: "Like",
+                localField: "_id",
+                foreignField: "commentId",
+                as: "Likes"
+            }
+        },
+        {
+            $addFields: {
+                owner: { $arrayElemAt: ["$owner", 0] },
+                replies: { $size: "$replies" },
+                likes: {
+                    $size: {
+                        $filter: {
+                            input: "$Likes",
+                            as: "like",
+                            cond: { $eq: ["$$like.isLiked", true] }
+                        }
+                    }
+                },
+                likes: {
+                    $size: {
+                        $filter: {
+                            input: "$Likes",
+                            as: "like",
+                            cond: { $eq: ["$$like.isLiked", false] }
+                        }
+                    }
+                }
+            }
+        },
         { $sort: { createdAt: -1 } },
+        {
+            $project: {
+                owner: 1,
+                content: 1,
+                likes: 1,
+                dislikes: 1,
+                replies: 1,
+                createdAt: 1,
+                updatedAt: 1
+            }
+        },
         { $skip: skip },
         { $limit: limitNo },
     ]);
