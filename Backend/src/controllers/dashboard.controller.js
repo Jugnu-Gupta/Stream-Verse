@@ -24,8 +24,65 @@ const getChannelStats = asyncHandler(async (req, res) => {
                 as: "Subscribers",
             }
         },
-        { addFields: { totalSubscribers: { $size: "$Subscribers" } } },
-        { $project: { subscribers: 1 } }
+        {
+            $lookup: {
+                from: "Video",
+                localField: "_id",
+                foreignField: "ownerId",
+                as: "Videos",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "Like",
+                            localField: "_id",
+                            foreignField: "videoId",
+                            as: "Likes",
+                        },
+                    },
+                    {
+                        $addFields: {
+                            likes: {
+                                $size: {
+                                    $filter: {
+                                        input: "$Likes",
+                                        as: "Like",
+                                        cond: { $eq: ["$$Like.isLiked", true] }
+                                    }
+                                }
+                            },
+                            dislikes: {
+                                $size: {
+                                    $filter: {
+                                        input: "$Likes",
+                                        as: "Like",
+                                        cond: { $eq: ["$$Like.isLiked", false] }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    { $project: { likes: 1, dislikes: 1, views: 1 } }
+                ]
+            }
+        },
+        {
+            $addFields: {
+                totalSubscribers: { $size: "$Subscribers" },
+                totalVideos: { $size: "$Videos" },
+                totalViews: { $sum: "$Videos.views" },
+                totalLikes: { $sum: "$Videos.likes" },
+                totalDislikes: { $sum: "$Videos.dislikes" }
+            }
+        },
+        {
+            $project: {
+                totalSubscribers: 1,
+                totalVideos: 1,
+                totalViews: 1,
+                totalLikes: 1,
+                totalDislikes: 1
+            }
+        }
     ]);
 
     return res.status(200).json(
@@ -50,24 +107,26 @@ const getChannelVideos = asyncHandler(async (req, res) => {
                 from: "Like",
                 localField: "_id",
                 foreignField: "videoId",
-                as: "likes",
+                as: "Likes"
             }
         },
         {
-            addFields: {
-                totalLikes: {
-                    $sum: {
-                        $cond: {
-                            if: { $eq: ["$Likes.isLiked", true] },
-                            then: 1, else: 0
+            $addFields: {
+                likes: {
+                    $size: {
+                        $filter: {
+                            input: "$Likes",
+                            as: "Like",
+                            cond: { $eq: ["$$Like.isLiked", true] }
                         }
                     }
                 },
-                totalDislikes: {
-                    $sum: {
-                        $cond: {
-                            if: { $eq: ["$Likes.isLiked", false] },
-                            then: 1, else: 0
+                dislikes: {
+                    $size: {
+                        $filter: {
+                            input: "$Likes",
+                            as: "Like",
+                            cond: { $eq: ["$$Like.isLiked", false] }
                         }
                     }
                 }
@@ -79,8 +138,8 @@ const getChannelVideos = asyncHandler(async (req, res) => {
                 description: 1,
                 isPublished: 1,
                 thumbnail: 1,
-                totalLikes: 1,
-                totalDislikes: 1,
+                likes: 1,
+                dislikes: 1,
                 views: 1,
                 createdAt: 1,
                 updatedAt: 1
@@ -96,7 +155,4 @@ const getChannelVideos = asyncHandler(async (req, res) => {
     );
 })
 
-export {
-    getChannelStats,
-    getChannelVideos
-}
+export { getChannelStats, getChannelVideos };
