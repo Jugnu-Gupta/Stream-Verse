@@ -5,8 +5,8 @@ import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 
 
+// controller to toggle like on video
 const likeVideoToggle = asyncHandler(async (req, res) => {
-    //TODO: toggle like on video
     const { videoId } = req.params;
     if (!videoId) {
         throw new ApiError(400, "Video id is required");
@@ -49,8 +49,8 @@ const likeVideoToggle = asyncHandler(async (req, res) => {
 })
 
 
+// controller to toggle dislike on video
 const dislikeVideoToggle = asyncHandler(async (req, res) => {
-    //TODO: toggle like on video
     const { videoId } = req.params;
     if (!videoId) {
         throw new ApiError(400, "Video id is required");
@@ -93,9 +93,8 @@ const dislikeVideoToggle = asyncHandler(async (req, res) => {
 })
 
 
+// controller to toggle like on comment
 const likeCommentToggle = asyncHandler(async (req, res) => {
-    //TODO: toggle like on comment
-
     const { commentId } = req.params
     if (!commentId) {
         throw new ApiError(400, "comment id is required");
@@ -138,9 +137,8 @@ const likeCommentToggle = asyncHandler(async (req, res) => {
 })
 
 
+// controller to toggle dislike on comment
 const dislikeCommentToggle = asyncHandler(async (req, res) => {
-    //TODO: toggle like on comment
-
     const { commentId } = req.params
     if (!commentId) {
         throw new ApiError(400, "comment id is required");
@@ -183,9 +181,8 @@ const dislikeCommentToggle = asyncHandler(async (req, res) => {
 });
 
 
+// controller to toggle like on tweet
 const likeTweetToggle = asyncHandler(async (req, res) => {
-    //TODO: toggle like on tweet
-
     const { tweetId } = req.params;
     if (!tweetId) {
         throw new ApiError(400, "tweet id is required");
@@ -228,9 +225,8 @@ const likeTweetToggle = asyncHandler(async (req, res) => {
 })
 
 
+// controller to toggle like on tweet
 const dislikeTweetToggle = asyncHandler(async (req, res) => {
-    //TODO: toggle like on tweet
-
     const { tweetId } = req.params
     if (!tweetId) {
         throw new ApiError(400, "tweet id is required");
@@ -273,6 +269,7 @@ const dislikeTweetToggle = asyncHandler(async (req, res) => {
 });
 
 
+// controller to fetch all liked videos
 const likedVideosFetch = asyncHandler(async (req, res) => {
     if (!isValidObjectId(req.user?._id)) {
         throw new ApiError(400, "Invalid user id");
@@ -307,7 +304,7 @@ const likedVideosFetch = asyncHandler(async (req, res) => {
                 ]
             },
         },
-        { $addFields: { video: { $arrayElemAt: ["$video", 0] } } }
+        { $addFields: { video: { $arrayElemAt: ["$video", 0] } } },
         { $sort: { createdAt: -1 } },
         { $project: { video: 1 } }
     ]);
