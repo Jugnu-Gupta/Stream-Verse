@@ -1,11 +1,10 @@
-import mongoose, { isValidObjectId } from "mongoose"
 import { Playlist } from "../models/playlist.model.js"
 import { asyncHandler } from "../utils/asyncHandler.js"
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 
 
-const createPlaylist = asyncHandler(async (req, res) => {
+const playlistCreate = asyncHandler(async (req, res) => {
     //TODO: create playlist
 
     const { name, description } = req.body;
@@ -28,7 +27,8 @@ const createPlaylist = asyncHandler(async (req, res) => {
     );
 })
 
-const getUserPlaylists = asyncHandler(async (req, res) => {
+
+const playlistFetchUser = asyncHandler(async (req, res) => {
     //TODO: get user playlists
 
     const { userId } = req.params;
@@ -46,7 +46,8 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
     );
 })
 
-const getPlaylistById = asyncHandler(async (req, res) => {
+
+const playlistFetchById = asyncHandler(async (req, res) => {
     //TODO: get playlist by id
 
     const { playlistId } = req.params;
@@ -64,7 +65,8 @@ const getPlaylistById = asyncHandler(async (req, res) => {
     );
 })
 
-const addVideoToPlaylist = asyncHandler(async (req, res) => {
+
+const playlistAddVideo = asyncHandler(async (req, res) => {
     const { playlistId, videoId } = req.params;
     if (!playlistId || !videoId) {
         const message = !playlistId ? "playlist id is required" : "video id is required";
@@ -87,7 +89,8 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
     );
 })
 
-const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
+
+const playlistRemoveVideo = asyncHandler(async (req, res) => {
     // TODO: remove video from playlist
 
     const { playlistId, videoId } = req.params
@@ -112,7 +115,8 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
     );
 })
 
-const deletePlaylist = asyncHandler(async (req, res) => {
+
+const playlistDelete = asyncHandler(async (req, res) => {
     // TODO: delete playlist
 
     const { playlistId } = req.params;
@@ -130,7 +134,8 @@ const deletePlaylist = asyncHandler(async (req, res) => {
     );
 })
 
-const updatePlaylist = asyncHandler(async (req, res) => {
+
+const playlistUpdate = asyncHandler(async (req, res) => {
     //TODO: update playlist
 
     const { playlistId } = req.params
@@ -139,21 +144,26 @@ const updatePlaylist = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Playlist id is required")
     }
     if (!name && !description) {
-        const message = !name ? "Name is required" : "Description is required";
-        throw new ApiError(400, message);
+        throw new ApiError(400, "Name or description is required");
     }
 
-    const playlist = await Playlist.findByIdAndUpdate(playlistId, { $set: { name, description } }, { new: true });
+    const playlist = await Playlist.findById(playlistId);
     if (!playlist) {
         throw new ApiError(404, "Playlist not found");
     }
+
+    // update playlist
+    playlist.name = name ? name : playlist.name;
+    playlist.description = description ? description : playlist.description;
+    await playlist.save({ validateBeforeSave: false });
 
     return res.status(200).json(
         new ApiResponse(200, { playlist }, "Playlist updated")
     );
 })
 
+
 export {
-    createPlaylist, getUserPlaylists, getPlaylistById, addVideoToPlaylist,
-    removeVideoFromPlaylist, deletePlaylist, updatePlaylist
+    playlistCreate, playlistFetchUser, playlistFetchById, playlistAddVideo,
+    playlistRemoveVideo, playlistDelete, playlistUpdate
 }

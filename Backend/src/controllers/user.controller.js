@@ -411,7 +411,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
                             pipeline: [{
                                 $project: {
                                     fullName: 1,
-                                    email: 1,
+                                    userName: 1,
                                     avatar: 1
                                 }
                             }]

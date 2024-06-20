@@ -5,7 +5,7 @@ import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 
 
-const toggleVideoLike = asyncHandler(async (req, res) => {
+const likeVideoToggle = asyncHandler(async (req, res) => {
     //TODO: toggle like on video
     const { videoId } = req.params;
     if (!videoId) {
@@ -49,7 +49,7 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
 })
 
 
-const toggleVideoDislike = asyncHandler(async (req, res) => {
+const dislikeVideoToggle = asyncHandler(async (req, res) => {
     //TODO: toggle like on video
     const { videoId } = req.params;
     if (!videoId) {
@@ -93,7 +93,7 @@ const toggleVideoDislike = asyncHandler(async (req, res) => {
 })
 
 
-const toggleCommentLike = asyncHandler(async (req, res) => {
+const likeCommentToggle = asyncHandler(async (req, res) => {
     //TODO: toggle like on comment
 
     const { commentId } = req.params
@@ -138,7 +138,7 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
 })
 
 
-const toggleCommentDislike = asyncHandler(async (req, res) => {
+const dislikeCommentToggle = asyncHandler(async (req, res) => {
     //TODO: toggle like on comment
 
     const { commentId } = req.params
@@ -183,7 +183,7 @@ const toggleCommentDislike = asyncHandler(async (req, res) => {
 });
 
 
-const toggleTweetLike = asyncHandler(async (req, res) => {
+const likeTweetToggle = asyncHandler(async (req, res) => {
     //TODO: toggle like on tweet
 
     const { tweetId } = req.params;
@@ -228,7 +228,7 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
 })
 
 
-const toggleTweetDislike = asyncHandler(async (req, res) => {
+const dislikeTweetToggle = asyncHandler(async (req, res) => {
     //TODO: toggle like on tweet
 
     const { tweetId } = req.params
@@ -273,7 +273,7 @@ const toggleTweetDislike = asyncHandler(async (req, res) => {
 });
 
 
-const getLikedVideos = asyncHandler(async (req, res) => {
+const likedVideosFetch = asyncHandler(async (req, res) => {
     if (!isValidObjectId(req.user?._id)) {
         throw new ApiError(400, "Invalid user id");
     }
@@ -321,9 +321,9 @@ const getLikedVideos = asyncHandler(async (req, res) => {
     );
 })
 
+
 export {
-    toggleVideoLike, toggleVideoDislike,
-    toggleCommentLike, toggleCommentDislike,
-    toggleTweetLike, toggleTweetDislike,
-    getLikedVideos
+    likeVideoToggle, dislikeVideoToggle, likeCommentToggle,
+    dislikeCommentToggle, likeTweetToggle, dislikeTweetToggle,
+    likedVideosFetch
 }

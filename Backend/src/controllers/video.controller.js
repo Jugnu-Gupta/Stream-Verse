@@ -1,12 +1,14 @@
 import mongoose, { isValidObjectId } from "mongoose";
 import { Video } from "../models/video.model.js";
+import { Like } from "../models/like.model.js";
+import { Comment } from "../models/comment.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 
 
-const getAllVideos = asyncHandler(async (req, res) => {
+const videoFetchAll = asyncHandler(async (req, res) => {
     //TODO: get all videos based on query, sort, pagination
 
     const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query;
@@ -16,7 +18,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
 })
 
 
-const publishAVideo = asyncHandler(async (req, res) => {
+const videoUpload = asyncHandler(async (req, res) => {
     // TODO: get video, upload to cloudinary, create video
 
     const { title, description, isPublished } = req.body;
@@ -68,7 +70,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
 })
 
 
-const getVideoById = asyncHandler(async (req, res) => {
+const videoFetchById = asyncHandler(async (req, res) => {
     //TODO: get video by id
     const { videoId } = req.params;
     if (!videoId) {
@@ -86,7 +88,7 @@ const getVideoById = asyncHandler(async (req, res) => {
 })
 
 
-const updateVideo = asyncHandler(async (req, res) => {
+const videoUpdate = asyncHandler(async (req, res) => {
     //TODO: update video details like title, description, thumbnail
 
     const { videoId } = req.params;
@@ -139,17 +141,94 @@ const updateVideo = asyncHandler(async (req, res) => {
 })
 
 
-const deleteVideo = asyncHandler(async (req, res) => {
+const videoDelete = asyncHandler(async (req, res) => {
     //TODO: delete video
 
     const { videoId } = req.params;
-    if (!videoId) {
+    if (!isValidObjectId(videoId)) {
         throw new ApiError(400, "Video id is required");
     }
 
-    const video = await Video.findByIdAndDelete(videoId);
+    const video = await Video.findById(videoId);
     if (!video) {
         throw new ApiError(404, "Video not found");
+    }
+
+    // delete video and thumbnail from cloudinary
+    const deleteVideo = await deleteFromCloudinary(video.videoFile.publicId, "video");
+    const deleteThumbnail = await deleteFromCloudinary(video.thumbnail.publicId, "image");
+    if (!deleteVideo) {
+        throw new ApiError(500, "Failed to delete video from cloudinary");
+    }
+    if (!deleteThumbnail) {
+        throw new ApiError(500, "Failed to delete thumbnail from cloudinary");
+    }
+
+    const videoDetails = await video.aggregate([
+        { $match: { _id: mongoose.Types.ObjectId(videoId) } },
+        {
+            $lookup: {
+                from: "Like",
+                localField: "_id",
+                foreignField: "videoId",
+                as: "videoLikes",
+            }
+        },
+        {
+            $lookup: {
+                from: "Comment",
+                localField: "_id",
+                foreignField: "videoId",
+                as: "videoComments",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "Like",
+                            localField: "_id",
+                            foreignField: "commentId",
+                            as: "commentLikes"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $project: {
+                videoLikes: 1,
+                videoComments: 1
+            }
+        }
+    ]);
+    if (!videoDetails) {
+        throw new ApiError(500, "No likes or comments found");
+    }
+
+    // Extract videoLikeId, commentId and LikeId of comments from videoDetails
+    const videoLikeIds = videoDetails[0]?.videoLikes.map(like => like._id);
+    const commentIds = videoDetails[0]?.videoComments.map(comment => comment._id);
+    const commentLikeIds = videoDetails[0]?.videoComments.map((comment) => {
+        return comment.commentLikes.map(like => like._id);
+    });
+
+    // delete video, video likes, comments and comments likes
+    const delVideo = await video.findByIdAndDelete(videoId);
+    if (!delVideo) {
+        throw new ApiError(500, "Failed to delete video");
+    }
+
+    const delVideoLikes = await Like.deleteMany({ _id: { $in: videoLikeIds } });
+    if (!delVideoLikes?.acknowledged) {
+        throw new ApiError(500, "Failed to delete video likes");
+    }
+
+    const delComments = await Comment.deleteMany({ _id: { $in: commentIds } });
+    if (!delComments?.acknowledged) {
+        throw new ApiError(500, "Failed to delete comments of video");
+    }
+
+    const delCommentsLikes = await Like.deleteMany({ _id: { $in: commentLikeIds } });
+    if (!delCommentsLikes?.acknowledged) {
+        throw new ApiError(500, "Failed to delete comments likes of video");
     }
 
     return res.status(200).json(
@@ -158,7 +237,7 @@ const deleteVideo = asyncHandler(async (req, res) => {
 })
 
 
-const togglePublishStatus = asyncHandler(async (req, res) => {
+const VideoTogglePublishStatus = asyncHandler(async (req, res) => {
     const { videoId } = req.params;
     if (!videoId) {
         throw new ApiError(400, "Video id is required");
@@ -178,6 +257,6 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
 })
 
 export {
-    getAllVideos, publishAVideo, getVideoById,
-    updateVideo, deleteVideo, togglePublishStatus
+    videoFetchAll, videoUpload, videoFetchById,
+    videoUpdate, videoDelete, VideoTogglePublishStatus
 };

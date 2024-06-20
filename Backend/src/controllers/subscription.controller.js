@@ -1,12 +1,12 @@
-import mongoose, { isValidObjectId } from "mongoose"
-import { User } from "../models/user.model.js"
+import mongoose, { isValidObjectId } from "mongoose";
 import { Subscription } from "../models/subscription.model.js"
 import { asyncHandler } from "../utils/asyncHandler.js"
+import { ApiError } from "../utils/apiError.js";
+import { ApiResponse } from "../utils/apiResponse.js";
 
 
-const toggleSubscription = asyncHandler(async (req, res) => {
-    // TODO: toggle subscription
-
+// controller to toggle subscription
+const SubscriptionToggle = asyncHandler(async (req, res) => {
     const { subscriberId } = req.user;
     const { channelId } = req.params;
     if (!subscriberId || !channelId) {
@@ -33,7 +33,7 @@ const toggleSubscription = asyncHandler(async (req, res) => {
 
 
 // controller to return subscriber list of a channel
-const getUserChannelSubscribers = asyncHandler(async (req, res) => {
+const SubscriptionFetchUserChannelSubscribers = asyncHandler(async (req, res) => {
     const { channelId } = req.params;
     if (!channelId) {
         throw new ApiError(400, "Channel id is required");
@@ -49,15 +49,16 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
     );
 })
 
+
 // controller to return channel list to which user has subscribed
-const getSubscribedChannels = asyncHandler(async (req, res) => {
+const SubscriptionFetchSubscribedChannels = asyncHandler(async (req, res) => {
     const { subscriberId } = req.params;
     if (!isValidObjectId(subscriberId)) {
         throw new ApiError(400, "Subscriber id is required");
     }
 
     const subscriptions = await Subscription.aggregate([
-        { $match: { subscriberId } },
+        { $match: { subscriberId: new mongoose.Types.ObjectId(subscriberId) } },
         {
             $lookup: {
                 from: "User",
@@ -80,7 +81,7 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
                         $project: {
                             userName: 1,
                             avatar: 1,
-                            email: 1,
+                            fullName: 1,
                             totalSubscriber: { $size: "$subscribers" }
                         }
                     }
@@ -98,4 +99,5 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
     );
 })
 
-export { toggleSubscription, getUserChannelSubscribers, getSubscribedChannels }
+
+export { SubscriptionToggle, SubscriptionFetchUserChannelSubscribers, SubscriptionFetchSubscribedChannels };

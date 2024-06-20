@@ -6,7 +6,7 @@ import { ApiResponse } from "../utils/apiResponse.js";
 import fs from "fs";
 
 
-const createTweet = asyncHandler(async (req, res) => {
+const tweetPost = asyncHandler(async (req, res) => {
     //TODO: create tweet
     const { content } = req.body;
     const imageLocalPath = req?.file?.path;
@@ -37,7 +37,7 @@ const createTweet = asyncHandler(async (req, res) => {
 })
 
 
-const getUserTweets = asyncHandler(async (req, res) => {
+const tweetFetchUser = asyncHandler(async (req, res) => {
     // TODO: get user tweets
 
     const { userId } = req.params;
@@ -114,7 +114,7 @@ const getUserTweets = asyncHandler(async (req, res) => {
 })
 
 
-const updateTweet = asyncHandler(async (req, res) => {
+const tweetUpdate = asyncHandler(async (req, res) => {
     //TODO: update tweet
 
     const { tweetId } = req.params;
@@ -135,7 +135,7 @@ const updateTweet = asyncHandler(async (req, res) => {
 })
 
 
-const updateTweetImage = asyncHandler(async (req, res) => {
+const tweetImageUpdate = asyncHandler(async (req, res) => {
     //TODO: update tweet
 
     const { tweetId } = req.params;
@@ -172,7 +172,7 @@ const updateTweetImage = asyncHandler(async (req, res) => {
 })
 
 
-const deleteTweet = asyncHandler(async (req, res) => {
+const tweetDelete = asyncHandler(async (req, res) => {
     //TODO: delete tweet
 
     const { tweetId } = req.params;
@@ -180,9 +180,76 @@ const deleteTweet = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Tweet id is required");
     }
 
-    const tweet = await Tweet.findByIdAndDelete(tweetId);
+    const tweet = await Tweet.findById(tweetId);
     if (!tweet) {
         throw new ApiError(404, "Tweet not found");
+    }
+
+    const tweetDetails = await Tweet.aggregate([
+        { $match: { _id: mongoose.Types.ObjectId(tweetId) } },
+        {
+            $lookup: {
+                from: "Like",
+                localField: "_id",
+                foreignField: "tweetId",
+                as: "tweetLikes",
+            }
+        },
+        {
+            $lookup: {
+                from: "Comment",
+                localField: "_id",
+                foreignField: "tweetId",
+                as: "tweetComments",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "Like",
+                            localField: "_id",
+                            foreignField: "commentId",
+                            as: "commentLikes"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $project: {
+                tweetLikes: 1,
+                tweetComments: 1
+            }
+        }
+    ]);
+    if (!tweetDetails) {
+        throw new ApiError(500, "No likes or comments found");
+    }
+
+    // Extract videoLikeId, commentId and LikeId of comments from videoDetails
+    const tweetLikeIds = tweetDetails[0]?.tweetLikes.map(like => like._id);
+    const commentIds = tweetDetails[0]?.tweetComments.map(comment => comment._id);
+    const commentLikeIds = tweetDetails[0]?.tweetComments.map((comment) => {
+        return comment.commentLikes.map(like => like._id);
+    });
+
+    // delete tweet, Tweet likes, comments and comments likes
+    const delTweet = await video.findByIdAndDelete(tweetId);
+    if (!delTweet) {
+        throw new ApiError(500, "Failed to delete tweet");
+    }
+
+    const delTweetLikes = await Like.deleteMany({ _id: { $in: tweetLikeIds } });
+    if (!delTweetLikes?.acknowledged) {
+        throw new ApiError(500, "Failed to delete tweet likes");
+    }
+
+    const delComments = await Comment.deleteMany({ _id: { $in: commentIds } });
+    if (!delComments?.acknowledged) {
+        throw new ApiError(500, "Failed to delete comments of tweet");
+    }
+
+    const delCommentsLikes = await Like.deleteMany({ _id: { $in: commentLikeIds } });
+    if (!delCommentsLikes?.acknowledged) {
+        throw new ApiError(500, "Failed to delete comments likes of tweet");
     }
 
     return res.status(200).json(
@@ -190,4 +257,4 @@ const deleteTweet = asyncHandler(async (req, res) => {
     );
 })
 
-export { createTweet, getUserTweets, updateTweet, updateTweetImage, deleteTweet };
+export { tweetPost, tweetFetchUser, tweetUpdate, tweetImageUpdate, tweetDelete };

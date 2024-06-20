@@ -1,11 +1,12 @@
 import mongoose, { isValidObjectId } from "mongoose";
 import { Comment } from "../models/comment.model.js";
+import { Like } from "../models/like.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 
 
-const getVideoComments = asyncHandler(async (req, res) => {
+const commentFetchVideo = asyncHandler(async (req, res) => {
     //TODO: get all comments for a video
     const { videoId, parentId = null } = req.params;
     const { page = 1, limit = 10 } = req.query;
@@ -100,7 +101,7 @@ const getVideoComments = asyncHandler(async (req, res) => {
 })
 
 
-const getTweetComments = asyncHandler(async (req, res) => {
+const CommentFetchTweet = asyncHandler(async (req, res) => {
     //TODO: get all comments for a tweet
     const { tweetId, parentId = null } = req.params;
     const { page = 1, limit = 10 } = req.query;
@@ -195,7 +196,7 @@ const getTweetComments = asyncHandler(async (req, res) => {
 });
 
 
-const addCommentInVideo = asyncHandler(async (req, res) => {
+const commentAddInVideo = asyncHandler(async (req, res) => {
     // TODO: add a comment to a video
 
     const { videoId } = req.params;
@@ -222,7 +223,7 @@ const addCommentInVideo = asyncHandler(async (req, res) => {
 })
 
 
-const addCommentInTweet = asyncHandler(async (req, res) => {
+const commentAddInTweet = asyncHandler(async (req, res) => {
     // TODO: add a comment to a video
 
     const { tweetId } = req.params;
@@ -249,7 +250,7 @@ const addCommentInTweet = asyncHandler(async (req, res) => {
 })
 
 
-const updateComment = asyncHandler(async (req, res) => {
+const commentUpdate = asyncHandler(async (req, res) => {
     // TODO: update a comment
 
     const { commentId } = req.params;
@@ -269,7 +270,22 @@ const updateComment = asyncHandler(async (req, res) => {
     );
 })
 
-const deleteComment = asyncHandler(async (req, res) => {
+
+const findRepliesRec = async (commentId) => {
+    const replies = await Comment.find({ parentId: commentId });
+    let result = [];
+    for (let i = 0; i < replies.length; i++) {
+        const reply = replies[i];
+        const subReplies = await findReplies(reply._id);
+
+        result.push(reply._id);
+        result.concat(subReplies);
+    }
+    return result;
+};
+
+
+const commentDelete = asyncHandler(async (req, res) => {
     // TODO: delete a comment
 
     const { commentId } = req.params;
@@ -277,9 +293,22 @@ const deleteComment = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Comment id is required");
     }
 
-    const comment = await Comment.findByIdAndDelete(commentId);
+    const comment = await Comment.findById(commentId);
     if (!comment) {
         throw new ApiError(404, "Comment not found");
+    }
+
+    // Extract all replies/comments to be deleted.
+    const commentIds = (await findRepliesRec(commentId)).push(commentId);
+
+    // delete comment, allReplies, and its likes
+    const delComment = await Comment.deleteMany({ _id: { $in: commentIds } });
+    const delLikes = await Like.deleteMany({ commentId: { $in: commentIds } });
+    if (!delComment?.acknowledged) {
+        throw new ApiError(500, "Failed to delete comment");
+    }
+    if (!delLikes?.acknowledged) {
+        throw new ApiError(500, "Failed to delete comment likes");
     }
 
     return res.status(200).json(
@@ -287,7 +316,8 @@ const deleteComment = asyncHandler(async (req, res) => {
     );
 })
 
+
 export {
-    getVideoComments, getTweetComments, addCommentInTweet,
-    addCommentInVideo, updateComment, deleteComment
+    commentFetchVideo, CommentFetchTweet, commentAddInVideo,
+    commentAddInTweet, commentUpdate, commentDelete
 }

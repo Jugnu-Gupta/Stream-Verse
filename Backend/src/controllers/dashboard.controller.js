@@ -5,7 +5,8 @@ import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import mongoose, { isValidObjectId } from "mongoose";
 
-const getChannelStats = asyncHandler(async (req, res) => {
+
+const DashboardFetchChannelStats = asyncHandler(async (req, res) => {
     // TODO: Get the channel stats like total video views, total subscribers, total videos, total likes etc.
 
     // check if the user id is valid.
@@ -91,7 +92,7 @@ const getChannelStats = asyncHandler(async (req, res) => {
 })
 
 
-const getChannelVideos = asyncHandler(async (req, res) => {
+const DashboardFetchChannelVideos = asyncHandler(async (req, res) => {
     // TODO: Get all the videos uploaded by the channel
 
     // check if the user id is valid.
@@ -155,4 +156,5 @@ const getChannelVideos = asyncHandler(async (req, res) => {
     );
 })
 
-export { getChannelStats, getChannelVideos };
+
+export { DashboardFetchChannelStats, DashboardFetchChannelVideos };
