@@ -9,7 +9,7 @@ const router = Router();
 
 
 router.route("/")
-    .get(videoFetchAll) // check for query.
+    .get(videoFetchAll) // incomplete
     .post(verifyJWT, uploadImage.single('image'),
         uploadVideo.single('video'), videoUpload);
 

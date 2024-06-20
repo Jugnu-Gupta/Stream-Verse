@@ -11,9 +11,49 @@ import { ApiResponse } from "../utils/apiResponse.js";
 // controller to fetch all videos based on query, sort, pagination
 const videoFetchAll = asyncHandler(async (req, res) => {
     const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query;
-    if (!userId) {
-        throw new ApiError(400, "User id is required")
+
+    // Convert page and limit to integers
+    const pageNo = parseInt(page, 10);
+    const limitNo = parseInt(limit, 10);
+    const skip = (pageNo - 1) * limitNo;
+
+    const filter = {
+        isPublished: true,
+        $text: { $search: query }
     }
+
+    if (userId) {
+        if (!isValidObjectId(userId))
+            filter.ownerId = new mongoose.Types.ObjectId(userId);
+        else
+            throw new ApiError(400, "Invalid user id");
+    }
+
+    const sortCritieria = {}; // define
+
+
+    const videos = await Video.aggregate([
+        { $match: filter },
+        {
+            $lookup: {
+                from: "User",
+                localField: "ownerId",
+                foreignField: "_id",
+                as: "owner",
+                pipeline: [{
+                    $project: {
+                        fullName: 1,
+                        userName: 1,
+                        avatar: 1
+                    }
+                }]
+            }
+        },
+        { $addFields: { owner: { $arrayElemAt: ["$owner", 0] } } },
+        { $sort: { sortCritieria: sortType?.toLowerCase() === "asc" ? 1 : -1 } },
+        { $skip: skip },
+        { $limit: limitNo }
+    ]);
 })
 
 

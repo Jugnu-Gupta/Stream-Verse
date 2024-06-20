@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        index: true,
+        index: 'text',
     },
     avatar: {
         // cloudinary: publicId and url
