@@ -8,9 +8,8 @@ import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 
 
+// controller to fetch all videos based on query, sort, pagination
 const videoFetchAll = asyncHandler(async (req, res) => {
-    //TODO: get all videos based on query, sort, pagination
-
     const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query;
     if (!userId) {
         throw new ApiError(400, "User id is required")
@@ -18,9 +17,8 @@ const videoFetchAll = asyncHandler(async (req, res) => {
 })
 
 
+// controller to upload video
 const videoUpload = asyncHandler(async (req, res) => {
-    // TODO: get video, upload to cloudinary, create video
-
     const { title, description, isPublished } = req.body;
     if (!title || !description || !isPublished) {
         const message = !title ? "Title is required" :
@@ -70,8 +68,8 @@ const videoUpload = asyncHandler(async (req, res) => {
 })
 
 
+// controller to fetch video by id
 const videoFetchById = asyncHandler(async (req, res) => {
-    //TODO: get video by id
     const { videoId } = req.params;
     if (!videoId) {
         throw new ApiError(400, "Video id is required");
@@ -88,9 +86,8 @@ const videoFetchById = asyncHandler(async (req, res) => {
 })
 
 
+// controller to update video details like title, description, thumbnail 
 const videoUpdate = asyncHandler(async (req, res) => {
-    //TODO: update video details like title, description, thumbnail
-
     const { videoId } = req.params;
     const { title, description } = req.body;
     const thumbnailLocalPath = req?.file?.path;
@@ -141,9 +138,8 @@ const videoUpdate = asyncHandler(async (req, res) => {
 })
 
 
+// controller to delete video
 const videoDelete = asyncHandler(async (req, res) => {
-    //TODO: delete video
-
     const { videoId } = req.params;
     if (!isValidObjectId(videoId)) {
         throw new ApiError(400, "Video id is required");
@@ -237,6 +233,7 @@ const videoDelete = asyncHandler(async (req, res) => {
 })
 
 
+// controller to toggle publish status of video
 const VideoTogglePublishStatus = asyncHandler(async (req, res) => {
     const { videoId } = req.params;
     if (!videoId) {
@@ -255,6 +252,7 @@ const VideoTogglePublishStatus = asyncHandler(async (req, res) => {
         new ApiResponse(200, video, "Publish status updated successfully")
     );
 })
+
 
 export {
     videoFetchAll, videoUpload, videoFetchById,

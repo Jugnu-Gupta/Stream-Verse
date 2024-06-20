@@ -6,8 +6,8 @@ import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 
 
+// controller to get all comments for a video
 const commentFetchVideo = asyncHandler(async (req, res) => {
-    //TODO: get all comments for a video
     const { videoId, parentId = null } = req.params;
     const { page = 1, limit = 10 } = req.query;
     if (!isValidObjectId(videoId)) {
@@ -101,8 +101,8 @@ const commentFetchVideo = asyncHandler(async (req, res) => {
 })
 
 
+// controller to get all comments for a tweet
 const CommentFetchTweet = asyncHandler(async (req, res) => {
-    //TODO: get all comments for a tweet
     const { tweetId, parentId = null } = req.params;
     const { page = 1, limit = 10 } = req.query;
     if (!isValidObjectId(tweetId)) {
@@ -196,9 +196,8 @@ const CommentFetchTweet = asyncHandler(async (req, res) => {
 });
 
 
+// controller to add a comment to a video
 const commentAddInVideo = asyncHandler(async (req, res) => {
-    // TODO: add a comment to a video
-
     const { videoId } = req.params;
     const { content, parentId } = req.body;
 
@@ -223,9 +222,8 @@ const commentAddInVideo = asyncHandler(async (req, res) => {
 })
 
 
+// controller to add a comment to a video
 const commentAddInTweet = asyncHandler(async (req, res) => {
-    // TODO: add a comment to a video
-
     const { tweetId } = req.params;
     const { content, parentId } = req.body;
 
@@ -250,9 +248,8 @@ const commentAddInTweet = asyncHandler(async (req, res) => {
 })
 
 
+// controller to update a comment
 const commentUpdate = asyncHandler(async (req, res) => {
-    // TODO: update a comment
-
     const { commentId } = req.params;
     const { content } = req.body;
     if (!commentId || !content) {
@@ -271,6 +268,7 @@ const commentUpdate = asyncHandler(async (req, res) => {
 })
 
 
+// Recursive function to find all replies of a comment
 const findRepliesRec = async (commentId) => {
     const replies = await Comment.find({ parentId: commentId });
     let result = [];
@@ -285,9 +283,8 @@ const findRepliesRec = async (commentId) => {
 };
 
 
+// controller to delete a comment
 const commentDelete = asyncHandler(async (req, res) => {
-    // TODO: delete a comment
-
     const { commentId } = req.params;
     if (!commentId) {
         throw new ApiError(400, "Comment id is required");

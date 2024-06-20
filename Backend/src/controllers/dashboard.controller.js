@@ -6,9 +6,8 @@ import { ApiResponse } from "../utils/apiResponse.js";
 import mongoose, { isValidObjectId } from "mongoose";
 
 
+// controller to Get the channel stats like total video views, total subscribers, total videos, total likes etc.
 const DashboardFetchChannelStats = asyncHandler(async (req, res) => {
-    // TODO: Get the channel stats like total video views, total subscribers, total videos, total likes etc.
-
     // check if the user id is valid.
     if (!isValidObjectId(req?.user?._id)) {
         throw new ApiError(400, "Invalid user id");
@@ -92,9 +91,8 @@ const DashboardFetchChannelStats = asyncHandler(async (req, res) => {
 })
 
 
+// controller to Get all the videos uploaded by the channel
 const DashboardFetchChannelVideos = asyncHandler(async (req, res) => {
-    // TODO: Get all the videos uploaded by the channel
-
     // check if the user id is valid.
     if (!isValidObjectId(req?.user?._id)) {
         throw new ApiError(400, "Invalid user id");

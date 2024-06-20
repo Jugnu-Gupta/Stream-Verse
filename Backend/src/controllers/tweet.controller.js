@@ -6,8 +6,8 @@ import { ApiResponse } from "../utils/apiResponse.js";
 import fs from "fs";
 
 
+// controller to create tweet
 const tweetPost = asyncHandler(async (req, res) => {
-    //TODO: create tweet
     const { content } = req.body;
     const imageLocalPath = req?.file?.path;
     if (!content) {
@@ -37,9 +37,8 @@ const tweetPost = asyncHandler(async (req, res) => {
 })
 
 
+// controller to fetch user tweets
 const tweetFetchUser = asyncHandler(async (req, res) => {
-    // TODO: get user tweets
-
     const { userId } = req.params;
     if (!isValidObjectId(userId)) {
         throw new ApiError(400, "Invalid user id");
@@ -114,9 +113,8 @@ const tweetFetchUser = asyncHandler(async (req, res) => {
 })
 
 
+// controller to update tweet
 const tweetUpdate = asyncHandler(async (req, res) => {
-    //TODO: update tweet
-
     const { tweetId } = req.params;
     const { content } = req.body;
     if (!tweetId || !content) {
@@ -135,9 +133,8 @@ const tweetUpdate = asyncHandler(async (req, res) => {
 })
 
 
+// controller to update tweet image
 const tweetImageUpdate = asyncHandler(async (req, res) => {
-    //TODO: update tweet
-
     const { tweetId } = req.params;
     const ImageLocalPath = req?.file?.path;
     if (!tweetId || !ImageLocalPath) {
@@ -172,9 +169,8 @@ const tweetImageUpdate = asyncHandler(async (req, res) => {
 })
 
 
+// controller to delete tweet
 const tweetDelete = asyncHandler(async (req, res) => {
-    //TODO: delete tweet
-
     const { tweetId } = req.params;
     if (!tweetId) {
         throw new ApiError(400, "Tweet id is required");

@@ -9,6 +9,7 @@ import jwt from "jsonwebtoken";
 import fs from "fs";
 
 
+// Generate access and refresh token
 const generateAccessAndRefreshToken = async (userId) => {
     try {
         const user = await User.findById(userId);
@@ -24,9 +25,8 @@ const generateAccessAndRefreshToken = async (userId) => {
     }
 }
 
-
+// controller to register user
 const registerUser = asyncHandler(async (req, res) => {
-
     const { fullName, email, userName, password } = req.body;
 
     // check is all fields are given.
@@ -91,6 +91,7 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 
+// controller to login user
 const loginUser = asyncHandler(async (req, res) => {
     // check if the email and password are given and email is valid.
     const { email, password } = req.body;
@@ -130,6 +131,7 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 
+// controller to logout user
 const logoutUser = asyncHandler(async (req, res) => {
     await User.findByIdAndUpdate(req.user._id, {
         $unset: { refreshToken: "" }
@@ -147,6 +149,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 });
 
 
+// controller to refresh access token
 const refreshAccessToken = asyncHandler(async (req, res) => {
     try {
         const incomingRefreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
@@ -192,6 +195,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 });
 
 
+// controller to change user password
 const changeUserPassword = asyncHandler(async (req, res) => {
     const { email, currentPassword, newPassword, confirmPassword } = req.body;
     if (!email?.trim()) {
@@ -237,6 +241,7 @@ const changeUserPassword = asyncHandler(async (req, res) => {
 });
 
 
+// controller to get current user
 const getCurrentUser = asyncHandler(async (req, res) => {
     return res.status(200).json(
         new ApiResponse(200, { user: req?.user }, "User found")
@@ -244,6 +249,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 });
 
 
+// controller to update user account details
 const updateAccountDetails = asyncHandler(async (req, res) => {
     const { fullName, userName } = req.body;
     if (!fullName?.trim() || !userName?.trim()) {
@@ -271,6 +277,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 });
 
 
+// controller to update user avatar
 const updateUserAvatar = asyncHandler(async (req, res) => {
     const avatarLocalPath = req?.file?.path;
     if (!avatarLocalPath) {
@@ -304,6 +311,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 });
 
 
+// controller to update user cover image
 const updateUserCoverImage = asyncHandler(async (req, res) => {
     const coverImageLocalPath = req?.file?.path;
 
@@ -337,6 +345,7 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
 });
 
 
+// controller to get channel page
 const getChannelPage = asyncHandler(async (req, res) => {
     const { userName } = req.params;
     if (!userName) {
@@ -384,6 +393,7 @@ const getChannelPage = asyncHandler(async (req, res) => {
 });
 
 
+// controller to get watch history
 const getWatchHistory = asyncHandler(async (req, res) => {
     // check if the user id is valid.
     if (!isValidObjectId(req?.user?._id)) {

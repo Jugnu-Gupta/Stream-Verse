@@ -4,9 +4,8 @@ import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 
 
+// controller to create playlist
 const playlistCreate = asyncHandler(async (req, res) => {
-    //TODO: create playlist
-
     const { name, description } = req.body;
     if (!name || !description) {
         const message = !name ? "Name is required" : "Description is required";
@@ -28,9 +27,8 @@ const playlistCreate = asyncHandler(async (req, res) => {
 })
 
 
+// controller to get user playlists
 const playlistFetchUser = asyncHandler(async (req, res) => {
-    //TODO: get user playlists
-
     const { userId } = req.params;
     if (!userId) {
         throw new ApiError(400, "User id is required")
@@ -47,9 +45,8 @@ const playlistFetchUser = asyncHandler(async (req, res) => {
 })
 
 
+// controller to get playlist by id
 const playlistFetchById = asyncHandler(async (req, res) => {
-    //TODO: get playlist by id
-
     const { playlistId } = req.params;
     if (!playlistId) {
         throw new ApiError(400, "Playlist id is required");
@@ -66,6 +63,7 @@ const playlistFetchById = asyncHandler(async (req, res) => {
 })
 
 
+// controller to add video to playlist
 const playlistAddVideo = asyncHandler(async (req, res) => {
     const { playlistId, videoId } = req.params;
     if (!playlistId || !videoId) {
@@ -90,9 +88,8 @@ const playlistAddVideo = asyncHandler(async (req, res) => {
 })
 
 
+// controller to remove video from playlist
 const playlistRemoveVideo = asyncHandler(async (req, res) => {
-    // TODO: remove video from playlist
-
     const { playlistId, videoId } = req.params
     if (!playlistId || !videoId) {
         const message = !playlistId ? "Playlist id is required" : "Video id is required"
@@ -116,9 +113,8 @@ const playlistRemoveVideo = asyncHandler(async (req, res) => {
 })
 
 
+// controller to delete playlist
 const playlistDelete = asyncHandler(async (req, res) => {
-    // TODO: delete playlist
-
     const { playlistId } = req.params;
     if (!playlistId) {
         throw new ApiError(400, "Playlist id is required");
@@ -135,9 +131,8 @@ const playlistDelete = asyncHandler(async (req, res) => {
 })
 
 
+// controller to update playlist
 const playlistUpdate = asyncHandler(async (req, res) => {
-    //TODO: update playlist
-
     const { playlistId } = req.params
     const { name, description } = req.body
     if (!playlistId) {
