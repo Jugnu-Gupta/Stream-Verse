@@ -28,10 +28,12 @@ const videoSchema = new Schema({
     },
     title: {
         type: String,
+        index: 'text',
         required: true,
     },
     description: {
         type: String,
+        index: 'text',
         required: true,
     },
     duration: {

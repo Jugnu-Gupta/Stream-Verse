@@ -1,34 +1,51 @@
-import { uploadImage } from "../middlewares/multer.middleware.js"
+import { imageUploader } from "../middlewares/multer.middleware.js"
 import {
     loginUser, logoutUser, registerUser, refreshAccessToken,
-    changeUserPassword, getCurrentUser, updateUserCoverImage,
-    getChannelPage, updateAccountDetails,
+    UpdateUserPassword, getCurrentUser, updateUserCoverImage,
+    getUserChannelPage, updateUserDetails,
     updateUserAvatar, getWatchHistory
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { Router } from "express";
-
 const router = Router();
 
+
+// Register user
 router.route("/register").
-    post(uploadImage.fields([
+    post(imageUploader.fields([
         { name: "avatar", maxCount: 1 },
         { name: "coverImage", maxCount: 1 }
     ]), registerUser);
 
+// Login user
 router.route("/login").post(loginUser);
+
+// Refresh access token
 router.route("/refresh-Token").post(refreshAccessToken);
 
-// secured routes
+// Logout user (secured route)
 router.route("/logout").post(verifyJWT, logoutUser);
-router.route("/password").patch(verifyJWT, changeUserPassword);
-router.route("/account").patch(verifyJWT, updateAccountDetails)
-router.route("/avatar").patch(verifyJWT,
-    uploadImage.single('avatar'), updateUserAvatar);
-router.route("/cover-image").patch(verifyJWT,
-    uploadImage.single('coverImage'), updateUserCoverImage);
-router.route("/current-user").get(verifyJWT, getCurrentUser);
-router.route("/channel-page/:userName").get(verifyJWT, getChannelPage);
+
+// Get current user (secured route), Update user details (secured route)
+router.route("/account")
+    .get(verifyJWT, getCurrentUser)
+    .patch(verifyJWT, updateUserDetails)
+
+// Change user password (secured route)
+router.route("/account/password").patch(verifyJWT, UpdateUserPassword);
+
+// Update user avatar (secured route)
+router.route("/account/avatar").patch(verifyJWT,
+    imageUploader.single('avatar'), updateUserAvatar);
+
+// Update user cover image (secured route)
+router.route("/account/cover-image").patch(verifyJWT,
+    imageUploader.single('coverImage'), updateUserCoverImage);
+
+// Get channel page by username (secured route)
+router.route("/channel-page/:userName").get(verifyJWT, getUserChannelPage);
+
+// Get watch history (secured route)
 router.route("/watch-history").get(verifyJWT, getWatchHistory);
 
 

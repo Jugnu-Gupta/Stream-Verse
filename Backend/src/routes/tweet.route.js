@@ -1,23 +1,29 @@
 import {
-    tweetPost, tweetFetchUser, tweetUpdate,
-    tweetDelete, tweetImageUpdate
+    createTweet, getUserTweet, updateTweet,
+    updateTweetImage, deleteTweet
 } from '../controllers/tweet.controller.js';
 import { verifyJWT } from '../middlewares/auth.middleware.js';
-import { uploadImage } from '../middlewares/multer.middleware.js';
+import { imageUploader } from '../middlewares/multer.middleware.js';
 import { Router } from 'express';
 const router = Router();
 
+
+// Create a new tweet (secured route)
 router.route('/')
-    .post(verifyJWT, uploadImage.single('image'), tweetPost);
+    .post(verifyJWT, imageUploader.single('image'), createTweet);
 
-router.route('/:userId')
-    .get(verifyJWT, tweetFetchUser);
+// Get all tweets by user
+router.route('/user/:userId')
+    .get(getUserTweet);
 
+// Update, delete tweet by id (secured route)
 router.route('/:tweetId')
-    .patch(verifyJWT, tweetUpdate)
-    .delete(verifyJWT, tweetDelete);
+    .patch(verifyJWT, updateTweet)
+    .delete(verifyJWT, deleteTweet);
 
+// Update tweet image by id (secured route)
 router.route('/:tweetId/Image')
-    .patch(verifyJWT, tweetImageUpdate);
+    .patch(verifyJWT, updateTweetImage);
+
 
 export default router;

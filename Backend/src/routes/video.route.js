@@ -1,25 +1,27 @@
 import {
-    videoFetchAll, videoUpload, videoFetchById,
-    videoUpdate, videoDelete, VideoTogglePublishStatus
+    getAllVideo, uploadVideo, getVideoById,
+    videoUpdate, deleteVideo, ToggleVideoPublishStatus
 } from "../controllers/video.controller.js"
-import { uploadImage, uploadVideo } from "../middlewares/multer.middleware.js"
+import { imageUploader, videoUploader } from "../middlewares/multer.middleware.js"
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { Router } from "express";
 const router = Router();
 
 
+// Get all videos, upload video (secured routes)
 router.route("/")
-    .get(videoFetchAll) // incomplete
-    .post(verifyJWT, uploadImage.single('image'),
-        uploadVideo.single('video'), videoUpload);
+    .get(getAllVideo) // incomplete
+    .post(verifyJWT, imageUploader.single('image'),
+        videoUploader.single('video'), uploadVideo);
 
+// Get, update, delete video by id (secured routes)
 router.route("/:videoId")
-    .get(videoFetchById)
-    .patch(verifyJWT, uploadImage.single('image'), videoUpdate)
-    .delete(verifyJWT, videoDelete);
+    .get(getVideoById)
+    .patch(verifyJWT, imageUploader.single('image'), videoUpdate)
+    .delete(verifyJWT, deleteVideo);
 
-// secure all routes.
-router.route("/:videoId/publish").patch(verifyJWT, VideoTogglePublishStatus);
+// Toggle publish status of video (secured route)
+router.route("/:videoId/publish").patch(verifyJWT, ToggleVideoPublishStatus);
 
 
 export default router;

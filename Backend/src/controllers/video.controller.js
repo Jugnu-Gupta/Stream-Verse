@@ -9,8 +9,8 @@ import { ApiResponse } from "../utils/apiResponse.js";
 
 
 // controller to fetch all videos based on query, sort, pagination
-const videoFetchAll = asyncHandler(async (req, res) => {
-    const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query;
+const getAllVideo = asyncHandler(async (req, res) => {
+    const { page = 1, limit = 10, query, sortBy, duration, userId } = req.query;
 
     // Convert page and limit to integers
     const pageNo = parseInt(page, 10);
@@ -57,8 +57,7 @@ const videoFetchAll = asyncHandler(async (req, res) => {
 })
 
 
-// controller to upload video
-const videoUpload = asyncHandler(async (req, res) => {
+const uploadVideo = asyncHandler(async (req, res) => {
     const { title, description, isPublished } = req.body;
     if (!title || !description || !isPublished) {
         const message = !title ? "Title is required" :
@@ -108,8 +107,7 @@ const videoUpload = asyncHandler(async (req, res) => {
 })
 
 
-// controller to fetch video by id
-const videoFetchById = asyncHandler(async (req, res) => {
+const getVideoById = asyncHandler(async (req, res) => {
     const { videoId } = req.params;
     if (!videoId) {
         throw new ApiError(400, "Video id is required");
@@ -178,8 +176,7 @@ const videoUpdate = asyncHandler(async (req, res) => {
 })
 
 
-// controller to delete video
-const videoDelete = asyncHandler(async (req, res) => {
+const deleteVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params;
     if (!isValidObjectId(videoId)) {
         throw new ApiError(400, "Video id is required");
@@ -273,8 +270,7 @@ const videoDelete = asyncHandler(async (req, res) => {
 })
 
 
-// controller to toggle publish status of video
-const VideoTogglePublishStatus = asyncHandler(async (req, res) => {
+const ToggleVideoPublishStatus = asyncHandler(async (req, res) => {
     const { videoId } = req.params;
     if (!videoId) {
         throw new ApiError(400, "Video id is required");
@@ -295,6 +291,6 @@ const VideoTogglePublishStatus = asyncHandler(async (req, res) => {
 
 
 export {
-    videoFetchAll, videoUpload, videoFetchById,
-    videoUpdate, videoDelete, VideoTogglePublishStatus
+    getAllVideo, uploadVideo, getVideoById,
+    videoUpdate, deleteVideo, ToggleVideoPublishStatus
 };

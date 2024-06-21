@@ -1,23 +1,30 @@
 import {
-    playlistCreate, playlistFetchUser, playlistFetchById, playlistAddVideo,
-    playlistRemoveVideo, playlistDelete, playlistUpdate
+    createPlaylist, getUserPlaylist, getPlaylistById, addVideoInPlaylist,
+    deleteVideoFromPlaylist, deletePlaylist, updatePlaylist
 } from '../controllers/playlist.controller.js';
 import { verifyJWT } from '../middlewares/auth.middleware.js';
 import { Router } from 'express';
 const router = Router();
 
 
-router.route('/').post(verifyJWT, playlistCreate);
-router.route('/:userId').get(playlistFetchUser);
-router.route('/:playlistId').get(playlistFetchById);
+// Create a new playlist
+router.route('/').post(verifyJWT, createPlaylist);
 
+// Get all playlists by user
+router.route('/:userId').get(getUserPlaylist);
+
+// Get playlist by id (secured route)
+router.route('/:playlistId').get(getPlaylistById);
+
+// Update, delete playlist by id (secured route)
 router.route('/:playlistId')
-    .patch(verifyJWT, playlistUpdate)
-    .delete(verifyJWT, playlistDelete);
+    .patch(verifyJWT, updatePlaylist)
+    .delete(verifyJWT, deletePlaylist);
 
+// Add, remove video to playlist by id (secured route)
 router.route('/:playlistId/:videoId')
-    .post(verifyJWT, playlistAddVideo)
-    .delete(verifyJWT, playlistRemoveVideo);
+    .post(verifyJWT, addVideoInPlaylist)
+    .delete(verifyJWT, deleteVideoFromPlaylist);
 
 
 export default router;

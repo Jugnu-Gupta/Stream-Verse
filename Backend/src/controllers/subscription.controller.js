@@ -5,8 +5,7 @@ import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 
 
-// controller to toggle subscription
-const SubscriptionToggle = asyncHandler(async (req, res) => {
+const toggleSubscription = asyncHandler(async (req, res) => {
     const { subscriberId } = req.user;
     const { channelId } = req.params;
     if (!subscriberId || !channelId) {
@@ -32,8 +31,7 @@ const SubscriptionToggle = asyncHandler(async (req, res) => {
 })
 
 
-// controller to return subscriber list of a channel
-const SubscriptionFetchUserChannelSubscribers = asyncHandler(async (req, res) => {
+const getUserChannelSubscribers = asyncHandler(async (req, res) => {
     const { channelId } = req.params;
     if (!channelId) {
         throw new ApiError(400, "Channel id is required");
@@ -50,8 +48,7 @@ const SubscriptionFetchUserChannelSubscribers = asyncHandler(async (req, res) =>
 })
 
 
-// controller to return channel list to which user has subscribed
-const SubscriptionFetchSubscribedChannels = asyncHandler(async (req, res) => {
+const getSubscribedChannels = asyncHandler(async (req, res) => {
     const { subscriberId } = req.params;
     if (!isValidObjectId(subscriberId)) {
         throw new ApiError(400, "Subscriber id is required");
@@ -100,4 +97,4 @@ const SubscriptionFetchSubscribedChannels = asyncHandler(async (req, res) => {
 })
 
 
-export { SubscriptionToggle, SubscriptionFetchUserChannelSubscribers, SubscriptionFetchSubscribedChannels };
+export { toggleSubscription, getUserChannelSubscribers, getSubscribedChannels };
