@@ -2,7 +2,7 @@ import { imageUploader } from "../middlewares/multer.middleware.js"
 import {
     loginUser, logoutUser, registerUser, refreshAccessToken,
     UpdateUserPassword, getCurrentUser, updateUserCoverImage,
-    getUserChannelPage, updateUserDetails,
+    getUserChannelPage, updateUserDetails, verifyEmail,
     updateUserAvatar, getWatchHistory
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -19,6 +19,12 @@ router.route("/register").
 
 // Login user
 router.route("/login").post(loginUser);
+
+// verify email
+router.route("/verify/:token").get(verifyEmail);
+
+// reset password
+router.route("/reset/:token").get(verifyEmail);
 
 // Refresh access token
 router.route("/refresh-Token").post(refreshAccessToken);

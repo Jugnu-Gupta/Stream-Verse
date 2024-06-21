@@ -5,6 +5,7 @@ import { uploadOnCloudinary, deleteFromCloudinary }
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import mongoose, { isValidObjectId } from "mongoose";
+import { sendMail } from "../utils/sendMail.js";
 import jwt from "jsonwebtoken";
 import fs from "fs";
 
@@ -54,7 +55,7 @@ const registerUser = asyncHandler(async (req, res) => {
     // uploading images to cloudinay
     const avatar = await uploadOnCloudinary(avatarLocalPath);
     const coverImage = await uploadOnCloudinary(coverImageLocalPath);
-    console.log("avatar", avatar);
+    // console.log("avatar", avatar);
 
     // check for images: avator, dp.
     if (!avatar) {
@@ -83,9 +84,11 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new ApiError(500, "Something went wrong while registering the user");
     }
 
-    // Give response
+    // email verification
+    const mail = await sendMail("jugnubhai47@gmail.com", "VERIFY", createdUser._id);
+
     return res.status(201).json(
-        new ApiResponse(200, createdUser, "User registered Successfully")
+        new ApiResponse(200, null, "A verification link has been sent to your email. Please verify to log in.")
     )
 });
 
@@ -109,6 +112,13 @@ const loginUser = asyncHandler(async (req, res) => {
         throw new ApiError(401, "Incorrect password");
     }
 
+    // verify the user email.
+    if (!user?.isVerified) {
+        const mail = await sendMail("jugnubhai47@gmail.com", "VERIFY", user._id);
+
+        throw new ApiError(401, "A verification link has been sent to your email. Please verify to log in.");
+    }
+
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
 
     let loggedInUser = user.toObject();
@@ -124,8 +134,32 @@ const loginUser = asyncHandler(async (req, res) => {
         .cookie("refreshToken", refreshToken, options)
         .cookie("accessToken", accessToken, options)
         .json(
-            new ApiResponse(200, { user: loggedInUser, accessToken, refreshToken }, "User logged in successful")
+            new ApiResponse(200, { user: loggedInUser, accessToken, refreshToken },
+                "User logged in successful")
         );
+});
+
+
+const verifyEmail = asyncHandler(async (req, res) => {
+    const { token } = req.params;
+    if (!token) {
+        throw new ApiError(400, "Invalid token");
+    }
+
+    const user = await User.findOne({
+        verifyToken: token,
+        verifyTokenExpiry: { $gt: Date.now() }
+    });
+    if (!user) {
+        throw new ApiError(401, "Invalid token or token expired");
+    }
+
+    user.isVerified = true;
+    await user.save({ ValidateBeforeSave: false });
+
+    return res.status(200).json(
+        new ApiResponse(200, null, "Email verified successfully")
+    );
 });
 
 
@@ -444,5 +478,5 @@ export {
     registerUser, loginUser, logoutUser, refreshAccessToken,
     UpdateUserPassword, getCurrentUser, updateUserDetails,
     updateUserCoverImage, updateUserAvatar, getUserChannelPage,
-    getWatchHistory
+    getWatchHistory, verifyEmail
 };

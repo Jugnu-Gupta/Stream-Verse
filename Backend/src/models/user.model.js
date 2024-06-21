@@ -29,7 +29,6 @@ const userSchema = new mongoose.Schema({
         index: 'text',
     },
     avatar: {
-        // cloudinary: publicId and url
         type: {
             publicId: String,
             url: String
@@ -38,12 +37,15 @@ const userSchema = new mongoose.Schema({
         require: true,
     },
     coverImage: {
-        // cloudinary: publicId and url
         type: {
             publicId: String,
             url: String
         },
         _id: false
+    },
+    isVerified: {
+        type: Boolean,
+        default: false,
     },
     refreshToken: {
         type: String,
@@ -60,6 +62,18 @@ const userSchema = new mongoose.Schema({
             }
         }
     ],
+    forgotPasswordToken: {
+        type: String,
+    },
+    forgotPasswordTokenExpiry: {
+        type: Date,
+    },
+    verifyToken: {
+        type: String,
+    },
+    verifyTokenExpiry: {
+        type: Date,
+    }
 }, { timestamps: true });
 
 userSchema.pre("save", async function (next) {
