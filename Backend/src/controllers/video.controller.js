@@ -65,8 +65,8 @@ const uploadVideo = asyncHandler(async (req, res) => {
         throw new ApiError(400, message);
     }
 
-    const videoLocalPath = req?.files?.video?.[0]?.path;
-    const thumbnailLocalPath = req?.files?.thumbnail?.[0]?.path;
+    const thumbnailLocalPath = req.files?.thumbnail?.[0]?.path;
+    const videoLocalPath = req.files?.video?.[0]?.path;
     if (!videoLocalPath || !thumbnailLocalPath) {
         const message = !videoLocalPath ? "Video is required" : "Thumbnail is required";
         throw new ApiError(400, message);
@@ -74,8 +74,8 @@ const uploadVideo = asyncHandler(async (req, res) => {
 
     const videoFile = await uploadOnCloudinary(videoLocalPath);
     const thumbnail = await uploadOnCloudinary(thumbnailLocalPath);
-    if (!video?.secure_url || !thumbnail?.secure_url) {
-        const message = !video ? "Failed to upload video" : "Failed to upload thumbnail";
+    if (!videoFile?.secure_url || !thumbnail?.secure_url) {
+        const message = !videoFile ? "Failed to upload video" : "Failed to upload thumbnail";
         throw new ApiError(500, message);
     }
 
@@ -90,13 +90,13 @@ const uploadVideo = asyncHandler(async (req, res) => {
         },
         title,
         description,
-        duration: video?.duration,
+        duration: videoFile?.duration,
         ownerId: req.user?._id,
         isPublished: isPublished,
     });
 
     // check if video is created
-    const uploadedVideo = await video.findById(video?._id);
+    const uploadedVideo = await Video.findById(video?._id);
     if (!uploadedVideo) {
         throw new ApiError(500, "Failed to upload video");
     }

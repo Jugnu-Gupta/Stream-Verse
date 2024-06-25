@@ -1,48 +1,15 @@
 import multer from "multer";
+import path from "path";
+
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, "./public/temp");
     },
     filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + Date.now())
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
     },
 });
 
-// File filter to allow only certain file types
-const filterImage = (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png/;
-    const extName = file.originalname?.split(".")?.pop()?.toLowerCase();
-    const mimeType = file.mimetype;
 
-    if (allowedTypes.test(extName) && allowedTypes.test(mimeType)) {
-        return cb(null, true);
-    } else {
-        cb(new Error('Only images of types jpeg, jpg and png are allowed'));
-    }
-};
-
-// File filter to allow only certain file types
-const filterVideo = (req, file, cb) => {
-    const allowedTypes = /mp4|mov|mpg|mpeg4|wmv|flv|webm|avi|mkv/;
-    const extName = file.originalname?.split(".")?.pop()?.toLowerCase();
-    const mimeType = file.mimetype;
-
-    if (allowedTypes.test(extName) && allowedTypes.test(mimeType)) {
-        return cb(null, true);
-    } else {
-        cb(new Error('Only videos of type mp4, flv, avi, mkv, mov, wmv, webm, mpg and mpeg4 are allowed'));
-    }
-};
-
-export const imageUploader = multer({
-    storage: storage,
-    fileFilter: filterImage,
-    limits: { fileSize: 1024 * 1024 * 10 } // Limit image size to 10 MB
-});
-
-export const videoUploader = multer({
-    storage: storage,
-    fileFilter: filterVideo,
-    limits: { fileSize: 1024 * 1024 * 100 } // Limit video size to 100 MB
-});
+export const upload = multer({ storage: storage });

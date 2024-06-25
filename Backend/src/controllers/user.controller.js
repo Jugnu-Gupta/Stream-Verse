@@ -79,7 +79,8 @@ const registerUser = asyncHandler(async (req, res) => {
     });
 
     // check for user creation
-    const createdUser = await User.findById(user._id)?.select("-password -refreshToken");
+    const createdUser = await User.findById(user._id)
+        ?.select("userName fullName email avatar coverImage isVerified");
     if (!createdUser) {
         throw new ApiError(500, "Something went wrong while registering the user");
     }
@@ -94,25 +95,22 @@ const registerUser = asyncHandler(async (req, res) => {
 
 
 const loginUser = asyncHandler(async (req, res) => {
-    // check if the email and password are given and email is valid.
     const { email, password } = req.body;
     if (!email) {
         throw new ApiError(400, "Email is required");
     }
 
-    // find and check if the user exists.
     const user = await User.findOne({ email });
     if (!user) {
         throw new ApiError(404, "User not found");
     }
 
-    // check password is correct.
     const isPasswordValid = await user.isPasswordCorrect(password);
     if (!isPasswordValid) {
         throw new ApiError(401, "Incorrect password");
     }
 
-    // verify the user email.
+    // check if the user is verified.
     if (!user?.isVerified) {
         const mail = await sendMail("jugnubhai47@gmail.com", "VERIFY", user._id);
 
@@ -121,10 +119,11 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
 
-    let loggedInUser = user.toObject();
-    // Delete the password and refreshToken properties
-    delete loggedInUser.password;
-    delete loggedInUser.refreshToken;
+    const loggedInUser = await User.findById(user._id)
+        ?.select("userName fullName email avatar coverImage isVerified");
+    if (!loggedInUser) {
+        throw new ApiError(500, "Something went wrong while logging in the user");
+    }
 
     const options = {
         httpOnly: true,
@@ -140,11 +139,13 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 
-const verifyEmail = asyncHandler(async (req, res) => {
-    const { token } = req.params;
+const confirmUserEmailVerification = asyncHandler(async (req, res) => {
+    const { token } = req.query;
     if (!token) {
         throw new ApiError(400, "Invalid token");
     }
+
+    console.log("token", token);
 
     const user = await User.findOne({
         verifyToken: token,
@@ -155,10 +156,63 @@ const verifyEmail = asyncHandler(async (req, res) => {
     }
 
     user.isVerified = true;
+    user.verifyToken = undefined;
+    user.verifyTokenExpiry = undefined;
     await user.save({ ValidateBeforeSave: false });
 
     return res.status(200).json(
         new ApiResponse(200, null, "Email verified successfully")
+    );
+});
+
+
+const validatePasswordResetToken = asyncHandler(async (req, res) => {
+    const { token } = req.query;
+    if (!token) {
+        throw new ApiError(400, "Invalid token");
+    }
+
+    const user = await User.findOne({
+        resetPasswordToken: token,
+        resetPasswordTokenExpiry: { $gt: Date.now() }
+    });
+    if (!user) {
+        throw new ApiError(401, "Invalid token or token expired");
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, token, "Token verified successfully")
+    );
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+    const { token, newPassword, confirmPassword } = req.body;
+    if (!token) {
+        throw new ApiError(400, "Invalid token");
+    }
+
+    // check if the new password and confirm password are same.
+    if (newPassword !== confirmPassword) {
+        throw new ApiError(400, "New password and confirm password do not match");
+    }
+
+    const user = await User.findOneAndUpdate(
+        {
+            resetPasswordToken: token,
+            resetPasswordTokenExpiry: { $gt: Date.now() }
+        },
+        {
+            $set: { password: newPassword },
+            $unset: { resetPasswordToken: "", resetPasswordTokenExpiry: "" },
+        },
+        { new: true }
+    )
+    if (!user) {
+        throw new ApiError(401, "Invalid token or token expired");
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, null, "Password reset successful")
     );
 });
 
@@ -177,6 +231,53 @@ const logoutUser = asyncHandler(async (req, res) => {
         .clearCookie("refreshToken", options)
         .clearCookie("accessToken", options)
         .json(new ApiResponse(200, null, "User logged out successfully"));
+});
+
+
+const suggestAvailableUserName = asyncHandler(async (req, res) => {
+    const { prefix } = req.query;
+    if (!prefix) {
+        throw new ApiError(400, "Prefix is required");
+    }
+
+    const availableUsername = await findAvailableUsername(prefix);
+    return res.status(200).json(
+        new ApiResponse(200, { availableUsername }, "Available username found")
+    );
+});
+
+const findAvailableUsername = asyncHandler(async (prefix) => {
+    const prefixRegex = new RegExp(`^${prefix}\\d+$`);
+
+    const results = await collection.aggregate([
+        {
+            $match: {
+                handle: { $regex: prefixRegex }
+            }
+        },
+        {
+            $project: {
+                suffix: {
+                    $toInt: {
+                        $substr: ["$handle", { $strLenCP: prefix }, -1]
+                    }
+                }
+            }
+        },
+        {
+            $sort: { suffix: 1 }
+        }
+    ]).toArray();
+
+    let expectedSuffix = 1;
+    for (const result of results) {
+        if (result.suffix !== expectedSuffix) {
+            break;
+        }
+        expectedSuffix++;
+    }
+
+    return `${prefix}${expectedSuffix}`;
 });
 
 
@@ -227,44 +328,34 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 const UpdateUserPassword = asyncHandler(async (req, res) => {
     const { email, currentPassword, newPassword, confirmPassword } = req.body;
-    if (!email?.trim()) {
+    if (!email) {
         throw new ApiError(400, "Email is required");
     }
+    if (newPassword !== confirmPassword) {
+        throw new ApiError(400, "New password and confirm password do not match");
+    }
 
-    // find and check if the user exists.
     const user = await User.findOne({ email });
     if (!user) {
         throw new ApiError(404, "User not found");
     }
 
-    // check password.
     const isPasswordValid = await user.isPasswordCorrect(currentPassword);
     if (!isPasswordValid) {
         throw new ApiError(401, "Incorrect password");
     }
 
-    // check if the new password and confirm password are same.
-    if (newPassword !== confirmPassword) {
-        throw new ApiError(400, "New password and confirm password do not match");
-    }
-
-    // check if the new password and old password are defferent.
     if (currentPassword === newPassword) {
         throw new ApiError(400, "New password cannot be same as old password");
     }
 
-    // update the password.
-    user.password = newPassword;
-    await user.save({ ValidateBeforeSave: false });
+    const updatedUser = await User.findByIdAndUpdate(user._id,
+        { password: newPassword }, { new: true }
+    )?.select("userName fullName email avatar coverImage isVerified");
 
-    const existedUser = user.toObject();
-
-    // Delete the password and refreshToken properties
-    delete existedUser.password;
-    delete existedUser.refreshToken;
 
     return res.status(200).json(
-        new ApiResponse(200, { user: existedUser },
+        new ApiResponse(200, { user: updatedUser },
             "Password changed successful")
     );
 });
@@ -293,7 +384,8 @@ const updateUserDetails = asyncHandler(async (req, res) => {
     // update the user profile.
     const user = await User.findByIdAndUpdate(req?.user?._id,
         { $set: { fullName, userName: userName.toLowerCase() } },
-        { new: true }).select("-password -refreshToken");
+        { new: true }
+    )?.select("userName fullName email avatar coverImage isVerified");
 
     if (!user) {
         throw new ApiError(500, "Something went wrong while updating the user profile");
@@ -330,7 +422,8 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 
     const user = await User.findByIdAndUpdate(req?.user?._id,
         { $set: { avatar: { publicId: avatar.public_id, url: avatar.secure_url } } },
-        { new: true }).select("-password -refreshToken");
+        { new: true }
+    )?.select("userName fullName email avatar coverImage isVerified");
 
     return res.status(200).json(
         new ApiResponse(200, { user }, "Avatar updated successfully")
@@ -363,7 +456,8 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
 
     const user = await User.findByIdAndUpdate(req?.user?._id,
         { $set: { coverImage: { publicId: coverImage.public_id, url: coverImage.secure_url } } },
-        { new: true }).select("-password -refreshToken");
+        { new: true }
+    )?.select("userName fullName email avatar coverImage isVerified");
 
     return res.status(200).json(
         new ApiResponse(200, { user }, "Cover image updated successfully")
@@ -478,5 +572,6 @@ export {
     registerUser, loginUser, logoutUser, refreshAccessToken,
     UpdateUserPassword, getCurrentUser, updateUserDetails,
     updateUserCoverImage, updateUserAvatar, getUserChannelPage,
-    getWatchHistory, verifyEmail
+    getWatchHistory, confirmUserEmailVerification,
+    validatePasswordResetToken, resetPassword
 };

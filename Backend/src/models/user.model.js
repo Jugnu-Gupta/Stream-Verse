@@ -62,10 +62,10 @@ const userSchema = new mongoose.Schema({
             }
         }
     ],
-    forgotPasswordToken: {
+    resetPasswordToken: {
         type: String,
     },
-    forgotPasswordTokenExpiry: {
+    resetPasswordTokenExpiry: {
         type: Date,
     },
     verifyToken: {

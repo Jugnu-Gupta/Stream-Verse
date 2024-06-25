@@ -3,14 +3,14 @@ import {
     updateTweetImage, deleteTweet
 } from '../controllers/tweet.controller.js';
 import { verifyJWT } from '../middlewares/auth.middleware.js';
-import { imageUploader } from '../middlewares/multer.middleware.js';
+import { upload } from '../middlewares/multer.middleware.js';
 import { Router } from 'express';
 const router = Router();
 
 
 // Create a new tweet (secured route)
 router.route('/')
-    .post(verifyJWT, imageUploader.single('image'), createTweet);
+    .post(verifyJWT, upload.single('image'), createTweet);
 
 // Get all tweets by user
 router.route('/user/:userId')

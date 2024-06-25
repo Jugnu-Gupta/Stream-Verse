@@ -11,8 +11,8 @@ const sendMail = async (email, emailType, userId) => {
         if (emailType === "RESET") {
             await User.findByIdAndUpdate(userId, {
                 $set: {
-                    forgotPasswordToken: hashedToken,
-                    forgotPasswordTokenExpiry: Date.now() + 3600000,
+                    resetPasswordToken: hashedToken,
+                    resetPasswordTokenExpiry: Date.now() + 3600000,
                 }
             })
 
@@ -30,7 +30,7 @@ const sendMail = async (email, emailType, userId) => {
 
             subject = "Verify your email";
             text = `Click on the link to verify your email: 
-            ${process.env.BASE_URL}/verify/${hashedToken}`;
+            ${process.env.BASE_URL}/email-verification?token=${hashedToken}`;
         }
 
         const transporter = nodemailer.createTransport({
