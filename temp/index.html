@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloudinary Video Player Example</title>
+    <link rel="stylesheet" href="https://unpkg.com/cloudinary-video-player/dist/cld-video-player.light.min.css">
+</head>
+
+
+<!-- // publicId: ligcmzjuf67crz6xzoyj
+// publicId: sbid4lbttymg0svju3re -->
+
+<body>
+    <video id="player" src="https://player.cloudinary.com/embed/?public_id=sbid4lbttymg0svju3re&cloud_name=diypl8rwq"
+        width="640" height="360" style="height: auto; width: 100%; aspect-ratio: 640 / 360;"
+        allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen frameborder="0">
+    </video>
+
+    <button id="good">720p</button>
+    <button id="bad"> 240p</button>
+
+    <script src="https://unpkg.com/cloudinary-core@2.9.0/cloudinary-core-shrinkwrap.js"></script>
+    <script src="https://unpkg.com/cloudinary-video-player@1.9.2/dist/cld-video-player.min.js"></script>
+    <script
+        src="https://unpkg.com/cloudinary-video-player/dist/plugins/quality-selector/cld-video-player.quality-selector.min.js"></script>
+
+    <script>
+        // document.addEventListener("DOMContentLoaded", function () {
+        // not working
+        // const player = cloudinary.videoPlayer('player', {
+        //     cloudName: 'diypl8rwq',
+        //     fluid: true,
+        //     controls: true
+        // });
+
+        // working
+        const cld = cloudinary.Cloudinary.new({ cloud_name: 'diypl8rwq' }); // Replace 'your_cloud_name' with your actual Cloudinary cloud name
+
+        let player = cld.videoPlayer('player', {
+            fluid: true,
+            controls: true,
+            muted: true,
+            autoplay: true,
+            preload: 'auto',
+            loop: true,
+            width: 640,
+            height: 360,
+            sourceTransformation: {
+                hls: [{ streaming_profile: "full_hd" }],
+                mp4: [{ quality: '720p' }, { segment_duration: 10 }],
+            },
+            playbackRates: [0.25, 0.5, 1, 1.5, 2],
+        });
+
+        let play = 'ligcmzjuf67crz6xzoyj';
+
+        addEventListener('click', (e) => {
+            if (e.target.id === 'good') {
+                player.source('sbid4lbttymg0svju3re');
+            } else if (e.target.id === 'bad') {
+                player.source('ligcmzjuf67crz6xzoyj');
+            }
+        });
+
+
+        // Adding the quality selector plugin
+        // player.qualitySelector('qualitySelector', {
+        //     defaultQuality: 'auto', // The default quality (e.g., 'auto', '360p', '720p', etc.)
+        //     qualities: [
+        //         { label: 'Auto', value: 'auto' },
+        //         { label: '360p', value: '360p' },
+        //         { label: '480p', value: '480p' },
+        //         { label: '720p', value: '720p' },
+        //     ]
+        // });
+
+        player.source('ligcmzjuf67crz6xzoyj');
+    </script>
+</body>
+
+</html>
+
+
+{quality === "auto" ? (
+<Transformation aspectRatio="16:9" quality={quality} />
+) : (
+<Transformation aspectRatio="16:9" crop={quality==="auto" ? "fill" : quality} quality="auto" />
+)}
