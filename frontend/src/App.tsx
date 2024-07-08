@@ -1,8 +1,8 @@
 import { Provider } from "react-redux";
 import { store } from "./context/store";
 import { RouterProvider, createBrowserRouter, Outlet } from "react-router-dom";
-import Login from "./pages/Login/Login.jsx";
-import Register from "./pages/Register/Register.jsx";
+import Login from "./pages/Register/Register.js";
+import Register from "./pages/Login/Login.js";
 import EmailVerification from "./pages/EmailVerification/EmailVerification.jsx";
 import PasswordReset from "./pages/PasswordReset/PasswordReset.jsx";
 

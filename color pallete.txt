@@ -31,3 +31,10 @@ teal:
 
   table-row-alternative-background-color: "#303030"
   paper-toggle-button-unchecked-bar-color: "#505050"
+
+
+          'white-color': '#FFFFFF',
+        'primary-color': '#33F2D8',
+        'dark-color': '#303030',
+        'dark-light-color': '#424242',
+        'dark-lighter-color': '#616161',
