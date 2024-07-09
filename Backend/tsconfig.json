@@ -6,7 +6,6 @@
         "outDir": "dist",
         "sourceMap": true,
         "noImplicitAny": true,
-        "allowImportingTsExtensions": null,
     },
     "include": ["src/**/*.ts"]
 }
