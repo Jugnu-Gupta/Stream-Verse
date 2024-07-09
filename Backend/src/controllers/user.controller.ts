@@ -5,6 +5,7 @@ import { User } from "../models/user.model";
 import { ApiError } from "../utils/apiError";
 import { ApiResponse } from "../utils/apiResponse";
 import mongoose, { isValidObjectId } from "mongoose";
+import { findAvailableUserName } from "../utils/findAvailableUserName";
 import fs from "fs";
 import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary";
 
@@ -99,7 +100,12 @@ const updateUserDetails = asyncHandler(
             userName: userName.toLowerCase(),
         });
         if (existedUser) {
-            throw new ApiError(409, "Username already exists");
+            const availableUserName: string | null =
+                await findAvailableUserName(fullName);
+
+            throw new ApiError(409, "This username isn't available.", {
+                availableUserName,
+            });
         }
 
         // update the user profile.
@@ -188,7 +194,7 @@ const updateUserCoverImage = asyncHandler(
         }
 
         // delete the old cover image from cloudinary if exists.
-        if (req?.user?.coverImage?.publicId) {
+        if (req.user?.coverImage?.publicId) {
             const oldCoverImage = await deleteFromCloudinary(
                 req?.user?.coverImage?.publicId,
                 "image"

@@ -5,7 +5,7 @@ import { UserType } from "../types/user.type";
 import { ApiError } from "../utils/apiError";
 import { ApiResponse } from "../utils/apiResponse";
 import mongoose, { isValidObjectId } from "mongoose";
-import { suggestAvailableUserName } from "../utils/suggestAvailableUserName";
+import { findAvailableUserName } from "../utils/findAvailableUserName";
 import { uploadOnCloudinary } from "../utils/cloudinary";
 import { sendMail } from "../utils/sendMail";
 import jwt from "jsonwebtoken";
@@ -71,13 +71,24 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     }
 
     // check if the user exists: email, username.
-    let existedUser: UserTypeDoc | null = await User.findOne({ userName });
+    let existedUser: UserTypeDoc | null = await User.findOne({ email });
     if (existedUser) {
-        throw new ApiError(409, "User with username already exists");
+        throw new ApiError(409, "This email isn't available.");
     }
-    existedUser = await User.findOne({ email });
+
+    existedUser = await User.findOne({ userName });
     if (existedUser) {
-        throw new ApiError(409, "User with email already exists");
+        const availableUserName: string | null =
+            await findAvailableUserName(fullName);
+        if (!availableUserName) {
+            throw new ApiError(409, "This username isn't available.");
+        } else {
+            // This username isn't available. Here's one available: @jugnu-b7y.
+            throw new ApiError(
+                409,
+                `This username isn't available. Here's one available: ${availableUserName}`
+            );
+        }
     }
 
     const avatarLocalPath: string = (req as FileType).files?.avatar?.[0]?.path;
