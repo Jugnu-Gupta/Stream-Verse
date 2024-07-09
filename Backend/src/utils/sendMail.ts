@@ -2,11 +2,17 @@ import nodemailer from "nodemailer";
 import { User } from "../models/user.model";
 import { ApiError } from "./apiError";
 import bcrypt from "bcrypt";
+import {
+    getEmailVerificationText,
+    getEmailVerificationHtml,
+    getPasswordResetText,
+    getPasswordResetHtml,
+} from "./emailTemplates";
 
 const sendMail = async (email: string, emailType: string, userId: string) => {
     try {
         const hashedToken = await bcrypt.hash(userId.toString(), 10);
-        let subject: string, text: string;
+        let subject: string, text: string, html: string;
 
         if (emailType === "RESET") {
             await User.findByIdAndUpdate(userId, {
@@ -17,8 +23,16 @@ const sendMail = async (email: string, emailType: string, userId: string) => {
             });
 
             subject = "Reset your password";
-            text = `Click on the link to reset your password: 
-            ${process.env.BASE_URL}/reset/${hashedToken}`;
+            // text = `Click on the link to reset your password:
+            // ${process.env.BASE_URL}/reset/${hashedToken}`;
+            text = getEmailVerificationText(
+                "Jugnu Gupta",
+                `${process.env.BASE_URL}/reset/${hashedToken}`
+            );
+            html = getEmailVerificationHtml(
+                "Jugnu Gupta",
+                `${process.env.BASE_URL}/reset/${hashedToken}`
+            );
         } else if (emailType === "VERIFY") {
             await User.findByIdAndUpdate(userId, {
                 $set: {
@@ -28,8 +42,16 @@ const sendMail = async (email: string, emailType: string, userId: string) => {
             });
 
             subject = "Verify your email";
-            text = `Click on the link to verify your email: 
-            ${process.env.BASE_URL}/email-verification?token=${hashedToken}`;
+            // text = `Click on the link to verify your email:
+            // ${process.env.BASE_URL}/email-verification?token=${hashedToken}`;
+            text = getPasswordResetText(
+                "Jugnu Gupta",
+                `${process.env.BASE_URL}/email-verification?token=${hashedToken}`
+            );
+            html = getPasswordResetHtml(
+                "Jugnu Gupta",
+                `${process.env.BASE_URL}/email-verification?token=${hashedToken}`
+            );
         }
 
         const transporter = nodemailer.createTransport({
@@ -48,6 +70,7 @@ const sendMail = async (email: string, emailType: string, userId: string) => {
             to: email,
             subject: subject,
             text: text,
+            html: html,
         };
 
         const mail = await transporter.sendMail(mailOptions);
