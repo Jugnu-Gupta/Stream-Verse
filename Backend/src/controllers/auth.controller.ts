@@ -4,7 +4,7 @@ import { User } from "../models/user.model";
 import { UserType } from "../types/user.type";
 import { ApiError } from "../utils/apiError";
 import { ApiResponse } from "../utils/apiResponse";
-import mongoose, { isValidObjectId } from "mongoose";
+import mongoose from "mongoose";
 import { findAvailableUserName } from "../utils/findAvailableUserName";
 import { uploadOnCloudinary } from "../utils/cloudinary";
 import { sendMail } from "../utils/sendMail";
@@ -193,10 +193,14 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
         );
     }
 
-    const options: Option = {
+    const options = {
         httpOnly: true,
-        secure: true,
+        // secure: true,
     };
+    // const options: Option = {
+    //     httpOnly: true,
+    //     secure: true,
+    // };
     return res
         .status(200)
         .cookie("refreshToken", refreshToken, options)

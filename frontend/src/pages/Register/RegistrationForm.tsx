@@ -1,6 +1,15 @@
 import React from "react";
 import { useFormik } from "formik";
-import * as Yup from "yup";
+import makeApiRequest from "../../utils/MakeApiRequest";
+import type { ApiRequestOptions } from "../../utils/MakeApiRequest";
+
+// interface FormValues {
+// 	firstName: string;
+// 	lastName: string;
+// 	userName: string;
+// 	email: string;
+// 	password: string;
+// }
 
 const RegistrationForm: React.FC = () => {
 	const { values, errors, touched, handleChange, handleSubmit, handleBlur } =
@@ -13,8 +22,22 @@ const RegistrationForm: React.FC = () => {
 				password: "",
 			},
 			// validationSchema: ,
-			onSubmit: (values) => {
+			onSubmit: async (values) => {
+				const request: ApiRequestOptions = {
+					method: "post",
+					url: "/api/v1/auths/register",
+					data: {
+						fullName: `${values.firstName}${
+							values.lastName !== "" ? " " + values.lastName : ""
+						}`,
+						userName: values.userName,
+						email: values.email,
+						password: values.password,
+					},
+				};
+				const res = await makeApiRequest(request);
 				console.log(values);
+				console.log(res);
 			},
 		});
 	return (

@@ -11,7 +11,7 @@ To complete your registration and start enjoying all the features we offer, plea
 Click the link below to verify your email:
 ${verificationLink}
 
-If you didn’t create an account with [Your Website Name], please ignore this email.
+If you didn't create an account with [Your Website Name], please ignore this email.
 
 Best regards,
 The [Your Website Name] Team

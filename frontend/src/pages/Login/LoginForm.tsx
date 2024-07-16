@@ -1,18 +1,26 @@
 import React from "react";
 import { useFormik } from "formik";
+import { ApiRequestOptions } from "../../utils/MakeApiRequest";
+import makeApiRequest from "../../utils/MakeApiRequest";
 
 const LoginForm: React.FC = () => {
-	const { values, errors, touched, handleChange, handleSubmit, handleBlur } =
-		useFormik({
-			initialValues: {
-				email: "",
-				password: "",
-			},
-			// validationSchema: {},
-			onSubmit: (values) => {
-				console.log(values);
-			},
-		});
+	const { values, handleChange, handleSubmit, handleBlur } = useFormik({
+		initialValues: {
+			email: "",
+			password: "",
+		},
+		// validationSchema: {},
+		onSubmit: async (values) => {
+			const request: ApiRequestOptions = {
+				method: "post",
+				url: "/api/v1/auths/login",
+				data: values,
+			};
+			const res = await makeApiRequest(request);
+			console.log(res);
+		},
+	});
+
 	return (
 		<form
 			onSubmit={handleSubmit}

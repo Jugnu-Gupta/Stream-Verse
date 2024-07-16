@@ -6,8 +6,8 @@ import { ApiError } from "../utils/apiError";
 import { ApiResponse } from "../utils/apiResponse";
 import mongoose, { isValidObjectId } from "mongoose";
 import { findAvailableUserName } from "../utils/findAvailableUserName";
-import fs from "fs";
 import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary";
+import fs from "fs";
 
 interface RequestWithUser extends Request {
     user: UserType;
