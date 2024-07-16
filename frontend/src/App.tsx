@@ -1,43 +1,37 @@
-import { Provider } from "react-redux";
-import { store } from "./context/store";
-import { RouterProvider, createBrowserRouter, Outlet } from "react-router-dom";
-import Login from "./pages/Register/Register.js";
-import Register from "./pages/Login/Login.js";
-import EmailVerification from "./pages/EmailVerification/EmailVerification.jsx";
-import PasswordReset from "./pages/PasswordReset/PasswordReset.jsx";
-
-const routes = createBrowserRouter([
-	{
-		path: "/",
-		element: <Outlet />,
-		// redirect ot login or home page
-		errorElement: <div>404 Not Found</div>,
-		children: [
-			{
-				path: "login",
-				element: <Login />,
-			},
-			{
-				path: "register",
-				element: <Register />,
-			},
-			{
-				path: "email-verification",
-				element: <EmailVerification />,
-			},
-			{
-				path: "password-reset",
-				element: <PasswordReset />,
-			},
-		],
-	},
-]);
+import { Route, Routes, BrowserRouter, Outlet } from "react-router-dom";
+import Register from "./pages/Register/Register.js";
+import Login from "./pages/Login/Login.js";
+import EmailVerification from "./pages/EmailVerification/EmailVerification.tsx";
+import PasswordReset from "./pages/PasswordReset/PasswordReset.tsx";
+import Header from "./pages/Header/Header.tsx";
+// import Navbar from "./components/Navbar/Navbar.tsx";
+import Home from "./pages/Home/Home.tsx";
 
 function App() {
 	return (
-		<Provider store={store}>
-			<RouterProvider router={routes} />
-		</Provider>
+		<BrowserRouter>
+			<Routes>
+				<Route path="/" element={<Outlet />}>
+					<Route
+						index
+						element={
+							<div>
+								<Header />
+								<Home />
+							</div>
+						}></Route>
+					{/* <Route path="/about" element={<About/>}></Route> */}
+				</Route>
+				<Route
+					path="email-verification"
+					element={<EmailVerification />}
+				/>
+				<Route path="/login" element={<Login />} />
+				<Route path="/password-reset" element={<PasswordReset />} />
+				<Route path="/register" element={<Register />} />
+				<Route path="*" element={<Register />} />
+			</Routes>
+		</BrowserRouter>
 	);
 }
 

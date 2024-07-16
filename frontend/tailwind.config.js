@@ -14,11 +14,24 @@ export default {
         'background-lighter': '#505050',
         'background-lightest': '#616161',
       },
+      keyframes: {
+        right: {
+          '0%': { transform: 'translateX(-50%)', opacity: 0 },
+          '100%': { transform: 'translateX(0)', opacity: 1 },
+        },
+        left: {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(0)' },
+        },
+      },
+      animation: {
+        right: 'right 0.3s linear forwards',
+        left: 'left 0.3s linear forwards',
+      },
     },
-  },
-  plugins: [],
+    plugins: [],
+  }
 }
-
 
 // ## Themes ##
 // teal:
