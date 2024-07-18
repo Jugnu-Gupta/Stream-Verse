@@ -3,23 +3,14 @@ import Register from "./pages/Register/Register.js";
 import Login from "./pages/Login/Login.js";
 import EmailVerification from "./pages/EmailVerification/EmailVerification.tsx";
 import PasswordReset from "./pages/PasswordReset/PasswordReset.tsx";
-import Header from "./pages/Header/Header.tsx";
-// import Navbar from "./components/Navbar/Navbar.tsx";
-import Home from "./pages/Home/Home.tsx";
+import HomeLayout from "./Layouts/HomeLayout.tsx";
 
 function App() {
 	return (
 		<BrowserRouter>
 			<Routes>
 				<Route path="/" element={<Outlet />}>
-					<Route
-						index
-						element={
-							<div>
-								<Header />
-								<Home />
-							</div>
-						}></Route>
+					<Route index element={<HomeLayout />}></Route>
 					{/* <Route path="/about" element={<About/>}></Route> */}
 				</Route>
 				<Route

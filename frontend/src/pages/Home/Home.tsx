@@ -1,25 +1,49 @@
 import React from "react";
-import Navbar from "../../components/Navbar/Navbar";
 import VideoCardView from "./VideoCardView";
+import { twMerge } from "tailwind-merge";
+import { useSelector } from "react-redux";
+import { RootState } from "../../context/store";
+import useWindowWidth from "../../hooks/useWindowWidth";
+
+const handleWidth = (width: number, isVisible: boolean) => {
+	console.log(width, isVisible);
+	if (width <= 550) {
+		return "grid-cols-1";
+	} else if (width <= 875) {
+		return "grid-cols-2";
+	} else if (width <= 1200) {
+		return "grid-cols-3";
+	} else if (!isVisible) {
+		return "grid-cols-4";
+	} else {
+		return "grid-cols-3";
+	}
+};
+
 const Home: React.FC = () => {
+	const windowWidth = useWindowWidth();
+	const isVisible: boolean = useSelector(
+		(state: RootState) => state.navbar.showNavbar
+	);
+
 	return (
-		<div className="flex gap-2 min-h-[100vh]">
-			{/* <div className="sticky left-0 top-0 h-[80vh] bg-red-400 z-[100] w-10"></div> */}
-			<Navbar />
-			<div className="grid grid-cols-3 gap-2">
-				<VideoCardView />
-				<VideoCardView />
-				<VideoCardView />
-				<VideoCardView />
-				<VideoCardView />
-				<VideoCardView />
-				<VideoCardView />
-				<VideoCardView />
-				<VideoCardView />
-				<VideoCardView />
-				<VideoCardView />
-				<VideoCardView />
-			</div>
+		<div
+			className={twMerge(
+				"grid m-2 w-full justify-items-center",
+				handleWidth(windowWidth, isVisible)
+			)}>
+			<VideoCardView />
+			<VideoCardView />
+			<VideoCardView />
+			<VideoCardView />
+			<VideoCardView />
+			<VideoCardView />
+			<VideoCardView />
+			<VideoCardView />
+			<VideoCardView />
+			<VideoCardView />
+			<VideoCardView />
+			<VideoCardView />
 		</div>
 	);
 };

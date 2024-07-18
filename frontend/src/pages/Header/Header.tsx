@@ -1,20 +1,14 @@
 import React from "react";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { IoIosSearch } from "react-icons/io";
-import { useSelector } from "react-redux";
-import { RootState } from "../../context/store";
 import { useDispatch } from "react-redux";
 import { toggleNavbar } from "../../context/slices/NavbarSlice";
 
 const Header: React.FC = () => {
-	const isVisible: boolean = useSelector(
-		(state: RootState) => state.navbar.showNavbar
-	);
 	const dispatch = useDispatch();
-	console.log(isVisible);
 
 	return (
-		<header className="w-full flex justify-between gap-4 bg-background text-white py-2 sticky top-0 z-50">
+		<header className="w-full flex justify-between gap-4 bg-background text-white py-2 sticky top-0 z-40">
 			<div className="flex items-center gap-2">
 				<button onClick={() => dispatch(toggleNavbar())}>
 					<RxHamburgerMenu className="text-3xl ml-[17px] hover:bg-background-lighter p-[6px] rounded-full duration-300" />

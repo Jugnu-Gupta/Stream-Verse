@@ -14,18 +14,31 @@ export default {
         'background-lighter': '#505050',
         'background-lightest': '#616161',
       },
+      screens: {
+        'xs': { 'max': '499px' },
+        'sm': { 'min': '500px', 'max': '639px' },
+        'md': { 'min': '640px', 'max': '767px' },
+        'lg': { 'min': '766px', 'max': '1023px' },
+        'xl': { 'min': '1024px' },
+      },
       keyframes: {
         right: {
-          '0%': { transform: 'translateX(-50%)', opacity: 0 },
+          '0%': { transform: 'translateX(-140%)', opacity: 0 },
           '100%': { transform: 'translateX(0)', opacity: 1 },
         },
-        left: {
-          '0%': { transform: 'translateX(100%)' },
+        right2: {
+          '0%': { transform: 'translateX(-100%)' },
           '100%': { transform: 'translateX(0)' },
+        },
+        left: {
+          '0%': { transform: 'translateX(0%)' },
+          // '99%': { opacity: 0 },
+          '100%': { transform: 'translateX(-100%)' },
         },
       },
       animation: {
-        right: 'right 0.3s linear forwards',
+        right: 'right .5s linear forwards',
+        right2: 'right2 .5s ease-in-out forwards',
         left: 'left 0.3s linear forwards',
       },
     },
