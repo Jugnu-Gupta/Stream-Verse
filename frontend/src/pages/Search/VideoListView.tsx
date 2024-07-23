@@ -2,15 +2,16 @@ import React from "react";
 import thumbnail from "../../assets/thumbnail.png";
 import { Link } from "react-router-dom";
 
-const VideoCardView: React.FC = () => {
+const VideoListView: React.FC = () => {
 	const duration = "10:00";
 	const views = "1000k";
 	const uploadedAt = "1 year";
+	const description = "This is a video description";
 
 	return (
-		<div className="flex flex-col gap-2 p-2 group max-w-[400px]">
-			<Link to="/register">
-				<div className="overflow-hidden rounded-xl relative">
+		<div className="flex gap-4 p-2 group w-full">
+			<Link to="/register" className="w-1/2">
+				<div className="overflow-hidden rounded-xl max-w-md relative">
 					<img
 						src={thumbnail}
 						alt="thumbnail"
@@ -21,31 +22,31 @@ const VideoCardView: React.FC = () => {
 					</p>
 				</div>
 			</Link>
-			<div className="flex gap-3">
+			<div className="flex flex-col text-white">
+				<Link to="/register">
+					<h2 className="font-semibold text-lg">Video Title</h2>
+					<p className="text-xs opacity-80 text-nowrap mb-3 mt-1">
+						{views} Views · {uploadedAt} ago
+					</p>
+				</Link>
 				<Link to="/login">
-					<div className="overflow-hidden rounded-full">
+					<div className="flex items-center gap-3 text-nowrap mb-2">
 						<img
 							src="https://ui-avatars.com/api/?format=svg&name=Elon+Musk&bold=true&background=random&size=36&rounded=true"
 							alt="Elon Musk"
+							className="rounded-full xs:w-7 aspect-square"
 						/>
-					</div>
-				</Link>
-				<div className="flex flex-col text-white w-full">
-					<Link to="/register">
-						<h2 className="font-bold w-full">Video Title</h2>
-						<p className="text-sm opacity-80">
-							{views} Views · {uploadedAt} ago
-						</p>
-					</Link>
-					<Link to="/login">
 						<p className="text-sm opacity-80 hover:opacity-100">
 							Channel Name
 						</p>
-					</Link>
-				</div>
+					</div>
+				</Link>
+				<Link to="/register">
+					<p className="text-sm">{description}</p>
+				</Link>
 			</div>
 		</div>
 	);
 };
 
-export default VideoCardView;
+export default VideoListView;

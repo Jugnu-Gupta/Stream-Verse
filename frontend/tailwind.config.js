@@ -13,6 +13,8 @@ export default {
         'background-light': '#424242',
         'background-lighter': '#505050',
         'background-lightest': '#616161',
+        'primary-text': '#ffffffcc',
+        'primary-text2': '#ffffffa6',
       },
       screens: {
         'xs': { 'max': '499px' },

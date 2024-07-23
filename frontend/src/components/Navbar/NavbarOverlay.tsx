@@ -5,9 +5,10 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleNavbar } from "../../context/slices/NavbarSlice";
 import { RootState } from "../../context/store";
+import useWindowWidth from "../../hooks/useWindowWidth";
 
 const Navbar: React.FC = () => {
-	const windowWidth = window.innerWidth;
+	const windowWidth = useWindowWidth();
 	const dispatch = useDispatch();
 	const isVisible: boolean = useSelector(
 		(state: RootState) => state.navbar.showNavbar
@@ -16,7 +17,7 @@ const Navbar: React.FC = () => {
 	useEffect(() => {
 		const navbarOverlay = document.querySelector(".navbar-overlay");
 		navbarOverlay?.classList.remove("hidden");
-		if (isVisible) {
+		if (isVisible && windowWidth < 1200) {
 			navbarOverlay?.classList.remove("animate-left");
 			navbarOverlay?.classList.add("animate-right2");
 
@@ -32,7 +33,7 @@ const Navbar: React.FC = () => {
 		return () => {
 			document.body.style.overflow = "";
 		};
-	}, [isVisible]);
+	}, [isVisible, windowWidth]);
 
 	return (
 		windowWidth < 1200 && (
