@@ -39,7 +39,7 @@ const getUserSuffixes = async (prefix: string) => {
     }
 };
 
-const findAvailableUserName = async (prefix: string) => {
+const getAvailableUserName = async (prefix: string) => {
     try {
         const results: UserSuffix[] = await getUserSuffixes(prefix);
         if (!results) return null;
@@ -64,4 +64,4 @@ const findAvailableUserName = async (prefix: string) => {
     }
 };
 
-export { findAvailableUserName };
+export { getAvailableUserName };

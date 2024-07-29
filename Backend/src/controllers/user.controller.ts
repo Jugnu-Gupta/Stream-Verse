@@ -5,7 +5,7 @@ import { User } from "../models/user.model";
 import { ApiError } from "../utils/apiError";
 import { ApiResponse } from "../utils/apiResponse";
 import mongoose, { isValidObjectId } from "mongoose";
-import { findAvailableUserName } from "../utils/findAvailableUserName";
+import { getAvailableUserName } from "../utils/getAvailableUserName";
 import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary";
 import fs from "fs";
 
@@ -101,7 +101,7 @@ const updateUserDetails = asyncHandler(
         });
         if (existedUser) {
             const availableUserName: string | null =
-                await findAvailableUserName(fullName);
+                await getAvailableUserName(fullName);
 
             throw new ApiError(409, "This username isn't available.", {
                 availableUserName,
@@ -159,7 +159,7 @@ const updateUserAvatar = asyncHandler(
         }
 
         // uploading images to cloudinay and updating the user profile.
-        const avatar = await uploadOnCloudinary(avatarLocalPath);
+        const avatar = await uploadOnCloudinary(avatarLocalPath, "image");
         if (!avatar) {
             throw new ApiError(500, "Image upload failed on cloudinary");
         }
@@ -210,7 +210,10 @@ const updateUserCoverImage = asyncHandler(
             }
         }
 
-        const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+        const coverImage = await uploadOnCloudinary(
+            coverImageLocalPath,
+            "image"
+        );
         if (!coverImage) {
             throw new ApiError(500, "Image upload failed on cloudinary");
         }

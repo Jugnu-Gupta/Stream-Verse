@@ -36,7 +36,7 @@ const createTweet = asyncHandler(
 
         let uploadImage: UploadApiResponse | null = null;
         if (imageLocalPath) {
-            uploadImage = await uploadOnCloudinary(imageLocalPath);
+            uploadImage = await uploadOnCloudinary(imageLocalPath, "image");
             if (!uploadImage) {
                 throw new ApiError(500, "Failed to upload image");
             }
@@ -212,7 +212,7 @@ const updateTweetImage = asyncHandler(
             }
         }
 
-        const Image = await uploadOnCloudinary(ImageLocalPath);
+        const Image = await uploadOnCloudinary(ImageLocalPath, "image");
         if (!Image) {
             throw new ApiError(500, "Failed to upload image");
         }

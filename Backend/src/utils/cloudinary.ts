@@ -10,13 +10,16 @@ cloudinary.config({
     secure: true,
 });
 
-const uploadOnCloudinary = async (localFilePath: string | undefined) => {
+const uploadOnCloudinary = async (
+    localFilePath: string | undefined,
+    resourceType: "image" | "video" | "raw" | "auto"
+) => {
     try {
-        if (!localFilePath) return null;
+        if (!localFilePath || !resourceType) return null;
 
         // upload file on cloudinary.
         const response = await cloudinary.uploader.upload(localFilePath, {
-            resource_type: "auto",
+            resource_type: resourceType,
         });
 
         // remove the locally saved temporary file.
@@ -31,7 +34,10 @@ const uploadOnCloudinary = async (localFilePath: string | undefined) => {
     }
 };
 
-const deleteFromCloudinary = async (publicId: string, resourceType: string) => {
+const deleteFromCloudinary = async (
+    publicId: string,
+    resourceType: "image" | "video" | "raw" | "auto"
+) => {
     try {
         if (!publicId || !resourceType) return null;
 

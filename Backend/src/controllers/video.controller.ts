@@ -8,6 +8,7 @@ import { ApiError } from "../utils/apiError";
 import { ApiResponse } from "../utils/apiResponse";
 import { UserType } from "types/user.type";
 import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary";
+import { getVideoQuality } from "utils/getVideoQuality";
 
 interface RequestWithUser extends Request {
     user: UserType;
@@ -118,8 +119,9 @@ const uploadVideo = asyncHandler(
             throw new ApiError(400, message);
         }
 
-        const videoFile = await uploadOnCloudinary(videoLocalPath);
-        const thumbnail = await uploadOnCloudinary(thumbnailLocalPath);
+        const videoFile = await uploadOnCloudinary(videoLocalPath, "video");
+        const videoQuality = getVideoQuality(videoFile.width, videoFile.height);
+        const thumbnail = await uploadOnCloudinary(thumbnailLocalPath, "image");
         if (!videoFile?.secure_url || !thumbnail?.secure_url) {
             const message = !videoFile
                 ? "Failed to upload video"
@@ -136,6 +138,7 @@ const uploadVideo = asyncHandler(
                 publicId: thumbnail?.public_id,
                 url: thumbnail?.secure_url || "",
             },
+            quality: videoQuality,
             title,
             description,
             duration: videoFile?.duration,
@@ -229,7 +232,10 @@ const videoUpdate = asyncHandler(
                 }
             }
 
-            const thumbnail = await uploadOnCloudinary(thumbnailLocalPath);
+            const thumbnail = await uploadOnCloudinary(
+                thumbnailLocalPath,
+                "image"
+            );
             if (!thumbnail) {
                 throw new ApiError(500, "Failed to upload thumbnail");
             }

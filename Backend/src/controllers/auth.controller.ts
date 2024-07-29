@@ -5,7 +5,7 @@ import { UserType } from "../types/user.type";
 import { ApiError } from "../utils/apiError";
 import { ApiResponse } from "../utils/apiResponse";
 import mongoose from "mongoose";
-import { findAvailableUserName } from "../utils/findAvailableUserName";
+import { getAvailableUserName } from "../utils/getAvailableUserName";
 import { uploadOnCloudinary } from "../utils/cloudinary";
 import { sendMail } from "../utils/sendMail";
 import jwt from "jsonwebtoken";
@@ -79,7 +79,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     existedUser = await User.findOne({ userName });
     if (existedUser) {
         const availableUserName: string | null =
-            await findAvailableUserName(fullName);
+            await getAvailableUserName(fullName);
         if (!availableUserName) {
             throw new ApiError(409, "This username isn't available.");
         } else {
@@ -96,8 +96,8 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
         ?.path;
 
     // uploading images to cloudinay
-    const avatar = await uploadOnCloudinary(avatarLocalPath);
-    const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+    const avatar = await uploadOnCloudinary(avatarLocalPath, "image");
+    const coverImage = await uploadOnCloudinary(coverImageLocalPath, "image");
     // console.log("avatar", avatar);
 
     // timestamps values will be generated automatically.
