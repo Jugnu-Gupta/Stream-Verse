@@ -9,7 +9,8 @@ import { FaChevronDown } from "react-icons/fa";
 import { FaChevronUp } from "react-icons/fa";
 
 const ChannelTweetCommentList: React.FC = () => {
-	const [readMore, setReadMore] = React.useState(false);
+	const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
+	const [comment, setComment] = React.useState<string>("");
 	const [isliked, setIsLiked] = React.useState(false);
 	const [isDisliked, setIsDisliked] = React.useState(false);
 	const [showReplies, setShowReplies] = React.useState(false);
@@ -22,7 +23,6 @@ const ChannelTweetCommentList: React.FC = () => {
 	// store 100 words in description
 	const description =
 		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.";
-	const desc = readMore ? description : `${description.slice(0, 100)}...`;
 
 	const likeHanlder = () => {
 		setIsLiked(!isliked);
@@ -32,6 +32,14 @@ const ChannelTweetCommentList: React.FC = () => {
 		setIsDisliked(!isDisliked);
 		setIsLiked(false);
 	};
+
+	React.useEffect(() => {
+		if (textAreaRef.current) {
+			textAreaRef.current!.style.height = "32px";
+			const scrollHeight = textAreaRef.current!.scrollHeight;
+			textAreaRef.current!.style.height = `${scrollHeight}px`;
+		}
+	}, [comment]);
 
 	return (
 		<div className="flex items-start gap-2 p-2">
@@ -50,14 +58,7 @@ const ChannelTweetCommentList: React.FC = () => {
 					<p className="text-primary-text2 text-xs">{UploadedAt}</p>
 				</div>
 				<div className="flex flex-col items-start my-2">
-					<p>{desc}</p>
-					{description.length > 100 && (
-						<button
-							onClick={() => setReadMore(!readMore)}
-							className="text-sm text-primary-text font-semibold">
-							{readMore ? "Show less" : "Read more"}
-						</button>
-					)}
+					<p>{description}</p>
 				</div>
 				<div className="flex justify-start gap-3 font-semibold tracking-wide mb-2">
 					<button
@@ -92,9 +93,11 @@ const ChannelTweetCommentList: React.FC = () => {
 						</div>
 						<div className="text-white flex flex-col w-full items-end">
 							<textarea
-								className="bg-transparent outline-none border-2 rounded-lg border-white w-full mb-2 px-2 focus:resize-y resize-none min-h-8"
+								className="w-full h-8 pb-1 border-b-2 mb-2 overflow-hidden outline-none resize-none bg-transparent"
 								placeholder="Add a comment..."
-								rows={3}></textarea>
+								value={comment}
+								onChange={(e) => setComment(e.target.value)}
+								ref={textAreaRef}></textarea>
 							<div className="flex gap-2">
 								<button
 									className="font-semibold hover:bg-background-lightest px-3 py-1 rounded-full duration-300"

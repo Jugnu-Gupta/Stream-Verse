@@ -2,18 +2,24 @@ import React from "react";
 import thumbnail from "../../../assets/thumbnail.png";
 import ChannelTweetCommentList from "./ChannelTweetCommentList";
 import ChannelTweetList from "./ChannelTweetList";
-import { twMerge } from "tailwind-merge";
 
 const ChannelTweetComment: React.FC = () => {
+	const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
+	const [comment, setComment] = React.useState<string>("");
 	const comments = 100;
 
+	React.useEffect(() => {
+		if (textAreaRef.current) {
+			textAreaRef.current!.style.height = "32px";
+			const scrollHeight = textAreaRef.current!.scrollHeight;
+			textAreaRef.current!.style.height = `${scrollHeight}px`;
+		}
+	}, [comment]);
+
 	return (
-		<div
-			className={twMerge(
-				"grid px-4 pt-4 w-full justify-items-center grid-cols-1"
-			)}>
+		<div className="px-4 pt-4 w-full flex justify-items-center flex-col">
 			<ChannelTweetList />
-			<div className="flex flex-col items-start gap-2 px-6 xs:px-2 w-full mt-4">
+			<div className="flex flex-col items-start gap-2 px-6 xs:px-2 w-full mt-4 mx-auto max-w-4xl">
 				<div className="text-white font-bold text-xl">
 					<h1>{comments} Comments</h1>
 				</div>
@@ -28,9 +34,11 @@ const ChannelTweetComment: React.FC = () => {
 					</div>
 					<div className="text-white flex flex-col w-full items-end">
 						<textarea
-							className="bg-transparent outline-none border-2 rounded-lg border-white w-full mb-2 px-2 focus:resize-y resize-none min-h-8"
+							className="w-full h-8 pb-1 border-b-2 mb-2 overflow-hidden outline-none resize-none bg-transparent"
 							placeholder="Add a comment..."
-							rows={4}></textarea>
+							value={comment}
+							onChange={(e) => setComment(e.target.value)}
+							ref={textAreaRef}></textarea>
 						<div className="flex gap-2">
 							<button className="font-semibold hover:bg-background-lightest px-3 py-1 rounded-full duration-300">
 								Cancel
