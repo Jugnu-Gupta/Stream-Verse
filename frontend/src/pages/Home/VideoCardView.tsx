@@ -10,15 +10,17 @@ const VideoCardView: React.FC = () => {
 	return (
 		<div className="flex flex-col gap-2 p-2 group max-w-[400px]">
 			<Link to="/register">
-				<div className="overflow-hidden rounded-xl relative">
+				<div className="overflow-hidden rounded-xl">
 					<img
 						src={thumbnail}
 						alt="thumbnail"
 						className="rounded-xl aspect-video group-hover:scale-110 duration-300"
 					/>
-					<p className="px-1 py-[1px] absolute bottom-2 right-2 text-xs text-white rounded-md bg-black bg-opacity-70">
-						{duration}
-					</p>
+					<div className="w-full relative">
+						<p className="px-1 py-[1px] absolute bottom-2 right-2 text-xs text-white rounded-md bg-black bg-opacity-70">
+							{duration}
+						</p>
+					</div>
 				</div>
 			</Link>
 			<div className="flex gap-3">
@@ -33,12 +35,12 @@ const VideoCardView: React.FC = () => {
 				<div className="flex flex-col text-white w-full">
 					<Link to="/register">
 						<h2 className="font-bold w-full">Video Title</h2>
-						<p className="text-sm opacity-80">
+						<p className="text-sm text-primary-text">
 							{views} Views · {uploadedAt} ago
 						</p>
 					</Link>
 					<Link to="/login">
-						<p className="text-sm opacity-80 hover:opacity-100">
+						<p className="text-sm text-primary-text hover:opacity-100">
 							Channel Name
 						</p>
 					</Link>
