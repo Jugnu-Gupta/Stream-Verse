@@ -8,10 +8,8 @@ interface NavItem {
 	titleClass?: string;
 	iconFilled: FunctionComponent<SVGProps<SVGSVGElement>>;
 	iconFilledClass: string;
-	iconFilledMargin: string;
 	iconOutline: FunctionComponent<SVGProps<SVGSVGElement>>;
 	iconOutlineClass: string;
-	iconOutlineMargin: string;
 }
 
 const NAVITEMS: NavItem[] = [
@@ -22,10 +20,8 @@ const NAVITEMS: NavItem[] = [
 		titleClass: "ml-[-1px]",
 		iconFilled: Icons.MdHomeFilled,
 		iconFilledClass: "text-xl",
-		iconFilledMargin: "ml-[6px]",
 		iconOutline: Icons.GrHomeRounded,
 		iconOutlineClass: "text-base",
-		iconOutlineMargin: "ml-2",
 	},
 	{
 		id: 2,
@@ -33,10 +29,8 @@ const NAVITEMS: NavItem[] = [
 		isTop: true,
 		iconFilled: Icons.MdSubscriptions,
 		iconFilledClass: "text-lg",
-		iconFilledMargin: "ml-[7px]",
 		iconOutline: Icons.MdOutlineSubscriptions,
 		iconOutlineClass: "text-lg",
-		iconOutlineMargin: "ml-[7px]",
 	},
 	{
 		id: 3,
@@ -44,65 +38,62 @@ const NAVITEMS: NavItem[] = [
 		isTop: true,
 		iconFilled: Icons.BiSolidUserRectangle,
 		iconFilledClass: "text-lg",
-		iconFilledMargin: "ml-[7px]",
 		iconOutline: Icons.TbUserSquare,
 		iconOutlineClass: "text-lg",
-		iconOutlineMargin: "ml-[7px]",
 	},
 	{
 		id: 4,
+		title: "Collections",
+		isTop: true,
+		iconFilled: Icons.PiFolderBold,
+		iconFilledClass: "text-lg",
+		iconOutline: Icons.PiFolder,
+		iconOutlineClass: "text-lg",
+	},
+	{
+		id: 5,
 		title: "History",
 		isTop: true,
 		iconFilled: Icons.FaHistory,
 		iconFilledClass: "text-lg",
-		iconFilledMargin: "ml-[7px]",
 		iconOutline: Icons.VscHistory,
 		iconOutlineClass: "text-lg",
-		iconOutlineMargin: "ml-[7px]",
 	},
 	{
-		id: 5,
+		id: 6,
 		title: "Liked videos",
 		isTop: true,
 		iconFilled: Icons.BiSolidLike,
 		iconFilledClass: "text-lg",
-		iconFilledMargin: "ml-[7px]",
 		iconOutline: Icons.BiLike,
 		iconOutlineClass: "text-lg",
-		iconOutlineMargin: "ml-[7px]",
 	},
 	{
-		id: 6,
+		id: 7,
 		title: "Help",
 		isTop: false,
 		iconFilled: Icons.IoMdHelpCircleOutline,
 		iconFilledClass: "text-xl",
-		iconFilledMargin: "ml-[6px]",
 		iconOutline: Icons.IoMdHelpCircleOutline,
 		iconOutlineClass: "text-xl",
-		iconOutlineMargin: "ml-[6px]",
 	},
 	{
-		id: 7,
+		id: 8,
 		title: "Feedback",
 		isTop: false,
 		iconFilled: Icons.MdOutlineFeedback,
 		iconFilledClass: "text-lg",
-		iconFilledMargin: "ml-[7px]",
 		iconOutline: Icons.MdOutlineFeedback,
 		iconOutlineClass: "text-lg",
-		iconOutlineMargin: "ml-[7px]",
 	},
 	{
-		id: 8,
+		id: 9,
 		title: "Settings",
 		isTop: false,
 		iconFilled: Icons.CiSettings,
 		iconFilledClass: "text-xl",
-		iconFilledMargin: "ml-[6px]",
 		iconOutline: Icons.CiSettings,
 		iconOutlineClass: "text-xl",
-		iconOutlineMargin: "ml-[6px]",
 	},
 ];
 

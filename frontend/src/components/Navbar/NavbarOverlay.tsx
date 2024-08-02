@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleNavbar } from "../../context/slices/NavbarSlice";
-import { RootState } from "../../context/store";
+import { RootState } from "../../context/Store";
 import useWindowWidth from "../../hooks/useWindowWidth";
 
 const Navbar: React.FC = () => {
@@ -17,7 +17,7 @@ const Navbar: React.FC = () => {
 	useEffect(() => {
 		const navbarOverlay = document.querySelector(".navbar-overlay");
 		navbarOverlay?.classList.remove("hidden");
-		if (isVisible && windowWidth < 1200) {
+		if (isVisible && windowWidth <= 500) {
 			navbarOverlay?.classList.remove("animate-left");
 			navbarOverlay?.classList.add("animate-right2");
 
@@ -36,7 +36,7 @@ const Navbar: React.FC = () => {
 	}, [isVisible, windowWidth]);
 
 	return (
-		windowWidth < 1200 && (
+		windowWidth <= 500 && (
 			<nav className="h-[100vh] w-full fixed z-50 top-0 hidden navbar-overlay">
 				<div className="flex h-full w-full">
 					<div className="w-48 min-w-48 h-full bg-background text-nowrap animate-right2">
@@ -47,18 +47,18 @@ const Navbar: React.FC = () => {
 							<h1>YouTube</h1>
 						</div>
 
-						<div className="p-2 pt-2 h-[calc(100vh-51px)] flex flex-col justify-between">
-							<div className="text-white text-sm font-semibold flex flex-col w-full justify-start animate-right">
+						<div className="p-2 pt-4 h-[calc(100vh-51px)] flex flex-col justify-between">
+							<div className="text-white text-sm font-semibold flex flex-col gap-1.5 w-full justify-start animate-right">
 								{NAVITEMS.filter((item) => item.isTop).map(
 									(item) => (
 										<button
 											key={item.id}
 											className="w-full animate-right">
-											<p className="py-2 px-2 flex items-center gap-6 rounded-xl hover:bg-background-light">
+											<p className="h-9 px-2 flex items-center gap-6 rounded-lg border-2 border-white hover:bg-primary2 hover:text-background">
 												<item.iconOutline
 													className={twMerge(
-														item.iconOutlineMargin,
-														item.iconOutlineClass
+														item.iconOutlineClass,
+														"w-8"
 													)}
 												/>
 												{/* <item.iconFilled
@@ -78,17 +78,17 @@ const Navbar: React.FC = () => {
 									)
 								)}
 							</div>
-							<div className="text-white text-sm font-semibold flex flex-col w-full justify-start animate-right">
+							<div className="text-white text-sm font-semibold flex flex-col gap-1.5 w-full justify-start animate-right">
 								{NAVITEMS.filter((item) => !item.isTop).map(
 									(item) => (
 										<button
 											key={item.id}
 											className="w-full animate-right">
-											<p className="py-2 px-2 flex items-center gap-6 rounded-xl hover:bg-background-light">
+											<p className="h-9 px-2 flex items-center gap-6 rounded-lg border-2 border-white hover:bg-primary2 hover:text-background">
 												<item.iconOutline
 													className={twMerge(
-														item.iconOutlineMargin,
-														item.iconOutlineClass
+														item.iconOutlineClass,
+														"w-8"
 													)}
 												/>
 												{/* <item.iconFilled
