@@ -2,7 +2,7 @@ import React from "react";
 import VideoCardView from "./VideoCardView";
 import { twMerge } from "tailwind-merge";
 import { useSelector } from "react-redux";
-import { RootState } from "../../context/store";
+import { RootState } from "../../context/Store";
 import useWindowWidth from "../../hooks/useWindowWidth";
 
 const handleWidth = (width: number, isVisible: boolean) => {

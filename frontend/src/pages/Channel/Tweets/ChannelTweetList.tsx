@@ -31,7 +31,7 @@ const ChannelTweetList: React.FC = () => {
 	};
 
 	return (
-		<div className="flex items-start gap-2 p-2 w-full">
+		<div className="flex items-start gap-2 p-2 w-full max-w-4xl mx-auto">
 			<Link to="/register">
 				<div className="overflow-hidden rounded-full w-10">
 					<img
@@ -57,7 +57,7 @@ const ChannelTweetList: React.FC = () => {
 					)}
 				</div>
 				{thumbnail && (
-					<Link to="/">
+					<Link to="../../tweets/:tweetId">
 						<div className="overflow-hidden rounded-lg m-2">
 							{/* // 1st video img. */}
 							<img
@@ -81,7 +81,7 @@ const ChannelTweetList: React.FC = () => {
 						{isDisliked ? <BiSolidDislike /> : <BiDislike />}
 						<span className="text-xs">{dislikes}</span>
 					</button>
-					<Link to="/:userName/tweets/Id">
+					<Link to="../../tweets/:tweetId">
 						<button className="flex items-center gap-1 text-xl hover:bg-background-lightest px-2 py-1 rounded-xl duration-300">
 							<BiCommentDetail className="-scale-x-100" />
 							<span className="text-xs">{comments}</span>

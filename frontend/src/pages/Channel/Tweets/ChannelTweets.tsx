@@ -3,7 +3,7 @@ import ChannelTweetList from "./ChannelTweetList";
 
 const ChannelTweets: React.FC = () => {
 	return (
-		<div className="grid px-4 pt-4 w-full justify-items-center grid-cols-1">
+		<div className="px-4 pt-4 w-full flex justify-center flex-col gap-4">
 			<ChannelTweetList />
 			<ChannelTweetList />
 			<ChannelTweetList />

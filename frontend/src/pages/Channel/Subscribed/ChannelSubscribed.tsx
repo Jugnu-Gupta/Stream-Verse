@@ -4,8 +4,8 @@ import { IoIosSearch } from "react-icons/io";
 
 const ChannelSubscribed: React.FC = () => {
 	return (
-		<div className="grid px-4 mt-4 w-full justify-items-center">
-			<div className="flex items-center border-2 border-white rounded-full bg-transparent w-[calc(100%-16px)] mx-auto">
+		<div className="px-4 mt-4 w-full flex flex-col mx-auto max-w-4xl">
+			<div className="flex items-center border-2 border-white rounded-full bg-white w-[calc(100%-16px)] mx-auto">
 				<input
 					type="text"
 					placeholder="Search"
