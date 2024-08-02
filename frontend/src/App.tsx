@@ -12,6 +12,8 @@ import ChannelPlaylists from "./pages/Channel/Playlists/ChannelPlaylists.tsx";
 import ChannelTweets from "./pages/Channel/Tweets/ChannelTweets.tsx";
 import ChannelTweetComment from "./pages/Channel/Tweets/ChannelTweetComments.tsx";
 import ChannelSubscribed from "./pages/Channel/Subscribed/ChannelSubscribed.tsx";
+import Dashboard from "./pages/Admin/Dashboard.tsx";
+import VideoDetail from "./pages/Video/VideoDetail.tsx";
 
 function App() {
 	return (
@@ -27,10 +29,34 @@ function App() {
 						}
 					/>
 					<Route
+						path="/videos/:videoId"
+						element={
+							<MainLayout>
+								<VideoDetail />
+							</MainLayout>
+						}
+					/>
+					<Route
 						path="/search"
 						element={
 							<MainLayout>
 								<Search />
+							</MainLayout>
+						}
+					/>
+					<Route
+						path="/admin"
+						element={
+							<MainLayout>
+								<Dashboard />
+							</MainLayout>
+						}
+					/>
+					<Route
+						path="tweets/:tweetId"
+						element={
+							<MainLayout>
+								<ChannelTweetComment />
 							</MainLayout>
 						}
 					/>
@@ -50,10 +76,6 @@ function App() {
 							element={<ChannelPlaylists />}
 						/>
 						<Route path="tweets" element={<ChannelTweets />} />
-						<Route
-							path="tweets/:tweetId"
-							element={<ChannelTweetComment />}
-						/>
 						<Route
 							path="subscribed"
 							element={<ChannelSubscribed />}

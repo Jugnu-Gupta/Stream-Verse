@@ -11,6 +11,8 @@ import { BiSolidLike } from "react-icons/bi";
 import { CiSettings } from "react-icons/ci";
 import { IoMdHelpCircleOutline } from "react-icons/io";
 import { MdOutlineFeedback } from "react-icons/md";
+import { PiFolder } from "react-icons/pi";
+import { PiFolderBold } from "react-icons/pi";
 
 export default {
 	MdHomeFilled,
@@ -26,4 +28,6 @@ export default {
 	CiSettings,
 	IoMdHelpCircleOutline,
 	MdOutlineFeedback,
+	PiFolder,
+	PiFolderBold,
 };
