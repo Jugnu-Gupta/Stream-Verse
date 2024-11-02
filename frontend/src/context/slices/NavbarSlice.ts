@@ -9,7 +9,7 @@ const initialState: NavbarState = {
 };
 
 const navbarSlice = createSlice({
-	name: "cart",
+	name: "navbar",
 	initialState,
 	reducers: {
 		toggleNavbar: (state) => {

@@ -29,7 +29,7 @@ const VideoListView: React.FC = () => {
 				onClick={() => setStatus(!status)}
 				className={twMerge(
 					"relative rounded-full h-[19px] w-9 px-1",
-					status ? "bg-primary2" : "bg-white"
+					status ? "bg-primary" : "bg-white"
 				)}>
 				<div className="w-3 aspect-square rounded-full bg-background absolute top-[3px] left-1 duration-300"></div>
 			</div>
@@ -65,8 +65,8 @@ const VideoListView: React.FC = () => {
 				<p>2021-08-01</p>
 			</div>
 			<div className="flex items-center gap-1 w-10">
-				<RiDeleteBin6Line />
-				<MdOutlineEdit />
+				<button><RiDeleteBin6Line /></button>
+				<button><MdOutlineEdit /></button>
 			</div>
 		</div>
 	);

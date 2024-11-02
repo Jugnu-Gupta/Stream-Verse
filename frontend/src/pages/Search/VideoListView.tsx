@@ -9,9 +9,9 @@ const VideoListView: React.FC = () => {
 	const description = "This is a video description";
 
 	return (
-		<div className="flex gap-4 p-2 group w-full">
-			<Link to="/register" className="w-1/2">
-				<div className="overflow-hidden rounded-xl max-w-md relative">
+		<div className="flex gap-4 p-2 group w-full justify-start">
+			<Link to="/video/:videoId">
+				<div className="overflow-hidden rounded-xl max-w-md w-fit relative">
 					<img
 						src={thumbnail}
 						alt="thumbnail"
@@ -22,26 +22,26 @@ const VideoListView: React.FC = () => {
 					</p>
 				</div>
 			</Link>
-			<div className="flex flex-col text-white">
-				<Link to="/register">
+			<div className="flex flex-col text-white sm:w-2/3">
+				<Link to="/video/:videoId">
 					<h2 className="font-semibold text-lg">Video Title</h2>
 					<p className="text-xs opacity-80 text-nowrap mb-3 mt-1">
 						{views} Views · {uploadedAt} ago
 					</p>
 				</Link>
-				<Link to="/login">
+				<Link to="/user/videos">
 					<div className="flex items-center gap-3 text-nowrap mb-2">
 						<img
 							src="https://ui-avatars.com/api/?format=svg&name=Elon+Musk&bold=true&background=random&size=36&rounded=true"
 							alt="Elon Musk"
-							className="rounded-full xs:w-7 aspect-square"
+							className="rounded-full aspect-square"
 						/>
 						<p className="text-sm opacity-80 hover:opacity-100">
 							Channel Name
 						</p>
 					</div>
 				</Link>
-				<Link to="/register">
+				<Link to="/video/:videoId">
 					<p className="text-sm">{description}</p>
 				</Link>
 			</div>

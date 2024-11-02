@@ -9,7 +9,7 @@ const VideoCardView: React.FC = () => {
 
 	return (
 		<div className="flex flex-col gap-2 p-2 group max-w-[400px]">
-			<Link to="/register">
+			<Link to="/video/:videoId">
 				<div className="overflow-hidden rounded-xl relative">
 					<img
 						src={thumbnail}
@@ -22,7 +22,7 @@ const VideoCardView: React.FC = () => {
 				</div>
 			</Link>
 			<div className="flex gap-3">
-				<Link to="/login">
+				<Link to="/user/videos">
 					<div className="overflow-hidden rounded-full">
 						<img
 							src="https://ui-avatars.com/api/?format=svg&name=Elon+Musk&bold=true&background=random&size=36&rounded=true"
@@ -31,13 +31,13 @@ const VideoCardView: React.FC = () => {
 					</div>
 				</Link>
 				<div className="flex flex-col text-white w-full">
-					<Link to="/register">
+					<Link to="/video/:videoId">
 						<h2 className="font-bold w-full">Video Title</h2>
 						<p className="text-sm text-primary-text">
 							{views} Views · {uploadedAt} ago
 						</p>
 					</Link>
-					<Link to="/login">
+					<Link to="/user/videos">
 						<p className="text-sm text-primary-text hover:opacity-100">
 							Channel Name
 						</p>

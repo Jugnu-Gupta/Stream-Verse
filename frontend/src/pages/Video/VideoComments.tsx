@@ -7,6 +7,7 @@ const VideoComments: React.FC = () => {
 	const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
 	const [comment, setComment] = React.useState<string>("");
 	const windowWidth = useWindowWidth();
+	const currPath: number[] = [];
 	const comments = 100;
 
 	React.useEffect(() => {
@@ -21,7 +22,7 @@ const VideoComments: React.FC = () => {
 		<div
 			className={twMerge(
 				"border-2 border-white py-2 rounded-lg mt-4",
-				windowWidth < 800 && "max-h-[50vh] overflow-y-scroll mx-2 mb-4"
+				windowWidth < 800 && "max-h-[50vh] overflow-y-scroll mb-4"
 			)}>
 			<h1 className="text-white font-bold tracking-wide mb-2 px-2">
 				{comments} Comments
@@ -44,9 +45,7 @@ const VideoComments: React.FC = () => {
 				</div>
 			</div>
 
-			<ChannelTweetCommentList />
-			<ChannelTweetCommentList />
-			<ChannelTweetCommentList />
+			<ChannelTweetCommentList currPath={currPath.concat([0])} />
 		</div>
 	);
 };

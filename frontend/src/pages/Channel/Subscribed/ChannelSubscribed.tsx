@@ -4,7 +4,7 @@ import { IoIosSearch } from "react-icons/io";
 
 const ChannelSubscribed: React.FC = () => {
 	return (
-		<div className="px-4 mt-4 w-full flex flex-col mx-auto max-w-4xl">
+		<div className="px-4 mt-4 w-full flex flex-col mx-auto max-w-6xl">
 			<div className="flex items-center border-2 border-white rounded-full bg-white w-[calc(100%-16px)] mx-auto">
 				<input
 					type="text"
@@ -13,7 +13,7 @@ const ChannelSubscribed: React.FC = () => {
 					required
 				/>
 				<div className="h-full pr-2 pl-1 rounded-r-full bg-white cursor-pointer">
-					<IoIosSearch className="text-xl h-full text-primary2" />
+					<IoIosSearch className="text-xl h-full text-primary" />
 				</div>
 			</div>
 			<ChannelSubcribedCards />

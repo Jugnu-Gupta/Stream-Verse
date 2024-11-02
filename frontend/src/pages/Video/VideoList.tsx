@@ -5,15 +5,19 @@ import "../../index.css"; // to use truncate-lines-2
 import useWindowWidth from "../../hooks/useWindowWidth";
 import { twMerge } from "tailwind-merge";
 
-const VideoListView: React.FC = () => {
+interface VideoListViewProps {
+	videoNo?: number;
+}
+
+const VideoListView: React.FC<VideoListViewProps> = ({ videoNo }) => {
 	const windowWidth = useWindowWidth();
 	const duration = "10:00";
 	const views = "1000k";
 	const uploadedAt = "1 year";
 
 	return (
-		<div className="flex gap-2 py-2 pl-2 group w-full">
-			<Link to="/register" className="min-w-36 w-1/2">
+		<div className={twMerge("flex gap-2 pl-2 group w-full p-2", videoNo == 1 && "bg-background-light")}>
+			<Link to="/register" className="min-w-36 w-1/2 max-w-52">
 				<div className="overflow-hidden rounded-xl max-w-md relative">
 					<img
 						src={thumbnail}
@@ -33,8 +37,8 @@ const VideoListView: React.FC = () => {
 							windowWidth <= 500
 								? "text-base"
 								: windowWidth <= 766
-								? "text-[17px]"
-								: " text-sm"
+									? "text-[17px]"
+									: " text-sm"
 						)}>
 						Video Title scscscsdcsdcd sckhakjcbjsbkjcbkjsb
 					</h2>
@@ -44,8 +48,8 @@ const VideoListView: React.FC = () => {
 							windowWidth <= 500
 								? "text-xs mt-0.5"
 								: windowWidth <= 766
-								? "mt-2 text-[13px] mb-1"
-								: "text-xs mt-1 mb-0.5"
+									? "mt-2 text-[13px] mb-1"
+									: "text-xs mt-1 mb-0.5"
 						)}>
 						{views} Views · {uploadedAt} ago
 					</p>
@@ -57,8 +61,8 @@ const VideoListView: React.FC = () => {
 							windowWidth <= 500
 								? "text-[13px]"
 								: windowWidth <= 766
-								? "text-sm"
-								: "text-[13px]"
+									? "text-sm"
+									: "text-[13px]"
 						)}>
 						Channel Name
 					</p>

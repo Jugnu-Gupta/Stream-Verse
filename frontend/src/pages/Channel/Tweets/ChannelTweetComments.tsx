@@ -2,11 +2,13 @@ import React from "react";
 import thumbnail from "../../../assets/thumbnail.png";
 import ChannelTweetCommentList from "./ChannelTweetCommentList";
 import ChannelTweetList from "./ChannelTweetList";
+import { twMerge } from "tailwind-merge";
 
-const ChannelTweetComment: React.FC = () => {
+const ChannelTweetComments: React.FC = () => {
 	const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
 	const [comment, setComment] = React.useState<string>("");
 	const comments = 100;
+	const currPath: number[] = [];
 
 	React.useEffect(() => {
 		if (textAreaRef.current) {
@@ -17,7 +19,7 @@ const ChannelTweetComment: React.FC = () => {
 	}, [comment]);
 
 	return (
-		<div className="px-4 pt-4 w-full flex justify-items-center flex-col">
+		<div className="px-4 pt-4 w-full flex justify-items-center flex-col overflow-hidden">
 			<ChannelTweetList />
 			<div className="flex flex-col items-start gap-2 px-6 xs:px-2 w-full mt-4 mx-auto max-w-4xl">
 				<div className="text-white font-bold text-xl">
@@ -43,18 +45,22 @@ const ChannelTweetComment: React.FC = () => {
 							<button className="font-semibold hover:bg-background-lightest px-3 py-1 rounded-full duration-300">
 								Cancel
 							</button>
-							<button className="px-3 py-1 rounded-full bg-background-lightest opacity-50">
+							<button
+								className={twMerge(
+									"px-3 py-1 rounded-full bg-background-lightest opacity-50",
+									comment != "" && "opacity-100"
+								)}>
 								Comment
 							</button>
 						</div>
 					</div>
 				</div>
-				<ChannelTweetCommentList />
-				<ChannelTweetCommentList />
-				<ChannelTweetCommentList />
+				<ChannelTweetCommentList currPath={currPath.concat([0])} />
+				{/* <ChannelTweetCommentList />
+				<ChannelTweetCommentList /> */}
 			</div>
 		</div>
 	);
 };
 
-export default ChannelTweetComment;
+export default ChannelTweetComments;

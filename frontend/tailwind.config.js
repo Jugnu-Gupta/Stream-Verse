@@ -5,23 +5,39 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    screens: {
+      'xs': { 'min': '0px', 'max': '500px' },
+      'sm': '500px',
+      '2sm': '575px',
+      'md': '640px',
+      'lg': '766px',
+      '2lg': '900px',
+      'xl': '1024px',
+      '2xl': '1280px',
+    },
     extend: {
       colors: {
-        'primary': '#33F2D8',
-        'primary2': '#1DE9B6',
+        // 'primary': '#33F2D8',
+        // 'primary2': '#1DE9B6',
+        'background2': '#020617', // main bg color
+        'background3': '#020617', // main bg 2 color
+        'border': '#374151',
         'background': '#303030',
         'background-light': '#424242',
         'background-lighter': '#505050',
         'background-lightest': '#616161',
         'primary-text': '#ffffffcc',
         'primary-text2': '#ffffffa6',
-      },
-      screens: {
-        'xs': { 'max': '499px' },
-        'sm': { 'min': '500px', 'max': '639px' },
-        'md': { 'min': '640px', 'max': '767px' },
-        'lg': { 'min': '766px', 'max': '1023px' },
-        'xl': { 'min': '1024px' },
+
+        'primary': '#0078e1',
+        'primaryBg': '#030014',
+        'secondaryBg': '#0f172a',
+        'secondaryDarkBg': '#020617',
+        'secondary': '#fff',
+        'dark': '#000',
+        'dark-light': '#6a7280',
+        'dark-lighter': '#D1D5DB',
+
       },
       keyframes: {
         right: {
@@ -34,7 +50,6 @@ export default {
         },
         left: {
           '0%': { transform: 'translateX(0%)' },
-          // '99%': { opacity: 0 },
           '100%': { transform: 'translateX(-100%)' },
         },
       },

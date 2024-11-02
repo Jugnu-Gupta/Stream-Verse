@@ -17,8 +17,7 @@ const ChannelTweetList: React.FC = () => {
 	const likes = 100;
 	const comments = 100;
 	// store 100 words in description
-	const description =
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.";
+	const description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.";
 	const desc = readMore ? description : `${description.slice(0, 100)}...`;
 
 	const likeHanlder = () => {
@@ -31,7 +30,7 @@ const ChannelTweetList: React.FC = () => {
 	};
 
 	return (
-		<div className="flex items-start gap-2 p-2 w-full max-w-4xl mx-auto">
+		<div className="flex items-start gap-2 p-2 w-full">
 			<Link to="/register">
 				<div className="overflow-hidden rounded-full w-10">
 					<img
@@ -58,7 +57,7 @@ const ChannelTweetList: React.FC = () => {
 				</div>
 				{thumbnail && (
 					<Link to="../../tweets/:tweetId">
-						<div className="overflow-hidden rounded-lg m-2">
+						<div className="overflow-hidden rounded-lg m-2 w-fit">
 							{/* // 1st video img. */}
 							<img
 								src={thumbnail}

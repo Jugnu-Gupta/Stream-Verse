@@ -31,7 +31,7 @@ const ChannelSubscribedCards: React.FC = () => {
 						<button
 							onClick={() => setIsSubscribed(!isSubscribed)}
 							className={twMerge(
-								"bg-primary text-white font-semibold px-4 py-1 mt-4 xs:px-3 xs:text-sm rounded-md hover:bg-white hover:text-primary2 duration-300",
+								"bg-primary text-white font-semibold px-4 py-1 mt-4 xs:px-3 xs:text-sm rounded-md hover:bg-white hover:text-primary duration-300",
 								isSubscribed && "bg-opacity-75"
 							)}>
 							Subscribed
@@ -40,7 +40,7 @@ const ChannelSubscribedCards: React.FC = () => {
 						<button
 							onClick={() => setIsSubscribed(!isSubscribed)}
 							className={twMerge(
-								"bg-white text-primary2 font-semibold px-4 py-1 mt-4 xs:px-3 xs:text-sm rounded-md duration-300",
+								"bg-white text-primary font-semibold px-4 py-1 mt-4 xs:px-3 xs:text-sm rounded-md duration-300",
 								isSubscribed && "bg-opacity-75"
 							)}>
 							Subscribe

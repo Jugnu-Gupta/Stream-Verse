@@ -9,7 +9,7 @@ const ChannelVideosCard: React.FC = () => {
 
 	return (
 		<div className="flex flex-col gap-2 p-2 group max-w-[400px]">
-			<Link to="/register">
+			<Link to="/video/:videoId">
 				<div className="overflow-hidden rounded-xl relative">
 					<img
 						src={thumbnail}
@@ -23,7 +23,7 @@ const ChannelVideosCard: React.FC = () => {
 			</Link>
 			<div className="flex gap-3">
 				<div className="flex flex-col text-white w-full">
-					<Link to="/register">
+					<Link to="/video/:videoId">
 						<h2 className="font-bold">Video Title</h2>
 						<p className="text-sm opacity-80">
 							{views} Views · {uploadedAt} ago

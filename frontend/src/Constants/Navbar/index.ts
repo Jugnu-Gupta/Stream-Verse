@@ -3,6 +3,7 @@ import Icons from "../../assets/Navbar/Index";
 
 interface NavItem {
 	id: number;
+	path: string;
 	title: string;
 	isTop: boolean;
 	titleClass?: string;
@@ -15,6 +16,7 @@ interface NavItem {
 const NAVITEMS: NavItem[] = [
 	{
 		id: 1,
+		path: "/",
 		title: "Home",
 		isTop: true,
 		titleClass: "ml-[-1px]",
@@ -25,6 +27,7 @@ const NAVITEMS: NavItem[] = [
 	},
 	{
 		id: 2,
+		path: "/subscriptions",
 		title: "Subscriptions",
 		isTop: true,
 		iconFilled: Icons.MdSubscriptions,
@@ -34,6 +37,7 @@ const NAVITEMS: NavItem[] = [
 	},
 	{
 		id: 3,
+		path: "/user/videos",
 		title: "Your Channel",
 		isTop: true,
 		iconFilled: Icons.BiSolidUserRectangle,
@@ -43,6 +47,7 @@ const NAVITEMS: NavItem[] = [
 	},
 	{
 		id: 4,
+		path: "/collections",
 		title: "Collections",
 		isTop: true,
 		iconFilled: Icons.PiFolderBold,
@@ -52,6 +57,7 @@ const NAVITEMS: NavItem[] = [
 	},
 	{
 		id: 5,
+		path: "/history",
 		title: "History",
 		isTop: true,
 		iconFilled: Icons.FaHistory,
@@ -61,6 +67,7 @@ const NAVITEMS: NavItem[] = [
 	},
 	{
 		id: 6,
+		path: "/liked-videos",
 		title: "Liked videos",
 		isTop: true,
 		iconFilled: Icons.BiSolidLike,
@@ -70,6 +77,7 @@ const NAVITEMS: NavItem[] = [
 	},
 	{
 		id: 7,
+		path: "/help",
 		title: "Help",
 		isTop: false,
 		iconFilled: Icons.IoMdHelpCircleOutline,
@@ -77,17 +85,19 @@ const NAVITEMS: NavItem[] = [
 		iconOutline: Icons.IoMdHelpCircleOutline,
 		iconOutlineClass: "text-xl",
 	},
-	{
-		id: 8,
-		title: "Feedback",
-		isTop: false,
-		iconFilled: Icons.MdOutlineFeedback,
-		iconFilledClass: "text-lg",
-		iconOutline: Icons.MdOutlineFeedback,
-		iconOutlineClass: "text-lg",
-	},
+	// {
+	// 	id: 8,
+	// 	path: "/feedback",
+	// 	title: "Feedback",
+	// 	isTop: false,
+	// 	iconFilled: Icons.MdOutlineFeedback,
+	// 	iconFilledClass: "text-lg",
+	// 	iconOutline: Icons.MdOutlineFeedback,
+	// 	iconOutlineClass: "text-lg",
+	// },
 	{
 		id: 9,
+		path: "/:adminName/dashboard",
 		title: "Settings",
 		isTop: false,
 		iconFilled: Icons.CiSettings,

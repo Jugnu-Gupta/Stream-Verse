@@ -5,6 +5,9 @@ import { FaRegHeart } from "react-icons/fa";
 import { BiCommentDetail } from "react-icons/bi";
 import VideoListView from "./VideoListView";
 import { FaPlus } from "react-icons/fa6";
+// import DeleteVideo from "../../components/Popup/DeleteVideo";
+// import EditVideo from "../../components/Popup/EditVideo";
+
 
 const Dashboard: React.FC = () => {
 	const Views = 100;
@@ -13,7 +16,9 @@ const Dashboard: React.FC = () => {
 	const Comments = 100;
 
 	return (
-		<div className="w-full mt-4 px-6">
+		<div className="w-full mt-4 px-6 relative">
+			{/* <DeleteVideo /> */}
+			{/* <EditVideo /> */}
 			<section className="text-white">
 				<div className="flex justify-between items-center">
 					<div className="my-2">
@@ -24,7 +29,7 @@ const Dashboard: React.FC = () => {
 							Here you can manage your videos
 						</p>
 					</div>
-					<button className="flex items-center gap-1 bg-primary2 rounded-lg px-2 py-[2px]">
+					<button className="flex items-center gap-1 bg-primary rounded-lg px-2 py-[2px]">
 						<FaPlus />
 						<span>Upload Video</span>
 					</button>
@@ -34,13 +39,13 @@ const Dashboard: React.FC = () => {
 				{/* <div className="w-full grid grid-cols-4 gap-4 justify-items-center"> */}
 				<div className="w-full flex gap-4 justify-between">
 					<div className="flex flex-col px-3 py-2 bg-background-lighter rounded-xl border-2 w-1/4">
-						<FaRegEye className="text-2xl bg-white text-primary2 rounded-full p-1" />
+						<FaRegEye className="text-2xl bg-white text-primary rounded-full p-1" />
 						<h3 className="text-xs mt-2 opacity-90">Total Views</h3>
 						<p className="text-xl font-semibold">{Views}</p>
 					</div>
 
 					<div className="flex flex-col px-3 py-2 bg-background-lighter rounded-xl border-2 w-1/4">
-						<FaRegUser className="text-2xl bg-white text-primary2 rounded-full p-1" />
+						<FaRegUser className="text-2xl bg-white text-primary rounded-full p-1" />
 						<h3 className="text-xs mt-2 opacity-90">
 							Total Subscribers
 						</h3>
@@ -48,13 +53,13 @@ const Dashboard: React.FC = () => {
 					</div>
 
 					<div className="flex flex-col px-3 py-2 bg-background-lighter rounded-xl border-2 w-1/4">
-						<FaRegHeart className="text-2xl bg-white text-primary2 rounded-full p-1" />
+						<FaRegHeart className="text-2xl bg-white text-primary rounded-full p-1" />
 						<h3 className="text-xs mt-2 opacity-90">Total Likes</h3>
 						<p className="text-xl font-semibold">{Likes}</p>
 					</div>
 
 					<div className="flex flex-col px-3 py-2 bg-background-lighter rounded-xl border-2 w-1/4">
-						<BiCommentDetail className="text-2xl bg-white text-primary2 rounded-full p-1" />
+						<BiCommentDetail className="text-2xl bg-white text-primary rounded-full p-1" />
 						<h3 className="text-xs mt-2 opacity-90">
 							Total Comments
 						</h3>
