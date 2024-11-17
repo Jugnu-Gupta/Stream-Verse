@@ -16,7 +16,7 @@ const VideoListView: React.FC<VideoListViewProps> = ({ videoNo }) => {
 	const uploadedAt = "1 year";
 
 	return (
-		<div className={twMerge("flex gap-2 pl-2 group w-full p-2", videoNo == 1 && "bg-background-light")}>
+		<div className={twMerge("flex gap-2 pl-2 group w-full p-2", videoNo == 1 && "bg-background-secondary")}>
 			<Link to="/register" className="min-w-36 w-1/2 max-w-52">
 				<div className="overflow-hidden rounded-xl max-w-md relative">
 					<img

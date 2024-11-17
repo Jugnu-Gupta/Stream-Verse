@@ -36,10 +36,10 @@ const VideoComments: React.FC = () => {
 					className="w-full h-8 pb-1 border-b-2 mb-2 overflow-hidden outline-none resize-none bg-transparent"></textarea>
 
 				<div className="flex gap-2">
-					<button className="font-semibold hover:bg-background-lightest px-3 py-1 rounded-full duration-300">
+					<button className="font-semibold outline-none hover:bg-background-secondary px-3 py-1 rounded-full duration-300">
 						Cancel
 					</button>
-					<button className="px-3 py-1 rounded-full bg-background-lightest opacity-50">
+					<button className="px-3 py-1 outline-none rounded-full bg-primary opacity-50">
 						Comment
 					</button>
 				</div>

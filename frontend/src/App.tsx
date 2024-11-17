@@ -6,7 +6,6 @@ import PasswordReset from "./pages/PasswordReset/PasswordReset.tsx";
 import MainLayout from "./Layouts/MainLayout.tsx";
 import Home from "./pages/Home/Home.tsx";
 import Search from "./pages/Search/Search.tsx";
-import ChannelHeader from "./pages/Channel/Header/ChannelHeader.tsx";
 import ChannelVideos from "./pages/Channel/Videos/ChannelVideos.tsx";
 import ChannelPlaylists from "./pages/Channel/Playlists/ChannelPlaylists.tsx";
 import ChannelTweets from "./pages/Channel/Tweets/ChannelTweets.tsx";
@@ -14,10 +13,13 @@ import ChannelTweetComment from "./pages/Channel/Tweets/ChannelTweetComments.tsx
 import ChannelSubscribed from "./pages/Channel/Subscribed/ChannelSubscribed.tsx";
 import Dashboard from "./pages/Admin/Dashboard.tsx";
 import VideoDetail from "./pages/Video/VideoDetail.tsx";
-import EditVideo from "./components/Popup/EditVideo.tsx";
-import DeleteVideo from "./components/Popup/DeleteVideo.tsx";
 import Help from "./pages/Help/Help.tsx";
 import TermsAndConditions from "./pages/TermsAndConditions/TermsAndConditions.tsx";
+import EditVideoModal from "./components/Popup/EditVideoModal.tsx";
+import DeleteVideoModal from "./components/Popup/DeleteVideoModal.tsx";
+import UploadVideoModal from "./components/Popup/UploadVideoModal.tsx";
+import ChannelLayout from "./Layouts/ChannelLayout.tsx";
+import ChangePassword from "./pages/Channel/ChangePassword/ChangePassword.tsx";
 
 function App() {
 	return (
@@ -38,11 +40,15 @@ function App() {
 					/>
 					<Route
 						path="/search2"
-						element={<MainLayout> <EditVideo /> </MainLayout>}
+						element={<MainLayout> <EditVideoModal setShowEditVideo={() => { console.log("hello") }} /> </MainLayout>}
 					/>
 					<Route
 						path="/search3"
-						element={<MainLayout> <DeleteVideo /> </MainLayout>}
+						element={<MainLayout> <DeleteVideoModal setShowDeleteVideo={() => { console.log("hello") }} /> </MainLayout>}
+					/>
+					<Route
+						path="/search4"
+						element={<MainLayout> <UploadVideoModal setShowUploadVideo={() => { console.log("hello") }} /> </MainLayout>}
 					/>
 					<Route
 						path="/help"
@@ -78,59 +84,43 @@ function App() {
 						element={<MainLayout> <Search /> </MainLayout>}
 					/>
 
-					{/* <Route
-						path="/user/videos"
-						element={
-							<MainLayout>
-								<div className="w-full">
-									<ChannelHeader />
-									<ChannelVideos />
-								</div>
-							</MainLayout>
-						} /> */}
-
 					<Route
 						path="/:adminName/dashboard"
-						element={<MainLayout><Dashboard /></MainLayout>}
+						element={<MainLayout> <Dashboard /> </MainLayout>}
 					/>
+					<Route
+						path="/me" // for current user: use adminName. 
+						element={
+							<MainLayout>
+								<ChannelLayout>	<ChangePassword /> </ChannelLayout>
+							</MainLayout>
+						} />
 					<Route
 						path="/:adminName/videos" // for current user: use adminName. 
 						element={
 							<MainLayout>
-								<div className="w-full">
-									<ChannelHeader />
-									<ChannelVideos />
-								</div>
+								<ChannelLayout>	<ChannelVideos /> </ChannelLayout>
 							</MainLayout>
 						} />
 					<Route
 						path="/:adminName/playlists"
 						element={
 							<MainLayout>
-								<div className="w-full">
-									<ChannelHeader />
-									<ChannelPlaylists />
-								</div>
+								<ChannelLayout>	<ChannelPlaylists /></ChannelLayout>
 							</MainLayout>
 						} />
 					<Route
 						path="/:adminName/tweets"
 						element={
 							<MainLayout>
-								<div className="w-full">
-									<ChannelHeader />
-									<ChannelTweets />
-								</div>
+								<ChannelLayout>	<ChannelTweets /> </ChannelLayout>
 							</MainLayout>
 						} />
 					<Route
 						path="/:adminName/subscribed"
 						element={
 							<MainLayout>
-								<div className="w-full">
-									<ChannelHeader />
-									<ChannelSubscribed />
-								</div>
+								<ChannelLayout>	<ChannelSubscribed /> </ChannelLayout>
 							</MainLayout>
 						} />
 

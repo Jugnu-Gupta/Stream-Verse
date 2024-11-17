@@ -2,7 +2,7 @@ import React from 'react'
 
 const Help: React.FC = () => {
     return (
-        <div className='px-2 max-w-[900px] mx-auto w-5/6 bg-background text-sm'>
+        <div className='px-2 max-w-[900px] mx-auto w-5/6 bg-background-primary text-sm'>
             <section className='text-white text-center mt-8'>
                 <h1 className='text-3xl font-bold'>Help & Support</h1>
                 <p className='mt-4 mb-6 text-[16px]'>Welcome to our Help and Support page! Here you'll find answers to frequently asked questions regarding account setup, video management and troubleshooting.</p>

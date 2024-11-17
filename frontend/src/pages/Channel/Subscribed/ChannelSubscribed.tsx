@@ -1,6 +1,6 @@
 import React from "react";
 import ChannelSubcribedCards from "./ChannelSubscribedCards";
-import { IoIosSearch } from "react-icons/io";
+import { IoSearchSharp } from "react-icons/io5";
 
 const ChannelSubscribed: React.FC = () => {
 	return (
@@ -13,7 +13,7 @@ const ChannelSubscribed: React.FC = () => {
 					required
 				/>
 				<div className="h-full pr-2 pl-1 rounded-r-full bg-white cursor-pointer">
-					<IoIosSearch className="text-xl h-full text-primary" />
+					<IoSearchSharp className="text-xl h-full text-primary" />
 				</div>
 			</div>
 			<ChannelSubcribedCards />

@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import NAVITEMS from "../../Constants/Navbar";
+import logo from "../../assets/logo.png";
 import { twMerge } from "tailwind-merge";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { useDispatch, useSelector } from "react-redux";
@@ -41,12 +42,15 @@ const Navbar: React.FC = () => {
 	return (
 		<nav className="h-[100vh] w-full fixed z-50 top-0 navbar-overlay xs:block hidden">
 			<div className="flex h-full w-full">
-				<div className="w-48 min-w-48 h-full bg-background text-nowrap animate-right2">
-					<div className="w-full flex items-center text-white gap-2 py-[11px]">
+				<div className="w-48 min-w-48 h-full bg-background-primary text-nowrap animate-right2">
+					<div className="w-full flex items-center text-white py-[10px]">
 						<button onClick={() => dispatch(toggleNavbar())}>
-							<RxHamburgerMenu className="text-3xl ml-[17px] hover:bg-background-lighter p-[6px] rounded-full duration-300" />
+							<RxHamburgerMenu className="text-3xl ml-[17px] hover:bg-background-secondary p-[6px] rounded-full duration-300" />
 						</button>
-						<h1>YouTube</h1>
+						<div className="w-8 flex mr-2 ml-1.5">
+							<img src={logo} alt="StreamVerse" className="aspect-square w-8 rounded-full" />
+						</div>
+						<h1>StreamVerse</h1>
 					</div>
 
 					<div className="p-2 pt-4 h-[calc(100vh-51px)] flex flex-col justify-between">
@@ -55,7 +59,7 @@ const Navbar: React.FC = () => {
 								(item) => (
 									<button
 										key={item.id}
-										className="w-full animate-right"
+										className="w-full animate-right outline-none"
 										onClick={() => navigate(item.path)}>
 										<p className={twMerge("h-9 px-2 flex items-center gap-6 rounded-lg border-2 border-white hover:bg-primary", (item.path == page && "bg-primary"))}>
 											<item.iconOutline
@@ -86,7 +90,7 @@ const Navbar: React.FC = () => {
 								(item) => (
 									<button
 										key={item.id}
-										className="w-full animate-right"
+										className="w-full animate-right outline-none"
 										onClick={() => navigate(item.path)}>
 										<p className={twMerge("h-9 px-2 flex items-center gap-6 rounded-lg border-2 border-white hover:bg-primary", (item.path == page && "bg-primary"))}>
 											<item.iconOutline
@@ -116,7 +120,7 @@ const Navbar: React.FC = () => {
 					)}
 					onClick={() => dispatch(toggleNavbar())}></div>
 			</div>
-		</nav>
+		</nav >
 	);
 };
 

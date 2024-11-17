@@ -18,13 +18,13 @@ const Navbar: React.FC = () => {
 			) : windowWidth <= 1023 || isVideoDetailPage ? (
 				<div className="w-full h-full relative group">
 					<div className="relative w-16 h-full"></div>
-					<div className="absolute left-0 top-0 z-10 w-16 hover:max-w-48 hover:w-48 h-full p-2 pt-4 flex flex-col justify-between bg-background text-nowrap">
+					<div className="absolute left-0 top-0 z-10 w-16 hover:max-w-48 hover:w-48 h-full p-2 pt-4 flex flex-col justify-between bg-background-primary text-nowrap">
 						<div className="text-white text-sm font-semibold flex flex-col gap-1.5 w-full justify-start">
 							{NAVITEMS.filter((item) => item.isTop).map(
 								(item) => (
 									<button
 										key={item.id}
-										className="w-full"
+										className="w-full outline-none"
 										onClick={() => navigate(item.path)}>
 										<p className={twMerge("px-2 h-9 flex items-center gap-6 border-2 border-white rounded-lg hover:bg-primary", (item.path == page && "bg-primary"))}>
 											<item.iconOutline
@@ -50,7 +50,7 @@ const Navbar: React.FC = () => {
 								(item) => (
 									<button
 										key={item.id}
-										className="w-full"
+										className="w-full outline-none"
 										onClick={() => navigate(item.path)}>
 										<p className={twMerge("h-9 px-2 flex items-center border-2 border-white gap-6 rounded-lg hover:bg-primary", (item.path == page && "bg-primary"))}>
 											<item.iconOutline
@@ -70,12 +70,12 @@ const Navbar: React.FC = () => {
 					</div>
 				</div>
 			) : (
-				<div className="h-full p-2 pt-4 max-w-48 w-48 flex flex-col justify-between bg-background text-nowrap">
+				<div className="h-full p-2 pt-4 max-w-48 w-48 flex flex-col justify-between bg-background-primary text-nowrap">
 					<div className="text-white text-sm font-semibold flex flex-col gap-1.5 w-full justify-start">
 						{NAVITEMS.filter((item) => item.isTop).map((item) => (
 							<button
 								key={item.id}
-								className="w-full"
+								className="w-full outline-none"
 								onClick={() => navigate(item.path)}>
 								<p className={twMerge("px-2 h-9 flex items-center gap-6 rounded-lg border-2 border-white hover:bg-primary", (item.path == page && "bg-primary"))}>
 									<item.iconOutline
@@ -95,7 +95,7 @@ const Navbar: React.FC = () => {
 						{NAVITEMS.filter((item) => !item.isTop).map((item) => (
 							<button
 								key={item.id}
-								className="w-full"
+								className="w-full outline-none"
 								onClick={() => navigate(item.path)}>
 								<p className="h-9 px-2 flex items-center border-2 border-white gap-6 rounded-lg hover:bg-primary">
 									<item.iconOutline

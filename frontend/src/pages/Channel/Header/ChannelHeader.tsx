@@ -70,7 +70,7 @@ const ChannelHeader: React.FC = () => {
 				</div>
 			</div>
 
-			<nav className="bg-background flex justify-between text-center xs:text-sm mt-4 text-primary-text2 font-semibold max-w-2xl">
+			<nav className="bg-background-primary flex justify-between text-center xs:text-sm mt-4 text-primary-text2 font-semibold max-w-2xl">
 				{
 					CHANNELNavItems.map((navItem) => (
 						<Link key={navItem.id}
@@ -81,7 +81,7 @@ const ChannelHeader: React.FC = () => {
 								className={twMerge(
 									"px-2 py-1 duration-300",
 									page === navItem.link &&
-									"bg-white rounded-md text-primary"
+									"bg-background-secondary rounded-md text-white"
 								)}>
 								{navItem.name}
 							</h3>

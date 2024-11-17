@@ -1,8 +1,9 @@
-import React from 'react'
+import React from 'react';
 
 const SaveToPlaylist: React.FC = () => {
     return (
-        <div className="absolute -z-10 group-focus-within:z-10 p-4 rounded-lg bg-background text-white top-full right-0 shadow-[0_1px_2px_white]">
+        // <div className="absolute -z-10 group-focus-within:z-10 p-4 rounded-lg bg-background-primary text-white top-full right-0 shadow-[0_1px_2px_white]">
+        <div className="absolute -z-10 group-focus-within:z-10 p-4 rounded-lg bg-background-primary text-white cursor-auto top-10 right-0 shadow-[0_1px_2px_white]">
             <h3 className="text-sm font-semibold text-nowrap">
                 Save to playlist
             </h3>
@@ -13,7 +14,7 @@ const SaveToPlaylist: React.FC = () => {
                     <input
                         type="checkbox"
                         id="playlist1"
-                        className="mr-2"
+                        className="mr-2 cursor-pointer outline-none"
                     />
                     <label htmlFor="playlist1">
                         playlist1
@@ -23,7 +24,7 @@ const SaveToPlaylist: React.FC = () => {
                     <input
                         type="checkbox"
                         id="playlist2"
-                        className="mr-2"
+                        className="mr-2 cursor-pointer outline-none"
                     />
                     <label htmlFor="playlist2">
                         playlist2
@@ -33,7 +34,7 @@ const SaveToPlaylist: React.FC = () => {
                     <input
                         type="checkbox"
                         id="playlist3"
-                        className="mr-2"
+                        className="mr-2 cursor-pointer outline-none"
                     />
                     <label htmlFor="playlist3">
                         playlist3
@@ -51,7 +52,7 @@ const SaveToPlaylist: React.FC = () => {
                     className="rounded-md p-1 mb-1 outline-none text-black"
                     placeholder="Enter playlist name"
                 />
-                <button className="bg-primary text-white font-semibold px-4 py-1 xs:px-3 xs:text-sm rounded-md mt-2">
+                <button className="bg-primary text-white outline-none font-semibold px-4 py-1 xs:px-3 xs:text-sm rounded-md mt-2">
                     Create a Playlist
                 </button>
             </div>

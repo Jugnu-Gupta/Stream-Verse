@@ -70,18 +70,18 @@ const ChannelTweetList: React.FC = () => {
 				<div className="flex justify-start gap-3 font-semibold tracking-wide">
 					<button
 						onClick={likeHanlder}
-						className="flex items-center gap-1 text-xl hover:bg-background-lightest px-2 py-1 rounded-xl duration-300">
+						className="flex items-center gap-1 text-xl hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
 						{isliked ? <BiSolidLike /> : <BiLike />}
 						<span className="text-xs">{likes}</span>
 					</button>
 					<button
 						onClick={dislikeHanlder}
-						className="flex items-center gap-1 text-xl hover:bg-background-lightest px-2 py-1 rounded-xl duration-300">
+						className="flex items-center gap-1 text-xl hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
 						{isDisliked ? <BiSolidDislike /> : <BiDislike />}
 						<span className="text-xs">{dislikes}</span>
 					</button>
 					<Link to="../../tweets/:tweetId">
-						<button className="flex items-center gap-1 text-xl hover:bg-background-lightest px-2 py-1 rounded-xl duration-300">
+						<button className="flex items-center gap-1 text-xl hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
 							<BiCommentDetail className="-scale-x-100" />
 							<span className="text-xs">{comments}</span>
 						</button>

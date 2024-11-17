@@ -25,9 +25,7 @@ const ChannelTweetCommentList: React.FC<CommentProps> = ({ currPath }) => {
 	const likes = 100;
 	const replies = [{ likes }];
 	const [giveReply, setGiveReply] = React.useState(false);
-	// store 100 words in description
-	const description =
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.";
+	const description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.";
 
 	const likeHanlder = () => {
 		setIsLiked(!isliked);
@@ -71,18 +69,18 @@ const ChannelTweetCommentList: React.FC<CommentProps> = ({ currPath }) => {
 					<div className="flex justify-start gap-3 font-semibold tracking-wide mb-2">
 						<button
 							onClick={likeHanlder}
-							className="flex items-center gap-1 text-xl hover:bg-background-lightest px-2 py-1 rounded-xl duration-300">
+							className="flex items-center gap-1 text-xl outline-none hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
 							{isliked ? <BiSolidLike /> : <BiLike />}
-							<span className="text-xs">{likes}</span>
+							<span className="text-xs">{likes + (isliked ? 1 : 0)}</span>
 						</button>
 						<button
 							onClick={dislikeHanlder}
-							className="flex items-center gap-1 text-xl hover:bg-background-lightest px-2 py-1 rounded-xl duration-300">
+							className="flex items-center gap-1 text-xl outline-none hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
 							{isDisliked ? <BiSolidDislike /> : <BiDislike />}
-							<span className="text-xs">{dislikes}</span>
+							<span className="text-xs">{dislikes + (isDisliked ? 1 : 0)}</span>
 						</button>
 						<button
-							className="flex items-center gap-1 text-xl hover:bg-background-lightest px-2 py-1 rounded-xl duration-300"
+							className="flex items-center gap-1 text-xl outline-none hover:bg-background-secondary px-2 py-1 rounded-xl duration-300"
 							onClick={() => setGiveReply(true)}>
 							{/* <BiCommentDetail className="-scale-x-100" /> */}
 							<span className="text-xs">Reply</span>
@@ -108,13 +106,13 @@ const ChannelTweetCommentList: React.FC<CommentProps> = ({ currPath }) => {
 									ref={textAreaRef}></textarea>
 								<div className="flex gap-2">
 									<button
-										className="font-semibold hover:bg-background-lightest px-3 py-1 rounded-full duration-300"
+										className="font-semibold outline-none hover:bg-background-secondary px-3 py-1 rounded-full duration-300"
 										onClick={() => setGiveReply(false)}>
 										Cancel
 									</button>
 									<button
 										className={twMerge(
-											"px-3 py-1 rounded-full bg-background-lightest opacity-50",
+											"px-3 py-1 rounded-full outline-none bg-primary opacity-50",
 											comment != "" && "opacity-100"
 										)}>
 										Comment
@@ -126,7 +124,7 @@ const ChannelTweetCommentList: React.FC<CommentProps> = ({ currPath }) => {
 
 					{replies.length > 0 && (
 						<button
-							className="flex items-center gap-2 text-primary w-fit hover:bg-background-lightest px-2 py-1 rounded-xl duration-300"
+							className="flex items-center gap-2 outline-none text-primary w-fit hover:bg-background-secondary px-2 py-1 rounded-xl duration-300"
 							onClick={() => setShowReplies(!showReplies)}>
 							{showReplies ? <FaChevronUp /> : <FaChevronDown />}
 							<span className="text-sm font-semibold tracking-wide">

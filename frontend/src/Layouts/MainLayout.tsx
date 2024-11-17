@@ -9,7 +9,7 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 	return (
-		<div className="bg-background relative">
+		<div className="bg-background-primary relative">
 			<Header />
 			<NavbarOverlay />
 			{/* <div className="flex min-h-[100vh] w-full relative top-0"> */}

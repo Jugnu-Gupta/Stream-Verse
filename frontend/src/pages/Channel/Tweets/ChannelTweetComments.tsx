@@ -21,7 +21,7 @@ const ChannelTweetComments: React.FC = () => {
 	return (
 		<div className="px-4 pt-4 w-full flex justify-items-center flex-col overflow-hidden">
 			<ChannelTweetList />
-			<div className="flex flex-col items-start gap-2 px-6 xs:px-2 w-full mt-4 mx-auto max-w-4xl">
+			<div className="flex flex-col items-start gap-2 px-6 xs:px-2 w-full mt-4 max-w-5xl">
 				<div className="text-white font-bold text-xl">
 					<h1>{comments} Comments</h1>
 				</div>
@@ -42,12 +42,12 @@ const ChannelTweetComments: React.FC = () => {
 							onChange={(e) => setComment(e.target.value)}
 							ref={textAreaRef}></textarea>
 						<div className="flex gap-2">
-							<button className="font-semibold hover:bg-background-lightest px-3 py-1 rounded-full duration-300">
+							<button className="font-semibold hover:bg-background-secondary px-3 py-1 rounded-full duration-300">
 								Cancel
 							</button>
 							<button
 								className={twMerge(
-									"px-3 py-1 rounded-full bg-background-lightest opacity-50",
+									"px-3 py-1 rounded-full bg-primary font-semibold opacity-50",
 									comment != "" && "opacity-100"
 								)}>
 								Comment

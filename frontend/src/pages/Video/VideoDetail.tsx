@@ -21,7 +21,7 @@ const VideoDetail: React.FC = () => {
 
 	return (
 		<div
-			className="flex flex-col 2lg:flex-row justify-start 2lg:items-start 2lg:gap-4 w-full px-2 mt-4">
+			className="flex flex-col 2lg:flex-row justify-start 2lg:items-start 2lg:gap-4 w-full px-2 mt-4 mx-auto max-w-[1400px]">
 			<div className="flex flex-col 2lg:w-2/3 w-full">
 				{/* video */}
 				<video

@@ -18,7 +18,7 @@ const VideoPlaylist: React.FC<VideoPlaylistProps> = ({ childClass, videoNo }) =>
 
     return (
         <div className={twMerge(childClass, "flex-col w-full border-2 overflow-hidden rounded-xl mb-4 2lg:ml-2 mt-4 2lg:mt-0")}>
-            <div className="text-white flex justify-between px-2 pt-2 pb-3 bg-background-light">
+            <div className="text-white flex justify-between px-2 pt-2 pb-3 bg-background-secondary">
                 <div>
                     {
                         showPlaylist
