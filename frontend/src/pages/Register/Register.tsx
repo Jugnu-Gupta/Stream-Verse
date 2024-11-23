@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const Register: React.FC = () => {
 	const navigate = useNavigate();
 	return (
-		<div className="flex justify-center items-center min-h-[100vh] bg-background-primary">
+		<div className="flex w-full justify-center items-center min-h-[calc(100vh-60px)] bg-background-primary">
 			<div className="flex min-w-[750px] h-[400px] shadow-[0_0_5px_white] rounded-lg">
 				<div className="w-1/3 flex flex-col rounded-l-lg justify-center items-center bg-primary px-2">
 					<h1 className="text-white font-bold text-3xl pb-1">

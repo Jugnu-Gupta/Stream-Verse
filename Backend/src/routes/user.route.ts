@@ -15,7 +15,7 @@ const router = Router();
 
 // Get current user (secured route), Update user details (secured route)
 router
-    .route("/current")
+    .route("/me")
     .get(verifyJWT, getCurrentUser)
     .patch(verifyJWT, updateUserDetails);
 

@@ -8,12 +8,14 @@ import { toggleNavbar } from "../../context/slices/NavbarSlice";
 import { RootState } from "../../context/Store";
 import useWindowWidth from "../../hooks/useWindowWidth";
 import { useNavigate } from "react-router-dom";
+import { comparePaths } from "../../utils/ComaprePaths";
+import { addAdminName } from "../../utils/AddAdminName";
 
 const Navbar: React.FC = () => {
 	const navigate = useNavigate();
 	const windowWidth = useWindowWidth();
 	const dispatch = useDispatch();
-	const page = "/" + window.location.pathname.split("/")[1];
+	const page = "/" + window.location.pathname.split("/").pop();
 	const isVisible: boolean = useSelector(
 		(state: RootState) => state.navbar.showNavbar
 	);
@@ -60,8 +62,9 @@ const Navbar: React.FC = () => {
 									<button
 										key={item.id}
 										className="w-full animate-right outline-none"
-										onClick={() => navigate(item.path)}>
-										<p className={twMerge("h-9 px-2 flex items-center gap-6 rounded-lg border-2 border-white hover:bg-primary", (item.path == page && "bg-primary"))}>
+										onClick={() => navigate(addAdminName(item.path))}>
+										<p className={twMerge("h-9 px-2 flex items-center gap-6 rounded-lg border-2 border-white hover:bg-primary",
+											(comparePaths(item.path, page) && "bg-primary"))}>
 											<item.iconOutline
 												className={twMerge(
 													item.iconOutlineClass,
@@ -91,8 +94,9 @@ const Navbar: React.FC = () => {
 									<button
 										key={item.id}
 										className="w-full animate-right outline-none"
-										onClick={() => navigate(item.path)}>
-										<p className={twMerge("h-9 px-2 flex items-center gap-6 rounded-lg border-2 border-white hover:bg-primary", (item.path == page && "bg-primary"))}>
+										onClick={() => navigate(addAdminName(item.path))}>
+										<p className={twMerge("h-9 px-2 flex items-center gap-6 rounded-lg border-2 border-white hover:bg-primary",
+											(comparePaths(item.path, page) && "bg-primary"))}>
 											<item.iconOutline
 												className={twMerge(
 													item.iconOutlineClass,

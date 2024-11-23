@@ -1,4 +1,4 @@
-import { Route, Routes, BrowserRouter, Outlet } from "react-router-dom";
+import { Route, Routes, BrowserRouter } from "react-router-dom";
 import Register from "./pages/Register/Register.js";
 import Login from "./pages/Login/Login.js";
 import EmailVerification from "./pages/EmailVerification/EmailVerification.tsx";
@@ -20,111 +20,41 @@ import DeleteVideoModal from "./components/Popup/DeleteVideoModal.tsx";
 import UploadVideoModal from "./components/Popup/UploadVideoModal.tsx";
 import ChannelLayout from "./Layouts/ChannelLayout.tsx";
 import ChangePassword from "./pages/Channel/ChangePassword/ChangePassword.tsx";
+import PersonalInformation from "./pages/Channel/PersonalInformation.tsx/PersonalInfomation.tsx";
+
+
+// fix login/ logout token problem
 
 function App() {
 	return (
 		<BrowserRouter>
 			<Routes>
-				<Route path="/" element={<Outlet />}>
-					<Route
-						index
-						element={<MainLayout> <Home /> </MainLayout>}
-					/>
-					<Route
-						path="/video/:videoId"
-						element={<MainLayout> <VideoDetail /> </MainLayout>}
-					/>
-					<Route
-						path="/search"
-						element={<MainLayout> <Search /> </MainLayout>}
-					/>
-					<Route
-						path="/search2"
-						element={<MainLayout> <EditVideoModal setShowEditVideo={() => { console.log("hello") }} /> </MainLayout>}
-					/>
-					<Route
-						path="/search3"
-						element={<MainLayout> <DeleteVideoModal setShowDeleteVideo={() => { console.log("hello") }} /> </MainLayout>}
-					/>
-					<Route
-						path="/search4"
-						element={<MainLayout> <UploadVideoModal setShowUploadVideo={() => { console.log("hello") }} /> </MainLayout>}
-					/>
-					<Route
-						path="/help"
-						element={<MainLayout><Help /></MainLayout>}
-					/>
-					<Route
-						path="/terms-and-conditions"
-						element={<MainLayout><TermsAndConditions /></MainLayout>}
-					/>
-					<Route
-						path="/tweets/:tweetId"
-						element={<MainLayout> <ChannelTweetComment /> </MainLayout>}
-					/>
-					<Route
-						path="/email-verification"
-						element={<EmailVerification />}
-					/>
+				<Route path="/" element={<MainLayout />}>
+					<Route index element={<Home />} />
+					<Route path="/video/:videoId" element={<VideoDetail />} />
+					<Route path="/search" element={<Search />} />
+					<Route path="/search2" element={<EditVideoModal setShowEditVideo={() => { console.log("hello") }} />} />
+					<Route path="/search3" element={<DeleteVideoModal setShowDeleteVideo={() => { console.log("hello") }} />} />
+					<Route path="/search4" element={<UploadVideoModal setShowUploadVideo={() => { console.log("hello") }} />} />
+					<Route path="/help" element={<Help />} />
+					<Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+					<Route path="/tweets/:tweetId" element={<ChannelTweetComment />} />
+					<Route path="/history" element={<Search />} />
+					<Route path="/liked-videos" element={<Search />} />
+					<Route path="/collections" element={<ChannelPlaylists />} />
+					<Route path="/subscriptions" element={<Search />} />
+					<Route path="/:adminName/dashboard" element={<Dashboard />} />
 
-					<Route
-						path="/history"
-						element={<MainLayout> <Search /> </MainLayout>}
-					/>
-					<Route
-						path="/liked-videos"
-						element={<MainLayout> <Search /> </MainLayout>}
-					/>
-					<Route
-						path="/collections"
-						element={<MainLayout> <ChannelPlaylists /> </MainLayout>}
-					/>
-					<Route
-						path="/subscriptions"
-						element={<MainLayout> <Search /> </MainLayout>}
-					/>
-
-					<Route
-						path="/:adminName/dashboard"
-						element={<MainLayout> <Dashboard /> </MainLayout>}
-					/>
-					<Route
-						path="/me" // for current user: use adminName. 
-						element={
-							<MainLayout>
-								<ChannelLayout>	<ChangePassword /> </ChannelLayout>
-							</MainLayout>
-						} />
-					<Route
-						path="/:adminName/videos" // for current user: use adminName. 
-						element={
-							<MainLayout>
-								<ChannelLayout>	<ChannelVideos /> </ChannelLayout>
-							</MainLayout>
-						} />
-					<Route
-						path="/:adminName/playlists"
-						element={
-							<MainLayout>
-								<ChannelLayout>	<ChannelPlaylists /></ChannelLayout>
-							</MainLayout>
-						} />
-					<Route
-						path="/:adminName/tweets"
-						element={
-							<MainLayout>
-								<ChannelLayout>	<ChannelTweets /> </ChannelLayout>
-							</MainLayout>
-						} />
-					<Route
-						path="/:adminName/subscribed"
-						element={
-							<MainLayout>
-								<ChannelLayout>	<ChannelSubscribed /> </ChannelLayout>
-							</MainLayout>
-						} />
+					{/* for current user: use adminName. */}
+					<Route path="/:adminName/change-password" element={<ChangePassword />} />
+					<Route path="/:adminName/personal-information" element={<PersonalInformation />} />
+					<Route path="/:adminName/videos" element={<ChannelLayout>	<ChannelVideos /> </ChannelLayout>} />
+					<Route path="/:adminName/playlists" element={<ChannelLayout>	<ChannelPlaylists /></ChannelLayout>} />
+					<Route path="/:adminName/tweets" element={<ChannelLayout>	<ChannelTweets /> </ChannelLayout>} />
+					<Route path="/:adminName/subscribed" element={<ChannelLayout>	<ChannelSubscribed /> </ChannelLayout>} />
 
 					<Route path="/login" element={<Login />} />
+					<Route path="/email-verification" element={<EmailVerification />} />
 					<Route path="/password-reset" element={<PasswordReset />} />
 					<Route path="/register" element={<Register />} />
 					<Route path="*" element={<Register />} />

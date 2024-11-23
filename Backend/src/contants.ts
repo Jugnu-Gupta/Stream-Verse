@@ -1,1 +1,2 @@
-export const DB_NAME = "youtubeTweet";
+export const DB_NAME = "StreamVerse";
+export const websiteName = "StreamVerse";

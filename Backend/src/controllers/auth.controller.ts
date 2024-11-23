@@ -63,10 +63,10 @@ interface RegisterUserBody {
 }
 
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
-    const { fullName, email, userName, password }: RegisterUserBody = req.body;
+    const { fullName, email, password }: RegisterUserBody = req.body;
 
     // check is all fields are given.
-    if ([userName, fullName, email, password].some((field) => !field?.trim())) {
+    if ([fullName, email, password].some((field) => !field?.trim())) {
         throw new ApiError(400, `All fields are required`);
     }
 
@@ -76,20 +76,9 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
         throw new ApiError(409, "This email isn't available.");
     }
 
-    existedUser = await User.findOne({ userName });
-    if (existedUser) {
-        const availableUserName: string | null =
-            await getAvailableUserName(fullName);
-        if (!availableUserName) {
-            throw new ApiError(409, "This username isn't available.");
-        } else {
-            // This username isn't available. Here's one available: @jugnu-b7y.
-            throw new ApiError(
-                409,
-                `This username isn't available. Here's one available: ${availableUserName}`
-            );
-        }
-    }
+    const userName: string = await getAvailableUserName(
+        fullName.split(" ").join("")
+    );
 
     const avatarLocalPath: string = (req as FileType).files?.avatar?.[0]?.path;
     const coverImageLocalPath: string = (req as FileType).files?.coverImage?.[0]
@@ -107,8 +96,8 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
         email,
         password,
         avatar: {
-            publicId: avatar.public_id || "",
-            url: avatar.secure_url || "",
+            publicId: avatar?.public_id || "",
+            url: avatar?.secure_url || "",
         },
         coverImage: {
             publicId: coverImage?.public_id || "",
@@ -195,12 +184,8 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
 
     const options = {
         httpOnly: true,
-        // secure: true,
+        secure: true,
     };
-    // const options: Option = {
-    //     httpOnly: true,
-    //     secure: true,
-    // };
     return res
         .status(200)
         .cookie("refreshToken", refreshToken, options)
@@ -217,9 +202,8 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
 interface Token {
     token?: string;
 }
-interface ConfirmUserEmailVerificationQuery extends Token {}
 const validateUserEmail = asyncHandler(async (req: Request, res: Response) => {
-    const { token }: ConfirmUserEmailVerificationQuery = req.query;
+    const { token }: Token = req.query;
     if (!token) {
         throw new ApiError(400, "Invalid token");
     }

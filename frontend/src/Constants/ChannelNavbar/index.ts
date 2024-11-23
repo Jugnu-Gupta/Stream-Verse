@@ -4,7 +4,7 @@ interface ChannelNavItemsProps {
 	link: string;
 }
 
-const CHANNELNavItems: ChannelNavItemsProps[] = [
+const CHANNELNAVITEMS: ChannelNavItemsProps[] = [
 	{
 		id: 1,
 		name: "Videos",
@@ -27,5 +27,19 @@ const CHANNELNavItems: ChannelNavItemsProps[] = [
 	},
 ];
 
-export default CHANNELNavItems;
+const CHANNELNAVITEMS2: ChannelNavItemsProps[] = [
+	{
+		id: 1,
+		name: "Personal Information",
+		link: "personal-information",
+	},
+	{
+		id: 2,
+		name: "Change Password",
+		link: "change-password",
+	},
+];
+
+export default CHANNELNAVITEMS;
+export { CHANNELNAVITEMS2 };
 export type { ChannelNavItemsProps };

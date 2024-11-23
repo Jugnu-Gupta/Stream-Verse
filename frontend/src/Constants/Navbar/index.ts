@@ -37,7 +37,7 @@ const NAVITEMS: NavItem[] = [
 	},
 	{
 		id: 3,
-		path: "/user/videos",
+		path: "/:adminName/videos",
 		title: "Your Channel",
 		isTop: true,
 		iconFilled: Icons.BiSolidUserRectangle,

@@ -5,23 +5,49 @@ import { FaLock } from "react-icons/fa";
 import { ApiRequestOptions } from "../../utils/MakeApiRequest";
 import makeApiRequest from "../../utils/MakeApiRequest";
 import { LoginValidationSchema } from "./LoginValidationSchema";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm: React.FC = () => {
-	const { values, handleChange, handleSubmit, handleBlur } = useFormik({
+	const navigate = useNavigate();
+	const [showVerifyEmail, setShowVerifyEmail] = React.useState(false);
+
+	const { values, touched, errors, handleChange, handleSubmit, handleBlur } = useFormik({
 		initialValues: {
 			email: "",
 			password: "",
 		},
 		validationSchema: LoginValidationSchema,
 		onSubmit: async (values) => {
-			const request: ApiRequestOptions = {
-				method: "post",
-				url: "/api/v1/auths/login",
-				data: values,
-			};
-			// const res = await makeApiRequest(request);
+			try {
+				const request: ApiRequestOptions = {
+					method: "post",
+					url: "/api/v1/auths/login",
+					data: values,
+				};
+				const { data }: any = await makeApiRequest(request);
+				console.log(data);
 
-			// console.log(res);
+				toast.success("Signed Up successfully");
+				setShowVerifyEmail(false);
+
+				// data in localStorage for future use
+				localStorage.setItem("token", data.accessToken);
+				localStorage.setItem("userName", data.user.userName);
+				localStorage.setItem("fullName", data.user.fullName);
+				localStorage.setItem("email", data.user.email);
+				localStorage.setItem("avatar", data.user.avatar.url);
+				localStorage.setItem("cover", data.user.coverImage.url);
+				navigate("/");
+			} catch (error: any) {
+				if (error.status === 401) {
+					setShowVerifyEmail(true);
+					console.error(error.response.data.message);
+				} else {
+					setShowVerifyEmail(false);
+					toast.error(error.response.data.message);
+				}
+			}
 		},
 	});
 
@@ -38,13 +64,13 @@ const LoginForm: React.FC = () => {
 					placeholder="Email"
 					onChange={handleChange}
 					onBlur={handleBlur}
-					className="pl-2 pr-10 py-1 w-72 rounded-md bg-background-primary 
-                outline-none transition delay-[50000s] placeholder:text-white 
-                placeholder:text-sm focus:ring-2 focus:ring-primary"
+					className="pl-2 pr-10 py-1.5 w-72 rounded-md bg-background-primary 
+                	outline-none transition delay-[50000s] placeholder:text-white text-sm"
 				/>
 				<label htmlFor="email">
 					<MdEmail className="absolute top-2 right-2" />
 				</label>
+				{touched.email && errors.email ? <p className="text-start text-xs mt-0.5">{errors.email}</p> : null}
 			</div>
 			<div className="relative">
 				<input
@@ -55,14 +81,20 @@ const LoginForm: React.FC = () => {
 					placeholder="Password"
 					onChange={handleChange}
 					onBlur={handleBlur}
-					className="pl-2 pr-10 py-1 w-72 rounded-md bg-background-primary 
-                	outline-none transition delay-[50000s] placeholder:text-white 
-                	placeholder:text-sm focus:ring-2 focus:ring-primary"
+					className="pl-2 pr-10 py-1.5 w-72 rounded-md bg-background-primary 
+                	outline-none transition delay-[50000s] placeholder:text-white text-sm"
 				/>
 				<label htmlFor="password">
 					<FaLock className="absolute top-2 right-2 text-sm" />
 				</label>
+				{touched.password && errors.password ? <p className="text-start text-xs mt-0.5">{errors.password}</p> : null}
 			</div>
+			{
+				showVerifyEmail &&
+				<div className="bg-primary w-72 px-1 py-0.5 mb-1 rounded-md text-sm text-justify">
+					An email has been sent to your email address. Please verify your email address.
+				</div>
+			}
 			<button
 				type="submit"
 				className="px-4 py-2 mb-1 tracking-wide font-medium 

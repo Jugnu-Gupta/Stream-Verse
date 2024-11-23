@@ -2,12 +2,9 @@ import React from "react";
 import Header from "../pages/Header/Header.tsx";
 import Navbar from "../components/Navbar/Navbar.tsx";
 import NavbarOverlay from "../components/Navbar/NavbarOverlay.tsx";
+import { Outlet } from "react-router-dom";
 
-interface MainLayoutProps {
-	children?: React.ReactNode;
-}
-
-const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+const MainLayout: React.FC = () => {
 	return (
 		<div className="bg-background-primary relative">
 			<Header />
@@ -15,7 +12,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 			{/* <div className="flex min-h-[100vh] w-full relative top-0"> */}
 			<div className="flex w-full relative top-0">
 				<Navbar />
-				{children}
+				<Outlet />
 			</div>
 		</div>
 	);

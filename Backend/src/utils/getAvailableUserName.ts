@@ -6,23 +6,25 @@ interface UserSuffix {
 
 const getUserSuffixes = async (prefix: string) => {
     try {
-        const prefixRegex = new RegExp(`^${prefix}\\d+$`);
+        const prefixRegex: string = `^${prefix}\\d+$`;
 
         const results: UserSuffix[] = await User.aggregate([
             {
                 $match: {
-                    userName: { $regex: prefixRegex },
+                    userName: { $regex: prefixRegex, $options: "i" },
                 },
             },
             {
                 $project: {
                     suffix: {
                         $toInt: {
-                            $substr: [
-                                "$userName",
-                                { $strLenCP: prefix.length },
-                                -1,
-                            ],
+                            $toInt: {
+                                $substrCP: [
+                                    "$userName",
+                                    prefix.length,
+                                    { $strLenCP: "$userName" },
+                                ],
+                            },
                         },
                     },
                 },

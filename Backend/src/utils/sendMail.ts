@@ -23,13 +23,11 @@ const sendMail = async (email: string, emailType: string, userId: string) => {
             });
 
             subject = "Reset your password";
-            // text = `Click on the link to reset your password:
-            // ${process.env.BASE_URL}/reset/${hashedToken}`;
-            text = getEmailVerificationText(
+            text = getPasswordResetText(
                 "Jugnu Gupta",
                 `${process.env.BASE_URL}/reset/${hashedToken}`
             );
-            html = getEmailVerificationHtml(
+            html = getPasswordResetHtml(
                 "Jugnu Gupta",
                 `${process.env.BASE_URL}/reset/${hashedToken}`
             );
@@ -42,23 +40,23 @@ const sendMail = async (email: string, emailType: string, userId: string) => {
             });
 
             subject = "Verify your email";
-            // text = `Click on the link to verify your email:
-            // ${process.env.BASE_URL}/email-verification?token=${hashedToken}`;
-            text = getPasswordResetText(
+            text = getEmailVerificationText(
                 "Jugnu Gupta",
                 `${process.env.BASE_URL}/email-verification?token=${hashedToken}`
             );
-            html = getPasswordResetHtml(
+            html = getEmailVerificationHtml(
                 "Jugnu Gupta",
                 `${process.env.BASE_URL}/email-verification?token=${hashedToken}`
             );
+        } else {
+            throw new ApiError(500, "Invalid email type");
         }
 
         const transporter = nodemailer.createTransport({
             host: process.env.EMAIL_HOST,
             service: process.env.EMAIL_SERVICE,
             port: parseInt(process.env.EMAIL_PORT, 10),
-            secure: true,
+            secure: false,
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS,

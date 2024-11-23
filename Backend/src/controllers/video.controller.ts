@@ -8,7 +8,7 @@ import { ApiError } from "../utils/apiError";
 import { ApiResponse } from "../utils/apiResponse";
 import { UserType } from "types/user.type";
 import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary";
-import { getVideoQuality } from "utils/getVideoQuality";
+import { getVideoQuality } from "../utils/getVideoQuality";
 
 interface RequestWithUser extends Request {
     user: UserType;
