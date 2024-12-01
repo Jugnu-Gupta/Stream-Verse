@@ -2,10 +2,10 @@ export const comparePaths = (link: string, curPage: string) => {
 	if (link == curPage) {
 		return true;
 	} else {
-		console.log("link:", link);
-		console.log("curPage:", curPage);
+		// console.log("link:", link);
+		// console.log("curPage:", curPage);
 		const path = "/" + link.split("/").pop();
-		console.log("path:", path);
+		// console.log("path:", path);
 		if (
 			path === "/videos" &&
 			["/videos", "/playlists", "/tweets", "/subscribed"].includes(

@@ -7,8 +7,10 @@ export interface value {
 	replies: number;
 	likes: number;
 	dislikes: number;
-	createdAt: Date;
-	updatedAt: Date;
+	createdAt: string;
+	updatedAt: string;
+	// createdAt: Date;
+	// updatedAt: Date;
 }
 
 export interface TreeNode {
@@ -24,8 +26,10 @@ const initialState: TreeNode = {
 		replies: 0,
 		likes: 0,
 		dislikes: 0,
-		createdAt: new Date(),
-		updatedAt: new Date(),
+		createdAt: new Date().toISOString(),
+		updatedAt: new Date().toISOString(),
+		// createdAt: new Date(),
+		// updatedAt: new Date(),
 	},
 	children: [],
 };

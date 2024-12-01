@@ -12,13 +12,13 @@ const navbarSlice = createSlice({
 	name: "navbar",
 	initialState,
 	reducers: {
-		toggleNavbar: (state) => {
-			state.showNavbar = !state.showNavbar;
+		setShowNavbar: (state, action) => {
+			state.showNavbar = action.payload;
 			// directly modify the state over here.
 			// action.payload is the parameter and state is the initial/current state.
 		},
 	},
 });
 
-export const { toggleNavbar } = navbarSlice.actions;
+export const { setShowNavbar } = navbarSlice.actions;
 export default navbarSlice.reducer;

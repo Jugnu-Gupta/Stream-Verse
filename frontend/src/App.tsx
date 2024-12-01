@@ -21,9 +21,11 @@ import UploadVideoModal from "./components/Popup/UploadVideoModal.tsx";
 import ChannelLayout from "./Layouts/ChannelLayout.tsx";
 import ChangePassword from "./pages/Channel/ChangePassword/ChangePassword.tsx";
 import PersonalInformation from "./pages/Channel/PersonalInformation.tsx/PersonalInfomation.tsx";
+import Subscriptions from "./pages/Subscriptions/Subscriptions.tsx";
+import History from "./pages/History/History.tsx";
+import LikedVideos from "./pages/LikedVideos/LikedVideos.tsx";
+import ProtectedLayout from "./Layouts/ProtectedLayout.tsx";
 
-
-// fix login/ logout token problem
 
 function App() {
 	return (
@@ -31,32 +33,35 @@ function App() {
 			<Routes>
 				<Route path="/" element={<MainLayout />}>
 					<Route index element={<Home />} />
-					<Route path="/video/:videoId" element={<VideoDetail />} />
 					<Route path="/search" element={<Search />} />
-					<Route path="/search2" element={<EditVideoModal setShowEditVideo={() => { console.log("hello") }} />} />
-					<Route path="/search3" element={<DeleteVideoModal setShowDeleteVideo={() => { console.log("hello") }} />} />
-					<Route path="/search4" element={<UploadVideoModal setShowUploadVideo={() => { console.log("hello") }} />} />
 					<Route path="/help" element={<Help />} />
-					<Route path="/terms-and-conditions" element={<TermsAndConditions />} />
-					<Route path="/tweets/:tweetId" element={<ChannelTweetComment />} />
-					<Route path="/history" element={<Search />} />
-					<Route path="/liked-videos" element={<Search />} />
-					<Route path="/collections" element={<ChannelPlaylists />} />
-					<Route path="/subscriptions" element={<Search />} />
-					<Route path="/:adminName/dashboard" element={<Dashboard />} />
 
-					{/* for current user: use adminName. */}
-					<Route path="/:adminName/change-password" element={<ChangePassword />} />
-					<Route path="/:adminName/personal-information" element={<PersonalInformation />} />
-					<Route path="/:adminName/videos" element={<ChannelLayout>	<ChannelVideos /> </ChannelLayout>} />
-					<Route path="/:adminName/playlists" element={<ChannelLayout>	<ChannelPlaylists /></ChannelLayout>} />
-					<Route path="/:adminName/tweets" element={<ChannelLayout>	<ChannelTweets /> </ChannelLayout>} />
-					<Route path="/:adminName/subscribed" element={<ChannelLayout>	<ChannelSubscribed /> </ChannelLayout>} />
+					<Route path="/" element={<ProtectedLayout />}>
+						<Route path="/video/:videoId" element={<VideoDetail />} />
+						<Route path="/search2" element={<EditVideoModal setShowEditVideo={() => { console.log("hello") }} />} />
+						<Route path="/search3" element={<DeleteVideoModal setShowDeleteVideo={() => { console.log("hello") }} />} />
+						<Route path="/search4" element={<UploadVideoModal setShowUploadVideo={() => { console.log("hello") }} />} />
+						<Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+						<Route path="/tweets/:tweetId" element={<ChannelTweetComment />} />
+						<Route path="/history" element={<History />} />
+						<Route path="/liked-videos" element={<LikedVideos />} />
+						<Route path="/collections" element={<ChannelPlaylists />} />
+						<Route path="/subscriptions" element={<Subscriptions />} />
+						<Route path="/:adminName/dashboard" element={<Dashboard />} />
+
+						{/* for current user: use adminName. */}
+						<Route path="/:adminName/change-password" element={<ChangePassword />} />
+						<Route path="/:adminName/personal-information" element={<PersonalInformation />} />
+						<Route path="/:adminName/videos" element={<ChannelLayout><ChannelVideos /> </ChannelLayout>} />
+						<Route path="/:adminName/playlists" element={<ChannelLayout><ChannelPlaylists /></ChannelLayout>} />
+						<Route path="/:adminName/tweets" element={<ChannelLayout><ChannelTweets /> </ChannelLayout>} />
+						<Route path="/:adminName/subscribed" element={<ChannelLayout>	<ChannelSubscribed /> </ChannelLayout>} />
+					</Route>
 
 					<Route path="/login" element={<Login />} />
-					<Route path="/email-verification" element={<EmailVerification />} />
-					<Route path="/password-reset" element={<PasswordReset />} />
 					<Route path="/register" element={<Register />} />
+					<Route path="/password-reset" element={<PasswordReset />} />
+					<Route path="/email-verification" element={<EmailVerification />} />
 					<Route path="*" element={<Register />} />
 				</Route>
 			</Routes>

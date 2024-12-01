@@ -5,12 +5,12 @@ import { FaRegHeart } from "react-icons/fa";
 import { BiCommentDetail } from "react-icons/bi";
 import { FaPlus } from "react-icons/fa6";
 import UploadVideoModal from "../../components/Popup/UploadVideoModal";
-import UploadingVideoModal from '../../components/Popup/UploadingVideoModal';
+// import UploadingVideoModal from '../../components/Popup/UploadingVideoModal';
 
 
 const DashboardStats: React.FC = () => {
     const [showUploadVideo, setShowUploadVideo] = React.useState(false);
-    const [showUploadingVideo, setShowUploadingVideo] = React.useState(false);
+    // const [showUploadingVideo, setShowUploadingVideo] = React.useState(false);
 
     const Views = 100;
     const Subscribers = 100;

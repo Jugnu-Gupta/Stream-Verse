@@ -164,7 +164,7 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
         );
 
         throw new ApiError(
-            401,
+            403,
             "A verification link has been sent to your email. Please verify to log in."
         );
     }

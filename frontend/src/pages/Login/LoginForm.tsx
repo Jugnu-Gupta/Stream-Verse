@@ -1,15 +1,17 @@
 import React from "react";
 import { useFormik } from "formik";
 import { MdEmail } from "react-icons/md";
-import { FaLock } from "react-icons/fa";
 import { ApiRequestOptions } from "../../utils/MakeApiRequest";
 import makeApiRequest from "../../utils/MakeApiRequest";
 import { LoginValidationSchema } from "./LoginValidationSchema";
 import toast from "react-hot-toast";
+import { FaRegEye } from "react-icons/fa";
+import { FaRegEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const LoginForm: React.FC = () => {
 	const navigate = useNavigate();
+	const [showPassword, setShowPassword] = React.useState(false);
 	const [showVerifyEmail, setShowVerifyEmail] = React.useState(false);
 
 	const { values, touched, errors, handleChange, handleSubmit, handleBlur } = useFormik({
@@ -38,9 +40,10 @@ const LoginForm: React.FC = () => {
 				localStorage.setItem("email", data.user.email);
 				localStorage.setItem("avatar", data.user.avatar.url);
 				localStorage.setItem("cover", data.user.coverImage.url);
+
 				navigate("/");
 			} catch (error: any) {
-				if (error.status === 401) {
+				if (error.status === 403) {
 					setShowVerifyEmail(true);
 					console.error(error.response.data.message);
 				} else {
@@ -74,18 +77,21 @@ const LoginForm: React.FC = () => {
 			</div>
 			<div className="relative">
 				<input
-					type="password"
+					type={showPassword ? "text" : "password"}
 					name="password"
 					id="password"
 					value={values.password}
 					placeholder="Password"
 					onChange={handleChange}
 					onBlur={handleBlur}
-					className="pl-2 pr-10 py-1.5 w-72 rounded-md bg-background-primary 
-                	outline-none transition delay-[50000s] placeholder:text-white text-sm"
+					className="pl-2 pr-10 py-1.5 w-72 rounded-md bg-background-primary
+				outline-none transition delay-[50000s] placeholder:text-white text-sm"
 				/>
-				<label htmlFor="password">
-					<FaLock className="absolute top-2 right-2 text-sm" />
+				<label htmlFor="password" className="cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
+					{
+						showPassword ? <FaRegEyeSlash className="absolute top-2 right-2 text-sm" /> :
+							<FaRegEye className="absolute top-2 right-2 text-sm" />
+					}
 				</label>
 				{touched.password && errors.password ? <p className="text-start text-xs mt-0.5">{errors.password}</p> : null}
 			</div>

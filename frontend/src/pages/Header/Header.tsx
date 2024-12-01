@@ -2,39 +2,26 @@ import React, { useEffect } from "react";
 import { RxHamburgerMenu } from "react-icons/rx";
 import logo from "../../assets/logo.jpg";
 import { IoSearchSharp } from "react-icons/io5";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { generateAvatar } from '../../utils/generateAvatar';
-import { toggleNavbar } from "../../context/slices/NavbarSlice";
+import { generateAvatar } from '../../utils/GenerateAvatar';
+import { setShowNavbar } from "../../context/slices/NavbarSlice";
 import makeApiRequest, { ApiRequestOptions } from "../../utils/MakeApiRequest";
+import { RootState } from "../../context/Store";
+import { useAuth } from "../../hooks/useAuth";
+
 
 const Header: React.FC = () => {
-	const [userImage, setUserImage] = React.useState("");
-	const [isLoggedIn, setIsLoggedIn] = React.useState(true);
-	const url = window.location.pathname;
-	const curUser: string = "@" + localStorage.getItem("userName");
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+	const { loggedIn, setLoggedIn } = useAuth();
+	const [userImage, setUserImage] = React.useState("");
+	const curUser: string = "@" + localStorage.getItem("userName");
+	const showNavbar: boolean = useSelector((state: RootState) => state.navbar.showNavbar);
 
 	useEffect(() => {
-		const getUser = async () => {
-			try {
-				const request: ApiRequestOptions = {
-					method: "get",
-					url: "/api/v1/users/me",
-				};
-				const { data }: any = await makeApiRequest(request);
-
-				console.log("Logged in");
-				setIsLoggedIn(true);
-				setUserImage(data.user.avatar.url || generateAvatar(data.user.fullName, "0078e1", "fff"));
-			} catch (error: any) {
-				console.error(error.response.data.message);
-				setIsLoggedIn(false);
-			}
-		}
-		getUser();
-	}, [url]);
+		setUserImage(generateAvatar(curUser.substring(1), "0078e1", "fff"));
+	}, [curUser]);
 
 	const logOutHandler = async () => {
 		try {
@@ -47,7 +34,7 @@ const Header: React.FC = () => {
 			console.log("Logged out successfully");
 			setUserImage("");
 
-			setIsLoggedIn(false);
+			setLoggedIn(false);
 			localStorage.removeItem("token");
 			localStorage.removeItem("userName");
 			localStorage.removeItem("fullName");
@@ -58,7 +45,7 @@ const Header: React.FC = () => {
 			navigate('/');
 		} catch (error: any) {
 			console.error(error.response.data.message);
-			setIsLoggedIn(true);
+			setLoggedIn(true);
 		}
 	}
 
@@ -66,7 +53,7 @@ const Header: React.FC = () => {
 		<header className="w-full flex justify-between md:gap-4 gap-3 bg-background-primary text-white py-2 sticky top-0 z-40">
 			<div className="flex items-center">
 				<button
-					onClick={() => dispatch(toggleNavbar())}
+					onClick={() => dispatch(setShowNavbar(!showNavbar))}
 					className="sm:hidden mr-1 outline-none">
 					<RxHamburgerMenu className="text-3xl ml-2 hover:bg-background-secondary p-[6px] rounded-full duration-300" />
 				</button>
@@ -87,7 +74,7 @@ const Header: React.FC = () => {
 			</div>
 			<div className="flex items-center pr-4 text-nowrap">
 				{
-					isLoggedIn ? (
+					loggedIn ? (
 						<>
 							<img onClick={() => navigate(`/${curUser}/personal-information`)} src={userImage} alt="userImage" className="text-sm w-7 h-7 cursor-pointer" />
 							<button onClick={logOutHandler}
@@ -100,9 +87,6 @@ const Header: React.FC = () => {
 						</button>
 					)
 				}
-				{/* <button
-					className="bg-primary text-white font-semibold px-4 py-1 xs:px-3 xs:text-sm rounded-md hover:bg-white hover:text-primary duration-300 ml-2">Log In
-				</button> */}
 			</div>
 		</header>
 	);

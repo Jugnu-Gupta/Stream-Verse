@@ -20,10 +20,8 @@ const EmailVerification: React.FC = () => {
 
 			if (res!.status === 200) {
 				console.log("Email verified successfully");
-				// navigate('/login');
 			} else {
 				console.log("Resend email verification link or try again or Invalid token");
-				// navigate('/login');
 			}
 			console.log(res);
 		}

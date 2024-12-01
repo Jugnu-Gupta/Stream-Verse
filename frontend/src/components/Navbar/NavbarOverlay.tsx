@@ -4,26 +4,25 @@ import logo from "../../assets/logo.png";
 import { twMerge } from "tailwind-merge";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleNavbar } from "../../context/slices/NavbarSlice";
+import { setShowNavbar } from "../../context/slices/NavbarSlice";
 import { RootState } from "../../context/Store";
-import useWindowWidth from "../../hooks/useWindowWidth";
 import { useNavigate } from "react-router-dom";
 import { comparePaths } from "../../utils/ComaprePaths";
 import { addAdminName } from "../../utils/AddAdminName";
 
+
 const Navbar: React.FC = () => {
 	const navigate = useNavigate();
-	const windowWidth = useWindowWidth();
 	const dispatch = useDispatch();
 	const page = "/" + window.location.pathname.split("/").pop();
-	const isVisible: boolean = useSelector(
+	const showNavbar: boolean = useSelector(
 		(state: RootState) => state.navbar.showNavbar
 	);
 
 	useEffect(() => {
 		const navbarOverlay = document.querySelector(".navbar-overlay");
 		navbarOverlay?.classList.remove("hidden");
-		if (isVisible && windowWidth < 500) {
+		if (showNavbar) {
 			navbarOverlay?.classList.remove("animate-left");
 			navbarOverlay?.classList.add("animate-right2");
 
@@ -39,14 +38,14 @@ const Navbar: React.FC = () => {
 		return () => {
 			document.body.style.overflow = "";
 		};
-	}, [isVisible, windowWidth]);
+	}, [showNavbar]);
 
 	return (
 		<nav className="h-[100vh] w-full fixed z-50 top-0 navbar-overlay xs:block hidden">
 			<div className="flex h-full w-full">
 				<div className="w-48 min-w-48 h-full bg-background-primary text-nowrap animate-right2">
 					<div className="w-full flex items-center text-white py-[10px]">
-						<button onClick={() => dispatch(toggleNavbar())}>
+						<button onClick={() => dispatch(setShowNavbar(!showNavbar))}>
 							<RxHamburgerMenu className="text-3xl ml-[17px] hover:bg-background-secondary p-[6px] rounded-full duration-300" />
 						</button>
 						<div className="w-8 flex mr-2 ml-1.5">
@@ -118,11 +117,9 @@ const Navbar: React.FC = () => {
 					</div>
 				</div>
 				<div
-					className={twMerge(
-						"h-full bg-black text-white bg-opacity-20",
-						isVisible && "w-[100%]"
-					)}
-					onClick={() => dispatch(toggleNavbar())}></div>
+					className={twMerge("h-full bg-black text-white bg-opacity-20", showNavbar && "w-screen")}
+					onClick={() => dispatch(setShowNavbar(!showNavbar))}>
+				</div>
 			</div>
 		</nav >
 	);
