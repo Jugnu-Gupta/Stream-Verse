@@ -1,12 +1,13 @@
 import React from 'react';
 import { RxCross2 } from "react-icons/rx";
-import thumbnail from '../../assets/thumbnail.png';
+import _thumbnail from '../../assets/thumbnail.png';
+import { updateImage } from '../../utils/UpdateImage';
 
 interface EditVideoModalProps {
     setShowEditVideo: React.Dispatch<React.SetStateAction<boolean>>;
 }
 const EditVideoModal: React.FC<EditVideoModalProps> = ({ setShowEditVideo }) => {
-    const [selectedImage, setSelectedImage] = React.useState<string>("");
+    const [thumbnail, setThumbnail] = React.useState<string>("");
 
     return (
         // <div className='w-full h-full flex justify-center items-center bg-black bg-opacity-20 absolute z-[1]'>
@@ -26,11 +27,11 @@ const EditVideoModal: React.FC<EditVideoModalProps> = ({ setShowEditVideo }) => 
                         <label htmlFor="thumbnail" className='text-sm mb-1'>
                             <p>Thumbnail<sup>*</sup></p>
                             <div className='border-dashed border-[1px] border-white p-1 cursor-pointer'>
-                                <img src={selectedImage ? selectedImage : thumbnail} alt="thumbnail" />
+                                <img src={thumbnail ? thumbnail : _thumbnail} alt="thumbnail" />
                             </div>
                         </label>
-                        <input type="file" name="thumbnail" id="thumbnail" accept="image/png" className='hidden'
-                            onChange={(e) => setSelectedImage(URL.createObjectURL(e.target.files![0]))}
+                        <input type="file" name="thumbnail" id="thumbnail" accept="image/png,image/jpeg" className='hidden'
+                            onChange={(e) => updateImage(e, setThumbnail, 1024 * 1024)}
                         />
                     </div>
 

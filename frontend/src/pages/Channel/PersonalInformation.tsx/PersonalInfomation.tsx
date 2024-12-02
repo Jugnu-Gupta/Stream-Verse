@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { FiUpload } from "react-icons/fi";
 import { CHANNELNAVITEMS2 } from "../../../Constants/ChannelNavbar";
 import ChannelNavbar from "../Navbar/ChannelNavbar";
+import { updateImage } from "../../../utils/UpdateImage";
 
 const PersonalInformation: React.FC = () => {
     const [coverImage, setCoverImage] = React.useState<string>("");
@@ -29,8 +30,8 @@ const PersonalInformation: React.FC = () => {
                         className="p-1 absolute rounded-md bg-blue-100 backdrop-blur-xl cursor-pointer outline-none top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                         <FiUpload className="text-primary text-xl blur-xs" />
                     </label>
-                    <input type="file" name="coverImage" id="coverImage" className="hidden"
-                        onChange={(e) => setCoverImage(URL.createObjectURL(e.target.files![0]))} />
+                    <input type="file" name="coverImage" id="coverImage" className="hidden" accept="image/png,image/jpeg"
+                        onChange={(e) => updateImage(e, setCoverImage, 1024 * 1024)} />
                 </div>
                 <div className="flex items-center justify-between">
                     <div className="flex mt-4 gap-4 items-center w-fit mr-2">
@@ -44,8 +45,8 @@ const PersonalInformation: React.FC = () => {
                                 className="p-1 absolute rounded-md bg-blue-100 backdrop-blur-xl cursor-pointer outline-none top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                                 <FiUpload className="text-primary text-xl blur-xs" />
                             </label>
-                            <input type="file" name="avatarImage" id="avatarImage" className="hidden"
-                                onChange={(e) => setAvatarImage(URL.createObjectURL(e.target.files![0]))} />
+                            <input type="file" name="avatarImage" id="avatarImage" className="hidden" accept="image/png,image/jpeg"
+                                onChange={(e) => updateImage(e, setAvatarImage, 1024 * 1024)} />
                         </div>
 
                         <div className="text-primary-text xs:text-sm">

@@ -6,12 +6,13 @@ export const comparePaths = (link: string, curPage: string) => {
 		const channelAdmin: string =
 			"@" + localStorage.getItem("channelAdmin") || "";
 
-		console.log("curUser:", curUser);
-		console.log("channelAdmin:", channelAdmin);
+		// console.log("curUser:", curUser);
+		// console.log("channelAdmin:", channelAdmin);
+
 		// console.log("link:", link);
-		console.log("curPage:", curPage);
+		// console.log("curPage:", curPage);
 		const path = "/" + link.split("/").pop();
-		console.log("path:", path);
+		// console.log("path:", path);
 		if (
 			path === "/videos" &&
 			curUser === channelAdmin &&

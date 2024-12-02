@@ -9,7 +9,7 @@ const ChannelPlaylists: React.FC = () => {
 	if (playlists.length === 0) {
 		return (
 			<div className="flex flex-col justify-center items-center text-center text-white px-4 w-full max-w-6xl mx-auto mt-4 z-0 mb-4">
-				<PiFolder className="text-4xl text-primary bg-blue-100 rounded-full p-1" />
+				<PiFolder className="text-4xl text-primary bg-blue-100 rounded-full p-1.5" />
 				<h1 className="text-md font-semibold">No Playlists Created</h1>
 				<p className="text-sm">There are no playlist created on this channel.</p>
 			</div>

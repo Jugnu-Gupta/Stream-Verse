@@ -34,13 +34,13 @@ function App() {
 				<Route path="/" element={<MainLayout />}>
 					<Route index element={<Home />} />
 					<Route path="/search" element={<Search />} />
+					<Route path="/search2" element={<EditVideoModal setShowEditVideo={() => { console.log("hello") }} />} />
+					<Route path="/search3" element={<DeleteVideoModal setShowDeleteVideo={() => { console.log("hello") }} />} />
+					<Route path="/search4" element={<UploadVideoModal setShowUploadVideo={() => { console.log("hello") }} />} />
 					<Route path="/help" element={<Help />} />
 
 					<Route path="/" element={<ProtectedLayout />}>
 						<Route path="/video/:videoId" element={<VideoDetail />} />
-						<Route path="/search2" element={<EditVideoModal setShowEditVideo={() => { console.log("hello") }} />} />
-						<Route path="/search3" element={<DeleteVideoModal setShowDeleteVideo={() => { console.log("hello") }} />} />
-						<Route path="/search4" element={<UploadVideoModal setShowUploadVideo={() => { console.log("hello") }} />} />
 						<Route path="/terms-and-conditions" element={<TermsAndConditions />} />
 						<Route path="/tweets/:tweetId" element={<ChannelTweetComment />} />
 						<Route path="/history" element={<History />} />
@@ -55,7 +55,7 @@ function App() {
 						<Route path="/:adminName/videos" element={<ChannelLayout><ChannelVideos /> </ChannelLayout>} />
 						<Route path="/:adminName/playlists" element={<ChannelLayout><ChannelPlaylists /></ChannelLayout>} />
 						<Route path="/:adminName/tweets" element={<ChannelLayout><ChannelTweets /> </ChannelLayout>} />
-						<Route path="/:adminName/subscribed" element={<ChannelLayout>	<ChannelSubscribed /> </ChannelLayout>} />
+						<Route path="/:adminName/subscribed" element={<ChannelLayout><ChannelSubscribed /> </ChannelLayout>} />
 					</Route>
 
 					<Route path="/login" element={<Login />} />

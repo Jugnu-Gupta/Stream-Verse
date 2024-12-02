@@ -1,8 +1,9 @@
 import React from 'react';
 import { RxCross2 } from "react-icons/rx";
-// import thumbnail from '../../assets/thumbnail.png';
 import { MdOutlineFileUpload } from "react-icons/md";
 import { twMerge } from 'tailwind-merge';
+import toast from 'react-hot-toast';
+import { validateImageSize } from '../../utils/ValidateImageSize';
 
 interface UploadVideoModalProps {
     setShowUploadVideo: React.Dispatch<React.SetStateAction<boolean>>;
@@ -20,7 +21,16 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setShowUploadVideo 
     const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         divRef.current!.classList.remove('opacity-50');
-        setSelectedVideo(URL.createObjectURL(e.dataTransfer.files[0]));
+        if (e.dataTransfer.files[0].type !== 'video/mp4') {
+            console.log('Invalid file type');
+        } else {
+            if (e.dataTransfer.files[0].size > 15000000) { // filesize > 15MB
+                console.log('Video size should not exceed 15 MB');
+                toast.error("Video size should not exceed 15 MB");
+            } else {
+                setSelectedVideo(URL.createObjectURL(e.dataTransfer.files[0]));
+            }
+        }
     }
 
     return (
@@ -39,15 +49,15 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setShowUploadVideo 
                 <div className='mt-4 text-white'>
                     <div>
                         <label htmlFor={selectedVideo ? "" : "video"} className='text-sm mb-1'>
-                            <div className={twMerge('border-dashed border-[1px] border-white p-1', !selectedVideo && "cursor-pointer")}>
+                            <div className={twMerge('border-dashed border-[1px] border-white p-1 aspect-video flex items-center justify-center', !selectedVideo && "cursor-pointer")}>
                                 {
                                     selectedVideo ? (<video src={selectedVideo} controls></video>) :
                                         (<div ref={divRef}
                                             onDragOver={(e) => onDragOver(e)}
                                             onDragLeave={() => onDragLeave()}
                                             onDrop={(e) => onDrop(e)}
-                                            className='w-full flex flex-col items-center my-4 px-2'>
-                                            <MdOutlineFileUpload className='text-6xl p-1 bg-white text-primary rounded-full' />
+                                            className='w-full flex flex-col items-center px-2'>
+                                            <MdOutlineFileUpload className='text-5xl p-1 bg-white text-primary rounded-full' />
                                             <h2 className='text-xs font-semibold mt-2 mb-1'>Drag and drop video files to upload</h2>
                                             <p className='text-xs'>Your videos will be private untill you publish them</p>
                                         </div >)
@@ -63,7 +73,9 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setShowUploadVideo 
                         <label htmlFor="thumbnail" className='text-sm mb-1'>
                             <p>Thumbnail<sup>*</sup></p>
                         </label>
-                        <input type="file" name="thumbnail" id="thumbnail" accept="image/png" className='text-sm border-[1px] border-white file:bg-primary file:border-none file:text-white w-full p-1' />
+                        <input type="file" name="thumbnail" id="thumbnail" accept="image/png,image/jpeg"
+                            onChange={(e) => validateImageSize(e, 1024 * 1024)}
+                            className='text-sm border-[1px] border-white file:bg-primary file:border-none file:text-white w-full p-1' />
                     </div>
 
                     <div className='mt-2'>
