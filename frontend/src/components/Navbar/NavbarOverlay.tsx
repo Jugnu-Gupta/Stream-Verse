@@ -6,8 +6,8 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import { useDispatch, useSelector } from "react-redux";
 import { setShowNavbar } from "../../context/slices/NavbarSlice";
 import { RootState } from "../../context/Store";
-import { useNavigate } from "react-router-dom";
-import { comparePaths } from "../../utils/ComaprePaths";
+import { useNavigate, useParams } from "react-router-dom";
+import { comparePaths } from "../../utils/ComparePaths";
 import { addAdminName } from "../../utils/AddAdminName";
 
 
@@ -15,6 +15,7 @@ const Navbar: React.FC = () => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const page = "/" + window.location.pathname.split("/").pop();
+	const { adminName } = useParams<{ adminName: string }>();
 	const showNavbar: boolean = useSelector(
 		(state: RootState) => state.navbar.showNavbar
 	);
@@ -63,7 +64,7 @@ const Navbar: React.FC = () => {
 										className="w-full animate-right outline-none"
 										onClick={() => navigate(addAdminName(item.path))}>
 										<p className={twMerge("h-9 px-2 flex items-center gap-6 rounded-lg border-2 border-white hover:bg-primary",
-											(comparePaths(item.path, page) && "bg-primary"))}>
+											(comparePaths(addAdminName(item.path), page, adminName ? adminName : null) && "bg-primary"))}>
 											<item.iconOutline
 												className={twMerge(
 													item.iconOutlineClass,
@@ -95,7 +96,7 @@ const Navbar: React.FC = () => {
 										className="w-full animate-right outline-none"
 										onClick={() => navigate(addAdminName(item.path))}>
 										<p className={twMerge("h-9 px-2 flex items-center gap-6 rounded-lg border-2 border-white hover:bg-primary",
-											(comparePaths(item.path, page) && "bg-primary"))}>
+											(comparePaths(addAdminName(item.path), page, addAdminName(item.path)) && "bg-primary"))}>
 											<item.iconOutline
 												className={twMerge(
 													item.iconOutlineClass,

@@ -1,10 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ChannelPlaylistCard from "./ChannelPlaylistCard";
 import { PiFolder } from "react-icons/pi";
+import makeApiRequest, { ApiRequestOptions } from "../../../utils/MakeApiRequest";
 
 
 const ChannelPlaylists: React.FC = () => {
 	const [playlists, setPlaylists] = React.useState([]);
+	const channelAdmin = localStorage.getItem("userName");
+
+	useEffect(() => {
+		// fetch playlists
+		const getPlaylists = async () => {
+			const request: ApiRequestOptions = {
+				method: "get",
+				url: `/api/v1/playlists?userId=${channelAdmin}`,
+			};
+
+			const { data }: any = await makeApiRequest(request);
+			console.log(data);
+			setPlaylists(data.playlists);
+		}
+		// setPlaylists([]);
+		getPlaylists();
+	}, [channelAdmin]);
 
 	if (playlists.length === 0) {
 		return (
@@ -17,7 +35,12 @@ const ChannelPlaylists: React.FC = () => {
 	}
 
 	return (
-		<div className="grid px-4 w-full max-w-6xl mx-auto justify-items-center mt-4 z-0 2xl:grid-cols-4 2lg:grid-cols-3 2sm:grid-cols-2 grid-cols-1">
+		< div className="grid px-4 w-full max-w-6xl mx-auto justify-items-center mt-4 z-0 2xl:grid-cols-4 2lg:grid-cols-3 2sm:grid-cols-2 grid-cols-1" >
+			{
+				playlists.map((playlist: any) => (
+					<ChannelPlaylistCard key={playlist._id} playlist={playlist} />
+				))
+			}
 			<ChannelPlaylistCard />
 			<ChannelPlaylistCard />
 			<ChannelPlaylistCard />
@@ -27,7 +50,7 @@ const ChannelPlaylists: React.FC = () => {
 			<ChannelPlaylistCard />
 			<ChannelPlaylistCard />
 			<ChannelPlaylistCard />
-		</div>
+		</div >
 	);
 };
 

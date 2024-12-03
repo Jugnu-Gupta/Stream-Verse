@@ -47,8 +47,8 @@ const NAVITEMS: NavItem[] = [
 	},
 	{
 		id: 4,
-		path: "/collections",
-		title: "Collections",
+		path: "/playlists",
+		title: "Playlists",
 		isTop: true,
 		iconFilled: Icons.PiFolderBold,
 		iconFilledClass: "text-lg",

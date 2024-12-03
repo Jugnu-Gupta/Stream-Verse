@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import videoplayback from "../../assets/videoplayback.mp4";
 import thumbnail from "../../assets/thumbnail.png";
 import VideoComments from "./VideoComments";
@@ -6,17 +6,59 @@ import VideoListView from "./VideoList";
 // import { useParams } from "react-router-dom";
 import LikeSubscribeSave from "./LikeSubscribeSave";
 import VideoPlaylist from "./VideoPlaylist";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import makeApiRequest, { ApiRequestOptions } from "../../utils/MakeApiRequest";
 
 const VideoDetail: React.FC = () => {
 	const [readMore, setReadMore] = React.useState(false);
-	// const param = useParams<{ videoId: string, listId: string }>();
-	// const videoId = param.videoId;
-	// const listId = param.listId;
+	const [searchParams] = useSearchParams();
+	const { videoId } = useParams();
+	const navigate = useNavigate();
+	const listId = searchParams.get("listId");
+	// console.log("videoId:", videoId);
+	// console.log("listId:", listId);
 	const views = 100;
 	const videoNo = 1;
 	const uploadedAt = "1 day";
 	const Subscribers = 100;
 	const description = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptates. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptates. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptates. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptates.";
+
+	useEffect(() => {
+		// fetch video details
+		const fetchVideoDetails = async () => {
+			try {
+				if (listId) {
+					const playlistRequest: ApiRequestOptions = {
+						method: "get",
+						url: `/api/v1/playlists/${listId}`,
+					};
+					const { data: playlist } = await makeApiRequest(playlistRequest);
+					console.log(playlist);
+				}
+
+				const videoRequest: ApiRequestOptions = {
+					method: "get",
+					url: `/api/v1/videos/${videoId}`,
+				};
+				const { data: video } = await makeApiRequest(videoRequest);
+				console.log(video);
+
+				const subcribersRequest: ApiRequestOptions = {
+					method: "get",
+					url: `/api/v1/subscriptions/user/${video.ownerId}`,
+				};
+
+				const { data: subcribersData } = await makeApiRequest(subcribersRequest);
+				console.log(subcribersData);
+			} catch (error) {
+				console.log(error);
+				navigate(listId ? `/video/${videoId}` : `/`);
+				// navigate(listId ? `/video/${videoId}` : `/video/${videoId}`);
+			}
+		};
+
+		fetchVideoDetails();
+	}, [listId, videoId, navigate]);
 
 
 	return (

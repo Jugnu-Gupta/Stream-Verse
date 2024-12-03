@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import mongoose from "mongoose";
+import mongoose, { isValidObjectId } from "mongoose";
 import { UserType } from "../types/user.type";
 import { Playlist } from "../models/playlist.model";
 import { asyncHandler } from "../utils/asyncHandler";
@@ -37,17 +37,56 @@ const createPlaylist = asyncHandler(
             .json(new ApiResponse(201, { playlist }, "Playlist created"));
     }
 );
+
 interface GetUserPlaylistParams {
     userId?: string;
 }
+
 const getUserPlaylist = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { userId }: GetUserPlaylistParams = req.params;
+        const { userId }: GetUserPlaylistParams = req.query;
+        if (!isValidObjectId(userId)) {
+            throw new ApiError(400, "Invalid user id");
+        }
         if (!userId) {
             throw new ApiError(400, "User id is required");
         }
 
-        const playlists = await Playlist.find({ ownerId: userId });
+        // get thumbnail of 1st video and no. of videos of each playlist
+        const playlists = await Playlist.aggregate([
+            { $match: { ownerId: new mongoose.Types.ObjectId(userId) } },
+            {
+                $lookup: {
+                    from: "videos",
+                    localField: "videos",
+                    foreignField: "_id",
+                    as: "videos",
+                },
+            },
+            {
+                $lookup: {
+                    from: "users", // Join with the 'users' collection
+                    localField: "ownerId",
+                    foreignField: "_id",
+                    as: "owner", // Keep owner as an array
+                },
+            },
+            { $addFields: { owner: { $arrayElemAt: ["$owner", 0] } } },
+            {
+                $project: {
+                    _id: 1,
+                    name: 1,
+                    description: 1,
+                    thumbnail: { $arrayElemAt: ["$videos.thumbnail", 0] }, // First video's thumbnail
+                    numberOfVideos: { $size: "$videos" }, // Count videos
+                    owner: {
+                        userName: "$owner.userName",
+                        email: "$owner.email",
+                    },
+                    updatedAt: 1,
+                },
+            },
+        ]);
         if (!playlists?.length) {
             throw new ApiError(404, "No playlists found");
         }
@@ -65,12 +104,59 @@ interface GetPlaylistByIdParams {
 const getPlaylistById = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
         const { playlistId }: GetPlaylistByIdParams = req.params;
+
+        if (!isValidObjectId(playlistId)) {
+            throw new ApiError(400, "Invalid playlist id");
+        }
         if (!playlistId) {
             throw new ApiError(400, "Playlist id is required");
         }
 
-        const playlist = await Playlist.findById(playlistId);
-        if (!playlist) {
+        // get videos of playlist and owner info
+        const playlist = await Playlist.aggregate([
+            { $match: { _id: new mongoose.Types.ObjectId(playlistId) } },
+            {
+                $lookup: {
+                    from: "videos",
+                    localField: "videos",
+                    foreignField: "_id",
+                    as: "videos",
+                    pipeline: [
+                        {
+                            $project: {
+                                _id: 1,
+                                thumbnail: 1,
+                                title: 1,
+                                duration: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $lookup: {
+                    from: "users", // Join with the 'users' collection
+                    localField: "ownerId",
+                    foreignField: "_id",
+                    as: "owner", // Keep owner as an array
+                },
+            },
+            { $addFields: { owner: { $arrayElemAt: ["$owner", 0] } } },
+            {
+                $project: {
+                    _id: 1,
+                    name: 1,
+                    description: 1,
+                    videos: 1,
+                    owner: {
+                        userName: "$owner.userName",
+                        email: "$owner.email",
+                    },
+                    updatedAt: 1,
+                },
+            },
+        ]);
+        if (!playlist?.length) {
             throw new ApiError(404, "Playlist not found");
         }
 

@@ -7,6 +7,7 @@ import {
     getVideoById,
     videoUpdate,
     deleteVideo,
+    getVideosByIds,
     ToggleVideoPublishStatus,
 } from "../controllers/video.controller";
 
@@ -24,6 +25,8 @@ router
         ]),
         uploadVideo
     );
+
+router.route("/subscription").get(getVideosByIds); // incomplete
 
 // Get, update, delete video by id (secured routes)
 router

@@ -24,13 +24,13 @@ const ChannelTweets: React.FC = () => {
 	}, [comment]);
 
 	return (
-		<div className="px-6 xs:px-2 pt-4 mx-auto w-full max-w-6xl flex justify-center flex-col gap-4">
+		<div className="px-6 xs:px-2 pt-4 mx-auto w-full max-w-6xl flex flex-col gap-4">
 
 			{/* Add Tweets */}
-			<div className={twMerge("text-white flex flex-col w-full items-end px-4 xs:px-3 py-2  bg-background-secondary rounded-xl border-[1px] pt-1",
+			<div className={twMerge("text-white flex flex-col w-full items-end px-3 xs:px-2 py-1 bg-background-secondary rounded-xl border-[1px] pt-1",
 				adminName !== channelAdmin && "hidden")}>
 
-				<div className="flex items-center gap-2 w-full py-2">
+				<div className="flex items-center gap-2 w-full pt-1 pb-2 xs:pt-0.5">
 					<div className="overflow-hidden rounded-full w-9">
 						<img
 							src={thumbnail}
@@ -44,7 +44,7 @@ const ChannelTweets: React.FC = () => {
 				</div>
 
 				<textarea
-					className="w-full h-8 pb-1 mb-2 xs:text-sm  overflow-hidden outline-none resize-none bg-transparent"
+					className="w-full h-8 pb-1 xs:text-sm  overflow-hidden outline-none resize-none bg-transparent"
 					placeholder="Add a tweet..."
 					value={comment}
 					onChange={(e) => setComment(e.target.value)}

@@ -4,9 +4,14 @@ import { Link } from "react-router-dom";
 import { CgPlayList } from "react-icons/cg";
 import { FaPlay } from "react-icons/fa";
 
-const ChannelVideosCard: React.FC = () => {
-	const videos = 100;
-	const updatedAt = "3 days";
+interface ChannelVideosCardProps {
+	playlist?: any;
+}
+
+const ChannelVideosCard: React.FC<ChannelVideosCardProps> = ({ playlist }) => {
+	const videos = playlist?.numberOfVideos || 100;
+	const updatedAt = playlist?.updatedAt || "3 days";
+	const _thumbnail = playlist?.videos[0]?.thumbnail || thumbnail;
 
 	return (
 		<div className="flex flex-col gap-2 p-2 max-w-[400px]">
@@ -14,7 +19,7 @@ const ChannelVideosCard: React.FC = () => {
 				<div className="overflow-hidden rounded-xl relative">
 					{/* // 1st video img. */}
 					<img
-						src={thumbnail}
+						src={_thumbnail}
 						alt="thumbnail"
 						className="rounded-xl aspect-video duration-300"
 					/>

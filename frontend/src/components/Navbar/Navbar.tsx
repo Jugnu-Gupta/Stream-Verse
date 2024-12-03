@@ -1,16 +1,17 @@
 import React from "react";
 import NAVITEMS from "../../Constants/Navbar";
 import { twMerge } from "tailwind-merge";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useWindowWidth from "../../hooks/useWindowWidth";
 import { addAdminName } from "../../utils/AddAdminName";
-import { comparePaths } from "../../utils/ComaprePaths";
+import { comparePaths } from "../../utils/ComparePaths";
 
 const Navbar: React.FC = () => {
 	const navigate = useNavigate();
 	const windowWidth = useWindowWidth();
 	const isVideoDetailPage = window.location.pathname.includes("/video/");
 	const page = "/" + window.location.pathname.split("/").pop();
+	const { adminName } = useParams<{ adminName: string }>();
 	// console.log(page);
 	// console.log("pathname:", addAdminName(window.location.pathname));
 
@@ -30,7 +31,7 @@ const Navbar: React.FC = () => {
 										className="w-full outline-none"
 										onClick={() => navigate(addAdminName(item.path))}>
 										<p className={twMerge("px-2 h-9 flex items-center gap-6 border-2 border-white rounded-lg hover:bg-primary",
-											(comparePaths(item.path, page) && "bg-primary"))}>
+											(comparePaths(addAdminName(item.path), page, adminName ? adminName : null) && "bg-primary"))}>
 											<item.iconOutline
 												className={twMerge(
 													item.iconOutlineClass,
@@ -57,7 +58,7 @@ const Navbar: React.FC = () => {
 										className="w-full outline-none"
 										onClick={() => navigate(addAdminName(item.path))}>
 										<p className={twMerge("h-9 px-2 flex items-center border-2 border-white gap-6 rounded-lg hover:bg-primary",
-											(comparePaths(item.path, page) && "bg-primary"))}>
+											(comparePaths(addAdminName(item.path), page, adminName ? adminName : null) && "bg-primary"))}>
 											<item.iconOutline
 												className={twMerge(
 													item.iconOutlineClass,
@@ -83,7 +84,7 @@ const Navbar: React.FC = () => {
 								className="w-full outline-none"
 								onClick={() => navigate(addAdminName(item.path))}>
 								<p className={twMerge("px-2 h-9 flex items-center gap-6 rounded-lg border-2 border-white hover:bg-primary",
-									(comparePaths(item.path, page) && "bg-primary"))}>
+									(comparePaths(addAdminName(item.path), page, adminName ? adminName : null) && "bg-primary"))}>
 									<item.iconOutline
 										className={twMerge(
 											item.iconOutlineClass,
@@ -104,7 +105,7 @@ const Navbar: React.FC = () => {
 								className="w-full outline-none"
 								onClick={() => navigate(addAdminName(item.path))}>
 								<p className={twMerge("h-9 px-2 flex items-center border-2 border-white gap-6 rounded-lg hover:bg-primary",
-									(comparePaths(item.path, page) && "bg-primary"))}>
+									(comparePaths(addAdminName(item.path), page, adminName ? adminName : null) && "bg-primary"))}>
 									<item.iconOutline
 										className={twMerge(
 											item.iconOutlineClass,
