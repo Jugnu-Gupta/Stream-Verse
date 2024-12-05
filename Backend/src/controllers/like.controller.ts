@@ -20,7 +20,7 @@ const toggleLike = asyncHandler(async (req: RequestWithUser, res: Response) => {
     if (!entityId) {
         throw new ApiError(400, "Video id is required");
     }
-    if (["Comment", "Video", "Tweet"].indexOf(entityType) === -1) {
+    if (["Comment", "Video", "Tweet"].includes(entityType)) {
         throw new ApiError(400, "Invalid entity type");
     }
 
