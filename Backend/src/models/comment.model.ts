@@ -30,6 +30,14 @@ const commentSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
+// Add custom validation to ensure either tweetId or videoId is provided
+commentSchema.pre("validate", function (next) {
+    if (!this.videoId && !this.tweetId) {
+        return next(new Error("Either videoId or tweetId must be provided."));
+    }
+    next();
+});
+
 commentSchema.plugin(mongooseAggregatePaginate);
 
 export const Comment = mongoose.model<CommentTypeDoc>("Comment", commentSchema);

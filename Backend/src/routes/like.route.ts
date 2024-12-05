@@ -8,13 +8,13 @@ import {
 
 const router = Router();
 
-// Like or dislike a tweet, video, comment by id (secured route)
-router
-    .route("/:entityType/:entityId")
-    .post(verifyJWT, toggleLike)
-    .post(verifyJWT, toggleDislike);
+// Like a tweet, video, comment by id (secured route)
+router.route("/:entityType/:entityId/like").post(verifyJWT, toggleLike);
 
-// Fetch all liked videos by user (secured route)
+// dislike a tweet, video, comment by id (secured route)
+router.route("/:entityType/:entityId/dislike").post(verifyJWT, toggleDislike);
+
+// get all liked videos by user (secured route)
 router.route("/video").get(verifyJWT, getLikedVideos);
 
 export default router;
