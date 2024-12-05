@@ -184,29 +184,29 @@ const getVideoById = asyncHandler(
             {
                 $lookup: {
                     from: "Like",
-                    localField: "_id",
-                    foreignField: "videoId",
-                    as: "videoLikes",
+                    let: { videoId: "$_id" },
                     pipeline: [
                         {
-                            $project: {
-                                _id: 1,
-                                isLiked: 1,
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$entityId", "$$videoId"],
+                                        },
+                                        {
+                                            $eq: ["$entityType", "Video"],
+                                        },
+                                    ],
+                                },
                             },
                         },
+                        { $project: { _id: 1, isLiked: 1 } },
                     ],
+                    as: "videoLikes",
                 },
             },
             {
-                $project: {
-                    title: 1,
-                    description: 1,
-                    thumbnail: 1,
-                    videoFile: 1,
-                    ownerId: 1,
-                    duration: 1,
-                    quality: 1,
-                    isPublished: 1,
+                $addFields: {
                     likes: {
                         $size: {
                             $filter: {
@@ -225,6 +225,20 @@ const getVideoById = asyncHandler(
                             },
                         },
                     },
+                },
+            },
+            {
+                $project: {
+                    title: 1,
+                    description: 1,
+                    thumbnail: 1,
+                    videoFile: 1,
+                    ownerId: 1,
+                    duration: 1,
+                    quality: 1,
+                    isPublished: 1,
+                    likes: 1,
+                    dislikes: 1,
                 },
             },
         ]);
@@ -265,29 +279,29 @@ const getVideosByIds = asyncHandler(
             {
                 $lookup: {
                     from: "Like",
-                    localField: "_id",
-                    foreignField: "videoId",
-                    as: "videoLikes",
+                    let: { videoId: "$_id" },
                     pipeline: [
                         {
-                            $project: {
-                                _id: 1,
-                                isLiked: 1,
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$entityId", "$$videoId"],
+                                        },
+                                        {
+                                            $eq: ["$entityType", "Video"],
+                                        },
+                                    ],
+                                },
                             },
                         },
+                        { $project: { _id: 1, isLiked: 1 } },
                     ],
+                    as: "videoLikes",
                 },
             },
             {
-                $project: {
-                    title: 1,
-                    description: 1,
-                    thumbnail: 1,
-                    videoFile: 1,
-                    ownerId: 1,
-                    duration: 1,
-                    quality: 1,
-                    isPublished: 1,
+                $addFields: {
                     likes: {
                         $size: {
                             $filter: {
@@ -306,6 +320,20 @@ const getVideosByIds = asyncHandler(
                             },
                         },
                     },
+                },
+            },
+            {
+                $project: {
+                    title: 1,
+                    description: 1,
+                    thumbnail: 1,
+                    videoFile: 1,
+                    ownerId: 1,
+                    duration: 1,
+                    quality: 1,
+                    isPublished: 1,
+                    likes: 1,
+                    dislikes: 1,
                 },
             },
         ]);
@@ -437,10 +465,25 @@ const deleteVideo = asyncHandler(
             {
                 $lookup: {
                     from: "Like",
-                    localField: "_id",
-                    foreignField: "videoId",
+                    let: { videoId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$entityId", "$$videoId"],
+                                        },
+                                        {
+                                            $eq: ["$entityType", "Video"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                        { $project: { _id: 1 } },
+                    ],
                     as: "videoLikes",
-                    pipeline: [{ $project: { _id: 1 } }],
                 },
             },
             {
@@ -453,10 +496,31 @@ const deleteVideo = asyncHandler(
                         {
                             $lookup: {
                                 from: "Like",
-                                localField: "_id",
-                                foreignField: "commentId",
+                                let: { commentId: "$_id" },
+                                pipeline: [
+                                    {
+                                        $match: {
+                                            $expr: {
+                                                $and: [
+                                                    {
+                                                        $eq: [
+                                                            "$entityId",
+                                                            "$$commentId",
+                                                        ],
+                                                    },
+                                                    {
+                                                        $eq: [
+                                                            "$entityType",
+                                                            "Comment",
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    },
+                                    { $project: { _id: 1 } },
+                                ],
                                 as: "commentLikes",
-                                pipeline: [{ $project: { _id: 1 } }],
                             },
                         },
                         { $project: { commentLikes: 1, _id: 1 } },

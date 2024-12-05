@@ -64,8 +64,23 @@ const getVideoComments = asyncHandler(
             {
                 $lookup: {
                     from: "Like",
-                    localField: "_id",
-                    foreignField: "commentId",
+                    let: { commentId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$entityId", "$$commentId"],
+                                        },
+                                        {
+                                            $eq: ["$entityType", "Comment"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
                     as: "Likes",
                 },
             },
@@ -132,7 +147,7 @@ const getTweetComments = asyncHandler(
         const { tweetId, parentId = null }: GetTweetCommentsParams = req.params;
         const { page = 1, limit = 10 }: GetTweetCommentsQuery = req.query;
         if (!isValidObjectId(tweetId)) {
-            throw new ApiError(400, "Video id is required");
+            throw new ApiError(400, "Tweet id is required");
         }
 
         const skip = (page - 1) * limit;
@@ -171,8 +186,23 @@ const getTweetComments = asyncHandler(
             {
                 $lookup: {
                     from: "Like",
-                    localField: "_id",
-                    foreignField: "commentId",
+                    let: { commentId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$entityId", "$$commentId"],
+                                        },
+                                        {
+                                            $eq: ["$entityType", "Comment"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
                     as: "Likes",
                 },
             },

@@ -94,11 +94,34 @@ const getUserTweet = asyncHandler(
                     ],
                 },
             },
+            // {
+            //     $lookup: {
+            //         from: "Like",
+            //         localField: "_id",
+            //         foreignField: "tweetId",
+            //         as: "Likes",
+            //     },
+            // },
             {
                 $lookup: {
                     from: "Like",
-                    localField: "_id",
-                    foreignField: "tweetId",
+                    let: { tweetId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$entityId", "$$tweetId"],
+                                        },
+                                        {
+                                            $eq: ["$entityType", "Tweet"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
                     as: "Likes",
                 },
             },
@@ -255,10 +278,25 @@ const deleteTweet = asyncHandler(
             {
                 $lookup: {
                     from: "Like",
-                    localField: "_id",
-                    foreignField: "tweetId",
+                    let: { tweetId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$entityId", "$$tweetId"],
+                                        },
+                                        {
+                                            $eq: ["$entityType", "Tweet"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                        { $project: { _id: 1 } },
+                    ],
                     as: "tweetLikes",
-                    pipeline: [{ $project: { _id: 1 } }],
                 },
             },
             {
@@ -271,10 +309,31 @@ const deleteTweet = asyncHandler(
                         {
                             $lookup: {
                                 from: "Like",
-                                localField: "_id",
-                                foreignField: "commentId",
+                                let: { commentId: "$_id" },
+                                pipeline: [
+                                    {
+                                        $match: {
+                                            $expr: {
+                                                $and: [
+                                                    {
+                                                        $eq: [
+                                                            "$entityId",
+                                                            "$$commentId",
+                                                        ],
+                                                    },
+                                                    {
+                                                        $eq: [
+                                                            "$entityType",
+                                                            "Comment",
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    },
+                                    { $project: { _id: 1 } },
+                                ],
                                 as: "commentLikes",
-                                pipeline: [{ $project: { _id: 1 } }],
                             },
                         },
                         { $project: { commentLikes: 1, _id: 1 } },

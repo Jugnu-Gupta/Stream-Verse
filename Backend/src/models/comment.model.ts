@@ -13,7 +13,6 @@ const commentSchema = new mongoose.Schema(
         ownerId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-            unique: true,
         },
         videoId: {
             type: mongoose.Schema.Types.ObjectId,

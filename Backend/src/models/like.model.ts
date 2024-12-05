@@ -5,25 +5,19 @@ interface LikeTypeDoc extends mongoose.Document, LikeType {}
 
 const likeSchema = new mongoose.Schema(
     {
-        commentId: {
+        // Reference to the associated entity (Comment, Video, or Tweet)
+        entityId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Comment",
-            unique: true,
+            required: true,
         },
-        videoId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Video",
-            unique: true,
-        },
-        tweetId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Tweet",
-            unique: true,
+        entityType: {
+            type: String,
+            enum: ["Comment", "Video", "Tweet"],
+            required: true,
         },
         likedBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-            unique: true,
             required: true,
         },
         isLiked: {
@@ -33,5 +27,8 @@ const likeSchema = new mongoose.Schema(
     },
     { timestamps: true }
 );
+
+// Create a compound index to ensure uniqueness for likedBy + entityId + entityType
+likeSchema.index({ likedBy: 1, entityId: 1, entityType: 1 }, { unique: true });
 
 export const Like = mongoose.model<LikeTypeDoc>("Like", likeSchema);

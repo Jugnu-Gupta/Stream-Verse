@@ -40,8 +40,29 @@ const getAdminChannelStats = asyncHandler(
                         {
                             $lookup: {
                                 from: "Like",
-                                localField: "_id",
-                                foreignField: "videoId",
+                                let: { videoId: "$_id" },
+                                pipeline: [
+                                    {
+                                        $match: {
+                                            $expr: {
+                                                $and: [
+                                                    {
+                                                        $eq: [
+                                                            "$entityId",
+                                                            "$$videoId",
+                                                        ],
+                                                    },
+                                                    {
+                                                        $eq: [
+                                                            "$entityType",
+                                                            "Video",
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    },
+                                ],
                                 as: "Likes",
                             },
                         },
@@ -121,8 +142,23 @@ const getAdminChannelVideos = asyncHandler(
             {
                 $lookup: {
                     from: "Like",
-                    localField: "_id",
-                    foreignField: "videoId",
+                    let: { videoId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$entityId", "$$videoId"],
+                                        },
+                                        {
+                                            $eq: ["$entityType", "Video"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
                     as: "Likes",
                 },
             },
