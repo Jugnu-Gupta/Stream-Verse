@@ -55,7 +55,7 @@ const getAdminChannelStats = asyncHandler(
                                                     {
                                                         $eq: [
                                                             "$entityType",
-                                                            "Video",
+                                                            "video",
                                                         ],
                                                     },
                                                 ],
@@ -152,7 +152,7 @@ const getAdminChannelVideos = asyncHandler(
                                             $eq: ["$entityId", "$$videoId"],
                                         },
                                         {
-                                            $eq: ["$entityType", "Video"],
+                                            $eq: ["$entityType", "video"],
                                         },
                                     ],
                                 },

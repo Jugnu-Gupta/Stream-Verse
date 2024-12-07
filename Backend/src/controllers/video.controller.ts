@@ -194,7 +194,7 @@ const getVideoById = asyncHandler(
                                             $eq: ["$entityId", "$$videoId"],
                                         },
                                         {
-                                            $eq: ["$entityType", "Video"],
+                                            $eq: ["$entityType", "video"],
                                         },
                                     ],
                                 },
@@ -289,7 +289,7 @@ const getVideosByIds = asyncHandler(
                                             $eq: ["$entityId", "$$videoId"],
                                         },
                                         {
-                                            $eq: ["$entityType", "Video"],
+                                            $eq: ["$entityType", "video"],
                                         },
                                     ],
                                 },
@@ -475,7 +475,7 @@ const deleteVideo = asyncHandler(
                                             $eq: ["$entityId", "$$videoId"],
                                         },
                                         {
-                                            $eq: ["$entityType", "Video"],
+                                            $eq: ["$entityType", "video"],
                                         },
                                     ],
                                 },
@@ -489,10 +489,22 @@ const deleteVideo = asyncHandler(
             {
                 $lookup: {
                     from: "Comment",
-                    localField: "_id",
-                    foreignField: "videoId",
-                    as: "videoComments",
+                    let: { videoId: "$_id" },
                     pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$entityId", "$$videoId"],
+                                        },
+                                        {
+                                            $eq: ["$entityType", "video"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
                         {
                             $lookup: {
                                 from: "Like",
@@ -511,7 +523,7 @@ const deleteVideo = asyncHandler(
                                                     {
                                                         $eq: [
                                                             "$entityType",
-                                                            "Comment",
+                                                            "comment",
                                                         ],
                                                     },
                                                 ],
@@ -525,6 +537,7 @@ const deleteVideo = asyncHandler(
                         },
                         { $project: { commentLikes: 1, _id: 1 } },
                     ],
+                    as: "videoComments",
                 },
             },
             {

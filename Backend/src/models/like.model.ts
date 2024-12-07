@@ -12,7 +12,7 @@ const likeSchema = new mongoose.Schema(
         },
         entityType: {
             type: String,
-            enum: ["Comment", "Video", "Tweet"],
+            enum: ["comment", "video", "tweet"],
             required: true,
         },
         likedBy: {

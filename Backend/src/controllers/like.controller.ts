@@ -20,7 +20,7 @@ const toggleLike = asyncHandler(async (req: RequestWithUser, res: Response) => {
     if (!entityId) {
         throw new ApiError(400, "Video id is required");
     }
-    if (["Comment", "Video", "Tweet"].includes(entityType)) {
+    if (!["comment", "video", "tweet"].includes(entityType)) {
         throw new ApiError(400, "Invalid entity type");
     }
 
@@ -71,7 +71,7 @@ const toggleDislike = asyncHandler(
         if (!entityId) {
             throw new ApiError(400, "Video id is required");
         }
-        if (["Comment", "Video", "Tweet"].indexOf(entityType) === -1) {
+        if (!["comment", "video", "tweet"].includes(entityType)) {
             throw new ApiError(400, "Invalid entity type");
         }
 
@@ -131,7 +131,7 @@ const getLikedVideos = asyncHandler(
             {
                 $match: {
                     likedBy: userId,
-                    entityType: "Video",
+                    entityType: "video",
                 },
             },
             {

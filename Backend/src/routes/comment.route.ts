@@ -1,27 +1,19 @@
 import { verifyJWT } from "../middlewares/auth.middleware";
 import { Router } from "express";
 import {
-    getVideoComments,
-    getTweetComments,
-    createCommentInVideo,
-    createCommentInTweet,
+    getComments,
+    createComment,
     updateComment,
     deleteComment,
 } from "../controllers/comment.controller";
 
 const router = Router();
 
-// Fetch all comments of a video, add a comment to a video (secured route)
+// Fetch all comments of a video/tweet, add a comment to a video/tweet (secured route)
 router
-    .route("/video/:videoId")
-    .get(getVideoComments)
-    .post(verifyJWT, createCommentInVideo);
-
-// Fetch all comments of a tweet, add a comment to a tweet (secured route)
-router
-    .route("/tweet/:tweetId")
-    .get(getTweetComments)
-    .post(verifyJWT, createCommentInTweet);
+    .route("/:entityType/:entityId/:parentId?")
+    .get(getComments)
+    .post(verifyJWT, createComment);
 
 // Update, delete comment by id (secured route)
 router

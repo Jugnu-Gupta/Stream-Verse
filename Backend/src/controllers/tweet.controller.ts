@@ -94,14 +94,6 @@ const getUserTweet = asyncHandler(
                     ],
                 },
             },
-            // {
-            //     $lookup: {
-            //         from: "Like",
-            //         localField: "_id",
-            //         foreignField: "tweetId",
-            //         as: "Likes",
-            //     },
-            // },
             {
                 $lookup: {
                     from: "Like",
@@ -115,7 +107,7 @@ const getUserTweet = asyncHandler(
                                             $eq: ["$entityId", "$$tweetId"],
                                         },
                                         {
-                                            $eq: ["$entityType", "Tweet"],
+                                            $eq: ["$entityType", "tweet"],
                                         },
                                     ],
                                 },
@@ -128,8 +120,23 @@ const getUserTweet = asyncHandler(
             {
                 $lookup: {
                     from: "Comment",
-                    localField: "_id",
-                    foreignField: "tweetId",
+                    let: { tweetId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$entityId", "$$tweetId"],
+                                        },
+                                        {
+                                            $eq: ["$entityType", "tweet"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
                     as: "Comments",
                 },
             },
@@ -288,7 +295,7 @@ const deleteTweet = asyncHandler(
                                             $eq: ["$entityId", "$$tweetId"],
                                         },
                                         {
-                                            $eq: ["$entityType", "Tweet"],
+                                            $eq: ["$entityType", "tweet"],
                                         },
                                     ],
                                 },
@@ -302,10 +309,22 @@ const deleteTweet = asyncHandler(
             {
                 $lookup: {
                     from: "Comment",
-                    localField: "_id",
-                    foreignField: "tweetId",
-                    as: "tweetComments",
+                    let: { tweetId: "$_id" },
                     pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$entityId", "$$tweetId"],
+                                        },
+                                        {
+                                            $eq: ["$entityType", "tweet"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
                         {
                             $lookup: {
                                 from: "Like",
@@ -324,7 +343,7 @@ const deleteTweet = asyncHandler(
                                                     {
                                                         $eq: [
                                                             "$entityType",
-                                                            "Comment",
+                                                            "comment",
                                                         ],
                                                     },
                                                 ],
@@ -338,6 +357,7 @@ const deleteTweet = asyncHandler(
                         },
                         { $project: { commentLikes: 1, _id: 1 } },
                     ],
+                    as: "tweetComments",
                 },
             },
             {

@@ -11,28 +11,37 @@ interface RequestWithUser extends Request {
     user: UserType;
 }
 
-interface GetVideoCommentsParams {
-    videoId?: string;
+interface GetCommentsParams {
+    entityId: string;
+    entityType: string;
     parentId?: string | null;
 }
-interface GetVideoCommentsQuery {
+interface GetCommentsQuery {
     page?: number;
     limit?: number;
 }
 
-const getVideoComments = asyncHandler(
+const getComments = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { videoId, parentId = null }: GetVideoCommentsParams = req.params;
-        const { page = 1, limit = 10 }: GetVideoCommentsQuery = req.query;
-        if (!isValidObjectId(videoId)) {
+        const {
+            entityId,
+            entityType,
+            parentId = null,
+        } = req.params as unknown as GetCommentsParams;
+        const { page = 1, limit = 10 }: GetCommentsQuery = req.query;
+        if (!isValidObjectId(entityId)) {
             throw new ApiError(400, "Video id is required");
         }
+        if (!["video", "tweet"].includes(entityType)) {
+            throw new ApiError(400, "Invalid entity type");
+        }
 
         const skip = (page - 1) * limit;
         const comments = await Comment.aggregate([
             {
                 $match: {
-                    videoId: new mongoose.Types.ObjectId(videoId),
+                    videoId: new mongoose.Types.ObjectId(entityId),
+                    entityType,
                     parentId,
                 },
             },
@@ -56,8 +65,21 @@ const getVideoComments = asyncHandler(
             {
                 $lookup: {
                     from: "Comment",
-                    localField: "_id",
-                    foreignField: "parentId",
+                    let: { commentId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $and: [
+                                    {
+                                        $eq: ["$parentId", "$$commentId"],
+                                    },
+                                    {
+                                        $eq: ["$entityType", entityType],
+                                    },
+                                ],
+                            },
+                        },
+                    ],
                     as: "replies",
                 },
             },
@@ -74,7 +96,7 @@ const getVideoComments = asyncHandler(
                                             $eq: ["$entityId", "$$commentId"],
                                         },
                                         {
-                                            $eq: ["$entityType", "Comment"],
+                                            $eq: ["$entityType", "comment"],
                                         },
                                     ],
                                 },
@@ -133,188 +155,39 @@ const getVideoComments = asyncHandler(
     }
 );
 
-interface GetTweetCommentsParams {
-    tweetId?: string;
-    parentId?: string | null;
-}
-interface GetTweetCommentsQuery {
-    page?: number;
-    limit?: number;
-}
-
-const getTweetComments = asyncHandler(
-    async (req: RequestWithUser, res: Response) => {
-        const { tweetId, parentId = null }: GetTweetCommentsParams = req.params;
-        const { page = 1, limit = 10 }: GetTweetCommentsQuery = req.query;
-        if (!isValidObjectId(tweetId)) {
-            throw new ApiError(400, "Tweet id is required");
-        }
-
-        const skip = (page - 1) * limit;
-        const comments = await Comment.aggregate([
-            {
-                $match: {
-                    tweetId: new mongoose.Types.ObjectId(tweetId),
-                    parentId,
-                },
-            },
-            {
-                $lookup: {
-                    from: "User",
-                    localField: "userId",
-                    foreignField: "_id",
-                    as: "owner",
-                    pipeline: [
-                        {
-                            $project: {
-                                fullName: 1,
-                                userName: 1,
-                                avatar: 1,
-                            },
-                        },
-                    ],
-                },
-            },
-            {
-                $lookup: {
-                    from: "Comment",
-                    localField: "_id",
-                    foreignField: "parentId",
-                    as: "replies",
-                },
-            },
-            {
-                $lookup: {
-                    from: "Like",
-                    let: { commentId: "$_id" },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $and: [
-                                        {
-                                            $eq: ["$entityId", "$$commentId"],
-                                        },
-                                        {
-                                            $eq: ["$entityType", "Comment"],
-                                        },
-                                    ],
-                                },
-                            },
-                        },
-                    ],
-                    as: "Likes",
-                },
-            },
-            {
-                $addFields: {
-                    owner: { $arrayElemAt: ["$owner", 0] },
-                    replies: { $size: "$replies" },
-                    likes: {
-                        $size: {
-                            $filter: {
-                                input: "$Likes",
-                                as: "like",
-                                cond: { $eq: ["$$like.isLiked", true] },
-                            },
-                        },
-                    },
-                    dislikes: {
-                        $size: {
-                            $filter: {
-                                input: "$Likes",
-                                as: "like",
-                                cond: { $eq: ["$$like.isLiked", false] },
-                            },
-                        },
-                    },
-                },
-            },
-            { $sort: { createdAt: -1 } },
-            {
-                $project: {
-                    owner: 1,
-                    content: 1,
-                    likes: 1,
-                    dislikes: 1,
-                    replies: 1,
-                    createdAt: 1,
-                    updatedAt: 1,
-                },
-            },
-            { $skip: skip },
-            { $limit: limit },
-        ]);
-        if (!comments?.length) {
-            throw new ApiError(404, "No comments found");
-        }
-
-        return res
-            .status(200)
-            .json(new ApiResponse(200, { comments }, "Comments found"));
-    }
-);
-
-interface CreateCommentInVideoParams {
-    videoId?: string;
-}
-interface CreateCommentInVideoBody {
-    content?: string;
+interface CreateCommentParams {
+    entityId: string;
+    entityType: string;
     parentId?: string;
 }
+interface CreateCommentBody {
+    content?: string;
+}
 
-const createCommentInVideo = asyncHandler(
+const createComment = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { videoId }: CreateCommentInVideoParams = req.params;
-        const { content, parentId }: CreateCommentInVideoBody = req.body;
+        const {
+            entityId,
+            entityType,
+            parentId = null,
+        } = req.params as unknown as CreateCommentParams;
+        const { content }: CreateCommentBody = req.body;
 
-        if (!content || !videoId) {
+        if (!content || !entityId) {
             const message = !content
                 ? "Content is required"
                 : "Video id is required";
             throw new ApiError(400, message);
         }
-
-        const comment = await Comment.create({
-            videoId,
-            content,
-            parentId: parentId ? parentId : null,
-        });
-
-        if (!comment) {
-            throw new ApiError(500, "Failed to add comment");
-        }
-
-        return res
-            .status(201)
-            .json(new ApiResponse(201, comment, "Comment added successfully"));
-    }
-);
-
-interface CreateCommentInTweetParams {
-    tweetId?: string;
-}
-interface CreateCommentInTweetBody {
-    content?: string;
-    parentId?: string;
-}
-
-const createCommentInTweet = asyncHandler(
-    async (req: RequestWithUser, res: Response) => {
-        const { tweetId }: CreateCommentInTweetParams = req.params;
-        const { content, parentId }: CreateCommentInTweetBody = req.body;
-
-        if (!content || !tweetId) {
-            const message = !content
-                ? "Content is required"
-                : "tweet id is required";
-            throw new ApiError(400, message);
+        if (!["video", "tweet"].includes(entityType)) {
+            throw new ApiError(400, "Invalid entity type");
         }
 
         const comment = await Comment.create({
-            tweetId,
+            entityId,
+            entityType,
             content,
-            parentId: parentId ? parentId : null,
+            parentId,
         });
 
         if (!comment) {
@@ -418,11 +291,4 @@ const deleteComment = asyncHandler(
     }
 );
 
-export {
-    getVideoComments,
-    getTweetComments,
-    createCommentInVideo,
-    createCommentInTweet,
-    updateComment,
-    deleteComment,
-};
+export { getComments, createComment, updateComment, deleteComment };

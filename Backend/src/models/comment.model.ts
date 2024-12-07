@@ -13,14 +13,16 @@ const commentSchema = new mongoose.Schema(
         ownerId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
+            required: true,
         },
-        videoId: {
+        entityId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Video",
+            required: true,
         },
-        tweetId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Tweet",
+        entityType: {
+            type: String,
+            enum: ["video", "tweet"],
+            required: true,
         },
         parentId: {
             type: mongoose.Schema.Types.ObjectId,
@@ -29,14 +31,6 @@ const commentSchema = new mongoose.Schema(
     },
     { timestamps: true }
 );
-
-// Add custom validation to ensure either tweetId or videoId is provided
-commentSchema.pre("validate", function (next) {
-    if (!this.videoId && !this.tweetId) {
-        return next(new Error("Either videoId or tweetId must be provided."));
-    }
-    next();
-});
 
 commentSchema.plugin(mongooseAggregatePaginate);
 
