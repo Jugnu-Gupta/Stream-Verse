@@ -26,7 +26,7 @@ router
         uploadVideo
     );
 
-router.route("/subscription").get(getVideosByIds); // incomplete
+router.route("/subscription").get(getVideosByIds);
 
 // Get, update, delete video by id (secured routes)
 router

@@ -257,7 +257,7 @@ const getUserChannelPage = asyncHandler(
             { $match: { userName: userName.toLowerCase() } },
             {
                 $lookup: {
-                    from: "Subscription",
+                    from: "subscriptions",
                     localField: "_id",
                     foreignField: "channelId",
                     as: "subscribers",
@@ -265,7 +265,7 @@ const getUserChannelPage = asyncHandler(
             },
             {
                 $lookup: {
-                    from: "Subscription",
+                    from: "subscriptions",
                     localField: "_id",
                     foreignField: "subscriberId",
                     as: "subscribedTo",
@@ -331,14 +331,14 @@ const getWatchHistory = asyncHandler(
             { $addFields: { watchedAt: "$watchHistory.watchedAt" } },
             {
                 $lookup: {
-                    from: "Video",
+                    from: "videos",
                     localField: "watchHistory.videoId",
                     foreignField: "_id",
                     as: "watchHistory",
                     pipeline: [
                         {
                             $lookup: {
-                                from: "User",
+                                from: "users",
                                 localField: "ownerId",
                                 foreignField: "_id",
                                 as: "owner",

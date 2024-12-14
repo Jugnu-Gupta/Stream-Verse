@@ -136,14 +136,14 @@ const getLikedVideos = asyncHandler(
             },
             {
                 $lookup: {
-                    from: "Video",
+                    from: "videos",
                     localField: "videoId",
                     foreignField: "_id",
                     as: "video",
                     pipeline: [
                         {
                             $lookup: {
-                                from: "User",
+                                from: "users",
                                 localField: "ownerId",
                                 foreignField: "_id",
                                 as: "owner",

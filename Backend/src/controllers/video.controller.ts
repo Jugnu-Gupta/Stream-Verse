@@ -183,7 +183,7 @@ const getVideoById = asyncHandler(
             { $match: { _id: new mongoose.Types.ObjectId(videoId) } },
             {
                 $lookup: {
-                    from: "Like",
+                    from: "likes",
                     let: { videoId: "$_id" },
                     pipeline: [
                         {
@@ -258,8 +258,16 @@ interface GetVideoByIdsBody {
 const getVideosByIds = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
         const { videoIds }: GetVideoByIdsBody = req.body;
-        if (!isValidObjectId(videoIds)) {
-            throw new ApiError(400, "Invalid video id");
+        console.log("videoIds:", videoIds);
+        console.log(
+            "videoIds:",
+            videoIds.map((id) => new mongoose.Types.ObjectId(id))
+        );
+        if (
+            !Array.isArray(videoIds) ||
+            videoIds.some((id) => !isValidObjectId(id))
+        ) {
+            throw new ApiError(400, "Invalid video id(s)");
         }
         if (!videoIds) {
             throw new ApiError(400, "Video id is required");
@@ -278,7 +286,7 @@ const getVideosByIds = asyncHandler(
             },
             {
                 $lookup: {
-                    from: "Like",
+                    from: "likes",
                     let: { videoId: "$_id" },
                     pipeline: [
                         {

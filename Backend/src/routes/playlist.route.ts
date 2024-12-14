@@ -15,12 +15,10 @@ const router = Router();
 // Create a new playlist & get all playlists of a user
 router.route("/").post(verifyJWT, createPlaylist).get(getUserPlaylist);
 
-// Get playlist by id
-router.route("/:playlistId").get(getPlaylistById);
-
-// Update, delete playlist by id (secured route)
+// Get playlist by id, and Update, delete playlist by id (secured route)
 router
     .route("/:playlistId")
+    .get(getPlaylistById)
     .patch(verifyJWT, updatePlaylist)
     .delete(verifyJWT, deletePlaylist);
 

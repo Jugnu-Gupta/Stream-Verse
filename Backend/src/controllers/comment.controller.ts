@@ -40,15 +40,15 @@ const getComments = asyncHandler(
         const comments = await Comment.aggregate([
             {
                 $match: {
-                    videoId: new mongoose.Types.ObjectId(entityId),
+                    entityId: new mongoose.Types.ObjectId(entityId),
                     entityType,
                     parentId,
                 },
             },
             {
                 $lookup: {
-                    from: "User",
-                    localField: "userId",
+                    from: "users",
+                    localField: "ownerId",
                     foreignField: "_id",
                     as: "owner",
                     pipeline: [
@@ -64,19 +64,21 @@ const getComments = asyncHandler(
             },
             {
                 $lookup: {
-                    from: "Comment",
+                    from: "comments",
                     let: { commentId: "$_id" },
                     pipeline: [
                         {
                             $match: {
-                                $and: [
-                                    {
-                                        $eq: ["$parentId", "$$commentId"],
-                                    },
-                                    {
-                                        $eq: ["$entityType", entityType],
-                                    },
-                                ],
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$parentId", "$$commentId"],
+                                        },
+                                        {
+                                            $eq: ["$entityType", entityType],
+                                        },
+                                    ],
+                                },
                             },
                         },
                     ],
@@ -85,7 +87,7 @@ const getComments = asyncHandler(
             },
             {
                 $lookup: {
-                    from: "Like",
+                    from: "likes",
                     let: { commentId: "$_id" },
                     pipeline: [
                         {
@@ -145,6 +147,7 @@ const getComments = asyncHandler(
             { $skip: skip },
             { $limit: limit },
         ]);
+
         if (!comments?.length) {
             throw new ApiError(404, "No comments found");
         }

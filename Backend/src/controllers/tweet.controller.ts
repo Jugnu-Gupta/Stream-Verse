@@ -79,7 +79,7 @@ const getUserTweet = asyncHandler(
             { $match: { ownerId: new mongoose.Types.ObjectId(userId) } },
             {
                 $lookup: {
-                    from: "User",
+                    from: "users",
                     localField: "ownerId",
                     foreignField: "_id",
                     as: "owner",
@@ -96,7 +96,7 @@ const getUserTweet = asyncHandler(
             },
             {
                 $lookup: {
-                    from: "Like",
+                    from: "likes",
                     let: { tweetId: "$_id" },
                     pipeline: [
                         {
@@ -119,7 +119,7 @@ const getUserTweet = asyncHandler(
             },
             {
                 $lookup: {
-                    from: "Comment",
+                    from: "comments",
                     let: { tweetId: "$_id" },
                     pipeline: [
                         {
@@ -162,6 +162,13 @@ const getUserTweet = asyncHandler(
                     },
                     comments: { $size: "$Comments" },
                     owner: { $arrayElemAt: ["$owner", 0] },
+                },
+            },
+            {
+                $project: {
+                    Likes: 0,
+                    Comments: 0,
+                    owner: { _id: 0 },
                 },
             },
         ]);
@@ -284,7 +291,7 @@ const deleteTweet = asyncHandler(
             { $match: { _id: new mongoose.Types.ObjectId(tweetId) } },
             {
                 $lookup: {
-                    from: "Like",
+                    from: "likes",
                     let: { tweetId: "$_id" },
                     pipeline: [
                         {
@@ -308,7 +315,7 @@ const deleteTweet = asyncHandler(
             },
             {
                 $lookup: {
-                    from: "Comment",
+                    from: "comments",
                     let: { tweetId: "$_id" },
                     pipeline: [
                         {
@@ -327,7 +334,7 @@ const deleteTweet = asyncHandler(
                         },
                         {
                             $lookup: {
-                                from: "Like",
+                                from: "likes",
                                 let: { commentId: "$_id" },
                                 pipeline: [
                                     {

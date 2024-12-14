@@ -24,7 +24,7 @@ const getAdminChannelStats = asyncHandler(
             { $match: { _id: userId } },
             {
                 $lookup: {
-                    from: "Subscription",
+                    from: "subscriptions",
                     localField: "_id",
                     foreignField: "channelId",
                     as: "Subscribers",
@@ -32,14 +32,14 @@ const getAdminChannelStats = asyncHandler(
             },
             {
                 $lookup: {
-                    from: "Video",
+                    from: "videos",
                     localField: "_id",
                     foreignField: "ownerId",
                     as: "Videos",
                     pipeline: [
                         {
                             $lookup: {
-                                from: "Like",
+                                from: "likes",
                                 let: { videoId: "$_id" },
                                 pipeline: [
                                     {
