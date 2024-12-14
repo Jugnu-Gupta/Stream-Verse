@@ -31,7 +31,7 @@ const Navbar: React.FC = () => {
 										className="w-full outline-none"
 										onClick={() => navigate(addAdminName(item.path))}>
 										<p className={twMerge("px-2 h-9 flex items-center gap-6 border-2 border-white rounded-lg hover:bg-primary",
-											(comparePaths(addAdminName(item.path), page, adminName ? adminName : null) && "bg-primary"))}>
+											(comparePaths(item.path, page, adminName) && "bg-primary"))}>
 											<item.iconOutline
 												className={twMerge(
 													item.iconOutlineClass,
@@ -58,7 +58,7 @@ const Navbar: React.FC = () => {
 										className="w-full outline-none"
 										onClick={() => navigate(addAdminName(item.path))}>
 										<p className={twMerge("h-9 px-2 flex items-center border-2 border-white gap-6 rounded-lg hover:bg-primary",
-											(comparePaths(addAdminName(item.path), page, adminName ? adminName : null) && "bg-primary"))}>
+											(comparePaths(item.path, page, adminName) && "bg-primary"))}>
 											<item.iconOutline
 												className={twMerge(
 													item.iconOutlineClass,
@@ -84,7 +84,7 @@ const Navbar: React.FC = () => {
 								className="w-full outline-none"
 								onClick={() => navigate(addAdminName(item.path))}>
 								<p className={twMerge("px-2 h-9 flex items-center gap-6 rounded-lg border-2 border-white hover:bg-primary",
-									(comparePaths(addAdminName(item.path), page, adminName ? adminName : null) && "bg-primary"))}>
+									(comparePaths(item.path, page, adminName) && "bg-primary"))}>
 									<item.iconOutline
 										className={twMerge(
 											item.iconOutlineClass,
@@ -105,7 +105,7 @@ const Navbar: React.FC = () => {
 								className="w-full outline-none"
 								onClick={() => navigate(addAdminName(item.path))}>
 								<p className={twMerge("h-9 px-2 flex items-center border-2 border-white gap-6 rounded-lg hover:bg-primary",
-									(comparePaths(addAdminName(item.path), page, adminName ? adminName : null) && "bg-primary"))}>
+									(comparePaths(item.path, page, adminName ? adminName : null) && "bg-primary"))}>
 									<item.iconOutline
 										className={twMerge(
 											item.iconOutlineClass,

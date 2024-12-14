@@ -22,7 +22,7 @@ export const useAuth = () => {
 				console.error("header", error.response.data.message);
 				setLoading(false);
 				setLoggedIn(false);
-				navigate("/login");
+				// navigate("/login");
 			}
 		};
 		getUser();

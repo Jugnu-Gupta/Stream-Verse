@@ -4,9 +4,10 @@ export const addAdminName = (url: string) => {
 		if (url.includes(":adminName")) {
 			url = url.replace(":adminName", "@" + adminName);
 		}
-	} else {
-		url = "/login";
 	}
+	// else {
+	// 	url = "/login";
+	// }
 
 	return url;
 };

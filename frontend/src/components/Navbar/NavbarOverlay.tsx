@@ -64,7 +64,7 @@ const Navbar: React.FC = () => {
 										className="w-full animate-right outline-none"
 										onClick={() => navigate(addAdminName(item.path))}>
 										<p className={twMerge("h-9 px-2 flex items-center gap-6 rounded-lg border-2 border-white hover:bg-primary",
-											(comparePaths(addAdminName(item.path), page, adminName ? adminName : null) && "bg-primary"))}>
+											(comparePaths(item.path, page, adminName ? adminName : null) && "bg-primary"))}>
 											<item.iconOutline
 												className={twMerge(
 													item.iconOutlineClass,
@@ -72,11 +72,11 @@ const Navbar: React.FC = () => {
 												)}
 											/>
 											{/* <item.iconFilled
-										className={twMerge(
-											item.iconFilledMargin,
-											item.iconFilledClass
-										)}
-									/> */}
+												className={twMerge(
+													item.iconFilledMargin,
+													item.iconFilledClass
+												)}
+											/> */}
 											<span
 												className={twMerge(
 													item.titleClass
@@ -96,7 +96,7 @@ const Navbar: React.FC = () => {
 										className="w-full animate-right outline-none"
 										onClick={() => navigate(addAdminName(item.path))}>
 										<p className={twMerge("h-9 px-2 flex items-center gap-6 rounded-lg border-2 border-white hover:bg-primary",
-											(comparePaths(addAdminName(item.path), page, addAdminName(item.path)) && "bg-primary"))}>
+											(comparePaths(item.path, page, addAdminName(item.path)) && "bg-primary"))}>
 											<item.iconOutline
 												className={twMerge(
 													item.iconOutlineClass,
@@ -104,11 +104,11 @@ const Navbar: React.FC = () => {
 												)}
 											/>
 											{/* <item.iconFilled
-										className={twMerge(
-											item.iconFilledMargin,
-											item.iconFilledClass
-										)}
-									/> */}
+												className={twMerge(
+													item.iconFilledMargin,
+													item.iconFilledClass
+												)}
+											/> */}
 											<span>{item.title}</span>
 										</p>
 									</button>
