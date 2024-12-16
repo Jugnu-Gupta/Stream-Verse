@@ -11,21 +11,21 @@ export const useGetVideos = ({ method, url }: useGetVideosProps) => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		const getWatchHistory = async () => {
+		const getVideos = async () => {
 			try {
 				const request: ApiRequestOptions = {
 					method,
 					url,
 				};
 				const { data }: any = await makeApiRequest(request);
-				console.log("video:", data);
+				console.log("video:", data.videos);
 				setVideos(data.videos);
 			} catch (error) {
 				console.log(error);
-				navigate("/");
+				// navigate("/");
 			}
 		};
-		getWatchHistory();
+		getVideos();
 	}, [navigate, method, url]);
 
 	return { videos };

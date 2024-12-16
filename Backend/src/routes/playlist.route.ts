@@ -2,7 +2,7 @@ import { verifyJWT } from "../middlewares/auth.middleware";
 import { Router } from "express";
 import {
     createPlaylist,
-    getUserPlaylist,
+    getUserPlaylists,
     getPlaylistById,
     addVideoInPlaylist,
     deleteVideoFromPlaylist,
@@ -12,8 +12,11 @@ import {
 
 const router = Router();
 
-// Create a new playlist & get all playlists of a user
-router.route("/").post(verifyJWT, createPlaylist).get(getUserPlaylist);
+// Create a new playlist
+router.route("/").post(verifyJWT, createPlaylist);
+
+// get all playlists of a user
+router.route("/").get(verifyJWT, getUserPlaylists);
 
 // Get playlist by id, and Update, delete playlist by id (secured route)
 router

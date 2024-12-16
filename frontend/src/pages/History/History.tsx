@@ -10,15 +10,15 @@ const History: React.FC = () => {
         <div className="sm:grid m-2 max-w-full w-11/12 justify-items-center">
             <div className='sm:grid hidden'>
                 {
-                    videos?.map((item: any) => (
-                        <VideoListView key={item._id} videoInfo={item.video} />
+                    videos?.map((video: any) => (
+                        <VideoListView key={video._id} videoInfo={video} />
                     ))
                 }
             </div>
             <div className='sm:hidden grid'>
                 {
-                    videos?.map((item: any) => (
-                        <VideoCardView key={item._id} videoInfo={item.video} />
+                    videos?.map((video: any) => (
+                        <VideoCardView key={video._id} videoInfo={video} />
                     ))
                 }
             </div>
