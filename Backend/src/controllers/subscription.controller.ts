@@ -130,4 +130,74 @@ const getSubscribedChannels = asyncHandler(
     }
 );
 
-export { toggleSubscription, getUserChannelSubscribers, getSubscribedChannels };
+const getSubscribedChannelsVideos = asyncHandler(
+    async (req: RequestWithUser, res: Response) => {
+        const subscriberId = req?.user?._id;
+        const subscriptions = await Subscription.aggregate([
+            {
+                $match: {
+                    subscriberId: new mongoose.Types.ObjectId(subscriberId),
+                },
+            },
+            {
+                $lookup: {
+                    from: "videos",
+                    localField: "channelId",
+                    foreignField: "ownerId",
+                    as: "video",
+                    pipeline: [
+                        {
+                            $lookup: {
+                                from: "users",
+                                localField: "ownerId",
+                                foreignField: "_id",
+                                as: "owner",
+                                pipeline: [
+                                    {
+                                        $project: {
+                                            userName: 1,
+                                            avatar: 1,
+                                            fullName: 1,
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                        {
+                            $project: {
+                                title: 1,
+                                description: 1,
+                                thumbnail: 1,
+                                views: 1,
+                                createdAt: 1,
+                                updatedAt: 1,
+                                owner: { $arrayElemAt: ["$owner", 0] },
+                            },
+                        },
+                    ],
+                },
+            },
+            { $project: { video: { $arrayElemAt: ["$video", 0] } } },
+        ]);
+        if (!subscriptions) {
+            throw new ApiError(404, "No subscriptions found");
+        }
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    { videos: subscriptions },
+                    "Subscribed channels"
+                )
+            );
+    }
+);
+
+export {
+    toggleSubscription,
+    getUserChannelSubscribers,
+    getSubscribedChannels,
+    getSubscribedChannelsVideos,
+};

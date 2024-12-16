@@ -3,16 +3,16 @@ import { Outlet, useNavigate, useParams } from 'react-router-dom';
 
 const ProtectedAdminLayout: React.FC = () => {
     const navigate = useNavigate();
-    const { AdminName } = useParams<{ AdminName: string }>();
+    const { adminName } = useParams<{ adminName: string }>();
     const channelAdmin = "@" + (localStorage.getItem("userName") || "");
 
-    console.log("AdminName:", AdminName);
+    console.log("AdminName:", adminName);
     console.log("channelAdmin:", channelAdmin);
     useEffect(() => {
-        if (AdminName !== channelAdmin) {
+        if (adminName !== channelAdmin) {
             navigate("/");
         }
-    }, [AdminName, channelAdmin, navigate]);
+    }, [adminName, channelAdmin, navigate]);
 
     return (
         <Outlet />

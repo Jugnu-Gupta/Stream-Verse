@@ -34,6 +34,7 @@ const LoginForm: React.FC = () => {
 				setShowVerifyEmail(false);
 
 				// data in localStorage for future use
+				localStorage.setItem("userId", data.user._id);
 				localStorage.setItem("token", data.accessToken);
 				localStorage.setItem("userName", data.user.userName);
 				localStorage.setItem("fullName", data.user.fullName);

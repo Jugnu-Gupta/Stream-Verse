@@ -1,5 +1,5 @@
 import React from 'react';
-import VideoListView from "./VideoListView";
+import DashboardVideoStatsControl from "./DashboardVideoStatsControl";
 
 const DashboardVideos: React.FC = () => {
     return (
@@ -16,12 +16,12 @@ const DashboardVideos: React.FC = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    <VideoListView />
-                    <VideoListView />
-                    <VideoListView />
-                    <VideoListView />
-                    <VideoListView />
-                    <VideoListView />
+                    <DashboardVideoStatsControl />
+                    <DashboardVideoStatsControl />
+                    <DashboardVideoStatsControl />
+                    <DashboardVideoStatsControl />
+                    <DashboardVideoStatsControl />
+                    <DashboardVideoStatsControl />
                 </tbody>
             </table>
         </div>

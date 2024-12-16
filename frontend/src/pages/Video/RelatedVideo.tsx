@@ -9,7 +9,7 @@ interface VideoListViewProps {
 	videoNo?: number;
 }
 
-const VideoListView: React.FC<VideoListViewProps> = ({ videoNo }) => {
+const RelatedVideo: React.FC<VideoListViewProps> = ({ videoNo }) => {
 	const windowWidth = useWindowWidth();
 	const duration = "10:00";
 	const views = "1000k";
@@ -72,4 +72,4 @@ const VideoListView: React.FC<VideoListViewProps> = ({ videoNo }) => {
 	);
 };
 
-export default VideoListView;
+export default RelatedVideo;

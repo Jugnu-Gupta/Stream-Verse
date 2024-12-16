@@ -252,109 +252,6 @@ const getVideoById = asyncHandler(
     }
 );
 
-interface GetVideoByIdsBody {
-    videoIds?: string[];
-}
-const getVideosByIds = asyncHandler(
-    async (req: RequestWithUser, res: Response) => {
-        const { videoIds }: GetVideoByIdsBody = req.body;
-        console.log("videoIds:", videoIds);
-        console.log(
-            "videoIds:",
-            videoIds.map((id) => new mongoose.Types.ObjectId(id))
-        );
-        if (
-            !Array.isArray(videoIds) ||
-            videoIds.some((id) => !isValidObjectId(id))
-        ) {
-            throw new ApiError(400, "Invalid video id(s)");
-        }
-        if (!videoIds) {
-            throw new ApiError(400, "Video id is required");
-        }
-
-        // get video details like likes, dislikes
-        const video = await Video.aggregate([
-            {
-                $match: {
-                    _id: {
-                        $in: videoIds.map(
-                            (id: any) => new mongoose.Types.ObjectId(id)
-                        ),
-                    },
-                },
-            },
-            {
-                $lookup: {
-                    from: "likes",
-                    let: { videoId: "$_id" },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $and: [
-                                        {
-                                            $eq: ["$entityId", "$$videoId"],
-                                        },
-                                        {
-                                            $eq: ["$entityType", "video"],
-                                        },
-                                    ],
-                                },
-                            },
-                        },
-                        { $project: { _id: 1, isLiked: 1 } },
-                    ],
-                    as: "videoLikes",
-                },
-            },
-            {
-                $addFields: {
-                    likes: {
-                        $size: {
-                            $filter: {
-                                input: "$videoLikes",
-                                as: "like",
-                                cond: { $eq: ["$$like.isLiked", true] },
-                            },
-                        },
-                    },
-                    dislikes: {
-                        $size: {
-                            $filter: {
-                                input: "$videoLikes",
-                                as: "like",
-                                cond: { $eq: ["$$like.isLiked", false] },
-                            },
-                        },
-                    },
-                },
-            },
-            {
-                $project: {
-                    title: 1,
-                    description: 1,
-                    thumbnail: 1,
-                    videoFile: 1,
-                    ownerId: 1,
-                    duration: 1,
-                    quality: 1,
-                    isPublished: 1,
-                    likes: 1,
-                    dislikes: 1,
-                },
-            },
-        ]);
-        if (!video) {
-            throw new ApiError(404, "Video not found");
-        }
-
-        return res
-            .status(200)
-            .json(new ApiResponse(200, video, "Video fetched successfully"));
-    }
-);
-
 interface VideoUpdateParams {
     videoId?: string;
 }
@@ -651,6 +548,5 @@ export {
     getVideoById,
     videoUpdate,
     deleteVideo,
-    getVideosByIds,
     ToggleVideoPublishStatus,
 };

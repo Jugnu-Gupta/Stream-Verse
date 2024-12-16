@@ -4,6 +4,7 @@ import {
     toggleSubscription,
     getUserChannelSubscribers,
     getSubscribedChannels,
+    getSubscribedChannelsVideos,
 } from "../controllers/subscription.controller";
 
 const router = Router();
@@ -16,5 +17,8 @@ router.route("/user/:channelId").get(verifyJWT, getUserChannelSubscribers);
 
 // Fetch all channels subscribed to by a user (secured route)
 router.route("/channel/:subscriberId").get(verifyJWT, getSubscribedChannels);
+
+// Fetch all videos of channels subscribed to by a current user (secured route)
+router.route("/").get(verifyJWT, getSubscribedChannelsVideos);
 
 export default router;

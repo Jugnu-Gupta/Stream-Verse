@@ -1,54 +1,28 @@
-import React, { useEffect } from 'react';
-import Search from '../Search/Search';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 import VideoCardView from '../Home/VideoCardView';
-import makeApiRequest, { ApiRequestOptions } from '../../utils/MakeApiRequest';
+import VideoListView from '../Search/VideoListView';
+import { useGetVideos } from '../../hooks/useGetVideos';
 
 const Subscriptions: React.FC = () => {
-    const [videos, setVideos] = React.useState([]);
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        // fetch subscriptions
-        const getSubscriptions = async () => {
-            const _id = localStorage.getItem("userId");
-
-            if (!_id) navigate("/login");
-            try {
-                const request: ApiRequestOptions = {
-                    method: "get",
-                    url: `/api/v1/subscriptions/user/${_id}`,
-                };
-                const { data }: any = await makeApiRequest(request);
-                console.log(data);
-
-                // get subscriptions videos
-                const requestVideos: ApiRequestOptions = {
-                    method: "get",
-                    url: `/api/v1/videos/subscriptions`,
-                    data: { subscriptions: data.subscribers.map((subs: any) => subs.subscriberId) },
-                };
-
-                const { data: videos }: any = await makeApiRequest(requestVideos);
-                console.log(videos);
-                // set videos
-            } catch (error) {
-                console.log(error);
-                navigate("/");
-            }
-        }
-        getSubscriptions();
-    }, [navigate]);
+    const { videos } = useGetVideos({ method: "get", url: "/api/v1/subscriptions" });
 
     return (
-        <>
-            <Search />
-            {/* {
-                videos.map((video: any) => (
-                    <VideoCardView />
-                ))
-            } */}
-        </>
+        <div className="sm:grid m-2 max-w-full w-11/12 justify-items-center">
+            <div className='sm:grid hidden'>
+                {
+                    videos?.map((item: any) => (
+                        <VideoListView key={item?._id} videoInfo={item.video} />
+                    ))
+                }
+            </div>
+            <div className='sm:hidden grid'>
+                {
+                    videos?.map((item: any) => (
+                        <VideoCardView key={item?._id} videoInfo={item.video} />
+                    ))
+                }
+            </div>
+        </div>
     )
 }
 

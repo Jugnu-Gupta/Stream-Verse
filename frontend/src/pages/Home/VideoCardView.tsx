@@ -1,11 +1,19 @@
 import React from "react";
-import thumbnail from "../../assets/thumbnail.png";
 import { Link } from "react-router-dom";
+import thumbnail from "../../assets/thumbnail.png";
+import { formatDateToNow } from "../../utils/formatDateToNow";
+import { secondsToHms } from "../../utils/SecondsToHms";
+import { formatNumber } from "../../utils/FormatNumber";
 
-const VideoCardView: React.FC = () => {
-	const duration = "10:00";
-	const views = "1000k";
-	const uploadedAt = "1 year";
+interface VideoCardViewProps {
+	videoInfo?: any;
+}
+const VideoCardView: React.FC<VideoCardViewProps> = ({ videoInfo }) => {
+	const views = formatNumber(videoInfo?.views || 0);
+	const duration = secondsToHms(videoInfo?.duration || 60);
+	const uploadedAt = formatDateToNow(new Date(videoInfo?.uploadedAt || Date.now()));
+	const title = videoInfo?.title || "Video Title";
+
 
 	return (
 		<div className="flex flex-col gap-2 p-2 group max-w-[400px]">
@@ -32,14 +40,14 @@ const VideoCardView: React.FC = () => {
 				</Link>
 				<div className="flex flex-col text-white w-full">
 					<Link to="/video/:videoId">
-						<h2 className="font-bold w-full">Video Title</h2>
-						<p className="text-sm text-primary-text">
-							{views} Views · {uploadedAt} ago
+						<h2 className="font-bold w-full truncate">{title}</h2>
+						<p className="text-sm text-primary-text text-nowrap">
+							{views} views · {uploadedAt}
 						</p>
 					</Link>
 					<Link to="/user/videos">
 						<p className="text-sm text-primary-text hover:opacity-100">
-							Channel Name
+							{videoInfo?.owner?.userName || "Channel Name"}
 						</p>
 					</Link>
 				</div>

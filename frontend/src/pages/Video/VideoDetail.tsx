@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import videoplayback from "../../assets/videoplayback.mp4";
 import thumbnail from "../../assets/thumbnail.png";
 import VideoComments from "./VideoComments";
-import VideoListView from "./VideoList";
+import RelatedVideo from "./RelatedVideo";
 // import { useParams } from "react-router-dom";
 import LikeSubscribeSave from "./LikeSubscribeSave";
 import VideoPlaylist from "./VideoPlaylist";
@@ -133,13 +133,13 @@ const VideoDetail: React.FC = () => {
 
 				{/* Related Videos */}
 				<div className="flex flex-col w-full">
-					<VideoListView />
-					<VideoListView />
-					<VideoListView />
-					<VideoListView />
-					<VideoListView />
-					<VideoListView />
-					<VideoListView />
+					<RelatedVideo />
+					<RelatedVideo />
+					<RelatedVideo />
+					<RelatedVideo />
+					<RelatedVideo />
+					<RelatedVideo />
+					<RelatedVideo />
 				</div>
 			</div>
 			{/* </div > */}

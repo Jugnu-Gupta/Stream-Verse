@@ -5,6 +5,7 @@ import { asyncHandler } from "../utils/asyncHandler";
 import { ApiError } from "../utils/apiError";
 import { ApiResponse } from "../utils/apiResponse";
 import { UserType } from "types/user.type";
+import { updateComment } from "./comment.controller";
 
 interface RequestWithUser extends Request {
     user: UserType;
@@ -132,12 +133,13 @@ const getLikedVideos = asyncHandler(
                 $match: {
                     likedBy: userId,
                     entityType: "video",
+                    isLiked: true,
                 },
             },
             {
                 $lookup: {
                     from: "videos",
-                    localField: "videoId",
+                    localField: "entityId",
                     foreignField: "_id",
                     as: "video",
                     pipeline: [
@@ -163,6 +165,17 @@ const getLikedVideos = asyncHandler(
                                 owner: { $arrayElemAt: ["$owner", 0] },
                             },
                         },
+                        {
+                            $project: {
+                                title: 1,
+                                description: 1,
+                                views: 1,
+                                duration: 1,
+                                createdAt: 1,
+                                updatedAt: 1,
+                                owner: 1,
+                            },
+                        },
                     ],
                 },
             },
@@ -177,7 +190,9 @@ const getLikedVideos = asyncHandler(
 
         return res
             .status(200)
-            .json(new ApiResponse(200, { likedVideos }, "Liked videos"));
+            .json(
+                new ApiResponse(200, { videos: likedVideos }, "Liked videos")
+            );
     }
 );
 

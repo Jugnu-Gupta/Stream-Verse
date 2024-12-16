@@ -1,12 +1,20 @@
 import React from "react";
 import thumbnail from "../../assets/thumbnail.png";
 import { Link } from "react-router-dom";
+import { secondsToHms } from "../../utils/SecondsToHms";
+import { formatDateToNow } from "../../utils/formatDateToNow";
+import { formatNumber } from "../../utils/FormatNumber";
 
-const VideoListView: React.FC = () => {
-	const duration = "10:00";
-	const views = "1000k";
-	const uploadedAt = "1 year";
-	const description = "This is a video description";
+interface VideoListViewProps {
+	videoInfo?: any;
+}
+const VideoListView: React.FC<VideoListViewProps> = ({ videoInfo }) => {
+	const duration = secondsToHms(videoInfo?.duration || 100);
+	const views = formatNumber(videoInfo?.views || 10200);
+	const uploadedAt = formatDateToNow(videoInfo?.createdAt || new Date());
+	const description = videoInfo?.description || "This is a video description";
+	const title = videoInfo?.title || "Video Title";
+	// const thumbnail = videoInfo?.thumbnail || "https://via.placeholder.com/150";
 
 	return (
 		<div className="flex gap-4 p-2 group w-full justify-start">
@@ -24,9 +32,9 @@ const VideoListView: React.FC = () => {
 			</Link>
 			<div className="flex flex-col text-white sm:w-2/3">
 				<Link to="/video/:videoId">
-					<h2 className="font-semibold text-lg">Video Title</h2>
+					<h2 className="font-semibold text-lg truncate-lines-2">{title}</h2>
 					<p className="text-xs opacity-80 text-nowrap mb-3 mt-1">
-						{views} Views · {uploadedAt} ago
+						{views} views · {uploadedAt}
 					</p>
 				</Link>
 				<Link to="/user/videos">
@@ -37,7 +45,7 @@ const VideoListView: React.FC = () => {
 							className="rounded-full aspect-square"
 						/>
 						<p className="text-sm opacity-80 hover:opacity-100">
-							Channel Name
+							{videoInfo?.owner?.userName || "Channel Name"}
 						</p>
 					</div>
 				</Link>

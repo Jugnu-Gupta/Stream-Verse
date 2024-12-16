@@ -7,7 +7,7 @@ import { ApiResponse } from "../utils/apiResponse";
 import mongoose, { isValidObjectId } from "mongoose";
 import { getAvailableUserName } from "../utils/getAvailableUserName";
 import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary";
-import fs from "fs";
+import fs, { watch } from "fs";
 
 interface RequestWithUser extends Request {
     user: UserType;
@@ -358,6 +358,17 @@ const getWatchHistory = asyncHandler(
                                 owner: { $arrayElemAt: ["$owner", 0] },
                             },
                         },
+                        {
+                            $project: {
+                                title: 1,
+                                description: 1,
+                                thumbnail: 1,
+                                views: 1,
+                                createdAt: 1,
+                                updatedAt: 1,
+                                owner: 1,
+                            },
+                        },
                     ],
                 },
             },
@@ -373,26 +384,40 @@ const getWatchHistory = asyncHandler(
                     watchHistory: { $push: "$watchHistory" },
                 },
             },
-            { $project: { watchHistory: 1 } },
+            {
+                $project: {
+                    watchHistory: {
+                        $map: {
+                            input: "$watchHistory", // Iterate over the watchHistory array
+                            as: "history", // Alias for each element in the array
+                            in: {
+                                video: "$$history", // Add the new field and value
+                                _id: "$$history._id", // Add the new field and value
+                            },
+                        },
+                    },
+                    _id: 0,
+                },
+            },
         ]);
 
-        if (!user?.length) {
+        if (!user) {
             throw new ApiError(404, "Watch history not found");
+        } else {
+            // sort by watchedAt.
+            user[0].watchHistory.sort(
+                (a: any, b: any) =>
+                    new Date(b.video.watchedAt).getTime() -
+                    new Date(a.video.watchedAt).getTime()
+            );
         }
-
-        // sort by watchedAt.
-        user[0].watchHistory.sort(
-            (a: any, b: any) =>
-                new Date(b.watchedAt).getTime() -
-                new Date(a.watchedAt).getTime()
-        );
 
         return res
             .status(200)
             .json(
                 new ApiResponse(
                     200,
-                    user[0].watchHistory,
+                    { videos: user[0].watchHistory },
                     "Watch history fetched successfully"
                 )
             );

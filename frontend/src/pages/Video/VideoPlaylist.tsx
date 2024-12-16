@@ -1,7 +1,7 @@
 import React from 'react';
 import { twMerge } from "tailwind-merge";
 import { RxCross2 } from "react-icons/rx";
-import VideoListView from "./VideoList";
+import RelatedVideo from "./RelatedVideo";
 import { IoIosArrowDown } from "react-icons/io";
 
 interface VideoPlaylistProps {
@@ -36,13 +36,13 @@ const VideoPlaylist: React.FC<VideoPlaylistProps> = ({ childClass, videoNo }) =>
             </div>
 
             <div className={twMerge("flex flex-col w-full pt-2 max-h-80 overflow-y-auto", !showPlaylist && "hidden")}>
-                <VideoListView videoNo={1} />
-                <VideoListView videoNo={2} />
-                <VideoListView videoNo={3} />
-                <VideoListView videoNo={4} />
-                <VideoListView videoNo={5} />
-                <VideoListView videoNo={6} />
-                <VideoListView videoNo={7} />
+                <RelatedVideo videoNo={1} />
+                <RelatedVideo videoNo={2} />
+                <RelatedVideo videoNo={3} />
+                <RelatedVideo videoNo={4} />
+                <RelatedVideo videoNo={5} />
+                <RelatedVideo videoNo={6} />
+                <RelatedVideo videoNo={7} />
             </div>
         </div>
     )
