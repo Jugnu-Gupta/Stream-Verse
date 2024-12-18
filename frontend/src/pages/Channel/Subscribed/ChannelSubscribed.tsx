@@ -1,8 +1,30 @@
 import React from "react";
 import ChannelSubcribedCards from "./ChannelSubscribedCards";
 import { IoSearchSharp } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
+import makeApiRequest from "../../../utils/MakeApiRequest";
 
-const ChannelSubscribed: React.FC = () => {
+interface ChannelSubscribedProps {
+	channelInfo?: any;
+}
+const ChannelSubscribed: React.FC<ChannelSubscribedProps> = ({ channelInfo }) => {
+	const navigate = useNavigate();
+	const channelId = channelInfo?._id;
+	const [subscribedChannels, setSubscribedChannels] = React.useState<any[]>([]);
+
+	React.useEffect(() => {
+		makeApiRequest({
+			method: "get",
+			url: `/api/v1/subscriptions/channel/${channelId}`,
+		}).then((response: any) => {
+			// console.log("channelsResponse tweets:", response.data?.subscribedChannels);
+			setSubscribedChannels(response.data?.subscribedChannels);
+		}).catch((error) => {
+			console.error("Error fetching data:", error);
+			navigate("/");
+		});
+	}, [navigate, channelId]);
+
 	return (
 		<div className="px-4 mt-4 w-full flex flex-col mx-auto max-w-6xl">
 			<div className="flex items-center border-2 border-white rounded-full bg-white w-[calc(100%-16px)] mx-auto">
@@ -16,12 +38,13 @@ const ChannelSubscribed: React.FC = () => {
 					<IoSearchSharp className="text-xl h-full text-primary" />
 				</div>
 			</div>
-			<ChannelSubcribedCards />
-			<ChannelSubcribedCards />
-			<ChannelSubcribedCards />
-			<ChannelSubcribedCards />
-			<ChannelSubcribedCards />
-			<ChannelSubcribedCards />
+			<div className="w-full">
+				{
+					subscribedChannels?.map((item: any) => (
+						<ChannelSubcribedCards key={item.channel._id} channelInfo={item.channel} />
+					))
+				}
+			</div>
 		</div>
 	);
 };

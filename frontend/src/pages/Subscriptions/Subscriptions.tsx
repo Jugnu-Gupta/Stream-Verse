@@ -1,10 +1,25 @@
 import React from 'react';
 import VideoCardView from '../Home/VideoCardView';
 import VideoListView from '../Search/VideoListView';
-import { useGetVideos } from '../../hooks/useGetVideos';
+import { useNavigate } from 'react-router-dom';
+import makeApiRequest from '../../utils/MakeApiRequest';
 
 const Subscriptions: React.FC = () => {
-    const { videos } = useGetVideos({ method: "get", url: "/api/v1/subscriptions" });
+    const navigate = useNavigate();
+    const [videos, setVideos] = React.useState<any[]>([]);
+
+    React.useEffect(() => {
+        makeApiRequest({
+            method: "get",
+            url: "/api/v1/subscriptions",
+        }).then((response: any) => {
+            console.log("response:", response.data);
+            setVideos(response.data?.subscriptions);
+        }).catch((error) => {
+            console.error("Error fetching data:", error);
+            navigate("/");
+        });
+    }, [navigate]);
 
     return (
         <div className="sm:grid m-2 max-w-full w-11/12 justify-items-center">

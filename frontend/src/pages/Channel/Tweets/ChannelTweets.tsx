@@ -1,21 +1,40 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ChannelTweetList from "./ChannelTweetList";
 import thumbnail from "../../../assets/thumbnail.png";
 import { IoImageOutline } from "react-icons/io5";
 import { twMerge } from "tailwind-merge";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { updateImage } from "../../../utils/UpdateImage";
+import makeApiRequest from "../../../utils/MakeApiRequest";
 
-const ChannelTweets: React.FC = () => {
+interface ChannelTweetsProps {
+	channelInfo?: any;
+}
+const ChannelTweets: React.FC<ChannelTweetsProps> = ({ channelInfo }) => {
 	const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
 	const [newTweetImage, setNewTweetImage] = React.useState<string>("");
 	const [comment, setComment] = React.useState<string>("");
 	const { adminName } = useParams<{ adminName: string }>();
-	const channelAdmin = "@" + localStorage.getItem("userName");
-	// console.log(adminName);
-	// console.log(channelAdmin);
+	const channelId = channelInfo?._id;
+	const curUserName = "@" + localStorage.getItem("userName");
+	const [tweets, setTweets] = React.useState<any[]>([]);
+	const navigate = useNavigate();
+	console.log("adminName:", channelInfo);
 
 	React.useEffect(() => {
+		makeApiRequest({
+			method: "get",
+			url: `/api/v1/tweets/user/${channelId}`,
+		}).then((response: any) => {
+			console.log("channelsResponse tweets:", response.data);
+			setTweets(response.data?.tweets);
+		}).catch((error) => {
+			console.error("Error fetching data:", error);
+			navigate("/");
+		});
+	}, [navigate, channelId]);
+
+	useEffect(() => {
 		if (textAreaRef.current) {
 			textAreaRef.current!.style.height = "32px";
 			const scrollHeight = textAreaRef.current!.scrollHeight;
@@ -27,8 +46,8 @@ const ChannelTweets: React.FC = () => {
 		<div className="px-6 xs:px-2 pt-4 mx-auto w-full max-w-6xl flex flex-col gap-4">
 
 			{/* Add Tweets */}
-			<div className={twMerge("text-white flex flex-col w-full items-end px-3 xs:px-2 py-1 bg-background-secondary rounded-xl border-[1px] pt-1",
-				adminName !== channelAdmin && "hidden")}>
+			<div className={twMerge("text-white flex flex-col w-full items-end px-3 xs:px-2 pt-1 pb-2 bg-background-secondary rounded-xl border-[1px]",
+				adminName !== curUserName && "hidden")}>
 
 				<div className="flex items-center gap-2 w-full pt-1 pb-2 xs:pt-0.5">
 					<div className="overflow-hidden rounded-full w-9">
@@ -94,13 +113,14 @@ const ChannelTweets: React.FC = () => {
 				</div>
 			</div>
 
-			<ChannelTweetList />
-			<ChannelTweetList />
-			<ChannelTweetList />
-			<ChannelTweetList />
-			<ChannelTweetList />
-			<ChannelTweetList />
-			<ChannelTweetList />
+			{/* Tweets */}
+			<div>
+				{
+					tweets?.map((tweet: any) => (
+						<ChannelTweetList key={tweet._id} tweetInfo={tweet} />
+					))
+				}
+			</div>
 		</div>
 	);
 };

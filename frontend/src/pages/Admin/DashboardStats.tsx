@@ -5,17 +5,34 @@ import { FaRegHeart } from "react-icons/fa";
 import { BiCommentDetail } from "react-icons/bi";
 import { FaPlus } from "react-icons/fa6";
 import UploadVideoModal from "../../components/Popup/UploadVideoModal";
+import makeApiRequest from '../../utils/MakeApiRequest';
+import { useNavigate } from 'react-router-dom';
 // import UploadingVideoModal from '../../components/Popup/UploadingVideoModal';
 
 
 const DashboardStats: React.FC = () => {
+    const navigate = useNavigate();
     const [showUploadVideo, setShowUploadVideo] = React.useState(false);
     // const [showUploadingVideo, setShowUploadingVideo] = React.useState(false);
+    const [stats, setStats] = React.useState<any>({});
 
-    const Views = 100;
-    const Subscribers = 100;
-    const Likes = 100;
-    const Comments = 100;
+    const Views = stats?.totalViews || 100;
+    const Subscribers = stats?.totalSubscribers || 100;
+    const Likes = stats?.totalLikes || 100;
+    const Comments = stats?.totalComments || 100;
+
+    React.useEffect(() => {
+        makeApiRequest({
+            method: "get",
+            url: "/api/v1/dashboard/channel-stats",
+        }).then((response: any) => {
+            console.log("response:", response.data);
+            setStats(response.data?.stats);
+        }).catch((error) => {
+            console.error("Error fetching data:", error);
+            navigate("/");
+        });
+    }, [navigate]);
 
     return (
         <>

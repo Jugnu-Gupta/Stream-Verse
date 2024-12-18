@@ -9,6 +9,7 @@ import { ApiResponse } from "../utils/apiResponse";
 import { UserType } from "types/user.type";
 import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary";
 import { getVideoQuality } from "../utils/getVideoQuality";
+import { subscribe } from "diagnostics_channel";
 
 interface RequestWithUser extends Request {
     user: UserType;
@@ -228,6 +229,14 @@ const getVideoById = asyncHandler(
                 },
             },
             {
+                $lookup: {
+                    from: "subscriptions",
+                    localField: "ownerId",
+                    foreignField: "channelId",
+                    as: "subscribers",
+                },
+            },
+            {
                 $project: {
                     title: 1,
                     description: 1,
@@ -237,6 +246,8 @@ const getVideoById = asyncHandler(
                     duration: 1,
                     quality: 1,
                     isPublished: 1,
+                    subscribers: { $size: "$subscribers" },
+                    views: 1,
                     likes: 1,
                     dislikes: 1,
                 },

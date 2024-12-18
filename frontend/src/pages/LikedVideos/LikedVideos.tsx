@@ -1,10 +1,27 @@
 import React from 'react';
 import VideoListView from '../Search/VideoListView';
 import VideoCardView from '../Home/VideoCardView';
-import { useGetVideos } from '../../hooks/useGetVideos';
+import makeApiRequest from '../../utils/MakeApiRequest';
+import { useNavigate } from 'react-router-dom';
 
 const LikedVideos: React.FC = () => {
-    const { videos } = useGetVideos({ method: "get", url: "/api/v1/likes/video" });
+    const navigate = useNavigate();
+    const [videos, setVideos] = React.useState<any[]>([]);
+
+
+    React.useEffect(() => {
+        makeApiRequest({
+            method: "get",
+            url: "/api/v1/likes/video",
+        }).then((response: any) => {
+            console.log("data:", response.data);
+            setVideos(response.data?.likedVideos);
+        }).catch((error) => {
+            console.error("Error fetching data:", error);
+            navigate("/");
+        });
+    }, [navigate]);
+
 
     return (
         <div className="sm:grid m-2 max-w-full w-11/12 justify-items-center">

@@ -287,6 +287,15 @@ const getUserChannelPage = asyncHandler(
                 },
             },
             {
+                $lookup: {
+                    from: "videos",
+                    localField: "_id",
+                    foreignField: "ownerId",
+                    as: "videos",
+                    pipeline: [{ $project: { _id: 1 } }],
+                },
+            },
+            {
                 $project: {
                     fullName: 1,
                     userName: 1,
@@ -296,11 +305,11 @@ const getUserChannelPage = asyncHandler(
                     subscriberCount: 1,
                     subscribedToCount: 1,
                     isSubscribed: 1,
+                    videoCount: { $size: "$videos" },
                 },
             },
         ]);
 
-        // console.log("channel", channel);
         if (!channel?.length) {
             throw new ApiError(404, "Channel does not exists");
         }
@@ -317,12 +326,63 @@ const getUserChannelPage = asyncHandler(
     }
 );
 
+interface GetUserChannelVideosParams {
+    userName?: string;
+}
+const getUserChannelVideos = asyncHandler(
+    async (req: RequestWithUser, res: Response) => {
+        const { userName }: GetUserChannelVideosParams = req.params;
+        if (!userName) {
+            throw new ApiError(404, "Username is missing");
+        }
+
+        const channelVideos = await User.aggregate([
+            { $match: { userName: userName.toLowerCase() } },
+            {
+                $lookup: {
+                    from: "videos",
+                    localField: "_id",
+                    foreignField: "ownerId",
+                    as: "videos",
+                    pipeline: [
+                        {
+                            $project: {
+                                title: 1,
+                                description: 1,
+                                thumbnail: 1,
+                                views: 1,
+                                createdAt: 1,
+                                updatedAt: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $project: {
+                    videos: 1,
+                },
+            },
+        ]);
+
+        if (!channelVideos?.length) {
+            throw new ApiError(404, "Channel does not exists");
+        }
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    { videos: channelVideos[0].videos },
+                    "User channel fetched successfully"
+                )
+            );
+    }
+);
+
 const getWatchHistory = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        // check if the user id is valid.
-        if (!isValidObjectId(req?.user?._id)) {
-            throw new ApiError(400, "Invalid user id");
-        }
         const userId = new mongoose.Types.ObjectId(req?.user?._id);
 
         const user = await User.aggregate([
@@ -386,16 +446,7 @@ const getWatchHistory = asyncHandler(
             },
             {
                 $project: {
-                    watchHistory: {
-                        $map: {
-                            input: "$watchHistory", // Iterate over the watchHistory array
-                            as: "history", // Alias for each element in the array
-                            in: {
-                                video: "$$history", // Add the new field and value
-                                _id: "$$history._id", // Add the new field and value
-                            },
-                        },
-                    },
+                    watchHistory: 1,
                     _id: 0,
                 },
             },
@@ -407,8 +458,8 @@ const getWatchHistory = asyncHandler(
             // sort by watchedAt.
             user[0].watchHistory.sort(
                 (a: any, b: any) =>
-                    new Date(b.video.watchedAt).getTime() -
-                    new Date(a.video.watchedAt).getTime()
+                    new Date(b.watchedAt).getTime() -
+                    new Date(a.watchedAt).getTime()
             );
         }
 
@@ -417,7 +468,7 @@ const getWatchHistory = asyncHandler(
             .json(
                 new ApiResponse(
                     200,
-                    { videos: user[0].watchHistory },
+                    { watchHistory: user[0].watchHistory },
                     "Watch history fetched successfully"
                 )
             );
@@ -431,5 +482,6 @@ export {
     updateUserCoverImage,
     updateUserAvatar,
     getUserChannelPage,
+    getUserChannelVideos,
     getWatchHistory,
 };

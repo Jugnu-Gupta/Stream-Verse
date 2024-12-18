@@ -1,16 +1,20 @@
 import React from 'react';
 import Background from "../../../assets/thumbnail.png";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
+import { formatNumber } from '../../../utils/FormatNumber';
 
-const ChannelInfo: React.FC = () => {
-    const [isSubscribed, setIsSubscribed] = React.useState(false);
-    const { adminName } = useParams<{ adminName: string }>();
-    const channelName: string = localStorage.getItem("fullName") || "channel Name"; // find out whose channel is this
-    const curUser: string = "@" + localStorage.getItem("userName");
+interface ChannelInfoProps {
+    channelInfo: any;
+}
+const ChannelInfo: React.FC<ChannelInfoProps> = ({ channelInfo }) => {
     const navigate = useNavigate();
-    const subscribers = "100k";
-    const videos = "100";
+    const [isSubscribed, setIsSubscribed] = React.useState(false);
+    const adminName = "@" + (channelInfo?.userName || "adminName");
+    const channelName = channelInfo?.fullName || "channel Name"; // find out whose channel is this
+    const curUserName: string = "@" + localStorage.getItem("userName");
+    const subscribers = formatNumber(channelInfo?.subscriberCount || 0);
+    const videos = formatNumber(channelInfo?.videoCount || 0);
 
     return (
         <>
@@ -43,11 +47,11 @@ const ChannelInfo: React.FC = () => {
                     <button
                         onClick={() => navigate(`/${adminName}/dashboard`)}
                         className={twMerge("bg-primary text-white font-semibold px-4 py-1 mt-4 xs:px-3 xs:text-sm rounded-md hover:bg-white hover:text-primary duration-300",
-                            adminName !== curUser && "hidden")}>
+                            adminName !== curUserName && "hidden")}>
                         Dashboard
                     </button>
                     {
-                        adminName !== curUser &&
+                        adminName !== curUserName &&
                         <button
                             onClick={() => setIsSubscribed(!isSubscribed)}
                             className={twMerge(

@@ -15,7 +15,7 @@ router.route("/toggle/:channelId").post(verifyJWT, toggleSubscription);
 // Fetch all subscribers of a channel (secured route)
 router.route("/user/:channelId").get(verifyJWT, getUserChannelSubscribers);
 
-// Fetch all channels subscribed to by a user (secured route)
+// Fetch all channels subscribed to by a user and mark channel subscribed by curUser in that channel list (secured route)
 router.route("/channel/:subscriberId").get(verifyJWT, getSubscribedChannels);
 
 // Fetch all videos of channels subscribed to by a current user (secured route)

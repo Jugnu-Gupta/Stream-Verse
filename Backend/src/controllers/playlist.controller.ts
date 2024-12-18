@@ -2,9 +2,11 @@ import { Request, Response } from "express";
 import mongoose, { isValidObjectId } from "mongoose";
 import { UserType } from "../types/user.type";
 import { Playlist } from "../models/playlist.model";
+import { User } from "../models/user.model";
 import { asyncHandler } from "../utils/asyncHandler";
 import { ApiError } from "../utils/apiError";
 import { ApiResponse } from "../utils/apiResponse";
+// import { User } from "models/user.model";
 
 interface RequestWithUser extends Request {
     user: UserType;
@@ -39,51 +41,56 @@ const createPlaylist = asyncHandler(
 );
 
 interface GetUserPlaylistParams {
-    userId?: string;
+    userName?: string;
 }
 
-const getUserPlaylist = asyncHandler(
+const getUserPlaylists = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { userId }: GetUserPlaylistParams = req.query;
-        if (!isValidObjectId(userId)) {
-            throw new ApiError(400, "Invalid user id");
-        }
-        if (!userId) {
-            throw new ApiError(400, "User id is required");
+        const { userName }: GetUserPlaylistParams = req.query;
+        if (!userName) {
+            throw new ApiError(400, "userName is required");
         }
 
         // get thumbnail of 1st video and no. of videos of each playlist
-        const playlists = await Playlist.aggregate([
-            { $match: { ownerId: new mongoose.Types.ObjectId(userId) } },
+        const playlists = await User.aggregate([
+            { $match: { userName: userName.toLowerCase() } },
             {
                 $lookup: {
-                    from: "videos",
-                    localField: "videos",
-                    foreignField: "_id",
-                    as: "videos",
+                    from: "playlists",
+                    localField: "_id",
+                    foreignField: "ownerId",
+                    as: "playlists",
+                    pipeline: [
+                        {
+                            $lookup: {
+                                from: "videos",
+                                localField: "videos",
+                                foreignField: "_id",
+                                as: "videos",
+                            },
+                        },
+                        {
+                            $project: {
+                                _id: 1,
+                                name: 1,
+                                description: 1,
+                                thumbnail: {
+                                    $arrayElemAt: ["$videos.thumbnail", 0],
+                                },
+                                noOfVideos: { $size: "$videos" },
+                                createdAt: 1,
+                                updatedAt: 1,
+                            },
+                        },
+                    ],
                 },
             },
-            {
-                $lookup: {
-                    from: "users", // Join with the 'users' collection
-                    localField: "ownerId",
-                    foreignField: "_id",
-                    as: "owner", // Keep owner as an array
-                },
-            },
-            { $addFields: { owner: { $arrayElemAt: ["$owner", 0] } } },
             {
                 $project: {
                     _id: 1,
-                    name: 1,
-                    description: 1,
-                    thumbnail: { $arrayElemAt: ["$videos.thumbnail", 0] }, // First video's thumbnail
-                    numberOfVideos: { $size: "$videos" }, // Count videos
-                    owner: {
-                        userName: "$owner.userName",
-                        email: "$owner.email",
-                    },
-                    updatedAt: 1,
+                    playlists: 1,
+                    fullName: 1,
+                    userName: 1,
                 },
             },
         ]);
@@ -93,7 +100,13 @@ const getUserPlaylist = asyncHandler(
 
         return res
             .status(200)
-            .json(new ApiResponse(200, { playlists }, "User playlists"));
+            .json(
+                new ApiResponse(
+                    200,
+                    { playlists: playlists[0].playlists },
+                    "User playlists"
+                )
+            );
     }
 );
 
@@ -127,7 +140,9 @@ const getPlaylistById = asyncHandler(
                                 _id: 1,
                                 thumbnail: 1,
                                 title: 1,
+                                description: 1,
                                 duration: 1,
+                                views: 1,
                             },
                         },
                     ],
@@ -150,9 +165,11 @@ const getPlaylistById = asyncHandler(
                     videos: 1,
                     owner: {
                         userName: "$owner.userName",
-                        email: "$owner.email",
+                        fullName: "$owner.fullName",
+                        avatar: "$owner.avatar",
                     },
                     updatedAt: 1,
+                    createdAt: 1,
                 },
             },
         ]);
@@ -162,7 +179,13 @@ const getPlaylistById = asyncHandler(
 
         return res
             .status(200)
-            .json(new ApiResponse(200, { playlist }, "Playlist found"));
+            .json(
+                new ApiResponse(
+                    200,
+                    { playlist: playlist[0] },
+                    "Playlist found"
+                )
+            );
     }
 );
 
@@ -298,7 +321,7 @@ const updatePlaylist = asyncHandler(
 
 export {
     createPlaylist,
-    getUserPlaylist,
+    getUserPlaylists,
     getPlaylistById,
     addVideoInPlaylist,
     deleteVideoFromPlaylist,

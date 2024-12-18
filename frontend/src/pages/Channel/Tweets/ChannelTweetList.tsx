@@ -6,19 +6,25 @@ import { BiSolidLike } from "react-icons/bi";
 import { BiDislike } from "react-icons/bi";
 import { BiSolidDislike } from "react-icons/bi";
 import { BiCommentDetail } from "react-icons/bi";
+import { formatDateToNow } from "../../../utils/formatDateToNow";
+import { formatNumber } from "../../../utils/FormatNumber";
 
-const ChannelTweetList: React.FC = () => {
+interface ChannelTweetListProps {
+	tweetInfo?: any;
+}
+const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo }) => {
 	const [readMore, setReadMore] = React.useState(false);
 	const [isliked, setIsLiked] = React.useState(false);
 	const [isDisliked, setIsDisliked] = React.useState(false);
-	const UploadedAt = "1 month";
-	const channelName = "Channel Name";
-	const dislikes = 100;
-	const likes = 100;
-	const comments = 100;
-	// store 100 words in description
+	const UploadedAt = formatDateToNow(tweetInfo?.createdAt || Date.now());
+	const channelName = tweetInfo?.owner?.fullName || "channel Name";
+	const dislikes = formatNumber(tweetInfo?.dislikes || 0);
+	const likes = formatNumber(tweetInfo?.likes || 0);
+	const comments = formatNumber(tweetInfo?.comments || 0);
 	const description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.";
-	const desc = readMore ? description : `${description.slice(0, 100)}...`;
+	const content = (tweetInfo?.content || description);
+	// store 100 length in description
+	const showContent = readMore ? content : `${content.slice(0, 100)}...`;
 
 	const likeHanlder = () => {
 		setIsLiked(!isliked);
@@ -46,8 +52,8 @@ const ChannelTweetList: React.FC = () => {
 					<p className="text-primary-text2 text-xs">{UploadedAt}</p>
 				</div>
 				<div className="flex flex-col items-start">
-					<p>{desc}</p>
-					{description.length > 100 && (
+					<p>{showContent}</p>
+					{content.length > 100 && (
 						<button
 							onClick={() => setReadMore(!readMore)}
 							className="text-sm text-primary-text font-semibold">

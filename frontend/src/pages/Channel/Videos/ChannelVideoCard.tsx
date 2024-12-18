@@ -1,11 +1,18 @@
 import React from "react";
 import thumbnail from "../../../assets/thumbnail.png";
 import { Link } from "react-router-dom";
+import { formatNumber } from "../../../utils/FormatNumber";
+import { formatDateToNow } from "../../../utils/formatDateToNow";
+import { secondsToHms } from "../../../utils/SecondsToHms";
 
-const ChannelVideosCard: React.FC = () => {
-	const duration = "10:00";
-	const views = "1000k";
-	const uploadedAt = "1 year";
+interface ChannelVideosCardProps {
+	videoInfo?: any;
+}
+const ChannelVideosCard: React.FC<ChannelVideosCardProps> = ({ videoInfo }) => {
+	const duration = secondsToHms(parseInt(videoInfo?.duration || 100));
+	const views = formatNumber(parseInt(videoInfo?.views || 100));
+	const uploadedAt = formatDateToNow(videoInfo?.uploadedAt || new Date());
+	const title = videoInfo?.title || "Video Title";
 
 	return (
 		<div className="flex flex-col gap-2 p-2 group max-w-[400px]">
@@ -24,9 +31,9 @@ const ChannelVideosCard: React.FC = () => {
 			<div className="flex gap-3">
 				<div className="flex flex-col text-white w-full">
 					<Link to="/video/:videoId">
-						<h2 className="font-bold">Video Title</h2>
+						<h2 className="font-bold">{title}</h2>
 						<p className="text-sm opacity-80">
-							{views} Views · {uploadedAt} ago
+							{views} views · {uploadedAt}
 						</p>
 					</Link>
 				</div>

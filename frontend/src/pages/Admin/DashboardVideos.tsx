@@ -1,7 +1,25 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import makeApiRequest from '../../utils/MakeApiRequest';
 import DashboardVideoStatsControl from "./DashboardVideoStatsControl";
 
 const DashboardVideos: React.FC = () => {
+    const navigate = useNavigate();
+    const [videos, setVideos] = React.useState<any[]>([]);
+
+    React.useEffect(() => {
+        makeApiRequest({
+            method: "get",
+            url: "/api/v1/dashboard/channel-videos",
+        }).then((response: any) => {
+            console.log("videos:", response.data);
+            setVideos(response.data?.videos);
+        }).catch((error) => {
+            console.error("Error fetching data:", error);
+            navigate("/");
+        });
+    }, [navigate]);
+
     return (
         <div className="overflow-x-auto mt-4">
             <table className="w-full text-white border-collapse">
@@ -16,12 +34,11 @@ const DashboardVideos: React.FC = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    <DashboardVideoStatsControl />
-                    <DashboardVideoStatsControl />
-                    <DashboardVideoStatsControl />
-                    <DashboardVideoStatsControl />
-                    <DashboardVideoStatsControl />
-                    <DashboardVideoStatsControl />
+                    {
+                        videos?.map((video: any) => (
+                            <DashboardVideoStatsControl key={video._id} videoInfo={video} />
+                        ))
+                    }
                 </tbody>
             </table>
         </div>

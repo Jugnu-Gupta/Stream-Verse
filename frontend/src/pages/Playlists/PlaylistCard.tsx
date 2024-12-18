@@ -1,17 +1,17 @@
 import React from "react";
-import thumbnail from "../../../assets/thumbnail.png";
+import thumbnail from "../../assets/thumbnail.png";
 import { Link } from "react-router-dom";
 import { CgPlayList } from "react-icons/cg";
 import { FaPlay } from "react-icons/fa";
-import { formatNumber } from "../../../utils/FormatNumber";
-import { formatDateToNow } from "../../../utils/formatDateToNow";
+import { formatNumber } from "../../utils/FormatNumber";
+import { formatDateToNow } from "../../utils/formatDateToNow";
 
 interface ChannelVideosCardProps {
 	playlist?: any;
 }
 
 const ChannelVideosCard: React.FC<ChannelVideosCardProps> = ({ playlist }) => {
-	const noOfvideos = formatNumber(parseInt(playlist?.numberOfVideos || 100));
+	const noOfvideos = formatNumber(parseInt(playlist?.noOfVideos || 100));
 	const updatedAt = formatDateToNow(playlist?.updatedAt || new Date());
 	const title = playlist?.name || "Playlist Title";
 	// const _thumbnail = playlist?.videos[0]?.thumbnail || thumbnail;

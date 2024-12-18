@@ -10,7 +10,7 @@ const Navbar: React.FC = () => {
 	const navigate = useNavigate();
 	const windowWidth = useWindowWidth();
 	const isVideoDetailPage = window.location.pathname.includes("/video/");
-	const page = "/" + window.location.pathname.split("/").pop();
+	const page = window.location.pathname;
 	const { adminName } = useParams<{ adminName: string }>();
 	// console.log(page);
 	// console.log("pathname:", addAdminName(window.location.pathname));

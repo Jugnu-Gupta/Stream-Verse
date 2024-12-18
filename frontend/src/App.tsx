@@ -7,7 +7,8 @@ import MainLayout from "./Layouts/MainLayout.tsx";
 import Home from "./pages/Home/Home.tsx";
 import Search from "./pages/Search/Search.tsx";
 import ChannelVideos from "./pages/Channel/Videos/ChannelVideos.tsx";
-import ChannelPlaylists from "./pages/Channel/Playlists/ChannelPlaylists.tsx";
+// import ChannelPlaylists from "./pages/Channel/Playlists/ChannelPlayists.tsx";
+import Playlists from "./pages/Playlists/Playlists.tsx";
 import ChannelTweets from "./pages/Channel/Tweets/ChannelTweets.tsx";
 import ChannelTweetComment from "./pages/Channel/Tweets/ChannelTweetComments.tsx";
 import ChannelSubscribed from "./pages/Channel/Subscribed/ChannelSubscribed.tsx";
@@ -22,7 +23,7 @@ import ChannelLayout from "./Layouts/ChannelLayout.tsx";
 import ChangePassword from "./pages/Channel/ChangePassword/ChangePassword.tsx";
 import PersonalInformation from "./pages/Channel/PersonalInformation.tsx/PersonalInfomation.tsx";
 import Subscriptions from "./pages/Subscriptions/Subscriptions.tsx";
-import History from "./pages/History/History.tsx";
+import WatchHistory from "./pages/WatchHistory/WatchHistory.tsx";
 import LikedVideos from "./pages/LikedVideos/LikedVideos.tsx";
 import ProtectedLayout from "./Layouts/ProtectedLayout.tsx";
 import ProtectedAdminLayout from "./Layouts/ProtectedAdminLayout.tsx";
@@ -65,16 +66,16 @@ function App() {
 
 					{/* for current user and channel of other users */}
 					<Route path=":adminName/videos" element={<ChannelLayout><ChannelVideos /> </ChannelLayout>} />
-					<Route path=":adminName/playlists" element={<ChannelLayout><ChannelPlaylists /></ChannelLayout>} />
+					<Route path=":adminName/playlists" element={<ChannelLayout><Playlists /></ChannelLayout>} />
 					<Route path=":adminName/tweets" element={<ChannelLayout><ChannelTweets /> </ChannelLayout>} />
 					<Route path=":adminName/subscribed" element={<ChannelLayout><ChannelSubscribed /> </ChannelLayout>} />
 
 					<Route element={<ProtectedLayout />}>
 						<Route path="terms-and-conditions" element={<TermsAndConditions />} />
 						<Route path="tweets/:tweetId" element={<ChannelTweetComment />} />
-						<Route path="history" element={<History />} />
+						<Route path="history" element={<WatchHistory />} />
 						<Route path="liked-videos" element={<LikedVideos />} />
-						<Route path="playlists" element={<ChannelPlaylists />} />
+						<Route path="playlists" element={<Playlists />} />
 						<Route path="subscriptions" element={<Subscriptions />} />
 
 						<Route path=":adminName" element={<ProtectedAdminLayout />} >

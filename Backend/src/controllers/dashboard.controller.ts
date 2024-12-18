@@ -14,12 +14,7 @@ interface RequestWithUser extends Request {
 // controller to Get the channel stats like total video views, total subscribers, total videos, total likes etc.
 const getAdminChannelStats = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        // check if the user id is valid.
-        if (!isValidObjectId(req?.user?._id)) {
-            throw new ApiError(400, "Invalid user id");
-        }
         const userId = new mongoose.Types.ObjectId(req?.user?._id);
-
         const user = await User.aggregate([
             { $match: { _id: userId } },
             {
@@ -62,19 +57,52 @@ const getAdminChannelStats = asyncHandler(
                                             },
                                         },
                                     },
+
+                                    { $project: { isLiked: 1 } },
                                 ],
                                 as: "Likes",
                             },
                         },
                         {
+                            $lookup: {
+                                from: "comments",
+                                let: { videoId: "$_id" },
+                                pipeline: [
+                                    {
+                                        $match: {
+                                            $expr: {
+                                                $and: [
+                                                    {
+                                                        $eq: [
+                                                            "$entityId",
+                                                            "$$videoId",
+                                                        ],
+                                                    },
+                                                    {
+                                                        $eq: [
+                                                            "$entityType",
+                                                            "video",
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    },
+                                    { $project: { _id: 1 } },
+                                ],
+                                as: "Comments",
+                            },
+                        },
+                        {
                             $addFields: {
+                                comments: { $size: "$Comments" },
                                 likes: {
                                     $size: {
                                         $filter: {
                                             input: "$Likes",
-                                            as: "Like",
+                                            as: "like",
                                             cond: {
-                                                $eq: ["$$Like.isLiked", true],
+                                                $eq: ["$$like.isLiked", true],
                                             },
                                         },
                                     },
@@ -83,45 +111,47 @@ const getAdminChannelStats = asyncHandler(
                                     $size: {
                                         $filter: {
                                             input: "$Likes",
-                                            as: "Like",
+                                            as: "like",
                                             cond: {
-                                                $eq: ["$$Like.isLiked", false],
+                                                $eq: ["$$like.isLiked", false],
                                             },
                                         },
                                     },
                                 },
                             },
                         },
-                        { $project: { likes: 1, dislikes: 1, views: 1 } },
+                        {
+                            $project: {
+                                likes: 1,
+                                dislikes: 1,
+                                views: 1,
+                                comments: 1,
+                            },
+                        },
                     ],
                 },
             },
             {
-                $addFields: {
+                $project: {
                     totalSubscribers: { $size: "$Subscribers" },
                     totalVideos: { $size: "$Videos" },
                     totalViews: { $sum: "$Videos.views" },
                     totalLikes: { $sum: "$Videos.likes" },
                     totalDislikes: { $sum: "$Videos.dislikes" },
-                },
-            },
-            {
-                $project: {
-                    totalSubscribers: 1,
-                    totalVideos: 1,
-                    totalViews: 1,
-                    totalLikes: 1,
-                    totalDislikes: 1,
+                    totalComments: { $sum: "$Videos.comments" },
                 },
             },
         ]);
+        if (!user?.length) {
+            throw new ApiError(404, "No user found with this id");
+        }
 
         return res
             .status(200)
             .json(
                 new ApiResponse(
                     200,
-                    { user },
+                    { stats: user[0] },
                     "Channel stats fetched successfully"
                 )
             );
@@ -168,8 +198,8 @@ const getAdminChannelVideos = asyncHandler(
                         $size: {
                             $filter: {
                                 input: "$Likes",
-                                as: "Like",
-                                cond: { $eq: ["$$Like.isLiked", true] },
+                                as: "like",
+                                cond: { $eq: ["$$like.isLiked", true] },
                             },
                         },
                     },
@@ -177,8 +207,8 @@ const getAdminChannelVideos = asyncHandler(
                         $size: {
                             $filter: {
                                 input: "$Likes",
-                                as: "Like",
-                                cond: { $eq: ["$$Like.isLiked", false] },
+                                as: "like",
+                                cond: { $eq: ["$$like.isLiked", false] },
                             },
                         },
                     },

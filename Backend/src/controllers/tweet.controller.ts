@@ -168,7 +168,7 @@ const getUserTweet = asyncHandler(
                 $project: {
                     Likes: 0,
                     Comments: 0,
-                    owner: { _id: 0 },
+                    ownerId: 0,
                 },
             },
         ]);
@@ -180,7 +180,11 @@ const getUserTweet = asyncHandler(
         return res
             .status(200)
             .json(
-                new ApiResponse(200, tweets, "User tweets fetched successfully")
+                new ApiResponse(
+                    200,
+                    { tweets },
+                    "User tweets fetched successfully"
+                )
             );
     }
 );

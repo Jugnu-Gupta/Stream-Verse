@@ -14,7 +14,7 @@ import { addAdminName } from "../../utils/AddAdminName";
 const Navbar: React.FC = () => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-	const page = "/" + window.location.pathname.split("/").pop();
+	const page = window.location.pathname;
 	const { adminName } = useParams<{ adminName: string }>();
 	const showNavbar: boolean = useSelector(
 		(state: RootState) => state.navbar.showNavbar

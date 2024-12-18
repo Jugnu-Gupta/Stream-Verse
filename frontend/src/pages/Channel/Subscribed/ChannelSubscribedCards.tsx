@@ -2,11 +2,16 @@ import React from "react";
 import thumbnail from "../../../assets/thumbnail.png";
 import { Link } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
+import { formatNumber } from "../../../utils/FormatNumber";
 
-const ChannelSubscribedCards: React.FC = () => {
+
+interface ChannelSubscribedCardsProps {
+	channelInfo?: any;
+}
+const ChannelSubscribedCards: React.FC<ChannelSubscribedCardsProps> = ({ channelInfo }) => {
 	const [isSubscribed, setIsSubscribed] = React.useState(false);
-	const channelName = "Channel Name";
-	const subscribers = "1000k";
+	const channelName = channelInfo?.fullName || "Channel Name";
+	const subscribers = formatNumber(channelInfo?.totalSubscribers || 100);
 
 	return (
 		<div className="flex items-center gap-2 p-2 w-full">

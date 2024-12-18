@@ -110,7 +110,19 @@ const getSubscribedChannels = asyncHandler(
                                 userName: 1,
                                 avatar: 1,
                                 fullName: 1,
-                                totalSubscriber: { $size: "$subscribers" },
+                                totalSubscribers: { $size: "$subscribers" },
+                                isSubcribed: {
+                                    $cond: {
+                                        if: {
+                                            $in: [
+                                                req?.user?._id, // Replace with the actual subscriber ID value
+                                                "$subscribers.subscriberId", // Path to the subscriber IDs array
+                                            ],
+                                        },
+                                        then: true,
+                                        else: false,
+                                    },
+                                },
                             },
                         },
                     ],
@@ -125,7 +137,11 @@ const getSubscribedChannels = asyncHandler(
         return res
             .status(200)
             .json(
-                new ApiResponse(200, { subscriptions }, "Subscribed channels")
+                new ApiResponse(
+                    200,
+                    { subscribedChannels: subscriptions },
+                    "Subscribed channels"
+                )
             );
     }
 );
@@ -186,11 +202,7 @@ const getSubscribedChannelsVideos = asyncHandler(
         return res
             .status(200)
             .json(
-                new ApiResponse(
-                    200,
-                    { videos: subscriptions },
-                    "Subscribed channels"
-                )
+                new ApiResponse(200, { subscriptions }, "Subscribed channels")
             );
     }
 );

@@ -6,6 +6,7 @@ import {
     getCurrentUser,
     updateUserCoverImage,
     getUserChannelPage,
+    getUserChannelVideos,
     updateUserDetails,
     updateUserAvatar,
     getWatchHistory,
@@ -34,6 +35,9 @@ router
 
 // Get channel page by username (secured route)
 router.route("/channel/:userName").get(verifyJWT, getUserChannelPage);
+
+// Get channel page videos by username (public route)
+router.route("/video/:userName").get(verifyJWT, getUserChannelVideos);
 
 // Get watch history (secured route)
 router.route("/watch-history").get(verifyJWT, getWatchHistory);
