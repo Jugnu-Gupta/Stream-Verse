@@ -6,7 +6,7 @@ const Login: React.FC = () => {
 	const navigate = useNavigate();
 
 	return (
-		<div className="w-full flex justify-center items-center min-h-[calc(100vh-60px)] bg-background-primary">
+		<div className="w-full flex justify-center items-center min-h-[100vh] bg-background-primary">
 			<div className="flex min-w-[750px] h-[400px] shadow-[0_0_5px_white] rounded-lg">
 				<div className="flex flex-col justify-center bg-background-secondary rounded-l-lg text-center p-4 w-2/3">
 					<h1 className="text-primary text-3xl font-bold pb-4">

@@ -1,16 +1,17 @@
 import React from "react";
 import thumbnail from "../../assets/thumbnail.png";
 import { Link } from "react-router-dom";
-import { secondsToHms } from "../../utils/SecondsToHms";
-import { formatDateToNow } from "../../utils/formatDateToNow";
+import { formatDuration } from "../../utils/FormatDuration";
+import { formatDateToNow } from "../../utils/FormatDateToNow";
 import { formatNumber } from "../../utils/FormatNumber";
+import { VideoType } from "../../Types/Video";
 
 interface VideoListViewProps {
-	videoInfo?: any;
+	videoInfo: VideoType;
 }
 const VideoListView: React.FC<VideoListViewProps> = ({ videoInfo }) => {
-	const duration = secondsToHms(videoInfo?.duration || 100);
-	const views = formatNumber(videoInfo?.views || 10200);
+	const duration = formatDuration(videoInfo?.duration);
+	const views = formatNumber(videoInfo?.views);
 	const uploadedAt = formatDateToNow(videoInfo?.createdAt || new Date());
 	const description = videoInfo?.description || "This is a video description";
 	const title = videoInfo?.title || "Video Title";

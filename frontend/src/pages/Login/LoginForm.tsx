@@ -1,7 +1,6 @@
 import React from "react";
 import { useFormik } from "formik";
 import { MdEmail } from "react-icons/md";
-import { ApiRequestOptions } from "../../utils/MakeApiRequest";
 import makeApiRequest from "../../utils/MakeApiRequest";
 import { LoginValidationSchema } from "./LoginValidationSchema";
 import toast from "react-hot-toast";
@@ -21,29 +20,27 @@ const LoginForm: React.FC = () => {
 		},
 		validationSchema: LoginValidationSchema,
 		onSubmit: async (values) => {
-			try {
-				const request: ApiRequestOptions = {
-					method: "post",
-					url: "/api/v1/auths/login",
-					data: values,
-				};
-				const { data }: any = await makeApiRequest(request);
-				console.log(data);
-
-				toast.success("Signed Up successfully");
+			makeApiRequest({
+				method: "post",
+				url: "/api/v1/auths/login",
+				data: values,
+			}).then((response: any) => { // eslint-disable-line
+				const responseData = response.data;
+				console.log("Login Info:", responseData);
+				toast.success("Logged in successfully");
 				setShowVerifyEmail(false);
 
 				// data in localStorage for future use
-				localStorage.setItem("userId", data.user._id);
-				localStorage.setItem("token", data.accessToken);
-				localStorage.setItem("userName", data.user.userName);
-				localStorage.setItem("fullName", data.user.fullName);
-				localStorage.setItem("email", data.user.email);
-				localStorage.setItem("avatar", data.user.avatar.url);
-				localStorage.setItem("cover", data.user.coverImage.url);
+				localStorage.setItem("userId", responseData.user._id);
+				localStorage.setItem("token", responseData.accessToken);
+				localStorage.setItem("userName", responseData.user.userName);
+				localStorage.setItem("fullName", responseData.user.fullName);
+				localStorage.setItem("email", responseData.user.email);
+				// localStorage.setItem("avatar", responseData.user.avatar.url);
+				// localStorage.setItem("cover", responseData.user.coverImage.url);
 
 				navigate("/");
-			} catch (error: any) {
+			}).catch((error) => {
 				if (error.status === 403) {
 					setShowVerifyEmail(true);
 					console.error(error.response.data.message);
@@ -51,7 +48,7 @@ const LoginForm: React.FC = () => {
 					setShowVerifyEmail(false);
 					toast.error(error.response.data.message);
 				}
-			}
+			});
 		},
 	});
 

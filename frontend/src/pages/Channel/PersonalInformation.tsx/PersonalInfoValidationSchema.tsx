@@ -1,8 +1,6 @@
 import * as yup from 'yup';
 
 export const PersonalInfoValidationSchema = yup.object({
-    firstName: yup.string().required('Please enter your first name'),
-    lastName: yup.string().required('Please enter your last name'),
+    fullName: yup.string().required('Please enter your full name'),
     userName: yup.string().required('Please enter your username'),
-    description: yup.string().required('Please enter your description'),
 });

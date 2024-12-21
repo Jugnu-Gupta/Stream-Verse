@@ -3,9 +3,10 @@ import Background from "../../../assets/thumbnail.png";
 import { useNavigate } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 import { formatNumber } from '../../../utils/FormatNumber';
+import { ChannelInfoType } from '../../../Types/Channel';
 
 interface ChannelInfoProps {
-    channelInfo: any;
+    channelInfo: ChannelInfoType | undefined;
 }
 const ChannelInfo: React.FC<ChannelInfoProps> = ({ channelInfo }) => {
     const navigate = useNavigate();
@@ -13,8 +14,8 @@ const ChannelInfo: React.FC<ChannelInfoProps> = ({ channelInfo }) => {
     const adminName = "@" + (channelInfo?.userName || "adminName");
     const channelName = channelInfo?.fullName || "channel Name"; // find out whose channel is this
     const curUserName: string = "@" + localStorage.getItem("userName");
-    const subscribers = formatNumber(channelInfo?.subscriberCount || 0);
-    const videos = formatNumber(channelInfo?.videoCount || 0);
+    const subscribers = formatNumber(channelInfo?.subscriberCount);
+    const videos = formatNumber(channelInfo?.videoCount);
 
     return (
         <>

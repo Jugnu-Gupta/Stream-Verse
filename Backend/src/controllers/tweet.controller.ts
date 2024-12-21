@@ -7,9 +7,9 @@ import { UserType } from "types/user.type";
 import { asyncHandler } from "../utils/asyncHandler";
 import { ApiError } from "../utils/apiError";
 import { ApiResponse } from "../utils/apiResponse";
-import fs from "fs";
 import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary";
 import { UploadApiResponse } from "cloudinary";
+import fs from "fs";
 
 interface RequestWithUser extends Request {
     user: UserType;
@@ -174,6 +174,131 @@ const getUserTweet = asyncHandler(
         ]);
 
         if (!tweets?.length) {
+            throw new ApiError(404, "No tweets found");
+        }
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    { tweets },
+                    "User tweets fetched successfully"
+                )
+            );
+    }
+);
+
+interface GetTweetByIdParams {
+    tweetId?: string;
+}
+
+const getTweetById = asyncHandler(
+    async (req: RequestWithUser, res: Response) => {
+        const { tweetId }: GetTweetByIdParams = req.params;
+        if (!isValidObjectId(tweetId)) {
+            throw new ApiError(400, "Invalid user id");
+        }
+
+        const tweets = await Tweet.aggregate([
+            { $match: { _id: new mongoose.Types.ObjectId(tweetId) } },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "ownerId",
+                    foreignField: "_id",
+                    as: "owner",
+                    pipeline: [
+                        {
+                            $project: {
+                                fullName: 1,
+                                avatar: 1,
+                                userName: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $lookup: {
+                    from: "likes",
+                    let: { tweetId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$entityId", "$$tweetId"],
+                                        },
+                                        {
+                                            $eq: ["$entityType", "tweet"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
+                    as: "Likes",
+                },
+            },
+            {
+                $lookup: {
+                    from: "comments",
+                    let: { tweetId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$entityId", "$$tweetId"],
+                                        },
+                                        {
+                                            $eq: ["$entityType", "tweet"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
+                    as: "Comments",
+                },
+            },
+            {
+                $addFields: {
+                    likes: {
+                        $size: {
+                            $filter: {
+                                input: "$Likes",
+                                as: "like",
+                                cond: { $eq: ["$$like.isLiked", true] },
+                            },
+                        },
+                    },
+                    dislikes: {
+                        $size: {
+                            $filter: {
+                                input: "$Likes",
+                                as: "like",
+                                cond: { $eq: ["$$like.isLiked", false] },
+                            },
+                        },
+                    },
+                    comments: { $size: "$Comments" },
+                    owner: { $arrayElemAt: ["$owner", 0] },
+                },
+            },
+            {
+                $project: {
+                    Likes: 0,
+                    Comments: 0,
+                    ownerId: 0,
+                },
+            },
+        ]);
+
+        if (!tweets) {
             throw new ApiError(404, "No tweets found");
         }
 
@@ -439,6 +564,7 @@ export {
     createTweet,
     getUserTweet,
     updateTweet,
+    getTweetById,
     updateTweetImage,
     deleteTweet,
 };

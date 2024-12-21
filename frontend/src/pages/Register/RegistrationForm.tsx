@@ -5,7 +5,6 @@ import { MdEmail } from "react-icons/md";
 import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa";
 import makeApiRequest from "../../utils/MakeApiRequest";
-import type { ApiRequestOptions } from "../../utils/MakeApiRequest";
 import { RegistrationValidationSchema } from "./RegistrationValidationSchema";
 import toast from "react-hot-toast";
 
@@ -21,26 +20,24 @@ const RegistrationForm: React.FC = () => {
 			},
 			validationSchema: RegistrationValidationSchema,
 			onSubmit: async (values) => {
-				try {
-					const request: ApiRequestOptions = {
-						method: "post",
-						url: "/api/v1/auths/register",
-						data: {
-							fullName: values.name,
-							email: values.email,
-							password: values.password,
-						},
-					};
-					const res: any = await makeApiRequest(request);
+				makeApiRequest({
+					method: "post",
+					url: "/api/v1/auths/register",
+					data: {
+						fullName: values.name,
+						email: values.email,
+						password: values.password,
+					},
+				}).then((response: any) => { // eslint-disable-line
+					const responseData = response.data;
+					console.log("Registration Info:", responseData);
 					console.log(values);
-					console.log(res);
-
 					setShowVerifyEmail(true);
-				} catch (error: any) {
+				}).catch((error) => {
 					console.error("Error registering");
 					setShowVerifyEmail(false);
 					toast.error(error.response.data.message);
-				}
+				});
 			},
 		});
 

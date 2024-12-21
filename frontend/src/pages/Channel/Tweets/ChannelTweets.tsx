@@ -3,34 +3,37 @@ import ChannelTweetList from "./ChannelTweetList";
 import thumbnail from "../../../assets/thumbnail.png";
 import { IoImageOutline } from "react-icons/io5";
 import { twMerge } from "tailwind-merge";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { updateImage } from "../../../utils/UpdateImage";
 import makeApiRequest from "../../../utils/MakeApiRequest";
+import { TweetType } from "../../../Types/Tweet";
+import { ChannelInfoType } from "../../../Types/Channel";
 
-interface ChannelTweetsProps {
-	channelInfo?: any;
+interface ChannelInfoWrapper {
+	channelInfo: ChannelInfoType;
 }
-const ChannelTweets: React.FC<ChannelTweetsProps> = ({ channelInfo }) => {
+const ChannelTweets: React.FC = () => {
+	const { channelInfo }: ChannelInfoWrapper = useOutletContext();
 	const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
 	const [newTweetImage, setNewTweetImage] = React.useState<string>("");
 	const [comment, setComment] = React.useState<string>("");
 	const { adminName } = useParams<{ adminName: string }>();
 	const channelId = channelInfo?._id;
 	const curUserName = "@" + localStorage.getItem("userName");
-	const [tweets, setTweets] = React.useState<any[]>([]);
+	const [tweets, setTweets] = React.useState<TweetType[]>([]);
 	const navigate = useNavigate();
-	console.log("adminName:", channelInfo);
 
 	React.useEffect(() => {
+		if (!channelId) return;
 		makeApiRequest({
 			method: "get",
 			url: `/api/v1/tweets/user/${channelId}`,
-		}).then((response: any) => {
+		}).then((response: any) => { // eslint-disable-line
 			console.log("channelsResponse tweets:", response.data);
 			setTweets(response.data?.tweets);
 		}).catch((error) => {
 			console.error("Error fetching data:", error);
-			navigate("/");
+			// navigate("/");
 		});
 	}, [navigate, channelId]);
 
@@ -116,7 +119,7 @@ const ChannelTweets: React.FC<ChannelTweetsProps> = ({ channelInfo }) => {
 			{/* Tweets */}
 			<div>
 				{
-					tweets?.map((tweet: any) => (
+					tweets?.map((tweet: TweetType) => (
 						<ChannelTweetList key={tweet._id} tweetInfo={tweet} />
 					))
 				}

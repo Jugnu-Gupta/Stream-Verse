@@ -1,35 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
-
-export interface value {
-	owner: string;
-	content: string;
-	id: number;
-	replies: number;
-	likes: number;
-	dislikes: number;
-	createdAt: string;
-	updatedAt: string;
-	// createdAt: Date;
-	// updatedAt: Date;
-}
+import { CommentType } from "../../Types/Comment";
 
 export interface TreeNode {
-	val: value;
+	val: CommentType | null;
 	children: TreeNode[];
 }
 
 const initialState: TreeNode = {
 	val: {
-		owner: "root",
+		owner: {
+			_id: "root",
+			userName: "root",
+			fullName: "root",
+		},
 		content: "root",
-		id: 0,
+		_id: "root",
 		replies: 0,
 		likes: 0,
 		dislikes: 0,
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString(),
-		// createdAt: new Date(),
-		// updatedAt: new Date(),
 	},
 	children: [],
 };
@@ -38,25 +28,44 @@ const CommentSlice = createSlice({
 	name: "comment",
 	initialState,
 	reducers: {
-		AddComments: (state, action) => {
-			const { parentPath, childs } = action.payload;
-
+		addComments: (state, action) => {
+			const { childPathIds, childs } = action.payload;
 			let root = state;
-			for (let i = 0; i < parentPath.length; i++) {
-				// if the parent is not found
-				if (root.children.length <= parentPath[i]) break;
+			let isNodeFound: boolean = true;
 
-				// go to the next parent
-				root = root.children[parentPath[i]];
-
-				// add the childs to the last parent
-				if (i + 1 === parentPath.length) {
-					root.children.push(...childs);
+			for (let i = 0; i < childPathIds.length; i++) {
+				const nextNode = root.children.find(
+					(child) => child.val?._id === childPathIds[i]
+				);
+				if (!nextNode) {
+					isNodeFound = false;
+					break;
 				}
+				// go to the next child
+				root = nextNode;
 			}
+			if (!isNodeFound) {
+				console.log("Node not found");
+			} else {
+				childs.forEach((child: CommentType) => {
+					root.children.push({ val: child, children: [] });
+				});
+			}
+		},
+		clearComments: (state) => {
+			const clearAllData = (node: TreeNode) => {
+				node.children.forEach((child) => {
+					clearAllData(child);
+				});
+				node.val = null;
+				node.children = [];
+			};
+			state.children.forEach((child) => {
+				clearAllData(child);
+			});
 		},
 	},
 });
 
-export const { AddComments } = CommentSlice.actions;
+export const { addComments, clearComments } = CommentSlice.actions;
 export default CommentSlice.reducer;

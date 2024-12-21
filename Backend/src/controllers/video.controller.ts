@@ -10,6 +10,7 @@ import { UserType } from "types/user.type";
 import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary";
 import { getVideoQuality } from "../utils/getVideoQuality";
 import { subscribe } from "diagnostics_channel";
+import path from "path";
 
 interface RequestWithUser extends Request {
     user: UserType;
@@ -31,18 +32,16 @@ const getAllVideo = asyncHandler(
             page = 1,
             limit = 10,
             query,
-            sortBy,
-            duration,
-            userId,
+            // sortBy,
+            // duration,
+            // userId,
         }: GetAllVideoQuery = req.query;
 
+        if (!query) {
+            throw new ApiError(400, "Query is required");
+        }
+
         const skip = (page - 1) * limit;
-
-        const filter = {
-            isPublished: true,
-            $text: { $search: query },
-        };
-
         // if (userId) {
         //     if (!isValidObjectId(userId))
         //         filter.ownerId = new mongoose.Types.ObjectId(userId);
@@ -51,34 +50,71 @@ const getAllVideo = asyncHandler(
 
         const sortCritieria = {}; // define
 
-        // const videos = await Video.aggregate([
-        //     { $match: filter },
-        //     {
-        //         $lookup: {
-        //             from: "User",
-        //             localField: "ownerId",
-        //             foreignField: "_id",
-        //             as: "owner",
-        //             pipeline: [
-        //                 {
-        //                     $project: {
-        //                         fullName: 1,
-        //                         userName: 1,
-        //                         avatar: 1,
-        //                     },
-        //                 },
-        //             ],
-        //         },
-        //     },
-        //     { $addFields: { owner: { $arrayElemAt: ["$owner", 0] } } },
-        //     {
-        //         $sort: {
-        //             sortCritieria: sortType?.toLowerCase() === "asc" ? 1 : -1,
-        //         },
-        //     },
-        //     { $skip: skip },
-        //     { $limit: limit },
-        // ]);
+        const videos = await Video.aggregate([
+            {
+                $search: {
+                    index: "default",
+                    text: {
+                        query,
+                        path: ["title", "description"],
+                    },
+                },
+            },
+            {
+                $limit: 10,
+            },
+            { $match: { isPublished: true } },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "ownerId",
+                    foreignField: "_id",
+                    as: "owner",
+                    pipeline: [
+                        {
+                            $project: {
+                                fullName: 1,
+                                userName: 1,
+                                avatar: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $addFields: {
+                    owner: { $arrayElemAt: ["$owner", 0] },
+                    score: { $meta: "searchScore" },
+                },
+            },
+            {
+                $sort: { score: -1 }, // descending order
+            },
+            { $skip: skip },
+            { $limit: limit },
+            {
+                $project: {
+                    title: 1,
+                    description: 1,
+                    thumbnail: 1,
+                    owner: 1,
+                    duration: 1,
+                    views: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+                },
+            },
+        ]);
+
+        if (!videos) {
+            throw new ApiError(404, "No videos found");
+        }
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(200, { videos }, "Videos fetched successfully")
+            );
     }
 );
 
@@ -237,12 +273,29 @@ const getVideoById = asyncHandler(
                 },
             },
             {
+                $lookup: {
+                    from: "users",
+                    localField: "ownerId",
+                    foreignField: "_id",
+                    as: "owner",
+                    pipeline: [
+                        {
+                            $project: {
+                                fullName: 1,
+                                userName: 1,
+                                avatar: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+            {
                 $project: {
                     title: 1,
                     description: 1,
                     thumbnail: 1,
                     videoFile: 1,
-                    ownerId: 1,
+                    owner: { $arrayElemAt: ["$owner", 0] },
                     duration: 1,
                     quality: 1,
                     isPublished: 1,
@@ -253,13 +306,19 @@ const getVideoById = asyncHandler(
                 },
             },
         ]);
-        if (!video) {
+        if (!video?.length) {
             throw new ApiError(404, "Video not found");
         }
 
         return res
             .status(200)
-            .json(new ApiResponse(200, video, "Video fetched successfully"));
+            .json(
+                new ApiResponse(
+                    200,
+                    { video: video[0] },
+                    "Video fetched successfully"
+                )
+            );
     }
 );
 

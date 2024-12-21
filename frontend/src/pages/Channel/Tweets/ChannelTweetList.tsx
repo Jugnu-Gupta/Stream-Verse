@@ -6,21 +6,22 @@ import { BiSolidLike } from "react-icons/bi";
 import { BiDislike } from "react-icons/bi";
 import { BiSolidDislike } from "react-icons/bi";
 import { BiCommentDetail } from "react-icons/bi";
-import { formatDateToNow } from "../../../utils/formatDateToNow";
+import { formatDateToNow } from "../../../utils/FormatDateToNow";
 import { formatNumber } from "../../../utils/FormatNumber";
+import { TweetType } from "../../../Types/Tweet";
 
 interface ChannelTweetListProps {
-	tweetInfo?: any;
+	tweetInfo: TweetType | undefined;
 }
 const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo }) => {
 	const [readMore, setReadMore] = React.useState(false);
 	const [isliked, setIsLiked] = React.useState(false);
 	const [isDisliked, setIsDisliked] = React.useState(false);
-	const UploadedAt = formatDateToNow(tweetInfo?.createdAt || Date.now());
+	const UploadedAt = formatDateToNow(tweetInfo?.createdAt);
 	const channelName = tweetInfo?.owner?.fullName || "channel Name";
-	const dislikes = formatNumber(tweetInfo?.dislikes || 0);
-	const likes = formatNumber(tweetInfo?.likes || 0);
-	const comments = formatNumber(tweetInfo?.comments || 0);
+	const dislikes = formatNumber(tweetInfo?.dislikes);
+	const likes = formatNumber(tweetInfo?.likes);
+	const comments = formatNumber(tweetInfo?.comments);
 	const description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.";
 	const content = (tweetInfo?.content || description);
 	// store 100 length in description

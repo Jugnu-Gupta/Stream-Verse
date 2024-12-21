@@ -1,6 +1,6 @@
 import React from "react";
-import thumbnail from "../../../assets/thumbnail.png";
-import { Link } from "react-router-dom";
+import thumbnail from "../../assets/thumbnail.png";
+import { Link, useNavigate } from "react-router-dom";
 import { BiLike } from "react-icons/bi";
 import { BiSolidLike } from "react-icons/bi";
 import { BiDislike } from "react-icons/bi";
@@ -8,24 +8,38 @@ import { BiSolidDislike } from "react-icons/bi";
 import { FaChevronDown } from "react-icons/fa";
 import { FaChevronUp } from "react-icons/fa";
 import { twMerge } from "tailwind-merge";
+import makeApiRequest from "../../utils/MakeApiRequest";
+import { formatDateToNow } from "../../utils/FormatDateToNow";
+import { addComments } from "../../context/slices/CommentSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../context/Store";
+import { CommentType } from "../../Types/Comment";
+import { selectReplies } from "./SelectReplies";
+import { formatNumber } from "../../utils/FormatNumber";
+import AddComment from "./AddComment";
 
 interface CommentProps {
-	currPath: number[];
+	currPath: string[];
+	entityId: string;
+	entityType: string;
+	comment: CommentType;
 }
 
-const ChannelTweetCommentList: React.FC<CommentProps> = ({ currPath }) => {
-	const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
-	const [comment, setComment] = React.useState<string>("");
+const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, entityType }) => {
+	const replies = useSelector((state: RootState) => selectReplies(state, currPath));
 	const [isliked, setIsLiked] = React.useState(false);
 	const [isDisliked, setIsDisliked] = React.useState(false);
 	const [showReplies, setShowReplies] = React.useState(false);
-	const UploadedAt = "1 month";
-	const channelName = "Channel Name";
-	const dislikes = 100;
-	const likes = 100;
-	const replies = [{ likes }];
+	const dislikes = formatNumber(comment?.dislikes);
+	const likes = formatNumber(comment?.likes);
 	const [giveReply, setGiveReply] = React.useState(false);
-	const description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.";
+
+	const UploadedAt = formatDateToNow(new Date(comment.createdAt));
+	const channelName = "@" + (comment?.owner?.userName || "Channel Name");
+	const commentId = comment?._id;
+	const navigate = useNavigate();
+	const dispatch = useDispatch();
+	const description = comment?.content || "comment";
 
 	const likeHanlder = () => {
 		setIsLiked(!isliked);
@@ -36,16 +50,25 @@ const ChannelTweetCommentList: React.FC<CommentProps> = ({ currPath }) => {
 		setIsLiked(false);
 	};
 
+
 	React.useEffect(() => {
-		if (textAreaRef.current) {
-			textAreaRef.current!.style.height = "32px";
-			const scrollHeight = textAreaRef.current!.scrollHeight;
-			textAreaRef.current!.style.height = `${scrollHeight}px`;
-		}
-	}, [comment]);
+		if (!entityId || !commentId || replies?.length) return;
+
+		makeApiRequest({
+			method: "get",
+			url: `/api/v1/comments/${entityType}/${entityId}/${commentId}`,
+		}).then((RepliesResponse: any) => {
+			const RepliesData = RepliesResponse.data?.comments || [];
+
+			dispatch(addComments({ childPathIds: currPath, childs: RepliesData }));
+		}).catch((error) => {
+			console.error("Error fetching data2:", error);
+			// navigate("/");
+		});
+	}, [navigate, dispatch, entityType, entityId, commentId, replies, currPath]);
 
 	return (
-		<div className="p-2 overflow-hidden w-full">
+		<div className="pl-2 pt-2 overflow-hidden w-full">
 			<div className="flex items-start gap-2 w-full">
 				<Link to="/register">
 					<div className="overflow-hidden rounded-full w-10">
@@ -56,7 +79,7 @@ const ChannelTweetCommentList: React.FC<CommentProps> = ({ currPath }) => {
 						/>
 					</div>
 				</Link>
-				<div className="flex flex-col text-white overflow-hidden">
+				<div className="flex flex-col text-white overflow-hidden w-full">
 					<div className="flex gap-2 items-center">
 						<p className="text-sm font-semibold">{channelName}</p>
 						<p className="text-primary-text2 text-xs">
@@ -87,58 +110,18 @@ const ChannelTweetCommentList: React.FC<CommentProps> = ({ currPath }) => {
 						</button>
 					</div>
 
-					{giveReply && (
-						<div className="flex items-start w-full">
-							<div className="overflow-hidden rounded-full w-10">
-								{/* // current user image */}
-								<img
-									src={thumbnail}
-									alt="thumbnail"
-									className="rounded-full w-6 aspect-square"
-								/>
-							</div>
-							<div className="text-white flex flex-col w-full items-end">
-								<textarea
-									className="w-full h-8 pb-1 border-b-2 mb-2 overflow-hidden outline-none resize-none bg-transparent"
-									placeholder="Add a comment..."
-									value={comment}
-									onChange={(e) => setComment(e.target.value)}
-									ref={textAreaRef}></textarea>
-								<div className="flex gap-2">
-									<button
-										className="font-semibold outline-none hover:bg-background-secondary px-3 py-1 rounded-full duration-300"
-										onClick={() => setGiveReply(false)}>
-										Cancel
-									</button>
-									<button
-										className={twMerge(
-											"px-3 py-1 rounded-full outline-none bg-primary opacity-50",
-											comment != "" && "opacity-100"
-										)}>
-										Comment
-									</button>
-								</div>
-							</div>
-						</div>
-					)}
+					{giveReply && <AddComment setGiveReply={setGiveReply} avatarStyle="w-7" />}
 
-					{replies.length > 0 && (
+					{replies?.length > 0 && (
 						<button
-							className="flex items-center gap-2 outline-none text-primary w-fit hover:bg-background-secondary px-2 py-1 rounded-xl duration-300"
+							className="flex items-center gap-2 outline-none text-primary w-fit hover:bg-background-secondary px-2 mb-2 py-1 rounded-xl duration-300"
 							onClick={() => setShowReplies(!showReplies)}>
 							{showReplies ? <FaChevronUp /> : <FaChevronDown />}
 							<span className="text-sm font-semibold tracking-wide">
-								{replies.length} replies
+								{replies?.length} replies
 							</span>
 						</button>
 					)}
-					{/* {showReplies && currPath.length < 10 && (
-						<div className="w-full h-full">
-							<ChannelTweetCommentList
-								currPath={currPath.concat([0])}
-							/>
-						</div>
-					)} */}
 				</div>
 			</div>
 			{showReplies && currPath.length < 10 && (
@@ -147,11 +130,19 @@ const ChannelTweetCommentList: React.FC<CommentProps> = ({ currPath }) => {
 						"w-full h-full",
 						currPath.length < 5 ? "pl-4" : "pl-0"
 					)}>
-					<ChannelTweetCommentList currPath={currPath.concat([0])} />
+
+					{replies?.map((reply: any) =>
+					(<CommentCard
+						key={reply?._id}
+						currPath={currPath.concat([reply?._id])}
+						comment={reply}
+						entityId={entityId}
+						entityType={entityType}
+					/>))}
 				</div>
 			)}
 		</div>
 	);
 };
 
-export default ChannelTweetCommentList;
+export default CommentCard;

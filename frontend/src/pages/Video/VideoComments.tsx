@@ -1,51 +1,61 @@
-import React from "react";
-import ChannelTweetCommentList from "../Channel/Tweets/ChannelTweetCommentList";
-import { twMerge } from "tailwind-merge";
-import useWindowWidth from "../../hooks/useWindowWidth";
+import React, { useEffect } from "react";
+import CommentCard from "../Tweet/CommentCard";
+import { useNavigate } from "react-router-dom";
+import makeApiRequest from "../../utils/MakeApiRequest";
+import { addComments, clearComments } from "../../context/slices/CommentSlice";
+import { useDispatch } from "react-redux";
+import { CommentType } from "../../Types/Comment";
+import AddComment from "../Tweet/AddComment";
 
-const VideoComments: React.FC = () => {
-	const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
-	const [comment, setComment] = React.useState<string>("");
-	const windowWidth = useWindowWidth();
-	const currPath: number[] = [];
-	const comments = 100;
+interface VideoCommentsProps {
+	videoId: string;
+}
+const VideoComments: React.FC<VideoCommentsProps> = ({ videoId }) => {
+	const [comments, setComments] = React.useState<CommentType[]>([]);
+	const navigate = useNavigate();
+	const dispatch = useDispatch();
+	const currPath = React.useMemo<string[]>(() => [], []);
+	const noOfcomments = 100;
+	// console.log("videoId:", videoId);
 
-	React.useEffect(() => {
-		if (textAreaRef.current) {
-			textAreaRef.current!.style.height = "32px";
-			const scrollHeight = textAreaRef.current!.scrollHeight;
-			textAreaRef.current!.style.height = `${scrollHeight}px`;
-		}
-	}, [comment]);
+	useEffect(() => {
+		dispatch(clearComments());
+	}, [videoId, dispatch]);
+
+	useEffect(() => {
+		if (!videoId) return;
+		makeApiRequest({
+			method: "get",
+			url: `/api/v1/comments/video/${videoId}`,
+		}).then((commentsResponse: any) => {
+			console.log("commentsv:", commentsResponse.data?.comments);
+			const commentsData = commentsResponse.data?.comments || [];
+			setComments(commentsData);
+
+			dispatch(addComments({ childPathIds: currPath, childs: commentsData }));
+		}).catch((error) => {
+			console.error("Error fetching data:", error);
+			// navigate("/");
+		});
+	}, [navigate, videoId, dispatch, currPath]);
 
 	return (
 		<div
-			className={twMerge(
-				"border-2 border-white py-2 rounded-lg mt-4",
-				windowWidth < 800 && "max-h-[50vh] overflow-y-scroll mb-4"
-			)}>
-			<h1 className="text-white font-bold tracking-wide mb-2 px-2">
-				{comments} Comments
+			className="border-2 border-white py-2 rounded-lg 2lg:max-h-max max-h-[70vh] overflow-y-scroll my-4 px-2">
+			<h1 className="text-white font-bold tracking-wide mb-2">
+				{noOfcomments} Comments
 			</h1>
-			<div className="text-white flex flex-col w-full items-end px-2">
-				<textarea
-					value={comment}
-					ref={textAreaRef}
-					onChange={(e) => setComment(e.target.value)}
-					placeholder="Add a comment..."
-					className="w-full h-8 pb-1 border-b-2 mb-2 overflow-hidden outline-none resize-none bg-transparent"></textarea>
+			<AddComment avatarStyle="w-10" />
 
-				<div className="flex gap-2">
-					<button className="font-semibold outline-none hover:bg-background-secondary px-3 py-1 rounded-full duration-300">
-						Cancel
-					</button>
-					<button className="px-3 py-1 outline-none rounded-full bg-primary opacity-50">
-						Comment
-					</button>
-				</div>
-			</div>
-
-			<ChannelTweetCommentList currPath={currPath.concat([0])} />
+			{comments?.map((comment: any) => (
+				<CommentCard
+					key={comment?._id}
+					currPath={currPath.concat(comment?._id)}
+					comment={comment}
+					entityId={videoId}
+					entityType="video"
+				/>
+			))}
 		</div>
 	);
 };

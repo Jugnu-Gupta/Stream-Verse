@@ -5,6 +5,7 @@ import {
     createTweet,
     getUserTweet,
     updateTweet,
+    getTweetById,
     updateTweetImage,
     deleteTweet,
 } from "../controllers/tweet.controller";
@@ -20,6 +21,7 @@ router.route("/user/:userId").get(getUserTweet);
 // Update, delete tweet by id (secured route)
 router
     .route("/:tweetId")
+    .get(getTweetById)
     .patch(verifyJWT, updateTweet)
     .delete(verifyJWT, deleteTweet);
 

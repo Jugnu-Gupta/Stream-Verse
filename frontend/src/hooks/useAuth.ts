@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import makeApiRequest, { ApiRequestOptions } from "../utils/MakeApiRequest";
+import makeApiRequest from "../utils/MakeApiRequest";
 
 export const useAuth = () => {
 	const navigate = useNavigate();
@@ -8,24 +8,21 @@ export const useAuth = () => {
 	const [loggedIn, setLoggedIn] = React.useState(false);
 
 	useEffect(() => {
-		const getUser = async () => {
-			try {
-				const request: ApiRequestOptions = {
-					method: "get",
-					url: "/api/v1/users/me",
-				};
-				const { data }: any = await makeApiRequest(request);
-				console.log(data);
-				setLoading(false);
+		makeApiRequest({
+			method: "get",
+			url: "/api/v1/users/me",
+		})
+			.then(() => {
 				setLoggedIn(true);
-			} catch (error: any) {
-				console.error("header", error.response.data.message);
+				setLoading(false);
+			})
+			.catch((error) => {
+				console.error("Error fetching data:", error);
+				console.log(error.response.data.message);
 				setLoading(false);
 				setLoggedIn(false);
 				// navigate("/login");
-			}
-		};
-		getUser();
+			});
 	}, [navigate]);
 
 	return { loggedIn, setLoggedIn, loading };

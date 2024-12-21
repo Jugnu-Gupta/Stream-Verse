@@ -136,6 +136,23 @@ const getPlaylistById = asyncHandler(
                     as: "videos",
                     pipeline: [
                         {
+                            $lookup: {
+                                from: "users",
+                                localField: "ownerId",
+                                foreignField: "_id",
+                                as: "owner",
+                                pipeline: [
+                                    {
+                                        $project: {
+                                            fullName: 1,
+                                            userName: 1,
+                                            avatar: 1,
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                        {
                             $project: {
                                 _id: 1,
                                 thumbnail: 1,
@@ -143,6 +160,11 @@ const getPlaylistById = asyncHandler(
                                 description: 1,
                                 duration: 1,
                                 views: 1,
+                                createdAt: 1,
+                                updatedAt: 1,
+                                owner: {
+                                    $arrayElemAt: ["$owner", 0],
+                                },
                             },
                         },
                     ],

@@ -16,8 +16,8 @@ const DashboardVideoStatsControl: React.FC<DashboardVideoStatsControlProps> = ({
 	const [showDeleteVideo, setShowDeleteVideo] = React.useState(false);
 	const divRef = React.useRef<HTMLDivElement>(null);
 	const [status, setStatus] = React.useState<boolean>(false);
-	const likes = formatNumber(videoInfo?.likes || 100);
-	const dislikes = formatNumber(videoInfo?.dislikes || 100);
+	const likes = formatNumber(videoInfo?.likes);
+	const dislikes = formatNumber(videoInfo?.dislikes);
 	const title = videoInfo?.title || "Video Title";
 	const uploadedAt = format(new Date(videoInfo?.uploadedAt || Date.now()), "yyyy-MM-dd");
 

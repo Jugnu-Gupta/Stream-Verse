@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PersonalInfoForm from './PersonalInfoForm';
 import Background from "../../../assets/thumbnail.png";
 import { useNavigate } from "react-router-dom";
@@ -6,15 +6,32 @@ import { FiUpload } from "react-icons/fi";
 import { CHANNELNAVITEMS2 } from "../../../Constants/ChannelNavbar";
 import ChannelNavbar from "../Navbar/ChannelNavbar";
 import { updateImage } from "../../../utils/UpdateImage";
+import makeApiRequest from "../../../utils/MakeApiRequest";
+import { formatNumber } from "../../../utils/FormatNumber";
+import { ChannelInfoType } from "../../../Types/Channel";
 
 const PersonalInformation: React.FC = () => {
+    const [channelInfo, setChannelInfo] = React.useState<ChannelInfoType>();
     const [coverImage, setCoverImage] = React.useState<string>("");
     const [avatarImage, setAvatarImage] = React.useState<string>("");
-    const navigate = useNavigate();
     const adminName: string = "@" + localStorage.getItem("userName");
     const channelName: string = localStorage.getItem("fullName") || "Channel Title";
-    const subscribers = "100k";
-    const videos = "100";
+    const subscribers = formatNumber(channelInfo?.subscriberCount);
+    const videos = formatNumber(channelInfo?.videoCount);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!adminName) navigate("/");
+        makeApiRequest({
+            method: "get",
+            url: `/api/v1/users/channel/${adminName?.substring(1)}`,
+        }).then((response: any) => { // eslint-disable-line
+            setChannelInfo(response.data);
+        }).catch((error) => {
+            console.error("Error fetching data:", error);
+            navigate("/");
+        });
+    }, [navigate, adminName]);
 
     return (
         <div className="w-full">
@@ -75,7 +92,7 @@ const PersonalInformation: React.FC = () => {
                 </div>
 
                 <div className='mb-4 w-full'>
-                    <PersonalInfoForm />
+                    <PersonalInfoForm channelInfo={channelInfo} />
                 </div>
             </div >
         </div>

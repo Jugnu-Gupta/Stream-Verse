@@ -29,6 +29,7 @@ const getComments = asyncHandler(
             parentId = null,
         } = req.params as unknown as GetCommentsParams;
         const { page = 1, limit = 10 }: GetCommentsQuery = req.query;
+
         if (!isValidObjectId(entityId)) {
             throw new ApiError(400, "Video id is required");
         }
@@ -42,7 +43,9 @@ const getComments = asyncHandler(
                 $match: {
                     entityId: new mongoose.Types.ObjectId(entityId),
                     entityType,
-                    parentId,
+                    parentId: parentId
+                        ? new mongoose.Types.ObjectId(parentId)
+                        : null,
                 },
             },
             {
@@ -148,7 +151,7 @@ const getComments = asyncHandler(
             { $limit: limit },
         ]);
 
-        if (!comments?.length) {
+        if (!comments) {
             throw new ApiError(404, "No comments found");
         }
 

@@ -1,19 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import thumbnail from "../../assets/thumbnail.png";
-import { formatDateToNow } from "../../utils/formatDateToNow";
-import { secondsToHms } from "../../utils/SecondsToHms";
+import { formatDateToNow } from "../../utils/FormatDateToNow";
+import { formatDuration } from "../../utils/FormatDuration";
 import { formatNumber } from "../../utils/FormatNumber";
+import { VideoType } from "../../Types/Video";
 
 interface VideoCardViewProps {
-	videoInfo?: any;
+	videoInfo: VideoType;
 }
 const VideoCardView: React.FC<VideoCardViewProps> = ({ videoInfo }) => {
-	const views = formatNumber(videoInfo?.views || 0);
-	const duration = secondsToHms(videoInfo?.duration || 60);
-	const uploadedAt = formatDateToNow(new Date(videoInfo?.uploadedAt || Date.now()));
+	const views = formatNumber(videoInfo?.views);
+	const duration = formatDuration(videoInfo?.duration);
+	const uploadedAt = formatDateToNow(videoInfo?.updatedAt);
 	const title = videoInfo?.title || "Video Title";
-
 
 	return (
 		<div className="flex flex-col gap-2 p-2 group max-w-[400px]">

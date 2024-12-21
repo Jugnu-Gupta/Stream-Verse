@@ -3,24 +3,23 @@ import ChannelVideosCard from "./ChannelVideoCard";
 import { HiOutlineVideoCamera } from "react-icons/hi";
 import { useNavigate, useParams } from "react-router-dom";
 import makeApiRequest from "../../../utils/MakeApiRequest";
+import { VideoType } from "../../../Types/Video";
 
 const ChannelVideos: React.FC = () => {
 	const navigate = useNavigate();
 	const { adminName } = useParams<{ adminName: string }>();
-	const [videos, setVideos] = React.useState<any>([]);
-	// console.log("ChannelVideos.tsx: adminName:", channelInfo);
+	const [videos, setVideos] = React.useState<VideoType[]>([]);
 
 	React.useEffect(() => {
-		if (!adminName) navigate("/");
 		makeApiRequest({
 			method: "get",
 			url: `/api/v1/users/video/${adminName?.substring(1)}`,
 		}).then((response: any) => {
-			// console.log("Fetched tweets:", response.data?.videos);
+			console.log("Fetched Videos:", response.data?.videos);
 			setVideos(response.data?.videos);
 		}).catch((error) => {
 			console.error("Error fetching data:", error);
-			navigate("/");
+			// navigate("/");
 		});
 	}, [navigate, adminName]);
 
@@ -39,7 +38,7 @@ const ChannelVideos: React.FC = () => {
 		<div
 			className="grid px-4 w-full max-w-6xl mx-auto justify-items-center mt-4 2xl:grid-cols-4 2lg:grid-cols-3 2sm:grid-cols-2 grid-cols-1" >
 			{
-				videos?.map((video: any) => (
+				videos?.map((video: VideoType) => (
 					<ChannelVideosCard key={video._id} videoInfo={video} />
 				))
 			}

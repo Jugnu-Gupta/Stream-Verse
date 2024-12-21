@@ -1,86 +1,83 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useFormik } from 'formik';
 import toast from 'react-hot-toast';
-import { ApiRequestOptions } from '../../../utils/MakeApiRequest';
 import makeApiRequest from '../../../utils/MakeApiRequest';
 import { PersonalInfoValidationSchema } from './PersonalInfoValidationSchema';
+import { ChannelInfoType } from '../../../Types/Channel';
 
-const PersonalInfoForm: React.FC = () => {
-    const { values, errors, touched, handleChange, handleSubmit, handleBlur } =
+interface PersonalInfoFormProps {
+    channelInfo: ChannelInfoType | undefined;
+}
+
+const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ channelInfo }) => {
+    const [availableUserName, setAvailableUserName] = React.useState<string>("");
+    const { values, errors, touched, handleChange, handleSubmit, handleBlur, resetForm } =
         useFormik({
             initialValues: {
-                firstName: "",
-                lastName: "",
+                _id: "",
+                fullName: "",
                 userName: "",
-                description: "",
             },
             validationSchema: PersonalInfoValidationSchema,
             onSubmit: async (values) => {
-                try {
-                    const request: ApiRequestOptions = {
-                        method: "post",
-                        url: "/api/v1/auths/register",
-                        data: {
-                            fullName: `${values.firstName}${values.lastName !== "" ? " " + values.lastName : ""}`,
-                            userName: values.userName,
-                            description: values.description
-                        },
-                    };
-                    const { data }: any = await makeApiRequest(request);
-                    console.log(values);
-                    console.log(data);
-
+                makeApiRequest({
+                    method: "patch",
+                    url: "/api/v1/users/me",
+                    data: {
+                        _id: channelInfo?._id,
+                        fullName: values.fullName,
+                        userName: values.userName,
+                    },
+                }).then((response: any) => { // eslint-disable-line
+                    const responseData = response.data;
                     toast.success("Changes updated successfully");
-                    localStorage.setItem("userName", data.user.userName);
-                    localStorage.setItem("fullName", data.user.fullName);
-                    localStorage.setItem("email", data.user.email);
-                    localStorage.setItem("avatar", data.user.avatar.url);
-                    localStorage.setItem("cover", data.user.coverImage.url);
-                    localStorage.setItem("description", data.user.description);
-                } catch (error: any) {
+                    localStorage.setItem("userName", responseData.user.userName);
+                    localStorage.setItem("fullName", responseData.user.fullName);
+                }).catch((error) => {
                     console.error(error.response.data.message);
-                    toast.error(error.response.data.message);
-                }
+                    console.error(error);
+                    if (error.response.data.statusCode === 409) {
+                        toast.error("User name already exists");
+                        setAvailableUserName(error.response.data.data.availableUserName);
+                    } else {
+                        toast.error(error.response.data.message);
+                    }
+                });
+                resetForm({ values });
             },
         });
 
+    useEffect(() => {
+        if (channelInfo) {
+            resetForm({
+                values: {
+                    _id: channelInfo._id,
+                    fullName: channelInfo?.fullName,
+                    userName: channelInfo?.userName,
+                }
+            });
+        }
+    }, [channelInfo, resetForm]);
+
     return (
-        <form
-            onSubmit={handleSubmit}
+        <form onSubmit={handleSubmit}
             className="w-full text-white border-2 border-white rounded-xl py-2">
             <div className="px-2 mb-3 text-sm">
-                <label htmlFor="firstName">
-                    First name
+                <label htmlFor="fullName">
+                    Full name
                 </label>
                 <input
                     type="text"
-                    name="firstName"
-                    id="firstName"
-                    value={values.firstName}
-                    placeholder="First name"
+                    name="fullName"
+                    id="fullName"
+                    value={values.fullName}
+                    placeholder="Full name"
                     onChange={handleChange}
                     onBlur={handleBlur}
                     className="px-2 py-1 mt-1 w-full rounded-md bg-background-secondary transition delay-[50000s]
 				    placeholder:text-gray-300 text-sm border-[1px] border-white outline-none"
                 />
-                {touched.firstName && errors.firstName ? <p className="text-start text-xs mt-0.5">{errors.firstName}</p> : null}
-            </div>
-            <div className='px-2 mb-3 text-sm'>
-                <label htmlFor="lastName">
-                    Last name
-                </label>
-                <input
-                    type="text"
-                    name="lastName"
-                    id="lastName"
-                    value={values.lastName}
-                    placeholder="Last name"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    className="px-2 py-1 mt-1 w-full rounded-md bg-background-secondary transition delay-[50000s]
-				    placeholder:text-gray-300 placeholder:text-sm border-[1px] border-white outline-none"
-                />
-                {touched.lastName && errors.lastName ? <p className="text-start text-xs mt-0.5">{errors.lastName}</p> : null}
+                {touched.fullName && errors.fullName ? <p className="text-start text-xs mt-0.5">{errors.fullName}</p> : null}
             </div>
             <div className='px-2 mb-3 text-sm'>
                 <label htmlFor="userName">
@@ -91,44 +88,39 @@ const PersonalInfoForm: React.FC = () => {
                     name="userName"
                     id="userName"
                     value={values.userName}
-                    placeholder="User Name"
+                    placeholder="User name"
                     onChange={handleChange}
                     onBlur={handleBlur}
                     className="px-2 py-1 mt-1 w-full rounded-md bg-background-secondary transition delay-[50000s]
 				    placeholder:text-gray-300 placeholder:text-sm border-[1px] border-white outline-none"
                 />
-                {touched.userName && errors.userName ? <p className="text-start text-xs mt-0.5">{errors.userName}</p> : null}
-
+                {availableUserName !== "" ? <p className="text-start text-xs mt-0.5">Available user name is '{availableUserName}'</p> :
+                    touched.userName && errors.userName ? <p className="text-start text-xs mt-0.5">{errors.userName}</p> : null
+                }
             </div>
             <div className='px-2 mb-3 text-sm'>
-                <label htmlFor="description">
-                    Description
+                <label htmlFor="email">
+                    Email
                 </label>
-                <textarea
-                    name="description"
-                    id="description"
-                    value={values.description}
-                    placeholder="Description"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    rows={3}
-                    className='px-2 py-1 mt-1 w-full rounded-md bg-background-secondary transition delay-[50000s]
-				    placeholder:text-gray-300 placeholder:text-sm border-[1px] border-white outline-none'>
-                </textarea>
-                {touched.description && errors.description ? <p className="text-start text-xs mt-0.5">{errors.description}</p> : null}
+                <input
+                    type="email"
+                    name="email"
+                    id="email"
+                    value={channelInfo?.email}
+                    className="px-2 py-1 mt-1 w-full rounded-md bg-background-secondary transition delay-[50000s]
+				    placeholder:text-gray-300 placeholder:text-sm border-[1px] border-white outline-none"
+                />
             </div>
             <div className='w-full h-[1px] text-white bg-white' />
 
             <div className='flex justify-end px-2 pt-3 text-sm text-nowrap'>
-                <button
-                    type="submit"
-                    className="px-3 py-1.5 mb-1 mr-4 tracking-wide font-medium 
+                <button type="button"
+                    className="px-3 py-1 mb-1 mr-4 tracking-wide font-medium 
                     text-white rounded-md outline-none border-[1px] border-white">
                     Cancel
                 </button>
-                <button
-                    type="submit"
-                    className="px-3 py-1.5 mb-1 tracking-wide font-semibold 
+                <button type="submit"
+                    className="px-3 py-1 mb-1 tracking-wide font-semibold 
                     text-white rounded-md bg-primary outline-none">
                     Save changes
                 </button>

@@ -1,22 +1,26 @@
 import React from "react";
 import thumbnail from "../../assets/thumbnail.png";
 import { Link } from "react-router-dom";
-import "../../index.css"; // to use truncate-lines-2
-import useWindowWidth from "../../hooks/useWindowWidth";
 import { twMerge } from "tailwind-merge";
+import { formatDuration } from "../../utils/FormatDuration";
+import { formatNumber } from "../../utils/FormatNumber";
+import { formatDateToNow } from "../../utils/FormatDateToNow";
+import { VideoType } from "../../Types/Video";
 
 interface VideoListViewProps {
-	videoNo?: number;
+	heighlightVideo?: string;
+	videoInfo: VideoType;
 }
 
-const RelatedVideo: React.FC<VideoListViewProps> = ({ videoNo }) => {
-	const windowWidth = useWindowWidth();
-	const duration = "10:00";
-	const views = "1000k";
-	const uploadedAt = "1 year";
+const RelatedVideo: React.FC<VideoListViewProps> = ({ heighlightVideo, videoInfo }) => {
+	const duration = formatDuration(videoInfo?.duration);
+	const views = formatNumber(videoInfo?.views);
+	const uploadedAt = formatDateToNow(videoInfo?.createdAt || new Date());
+	const title = videoInfo?.title || "Video Title";
+	const channelName = videoInfo?.owner?.fullName || "Channel Name";
 
 	return (
-		<div className={twMerge("flex gap-2 pl-2 group w-full p-2", videoNo == 1 && "bg-background-secondary")}>
+		<div className={twMerge("flex gap-2 pl-2 group w-full p-2", heighlightVideo == videoInfo?._id && "bg-background-secondary")}>
 			<Link to="/register" className="min-w-36 w-1/2 max-w-52">
 				<div className="overflow-hidden rounded-xl max-w-md relative">
 					<img
@@ -31,40 +35,16 @@ const RelatedVideo: React.FC<VideoListViewProps> = ({ videoNo }) => {
 			</Link>
 			<div className="flex flex-col text-white w-full overflow-hidden">
 				<Link to="/register" className="w-full">
-					<h2
-						className={twMerge(
-							"font-semibold truncate-lines-2",
-							windowWidth <= 500
-								? "text-base"
-								: windowWidth <= 766
-									? "text-[17px]"
-									: " text-sm"
-						)}>
-						Video Title scscscsdcsdcd sckhakjcbjsbkjcbkjsb
+					<h2 className="font-semibold truncate-lines-2 2lg:text-sm xs:text-base sm:text-[17px]">
+						{title}
 					</h2>
-					<p
-						className={twMerge(
-							"opacity-80 text-nowrap truncate",
-							windowWidth <= 500
-								? "text-xs mt-0.5"
-								: windowWidth <= 766
-									? "mt-2 text-[13px] mb-1"
-									: "text-xs mt-1 mb-0.5"
-						)}>
-						{views} Views · {uploadedAt} ago
+					<p className="opacity-80 text-nowrap truncate 2lg:text-xs xs:text-sm sm:text-[15px] 2lg:mt-1 2lg:mb-0.5 xs:mt-0.5 sm:mt-2 sm:mb-1">
+						{views} Views · {uploadedAt}
 					</p>
 				</Link>
 				<Link to="/login">
-					<p
-						className={twMerge(
-							"opacity-80 hover:opacity-100 text-nowrap truncate",
-							windowWidth <= 500
-								? "text-[13px]"
-								: windowWidth <= 766
-									? "text-sm"
-									: "text-[13px]"
-						)}>
-						Channel Name
+					<p className="opacity-80 hover:opacity-100 text-nowrap truncate 2lg:text-[13px] xs:text-sm sm:text-[15px]">
+						{channelName}
 					</p>
 				</Link>
 			</div>

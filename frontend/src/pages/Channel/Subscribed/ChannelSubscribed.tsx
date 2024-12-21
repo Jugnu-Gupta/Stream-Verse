@@ -1,23 +1,24 @@
 import React from "react";
 import ChannelSubcribedCards from "./ChannelSubscribedCards";
 import { IoSearchSharp } from "react-icons/io5";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import makeApiRequest from "../../../utils/MakeApiRequest";
+import { ChannelInfoType } from "../../../Types/Channel";
 
-interface ChannelSubscribedProps {
-	channelInfo?: any;
+interface ChannelInfoWrapper {
+	channelInfo: ChannelInfoType;
 }
-const ChannelSubscribed: React.FC<ChannelSubscribedProps> = ({ channelInfo }) => {
+const ChannelSubscribed: React.FC = () => {
+	const [subscribedChannels, setSubscribedChannels] = React.useState<any[]>([]);
+	const { channelInfo }: ChannelInfoWrapper = useOutletContext();
 	const navigate = useNavigate();
 	const channelId = channelInfo?._id;
-	const [subscribedChannels, setSubscribedChannels] = React.useState<any[]>([]);
 
 	React.useEffect(() => {
 		makeApiRequest({
 			method: "get",
 			url: `/api/v1/subscriptions/channel/${channelId}`,
 		}).then((response: any) => {
-			// console.log("channelsResponse tweets:", response.data?.subscribedChannels);
 			setSubscribedChannels(response.data?.subscribedChannels);
 		}).catch((error) => {
 			console.error("Error fetching data:", error);

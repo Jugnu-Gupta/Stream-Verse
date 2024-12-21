@@ -4,15 +4,15 @@ import { Link } from "react-router-dom";
 import { CgPlayList } from "react-icons/cg";
 import { FaPlay } from "react-icons/fa";
 import { formatNumber } from "../../utils/FormatNumber";
-import { formatDateToNow } from "../../utils/formatDateToNow";
+import { formatDateToNow } from "../../utils/FormatDateToNow";
 
 interface ChannelVideosCardProps {
 	playlist?: any;
 }
 
 const ChannelVideosCard: React.FC<ChannelVideosCardProps> = ({ playlist }) => {
-	const noOfvideos = formatNumber(parseInt(playlist?.noOfVideos || 100));
-	const updatedAt = formatDateToNow(playlist?.updatedAt || new Date());
+	const noOfvideos = formatNumber(playlist?.noOfVideos);
+	const updatedAt = formatDateToNow(playlist?.updatedAt);
 	const title = playlist?.name || "Playlist Title";
 	// const _thumbnail = playlist?.videos[0]?.thumbnail || thumbnail;
 	const _thumbnail = thumbnail;

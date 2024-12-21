@@ -4,10 +4,10 @@ import { UserType } from "../types/user.type";
 import { User } from "../models/user.model";
 import { ApiError } from "../utils/apiError";
 import { ApiResponse } from "../utils/apiResponse";
-import mongoose, { isValidObjectId } from "mongoose";
 import { getAvailableUserName } from "../utils/getAvailableUserName";
 import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary";
-import fs, { watch } from "fs";
+import mongoose from "mongoose";
+import fs from "fs";
 
 interface RequestWithUser extends Request {
     user: UserType;
@@ -15,7 +15,7 @@ interface RequestWithUser extends Request {
 
 interface UpdateUserPasswordBody {
     email?: string;
-    currentPassword?: string;
+    curPassword?: string;
     newPassword?: string;
     confirmPassword?: string;
 }
@@ -24,11 +24,10 @@ const UpdateUserPassword = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
         const {
             email,
-            currentPassword,
+            curPassword,
             newPassword,
             confirmPassword,
         }: UpdateUserPasswordBody = req.body;
-
         if (!email) {
             throw new ApiError(400, "Email is required");
         }
@@ -45,30 +44,32 @@ const UpdateUserPassword = asyncHandler(
         }
 
         const isPasswordValid: Boolean =
-            await user.isPasswordCorrect(currentPassword);
+            await user.isPasswordCorrect(curPassword);
         if (!isPasswordValid) {
             throw new ApiError(401, "Incorrect password");
         }
 
-        if (currentPassword === newPassword) {
+        if (curPassword === newPassword) {
             throw new ApiError(
                 400,
                 "New password cannot be same as old password"
             );
         }
 
-        const updatedUser = await User.findByIdAndUpdate(
-            user._id,
-            { password: newPassword },
-            { new: true }
-        )?.select("avatar coverImage isVerified");
-
+        const updateUser = await User.findById(user._id)?.select(
+            "avatar coverImage isVerified"
+        );
+        if (updateUser) {
+            updateUser.password = newPassword;
+            await updateUser.save();
+        }
+        updateUser.password = undefined;
         return res
             .status(200)
             .json(
                 new ApiResponse(
                     200,
-                    { user: updatedUser },
+                    { user: updateUser },
                     "Password changed successful"
                 )
             );
@@ -86,20 +87,21 @@ const getCurrentUser = asyncHandler(
 interface UpdateUserDetailsBody {
     fullName?: string;
     userName?: string;
+    _id?: string;
 }
 // controller to update user account details like fullName, userName
 const updateUserDetails = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { fullName, userName }: UpdateUserDetailsBody = req.body;
-        if (!fullName?.trim() || !userName?.trim()) {
-            throw new ApiError(400, "FullName and username are required");
+        const { fullName, userName, _id }: UpdateUserDetailsBody = req.body;
+        if (!fullName?.trim() || !userName?.trim() || !_id) {
+            throw new ApiError(400, "FullName, username and id are required");
         }
 
         // check if the username already exists.
         const existedUser = await User.findOne({
             userName: userName.toLowerCase(),
         });
-        if (existedUser) {
+        if (existedUser && existedUser._id.toString() !== _id) {
             const availableUserName: string | null =
                 await getAvailableUserName(fullName);
 
@@ -306,6 +308,8 @@ const getUserChannelPage = asyncHandler(
                     subscribedToCount: 1,
                     isSubscribed: 1,
                     videoCount: { $size: "$videos" },
+                    createdAt: 1,
+                    updatedAt: 1,
                 },
             },
         ]);
@@ -351,6 +355,7 @@ const getUserChannelVideos = asyncHandler(
                                 description: 1,
                                 thumbnail: 1,
                                 views: 1,
+                                duration: 1,
                                 createdAt: 1,
                                 updatedAt: 1,
                             },
@@ -424,6 +429,7 @@ const getWatchHistory = asyncHandler(
                                 description: 1,
                                 thumbnail: 1,
                                 views: 1,
+                                duration: 1,
                                 createdAt: 1,
                                 updatedAt: 1,
                                 owner: 1,

@@ -2,16 +2,17 @@ import React from "react";
 import thumbnail from "../../../assets/thumbnail.png";
 import { Link } from "react-router-dom";
 import { formatNumber } from "../../../utils/FormatNumber";
-import { formatDateToNow } from "../../../utils/formatDateToNow";
-import { secondsToHms } from "../../../utils/SecondsToHms";
+import { formatDateToNow } from "../../../utils/FormatDateToNow";
+import { formatDuration } from "../../../utils/FormatDuration";
+import { VideoType } from "../../../Types/Video";
 
 interface ChannelVideosCardProps {
-	videoInfo?: any;
+	videoInfo: VideoType;
 }
 const ChannelVideosCard: React.FC<ChannelVideosCardProps> = ({ videoInfo }) => {
-	const duration = secondsToHms(parseInt(videoInfo?.duration || 100));
-	const views = formatNumber(parseInt(videoInfo?.views || 100));
-	const uploadedAt = formatDateToNow(videoInfo?.uploadedAt || new Date());
+	const duration = formatDuration(videoInfo?.duration);
+	const views = formatNumber(videoInfo?.views);
+	const uploadedAt = formatDateToNow(videoInfo?.updatedAt);
 	const title = videoInfo?.title || "Video Title";
 
 	return (

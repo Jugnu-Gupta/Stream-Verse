@@ -1,4 +1,6 @@
-export const formatNumber = (num: number) => {
+export const formatNumber = (num: number | undefined) => {
+	if (!num) return 0;
+
 	// Format numbers to K, M, B, and return 3 MSD etc.
 	if (num >= 1000000000) {
 		const result = num / 1000000000;

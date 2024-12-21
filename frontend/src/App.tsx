@@ -1,4 +1,4 @@
-import { Route, Routes, BrowserRouter } from "react-router-dom";
+import { Route, Routes, BrowserRouter, Navigate } from "react-router-dom";
 import Register from "./pages/Register/Register.js";
 import Login from "./pages/Login/Login.js";
 import EmailVerification from "./pages/EmailVerification/EmailVerification.tsx";
@@ -10,7 +10,7 @@ import ChannelVideos from "./pages/Channel/Videos/ChannelVideos.tsx";
 // import ChannelPlaylists from "./pages/Channel/Playlists/ChannelPlayists.tsx";
 import Playlists from "./pages/Playlists/Playlists.tsx";
 import ChannelTweets from "./pages/Channel/Tweets/ChannelTweets.tsx";
-import ChannelTweetComment from "./pages/Channel/Tweets/ChannelTweetComments.tsx";
+import TweetDetails from "./pages/Tweet/TweetDetails.tsx";
 import ChannelSubscribed from "./pages/Channel/Subscribed/ChannelSubscribed.tsx";
 import Dashboard from "./pages/Admin/Dashboard.tsx";
 import VideoDetail from "./pages/Video/VideoDetail.tsx";
@@ -65,36 +65,42 @@ function App() {
 					<Route path="help" element={<Help />} />
 
 					{/* for current user and channel of other users */}
-					<Route path=":adminName/videos" element={<ChannelLayout><ChannelVideos /> </ChannelLayout>} />
-					<Route path=":adminName/playlists" element={<ChannelLayout><Playlists /></ChannelLayout>} />
-					<Route path=":adminName/tweets" element={<ChannelLayout><ChannelTweets /> </ChannelLayout>} />
-					<Route path=":adminName/subscribed" element={<ChannelLayout><ChannelSubscribed /> </ChannelLayout>} />
+					<Route path=":adminName" element={<ChannelLayout />}>
+						{/* // No params after adminName, then send to No page found */}
+						<Route index element={<Navigate to="/register" />} />
+						<Route path="videos" element={<ChannelVideos />} />
+						<Route path="playlists" element={<Playlists />} />
+						<Route path="tweets" element={<ChannelTweets />} />
+						<Route path="subscribed" element={<ChannelSubscribed />} />
+					</Route >
 
 					<Route element={<ProtectedLayout />}>
 						<Route path="terms-and-conditions" element={<TermsAndConditions />} />
-						<Route path="tweets/:tweetId" element={<ChannelTweetComment />} />
+						<Route path="tweets/:tweetId" element={<TweetDetails />} />
 						<Route path="history" element={<WatchHistory />} />
 						<Route path="liked-videos" element={<LikedVideos />} />
 						<Route path="playlists" element={<Playlists />} />
 						<Route path="subscriptions" element={<Subscriptions />} />
 
 						<Route path=":adminName" element={<ProtectedAdminLayout />} >
-							<Route path="dashboard" element={<Dashboard />} />
+							{/* // No params after adminName, then send to No page found */}
+							<Route index element={<Navigate to="/register" />} />
 
+							<Route path="dashboard" element={<Dashboard />} />
 							{/* for current user: use adminName. */}
 							<Route path="change-password" element={<ChangePassword />} />
 							<Route path="personal-information" element={<PersonalInformation />} />
 						</Route>
 					</Route>
-
-					<Route path="login" element={<Login />} />
-					<Route path="register" element={<Register />} />
-					<Route path="password-reset" element={<PasswordReset />} />
-					<Route path="email-verification" element={<EmailVerification />} />
-
-					{/* Catch-all for undefined routes */}
-					<Route path="*" element={<Register />} />
 				</Route>
+
+				<Route path="login" element={<Login />} />
+				<Route path="register" element={<Register />} />
+				<Route path="password-reset" element={<PasswordReset />} />
+				<Route path="email-verification" element={<EmailVerification />} />
+
+				{/* Catch-all for undefined routes */}
+				<Route path="*" element={<Register />} />
 			</Routes>
 		</BrowserRouter >
 	);

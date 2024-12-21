@@ -6,7 +6,7 @@ interface FormData {
 // A generic type for form values
 
 interface ApiRequestOptions {
-	method: "get" | "post" | "put" | "delete";
+	method: "get" | "post" | "put" | "delete" | "patch";
 	url: string;
 	data?: FormData;
 	params?: FormData;

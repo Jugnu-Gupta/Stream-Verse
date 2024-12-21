@@ -11,7 +11,7 @@ interface ChannelSubscribedCardsProps {
 const ChannelSubscribedCards: React.FC<ChannelSubscribedCardsProps> = ({ channelInfo }) => {
 	const [isSubscribed, setIsSubscribed] = React.useState(false);
 	const channelName = channelInfo?.fullName || "Channel Name";
-	const subscribers = formatNumber(channelInfo?.totalSubscribers || 100);
+	const subscribers = formatNumber(channelInfo?.totalSubscribers);
 
 	return (
 		<div className="flex items-center gap-2 p-2 w-full">

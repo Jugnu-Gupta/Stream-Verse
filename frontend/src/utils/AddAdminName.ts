@@ -4,9 +4,6 @@ export const addAdminName = (url: string) => {
 		if (adminName) {
 			url = url.replace(":adminName", "@" + adminName);
 		}
-		// else {
-		// 	url = "/login"; // added recently
-		// }
 	}
 
 	return url;

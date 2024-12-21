@@ -3,18 +3,21 @@ import { twMerge } from "tailwind-merge";
 import { RxCross2 } from "react-icons/rx";
 import RelatedVideo from "./RelatedVideo";
 import { IoIosArrowDown } from "react-icons/io";
+import { formatNumber } from '../../utils/FormatNumber';
 
 interface VideoPlaylistProps {
     childClass: string;
-    videoNo: number;
+    heighlightVideo: string;
+    playlist: any;
 }
 
-const VideoPlaylist: React.FC<VideoPlaylistProps> = ({ childClass, videoNo }) => {
+const VideoPlaylist: React.FC<VideoPlaylistProps> = ({ childClass, heighlightVideo, playlist }) => {
     const [showPlaylist, setShowPlaylist] = React.useState(true);
-    const playlistTitle = "Playlist Title";
+    const totalVideos = formatNumber(playlist?.videos?.length);
+    const curVideoIndex = playlist?.videos?.findIndex((video: any) => video._id === heighlightVideo) || 0;
+    const playlistTitle = playlist?.name || "Playlist Title";
     const NextVideoTitle = "Next Video Title";
-    const owner = "Owner";
-    const totVideos = 10;
+    const owner = playlist?.owner?.fullName || "Channel Name";
 
     return (
         <div className={twMerge(childClass, "flex-col w-full border-2 overflow-hidden rounded-xl mb-4 2lg:ml-2 mt-4 2lg:mt-0")}>
@@ -22,10 +25,14 @@ const VideoPlaylist: React.FC<VideoPlaylistProps> = ({ childClass, videoNo }) =>
                 <div>
                     {
                         showPlaylist
-                            ? (<><h1 className="text-white text-md font-semibold"> {playlistTitle} </h1>
-                                <p className="text-xs">{owner} - {videoNo}/{totVideos}</p></>)
-                            : (<><h1 className="text-white text-md font-semibold"> Next: {NextVideoTitle} </h1>
-                                <p className="text-xs">{playlistTitle} - {videoNo}/{totVideos}</p></>)
+                            ? (<>
+                                <h1 className="text-white text-md font-semibold"> {playlistTitle} </h1>
+                                <p className="text-xs">{owner} - {curVideoIndex + 1}/{totalVideos}</p>
+                            </>)
+                            : (<>
+                                <h1 className="text-white text-md font-semibold"> {curVideoIndex + 1 === totalVideos ? "End of Playlist" : `Next: ${NextVideoTitle}`}</h1>
+                                <p className="text-xs">{playlistTitle} - {curVideoIndex + 1}/{totalVideos}</p>
+                            </>)
                     }
                 </div>
                 {
@@ -35,14 +42,12 @@ const VideoPlaylist: React.FC<VideoPlaylistProps> = ({ childClass, videoNo }) =>
                 }
             </div>
 
-            <div className={twMerge("flex flex-col w-full pt-2 max-h-80 overflow-y-auto", !showPlaylist && "hidden")}>
-                <RelatedVideo videoNo={1} />
-                <RelatedVideo videoNo={2} />
-                <RelatedVideo videoNo={3} />
-                <RelatedVideo videoNo={4} />
-                <RelatedVideo videoNo={5} />
-                <RelatedVideo videoNo={6} />
-                <RelatedVideo videoNo={7} />
+            <div className={twMerge("flex flex-col w-full pt-2 max-h-[60vh] overflow-y-auto", !showPlaylist && "hidden")}>
+                {
+                    playlist?.videos?.map((video: any) => (
+                        <RelatedVideo key={video?._id} heighlightVideo={heighlightVideo} videoInfo={video} />
+                    ))
+                }
             </div>
         </div>
     )

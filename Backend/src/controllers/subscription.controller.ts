@@ -185,6 +185,7 @@ const getSubscribedChannelsVideos = asyncHandler(
                                 description: 1,
                                 thumbnail: 1,
                                 views: 1,
+                                duration: 1,
                                 createdAt: 1,
                                 updatedAt: 1,
                                 owner: { $arrayElemAt: ["$owner", 0] },

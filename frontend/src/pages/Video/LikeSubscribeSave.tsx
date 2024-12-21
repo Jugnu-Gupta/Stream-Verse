@@ -19,12 +19,12 @@ const LikeSubscribeSave: React.FC = () => {
             <button
                 onClick={() => setIsSubscribed(!isSubscribed)}
                 className={twMerge(
-                    "bg-primary h-fit text-white outline-none font-semibold px-4 py-1 sm:px-3 sm:text-sm rounded-md hover:bg-white hover:text-primary duration-300",
+                    "bg-primary h-fit text-white outline-none font-semibold px-3 py-1 sm:text-sm rounded-md hover:bg-white hover:text-primary duration-300",
                     isSubscribed && "bg-opacity-75"
                 )}>
                 {isSubscribed ? "Subscribed" : "Subscribe"}
             </button>
-            <div className="border-2 border-white rounded-lg w-fit flex items-center px-2 my-2">
+            <div className="border-2 border-white rounded-lg w-fit flex items-center px-2">
                 <button
                     onClick={() => setIsLiked(!isliked)}
                     className="flex items-center gap-1 text-white outline-none border-r-2 pr-2 py-0.5">
@@ -46,7 +46,7 @@ const LikeSubscribeSave: React.FC = () => {
             </div>
 
             <button className="relative group outline-none">
-                <div className="flex items-center gap-1 relative rounded-md bg-white px-4 sm:px-3 py-1 text-black ">
+                <div className="flex items-center gap-1 relative rounded-md bg-white px-3 py-1 text-black">
                     <HiOutlineFolderAdd className="text-xl" />
                     <span className="sm:text-sm">Save</span>
                 </div>
