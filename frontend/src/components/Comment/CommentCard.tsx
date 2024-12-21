@@ -13,8 +13,8 @@ import { formatDateToNow } from "../../utils/FormatDateToNow";
 import { addComments } from "../../context/slices/CommentSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../context/Store";
-import { CommentType } from "../../Types/Comment";
-import { selectReplies } from "./SelectReplies";
+import { CommentType } from "../../Types/Comment.type";
+import { selectReplies } from "../../pages/Tweet/SelectReplies";
 import { formatNumber } from "../../utils/FormatNumber";
 import AddComment from "./AddComment";
 
@@ -26,12 +26,12 @@ interface CommentProps {
 }
 
 const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, entityType }) => {
-	const replies = useSelector((state: RootState) => selectReplies(state, currPath));
+	const replies: CommentType[] = useSelector((state: RootState) => selectReplies(state, currPath));
 	const [isliked, setIsLiked] = React.useState(false);
 	const [isDisliked, setIsDisliked] = React.useState(false);
 	const [showReplies, setShowReplies] = React.useState(false);
-	const dislikes = formatNumber(comment?.dislikes);
-	const likes = formatNumber(comment?.likes);
+	const dislikes = formatNumber(comment?.dislikes + (isDisliked ? 1 : 0));
+	const likes = formatNumber(comment?.likes + (isliked ? 1 : 0));
 	const [giveReply, setGiveReply] = React.useState(false);
 
 	const UploadedAt = formatDateToNow(new Date(comment.createdAt));
@@ -57,7 +57,7 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 		makeApiRequest({
 			method: "get",
 			url: `/api/v1/comments/${entityType}/${entityId}/${commentId}`,
-		}).then((RepliesResponse: any) => {
+		}).then((RepliesResponse: any) => { // eslint-disable-line
 			const RepliesData = RepliesResponse.data?.comments || [];
 
 			dispatch(addComments({ childPathIds: currPath, childs: RepliesData }));
@@ -94,13 +94,13 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 							onClick={likeHanlder}
 							className="flex items-center gap-1 text-xl outline-none hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
 							{isliked ? <BiSolidLike /> : <BiLike />}
-							<span className="text-xs">{likes + (isliked ? 1 : 0)}</span>
+							<span className="text-xs">{likes}</span>
 						</button>
 						<button
 							onClick={dislikeHanlder}
 							className="flex items-center gap-1 text-xl outline-none hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
 							{isDisliked ? <BiSolidDislike /> : <BiDislike />}
-							<span className="text-xs">{dislikes + (isDisliked ? 1 : 0)}</span>
+							<span className="text-xs">{dislikes}</span>
 						</button>
 						<button
 							className="flex items-center gap-1 text-xl outline-none hover:bg-background-secondary px-2 py-1 rounded-xl duration-300"
@@ -131,14 +131,16 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 						currPath.length < 5 ? "pl-4" : "pl-0"
 					)}>
 
-					{replies?.map((reply: any) =>
-					(<CommentCard
-						key={reply?._id}
-						currPath={currPath.concat([reply?._id])}
-						comment={reply}
-						entityId={entityId}
-						entityType={entityType}
-					/>))}
+					{
+						replies?.map((reply: CommentType) =>
+						(<CommentCard
+							key={reply?._id}
+							currPath={currPath.concat([reply?._id])}
+							comment={reply}
+							entityId={entityId}
+							entityType={entityType}
+						/>))
+					}
 				</div>
 			)}
 		</div>

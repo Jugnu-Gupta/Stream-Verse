@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { formatNumber } from "../../../utils/FormatNumber";
 import { formatDateToNow } from "../../../utils/FormatDateToNow";
 import { formatDuration } from "../../../utils/FormatDuration";
-import { VideoType } from "../../../Types/Video";
+import { VideoType } from "../../../Types/Video.type";
 
 interface ChannelVideosCardProps {
 	videoInfo: VideoType;

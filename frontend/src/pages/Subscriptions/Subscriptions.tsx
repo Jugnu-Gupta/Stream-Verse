@@ -3,7 +3,7 @@ import VideoCardView from '../Home/VideoCardView';
 import VideoListView from '../Search/VideoListView';
 import { useNavigate } from 'react-router-dom';
 import makeApiRequest from '../../utils/MakeApiRequest';
-import { VideoType } from '../../Types/Video';
+import { VideoType } from '../../Types/Video.type';
 
 
 // interface SubscriptionsChildProps {

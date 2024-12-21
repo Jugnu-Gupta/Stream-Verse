@@ -3,7 +3,7 @@ import VideoListView from '../Search/VideoListView';
 import VideoCardView from '../Home/VideoCardView';
 import makeApiRequest from '../../utils/MakeApiRequest';
 import { useNavigate } from 'react-router-dom';
-import { VideoType } from '../../Types/Video';
+import { VideoType } from '../../Types/Video.type';
 
 interface VideoWrapper {
     _id: string;

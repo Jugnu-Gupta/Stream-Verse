@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import mongoose, { isValidObjectId } from "mongoose";
+import mongoose, { isValidObjectId, Mongoose } from "mongoose";
 import { Video } from "../models/video.model";
 import { Like } from "../models/like.model";
 import { Comment } from "../models/comment.model";
@@ -203,16 +203,20 @@ const uploadVideo = asyncHandler(
 
 interface GetVideoByIdParams {
     videoId?: string;
+    userId?: string;
 }
 
 const getVideoById = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { videoId }: GetVideoByIdParams = req.params;
+        let { videoId, userId }: GetVideoByIdParams = req.params;
+        if (!videoId) {
+            throw new ApiError(400, "Video id is required");
+        }
         if (!isValidObjectId(videoId)) {
             throw new ApiError(400, "Invalid video id");
         }
-        if (!videoId) {
-            throw new ApiError(400, "Video id is required");
+        if (!userId || !isValidObjectId(userId)) {
+            userId = "";
         }
 
         // get video details like likes, dislikes
@@ -237,13 +241,43 @@ const getVideoById = asyncHandler(
                                 },
                             },
                         },
-                        { $project: { _id: 1, isLiked: 1 } },
+                        { $project: { _id: 1, isLiked: 1, likedBy: 1 } },
                     ],
                     as: "videoLikes",
                 },
             },
             {
                 $addFields: {
+                    likeStatus: {
+                        $cond: {
+                            if: {
+                                $in: [
+                                    new mongoose.Types.ObjectId(userId),
+                                    "$videoLikes.likedBy",
+                                ],
+                            },
+                            then: {
+                                $cond: {
+                                    if: {
+                                        $arrayElemAt: [
+                                            "$videoLikes.isLiked",
+                                            {
+                                                $indexOfArray: [
+                                                    "$videoLikes.likedBy",
+                                                    new mongoose.Types.ObjectId(
+                                                        userId
+                                                    ),
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                    then: 1,
+                                    else: -1,
+                                },
+                            },
+                            else: 0,
+                        },
+                    },
                     likes: {
                         $size: {
                             $filter: {
@@ -292,6 +326,7 @@ const getVideoById = asyncHandler(
             {
                 $project: {
                     title: 1,
+                    likeStatus: 1,
                     description: 1,
                     thumbnail: 1,
                     videoFile: 1,
@@ -303,6 +338,8 @@ const getVideoById = asyncHandler(
                     views: 1,
                     likes: 1,
                     dislikes: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
                 },
             },
         ]);

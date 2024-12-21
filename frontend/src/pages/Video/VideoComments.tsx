@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
-import CommentCard from "../Tweet/CommentCard";
+import CommentCard from "../../components/Comment/CommentCard";
 import { useNavigate } from "react-router-dom";
 import makeApiRequest from "../../utils/MakeApiRequest";
 import { addComments, clearComments } from "../../context/slices/CommentSlice";
 import { useDispatch } from "react-redux";
-import { CommentType } from "../../Types/Comment";
-import AddComment from "../Tweet/AddComment";
+import { CommentType } from "../../Types/Comment.type";
+import AddComment from "../../components/Comment/AddComment";
 
 interface VideoCommentsProps {
 	videoId: string;
@@ -24,11 +24,11 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ videoId }) => {
 
 	useEffect(() => {
 		if (!videoId) return;
+
 		makeApiRequest({
 			method: "get",
 			url: `/api/v1/comments/video/${videoId}`,
-		}).then((commentsResponse: any) => {
-			console.log("commentsv:", commentsResponse.data?.comments);
+		}).then((commentsResponse: any) => { // eslint-disable-line
 			const commentsData = commentsResponse.data?.comments || [];
 			setComments(commentsData);
 
@@ -47,7 +47,7 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ videoId }) => {
 			</h1>
 			<AddComment avatarStyle="w-10" />
 
-			{comments?.map((comment: any) => (
+			{comments?.map((comment: CommentType) => (
 				<CommentCard
 					key={comment?._id}
 					currPath={currPath.concat(comment?._id)}

@@ -20,3 +20,16 @@ export interface VideoType {
 	updatedAt: Date;
 	createdAt: Date;
 }
+
+export interface VideoDetailsType extends VideoType {
+	likeStatus: number;
+	isPublished: boolean;
+	quality: string;
+	subscribers: number;
+	likes: number;
+	dislikes: number;
+	VideoFile: {
+		url: string;
+		publicId: string;
+	};
+}

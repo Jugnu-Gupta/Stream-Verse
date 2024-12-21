@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { formatDuration } from "../../utils/FormatDuration";
 import { formatDateToNow } from "../../utils/FormatDateToNow";
 import { formatNumber } from "../../utils/FormatNumber";
-import { VideoType } from "../../Types/Video";
+import { VideoType } from "../../Types/Video.type";
 
 interface VideoListViewProps {
 	videoInfo: VideoType;

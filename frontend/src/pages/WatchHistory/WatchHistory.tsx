@@ -3,7 +3,7 @@ import VideoListView from '../Search/VideoListView';
 import VideoCardView from '../Home/VideoCardView';
 import makeApiRequest from '../../utils/MakeApiRequest';
 import { useNavigate } from 'react-router-dom';
-import { VideoType } from '../../Types/Video';
+import { VideoType } from '../../Types/Video.type';
 
 const History: React.FC = () => {
     const navigate = useNavigate();
@@ -23,15 +23,15 @@ const History: React.FC = () => {
     }, [navigate]);
 
     return (
-        <div className="sm:grid m-2 max-w-full w-11/12 justify-items-center">
-            <div className='sm:grid hidden'>
+        <div className="sm:flex m-2 max-w-full w-11/12">
+            <div className='sm:flex hidden flex-col'>
                 {
                     videos?.map((video: VideoType) => (
                         <VideoListView key={video._id} videoInfo={video} />
                     ))
                 }
             </div>
-            <div className='sm:hidden grid'>
+            <div className='sm:hidden flex flex-col'>
                 {
                     videos?.map((video: VideoType) => (
                         <VideoCardView key={video._id} videoInfo={video} />

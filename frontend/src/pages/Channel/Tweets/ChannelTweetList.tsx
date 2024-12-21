@@ -8,7 +8,7 @@ import { BiSolidDislike } from "react-icons/bi";
 import { BiCommentDetail } from "react-icons/bi";
 import { formatDateToNow } from "../../../utils/FormatDateToNow";
 import { formatNumber } from "../../../utils/FormatNumber";
-import { TweetType } from "../../../Types/Tweet";
+import { TweetType } from "../../../Types/Tweet.type";
 
 interface ChannelTweetListProps {
 	tweetInfo: TweetType | undefined;

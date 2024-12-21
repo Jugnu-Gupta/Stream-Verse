@@ -4,9 +4,10 @@ import { PiFolder } from "react-icons/pi";
 import makeApiRequest from "../../utils/MakeApiRequest";
 import { useNavigate, useParams } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
+import { PlaylistType } from "../../Types/Platlist.type";
 
 const Playlists: React.FC = () => {
-	const [playlists, setPlaylists] = React.useState([]);
+	const [playlists, setPlaylists] = React.useState<PlaylistType[]>([]);
 	const navigate = useNavigate();
 	const { adminName } = useParams<{ adminName: string }>();
 
@@ -17,15 +18,13 @@ const Playlists: React.FC = () => {
 		makeApiRequest({
 			method: "get",
 			url: `/api/v1/playlists?userName=${userName}`,
-		}).then((response: any) => {
-			// console.log("response:", response.data);
+		}).then((response: any) => { // eslint-disable-line
 			setPlaylists(response.data?.playlists);
 		}).catch((error) => {
 			console.error("Error fetching data:", error);
 			navigate("/");
 		});
 	}, [navigate, adminName]);
-
 
 	if (playlists?.length === 0) {
 		return (
@@ -40,7 +39,7 @@ const Playlists: React.FC = () => {
 	return (
 		< div className={twMerge("grid px-4 w-full max-w-6xl mx-auto justify-items-center z-0 2xl:grid-cols-4 2lg:grid-cols-3 2sm:grid-cols-2 grid-cols-1", adminName ? "mt-4" : "mt-2")} >
 			{
-				playlists?.map((playlist: any) => (
+				playlists?.map((playlist: PlaylistType) => (
 					<PlaylistCard key={playlist._id} playlist={playlist} />
 				))
 			}

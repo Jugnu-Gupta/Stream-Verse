@@ -266,17 +266,8 @@ const getUserChannelPage = asyncHandler(
                 },
             },
             {
-                $lookup: {
-                    from: "subscriptions",
-                    localField: "_id",
-                    foreignField: "subscriberId",
-                    as: "subscribedTo",
-                },
-            },
-            {
                 $addFields: {
                     subscriberCount: { $size: "$subscribers" },
-                    subscribedToCount: { $size: "$subscribedTo" },
                     isSubscribed: {
                         $cond: {
                             if: {
@@ -305,7 +296,6 @@ const getUserChannelPage = asyncHandler(
                     avatar: 1,
                     coverImage: 1,
                     subscriberCount: 1,
-                    subscribedToCount: 1,
                     isSubscribed: 1,
                     videoCount: { $size: "$videos" },
                     createdAt: 1,

@@ -3,7 +3,7 @@ import ChannelVideosCard from "./ChannelVideoCard";
 import { HiOutlineVideoCamera } from "react-icons/hi";
 import { useNavigate, useParams } from "react-router-dom";
 import makeApiRequest from "../../../utils/MakeApiRequest";
-import { VideoType } from "../../../Types/Video";
+import { VideoType } from "../../../Types/Video.type";
 
 const ChannelVideos: React.FC = () => {
 	const navigate = useNavigate();
@@ -14,8 +14,8 @@ const ChannelVideos: React.FC = () => {
 		makeApiRequest({
 			method: "get",
 			url: `/api/v1/users/video/${adminName?.substring(1)}`,
-		}).then((response: any) => {
-			console.log("Fetched Videos:", response.data?.videos);
+		}).then((response: any) => { // eslint-disable-line
+			// console.log("Fetched Videos:", response.data?.videos);
 			setVideos(response.data?.videos);
 		}).catch((error) => {
 			console.error("Error fetching data:", error);

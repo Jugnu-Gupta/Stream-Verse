@@ -13,8 +13,19 @@ export interface ChannelInfoType {
 	};
 	isSubscribed: boolean;
 	subscriberCount: number;
-	subscribedToCount?: number;
 	videoCount: number;
 	createdAt: Date;
 	updatedAt: Date;
+}
+
+export interface SubscribedChannelType {
+	_id: string;
+	fullName: string;
+	userName: string;
+	isSubscribed: boolean;
+	totalSubscribers: number;
+	avatar: {
+		url: string;
+		publicId: string;
+	};
 }

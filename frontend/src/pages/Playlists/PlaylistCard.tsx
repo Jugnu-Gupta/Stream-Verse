@@ -5,9 +5,10 @@ import { CgPlayList } from "react-icons/cg";
 import { FaPlay } from "react-icons/fa";
 import { formatNumber } from "../../utils/FormatNumber";
 import { formatDateToNow } from "../../utils/FormatDateToNow";
+import { PlaylistType } from "../../Types/Platlist.type";
 
 interface ChannelVideosCardProps {
-	playlist?: any;
+	playlist: PlaylistType;
 }
 
 const ChannelVideosCard: React.FC<ChannelVideosCardProps> = ({ playlist }) => {

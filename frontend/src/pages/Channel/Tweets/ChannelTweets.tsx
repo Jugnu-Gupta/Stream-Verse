@@ -6,8 +6,8 @@ import { twMerge } from "tailwind-merge";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { updateImage } from "../../../utils/UpdateImage";
 import makeApiRequest from "../../../utils/MakeApiRequest";
-import { TweetType } from "../../../Types/Tweet";
-import { ChannelInfoType } from "../../../Types/Channel";
+import { TweetType } from "../../../Types/Tweet.type";
+import { ChannelInfoType } from "../../../Types/Channel.type";
 
 interface ChannelInfoWrapper {
 	channelInfo: ChannelInfoType;
@@ -110,7 +110,7 @@ const ChannelTweets: React.FC = () => {
 								"px-3 py-1 rounded-full bg-primary xs:text-sm font-semibold opacity-70",
 								(comment != "" || newTweetImage) && "opacity-100"
 							)}>
-							Comment
+							Tweet
 						</button>
 					</div>
 				</div>

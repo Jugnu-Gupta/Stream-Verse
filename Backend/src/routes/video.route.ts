@@ -28,9 +28,10 @@ router
 // Get, update, delete video by id (secured routes)
 router
     .route("/:videoId")
-    .get(getVideoById)
     .patch(verifyJWT, upload.single("image"), videoUpdate)
     .delete(verifyJWT, deleteVideo);
+
+router.route("/:videoId/:userId?").get(getVideoById);
 
 // Toggle publish status of video (secured route)
 router.route("/:videoId/publish").patch(verifyJWT, ToggleVideoPublishStatus);

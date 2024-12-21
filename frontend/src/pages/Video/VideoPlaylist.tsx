@@ -4,17 +4,20 @@ import { RxCross2 } from "react-icons/rx";
 import RelatedVideo from "./RelatedVideo";
 import { IoIosArrowDown } from "react-icons/io";
 import { formatNumber } from '../../utils/FormatNumber';
+import { PlaylistVideosType } from '../../Types/Platlist.type';
+import { VideoType } from '../../Types/Video.type';
 
 interface VideoPlaylistProps {
     childClass: string;
     heighlightVideo: string;
-    playlist: any;
+    playlist: PlaylistVideosType | undefined;
 }
 
 const VideoPlaylist: React.FC<VideoPlaylistProps> = ({ childClass, heighlightVideo, playlist }) => {
     const [showPlaylist, setShowPlaylist] = React.useState(true);
-    const totalVideos = formatNumber(playlist?.videos?.length);
-    const curVideoIndex = playlist?.videos?.findIndex((video: any) => video._id === heighlightVideo) || 0;
+    const totalVideos = formatNumber(playlist?.noOfVideos);
+    const curVideoIndex = playlist?.videos?.findIndex(
+        (video: VideoType) => video._id === heighlightVideo) || 0;
     const playlistTitle = playlist?.name || "Playlist Title";
     const NextVideoTitle = "Next Video Title";
     const owner = playlist?.owner?.fullName || "Channel Name";
@@ -44,7 +47,7 @@ const VideoPlaylist: React.FC<VideoPlaylistProps> = ({ childClass, heighlightVid
 
             <div className={twMerge("flex flex-col w-full pt-2 max-h-[60vh] overflow-y-auto", !showPlaylist && "hidden")}>
                 {
-                    playlist?.videos?.map((video: any) => (
+                    playlist?.videos?.map((video: VideoType) => (
                         <RelatedVideo key={video?._id} heighlightVideo={heighlightVideo} videoInfo={video} />
                     ))
                 }

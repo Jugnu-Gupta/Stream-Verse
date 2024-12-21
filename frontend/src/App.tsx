@@ -7,7 +7,6 @@ import MainLayout from "./Layouts/MainLayout.tsx";
 import Home from "./pages/Home/Home.tsx";
 import Search from "./pages/Search/Search.tsx";
 import ChannelVideos from "./pages/Channel/Videos/ChannelVideos.tsx";
-// import ChannelPlaylists from "./pages/Channel/Playlists/ChannelPlayists.tsx";
 import Playlists from "./pages/Playlists/Playlists.tsx";
 import ChannelTweets from "./pages/Channel/Tweets/ChannelTweets.tsx";
 import TweetDetails from "./pages/Tweet/TweetDetails.tsx";

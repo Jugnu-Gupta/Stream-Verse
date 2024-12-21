@@ -3,7 +3,7 @@ import Background from "../../../assets/thumbnail.png";
 import { useNavigate } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 import { formatNumber } from '../../../utils/FormatNumber';
-import { ChannelInfoType } from '../../../Types/Channel';
+import { ChannelInfoType } from '../../../Types/Channel.type';
 
 interface ChannelInfoProps {
     channelInfo: ChannelInfoType | undefined;

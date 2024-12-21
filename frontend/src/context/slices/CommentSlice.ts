@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { CommentType } from "../../Types/Comment";
+import { CommentType } from "../../Types/Comment.type";
 
 export interface TreeNode {
-	val: CommentType | null;
+	val: CommentType;
 	children: TreeNode[];
 }
 
@@ -57,7 +57,20 @@ const CommentSlice = createSlice({
 				node.children.forEach((child) => {
 					clearAllData(child);
 				});
-				node.val = null;
+				node.val = {
+					owner: {
+						_id: "",
+						userName: "",
+						fullName: "",
+					},
+					replies: 0,
+					likes: 0,
+					dislikes: 0,
+					content: "",
+					_id: "",
+					createdAt: new Date().toISOString(),
+					updatedAt: new Date().toISOString(),
+				};
 				node.children = [];
 			};
 			state.children.forEach((child) => {

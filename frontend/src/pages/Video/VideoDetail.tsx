@@ -10,6 +10,8 @@ import makeApiRequest from "../../utils/MakeApiRequest";
 import { formatNumber } from "../../utils/FormatNumber";
 import { formatDateToNow } from "../../utils/FormatDateToNow";
 import ShowHideText from "../../components/Text/ShowHideText";
+import { VideoDetailsType, VideoType } from "../../Types/Video.type";
+import { PlaylistVideosType } from "../../Types/Platlist.type";
 
 const VideoDetail: React.FC = () => {
 	const [searchParams] = useSearchParams();
@@ -17,36 +19,35 @@ const VideoDetail: React.FC = () => {
 	const navigate = useNavigate();
 	const listId = searchParams.get("listId");
 
-	const [playlist, setPlaylist] = React.useState<any>(null);
-	const [video, setVideo] = React.useState<any>(null);
-	const [similarVideos, setSimilarVideos] = React.useState<any[]>([]);
+	const [playlist, setPlaylist] = React.useState<PlaylistVideosType>();
+	const [video, setVideo] = React.useState<VideoDetailsType>();
+	const [similarVideos, setSimilarVideos] = React.useState<VideoType[]>([]);
 	const views = formatNumber(video?.views);
 	const uploadedAt = formatDateToNow(video?.createdAt);
 	const Subscribers = formatNumber(video?.subscribers);
 	const channelName = video?.owner?.fullName || "Channel Name";
-	const videoNo = video?._id || "0";
+	const videoNo = video?._id || "";
 	const title = video?.title || "Video Title";
 	const description = video?.description || "Video Description";
 	// console.log("videoId:", videoId);
 	// console.log("listId:", listId);
 
 	useEffect(() => {
-		console.log("listId:", listId);
-		console.log("videoId:", videoId);
+		const userId = localStorage.getItem("userId");
+
 		makeApiRequest({
 			method: "get",
 			url: `/api/v1/playlists/${"67502bffd0104e89cbb9be5e"}`,
-		}).then((playlistRes: any) => {
-			// console.log("playlist:", playlistResponse.data?.playlist);
+		}).then((playlistRes: any) => { // eslint-disable-line
 			setPlaylist(playlistRes.data?.playlist);
 
 			// find details of current video
 			return makeApiRequest({
 				method: "get",
-				url: `/api/v1/videos/${"67502949d0104e89cbb9be5d"}`,
+				url: `/api/v1/videos/${"67502949d0104e89cbb9be5d"}${(userId ? "/" + userId : "")}`,
 			});
-		}).then((videoInfoRes: any) => {
-			// console.log("videosResponse:", videosResponse.data?.video);
+		}).then((videoInfoRes: any) => { // eslint-disable-line
+			console.log("videoInfoRes:", videoInfoRes.data);
 			setVideo(videoInfoRes.data?.video);
 
 			// find similar videos
@@ -54,9 +55,7 @@ const VideoDetail: React.FC = () => {
 				method: "get",
 				url: `/api/v1/videos?query=${"advanced"}}`,
 			})
-		}).then((SimilarVideosRes: any) => {
-			console.log("SimilarVideosRes:", SimilarVideosRes.data);
-
+		}).then((SimilarVideosRes: any) => { // eslint-disable-line
 			setSimilarVideos(SimilarVideosRes.data?.videos);
 		}).catch((error) => {
 			console.error("Error fetching data:", error);
@@ -108,7 +107,7 @@ const VideoDetail: React.FC = () => {
 						</div>
 
 						{/* Like, Subscribe And Save */}
-						<LikeSubscribeSave />
+						<LikeSubscribeSave likes={video?.likes} dislikes={video?.dislikes} likeStatus={video?.likeStatus} entityType="video" entityId={videoNo} />
 					</div>
 					<div className="w-full bg-white border-b-2 my-3"></div>
 
@@ -127,7 +126,7 @@ const VideoDetail: React.FC = () => {
 				{/* Related Videos */}
 				<div className="flex flex-col w-full">
 					{
-						similarVideos?.map((video: any) => (
+						similarVideos?.map((video: VideoType) => (
 							<RelatedVideo key={video?._id} videoInfo={video} />
 						))
 					}

@@ -1,14 +1,14 @@
 import React from "react";
-import CommentCard from "./CommentCard";
+import CommentCard from "../../components/Comment/CommentCard";
 import ChannelTweetList from "../Channel/Tweets/ChannelTweetList";
 import makeApiRequest from "../../utils/MakeApiRequest";
 import { useNavigate, useParams } from "react-router-dom";
 import { addComments } from "../../context/slices/CommentSlice";
 import { useDispatch } from "react-redux";
-import { CommentType } from "../../Types/Comment";
-import AddComment from "./AddComment";
+import { CommentType } from "../../Types/Comment.type";
+import AddComment from "../../components/Comment/AddComment";
 import { formatNumber } from "../../utils/FormatNumber";
-import { TweetType } from "../../Types/Tweet";
+import { TweetType } from "../../Types/Tweet.type";
 
 
 const TweetDetails: React.FC = () => {

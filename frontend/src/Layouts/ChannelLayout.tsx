@@ -2,7 +2,7 @@ import React from 'react';
 import ChannelHeader from '../pages/Channel/Header/ChannelHeader';
 import makeApiRequest from '../utils/MakeApiRequest';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
-import { ChannelInfoType } from '../Types/Channel';
+import { ChannelInfoType } from '../Types/Channel.type';
 
 const ChannelLayout: React.FC = () => {
     const navigate = useNavigate();

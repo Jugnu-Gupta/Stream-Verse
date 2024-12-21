@@ -172,10 +172,10 @@ const getPlaylistById = asyncHandler(
             },
             {
                 $lookup: {
-                    from: "users", // Join with the 'users' collection
+                    from: "users",
                     localField: "ownerId",
                     foreignField: "_id",
-                    as: "owner", // Keep owner as an array
+                    as: "owner",
                 },
             },
             { $addFields: { owner: { $arrayElemAt: ["$owner", 0] } } },
@@ -185,6 +185,7 @@ const getPlaylistById = asyncHandler(
                     name: 1,
                     description: 1,
                     videos: 1,
+                    noOfVideos: { $size: "$videos" },
                     owner: {
                         userName: "$owner.userName",
                         fullName: "$owner.fullName",

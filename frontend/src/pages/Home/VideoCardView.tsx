@@ -4,7 +4,7 @@ import thumbnail from "../../assets/thumbnail.png";
 import { formatDateToNow } from "../../utils/FormatDateToNow";
 import { formatDuration } from "../../utils/FormatDuration";
 import { formatNumber } from "../../utils/FormatNumber";
-import { VideoType } from "../../Types/Video";
+import { VideoType } from "../../Types/Video.type";
 
 interface VideoCardViewProps {
 	videoInfo: VideoType;

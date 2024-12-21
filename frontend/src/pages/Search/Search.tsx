@@ -22,8 +22,16 @@ const Search: React.FC = () => {
 		updatedAt: new Date(),
 	};
 	return (
-		<>
-			<div className="sm:grid hidden m-2 max-w-full w-11/12 justify-items-center">
+		<div className="sm:flex m-2 max-w-full w-11/12">
+			<div className='sm:flex hidden flex-col'>
+				{/* {
+					videos?.map((video: VideoType) => (
+						<VideoListView key={video._id} videoInfo={video} />
+					))
+				} */}
+				<VideoListView videoInfo={videoInfo} />
+				<VideoListView videoInfo={videoInfo} />
+				<VideoListView videoInfo={videoInfo} />
 				<VideoListView videoInfo={videoInfo} />
 				<VideoListView videoInfo={videoInfo} />
 				<VideoListView videoInfo={videoInfo} />
@@ -32,16 +40,22 @@ const Search: React.FC = () => {
 				<VideoListView videoInfo={videoInfo} />
 				<VideoListView videoInfo={videoInfo} />
 			</div>
-			<div className="sm:hidden grid m-2 w-11/12 justify-items-center">
-				<VideoCardView videoInfo={videoInfo} />
-				<VideoCardView videoInfo={videoInfo} />
-				<VideoCardView videoInfo={videoInfo} />
-				<VideoCardView videoInfo={videoInfo} />
-				<VideoCardView videoInfo={videoInfo} />
-				<VideoCardView videoInfo={videoInfo} />
-				<VideoCardView videoInfo={videoInfo} />
+			<div className='sm:hidden flex flex-col'>
+				{/* {
+					videos?.map((video: VideoType) => (
+						<VideoCardView key={video._id} videoInfo={video} />
+					))
+				} */}
 			</div>
-		</>
+			<VideoCardView videoInfo={videoInfo} />
+			<VideoCardView videoInfo={videoInfo} />
+			<VideoCardView videoInfo={videoInfo} />
+			<VideoCardView videoInfo={videoInfo} />
+			<VideoCardView videoInfo={videoInfo} />
+			<VideoCardView videoInfo={videoInfo} />
+			<VideoCardView videoInfo={videoInfo} />
+			<VideoCardView videoInfo={videoInfo} />
+		</div>
 	);
 };
 

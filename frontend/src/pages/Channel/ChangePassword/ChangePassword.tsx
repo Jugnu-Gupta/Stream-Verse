@@ -5,7 +5,7 @@ import ChannelNavbar from '../Navbar/ChannelNavbar';
 import { CHANNELNAVITEMS2 } from '../../../Constants/ChannelNavbar';
 import { useNavigate, useParams } from 'react-router-dom';
 import makeApiRequest from '../../../utils/MakeApiRequest';
-import { ChannelInfoType } from '../../../Types/Channel';
+import { ChannelInfoType } from '../../../Types/Channel.type';
 
 const ChangePassword: React.FC = () => {
     const { adminName } = useParams<{ adminName: string }>();

@@ -8,7 +8,7 @@ import ChannelNavbar from "../Navbar/ChannelNavbar";
 import { updateImage } from "../../../utils/UpdateImage";
 import makeApiRequest from "../../../utils/MakeApiRequest";
 import { formatNumber } from "../../../utils/FormatNumber";
-import { ChannelInfoType } from "../../../Types/Channel";
+import { ChannelInfoType } from "../../../Types/Channel.type";
 
 const PersonalInformation: React.FC = () => {
     const [channelInfo, setChannelInfo] = React.useState<ChannelInfoType>();

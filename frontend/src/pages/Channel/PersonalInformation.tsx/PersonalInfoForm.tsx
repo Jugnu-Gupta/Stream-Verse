@@ -3,7 +3,7 @@ import { useFormik } from 'formik';
 import toast from 'react-hot-toast';
 import makeApiRequest from '../../../utils/MakeApiRequest';
 import { PersonalInfoValidationSchema } from './PersonalInfoValidationSchema';
-import { ChannelInfoType } from '../../../Types/Channel';
+import { ChannelInfoType } from '../../../Types/Channel.type';
 
 interface PersonalInfoFormProps {
     channelInfo: ChannelInfoType | undefined;
