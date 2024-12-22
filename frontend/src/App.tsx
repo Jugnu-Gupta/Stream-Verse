@@ -12,7 +12,7 @@ import ChannelTweets from "./pages/Channel/Tweets/ChannelTweets.tsx";
 import TweetDetails from "./pages/Tweet/TweetDetails.tsx";
 import ChannelSubscribed from "./pages/Channel/Subscribed/ChannelSubscribed.tsx";
 import Dashboard from "./pages/Admin/Dashboard.tsx";
-import VideoDetail from "./pages/Video/VideoDetail.tsx";
+import VideoDetail from "./pages/Video/VideoDetails.tsx";
 import Help from "./pages/Help/Help.tsx";
 import TermsAndConditions from "./pages/TermsAndConditions/TermsAndConditions.tsx";
 import EditVideoModal from "./components/Popup/EditVideoModal.tsx";
@@ -26,6 +26,7 @@ import WatchHistory from "./pages/WatchHistory/WatchHistory.tsx";
 import LikedVideos from "./pages/LikedVideos/LikedVideos.tsx";
 import ProtectedLayout from "./Layouts/ProtectedLayout.tsx";
 import ProtectedAdminLayout from "./Layouts/ProtectedAdminLayout.tsx";
+import UploadingVideoModal from "./components/Popup/UploadingVideoModal.tsx";
 
 // check api for subscription and video details using dummy data
 
@@ -61,6 +62,7 @@ function App() {
 					<Route path="search2" element={<EditVideoModal setShowEditVideo={() => { console.log("hello") }} />} />
 					<Route path="search3" element={<DeleteVideoModal setShowDeleteVideo={() => { console.log("hello") }} />} />
 					<Route path="search4" element={<UploadVideoModal setShowUploadVideo={() => { console.log("hello") }} />} />
+					<Route path="search5" element={<UploadingVideoModal setShowUploadingVideo={() => { console.log("hello") }} />} />
 					<Route path="help" element={<Help />} />
 
 					{/* for current user and channel of other users */}

@@ -29,9 +29,9 @@ const AddComment: React.FC<AddCommentProps> = ({ setGiveReply, avatarStyle }) =>
                     className="rounded-full w-full aspect-square"
                 />
             </div>
-            <div className="text-white flex flex-col w-full items-end">
+            <div className="text-primary-text flex flex-col w-full items-end">
                 <textarea
-                    className="w-full h-8 pb-1 border-b-2 mb-2 overflow-hidden outline-none resize-none bg-transparent"
+                    className="w-full h-8 pb-1 border-b-2 border-primary-border mb-2 overflow-hidden outline-none resize-none bg-transparent"
                     placeholder="Add a comment..."
                     value={addCommentText}
                     onChange={(e) => setAddCommentText(e.target.value)}
@@ -44,7 +44,7 @@ const AddComment: React.FC<AddCommentProps> = ({ setGiveReply, avatarStyle }) =>
                     </button>
                     <button
                         className={twMerge(
-                            "px-3 py-1 rounded-full outline-none bg-primary opacity-50",
+                            "px-3 py-1 rounded-full outline-none bg-primary opacity-75 font-semibold",
                             addCommentText != "" && "opacity-100"
                         )}>
                         Comment

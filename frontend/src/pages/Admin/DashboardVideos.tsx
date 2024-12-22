@@ -22,18 +22,18 @@ const DashboardVideos: React.FC = () => {
 
     return (
         <div className="overflow-x-auto mt-4">
-            <table className="w-full text-white border-collapse">
+            <table className="w-full border-collapse bg-background-tertiary">
                 <thead>
-                    <tr className="text-nowrap border-[1px] border-background-secondary">
-                        <th className="px-4 py-2 text-center border-r border-background-secondary w-1/12">Toggle</th>
-                        <th className="px-4 py-2 text-center border-r border-background-secondary w-1/12">Status</th>
-                        <th className="px-4 py-2 text-center border-r border-background-secondary w-full">Video</th>
-                        <th className="px-4 py-2 text-center border-r border-background-secondary w-1/12">Engagement</th>
-                        <th className="px-4 py-2 text-center border-r border-background-secondary w-1/12">Upload Date</th>
-                        <th className="px-4 py-2 text-center w-1/12">Edit</th>
+                    <tr className="text-nowrap border-2 border-primary-border text-primary-text">
+                        <th className="px-4 py-2 text-center border-x-2 border-primary-border w-1/12">Toggle</th>
+                        <th className="px-4 py-2 text-center border-x-2 border-primary-border w-1/12">Status</th>
+                        <th className="px-4 py-2 text-center border-x-2 border-primary-border w-full">Video</th>
+                        <th className="px-4 py-2 text-center border-x-2 border-primary-border w-1/12">Engagement</th>
+                        <th className="px-4 py-2 text-center border-x-2 border-primary-border w-1/12">Upload Date</th>
+                        <th className="px-4 py-2 text-center w-1/12 border-x-2 border-primary-border">Edit</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody className='text-primary-text'>
                     {
                         videos?.map((video: any) => (
                             <DashboardVideoStatsControl key={video._id} videoInfo={video} />

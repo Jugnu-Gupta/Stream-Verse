@@ -14,6 +14,7 @@ const VideoListView: React.FC<VideoListViewProps> = ({ videoInfo }) => {
 	const views = formatNumber(videoInfo?.views);
 	const uploadedAt = formatDateToNow(videoInfo?.createdAt || new Date());
 	const description = videoInfo?.description || "This is a video description";
+	const ownerName = videoInfo?.owner?.userName || "Channel Name";
 	const title = videoInfo?.title || "Video Title";
 	// const thumbnail = videoInfo?.thumbnail || "https://via.placeholder.com/150";
 
@@ -31,22 +32,22 @@ const VideoListView: React.FC<VideoListViewProps> = ({ videoInfo }) => {
 					</p>
 				</div>
 			</Link>
-			<div className="flex flex-col text-white sm:w-2/3">
+			<div className="flex flex-col text-primary-text sm:w-2/3">
 				<Link to="/video/:videoId">
 					<h2 className="font-semibold text-lg truncate-lines-2">{title}</h2>
-					<p className="text-xs opacity-80 text-nowrap mb-3 mt-1">
+					<p className="text-xs text-nowrap mb-3 mt-1 text-primary-text2">
 						{views} views · {uploadedAt}
 					</p>
 				</Link>
-				<Link to="/user/videos">
+				<Link to={`/${ownerName}/videos`}>
 					<div className="flex items-center gap-3 text-nowrap mb-2">
 						<img
 							src="https://ui-avatars.com/api/?format=svg&name=Elon+Musk&bold=true&background=random&size=36&rounded=true"
 							alt="Elon Musk"
 							className="rounded-full aspect-square"
 						/>
-						<p className="text-sm opacity-80 hover:opacity-100">
-							{videoInfo?.owner?.userName || "Channel Name"}
+						<p className="text-sm text-primary-text2 hover:text-primary-text">
+							{ownerName}
 						</p>
 					</div>
 				</Link>

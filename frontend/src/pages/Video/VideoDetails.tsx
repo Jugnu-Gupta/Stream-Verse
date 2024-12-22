@@ -26,15 +26,14 @@ const VideoDetail: React.FC = () => {
 	const uploadedAt = formatDateToNow(video?.createdAt);
 	const Subscribers = formatNumber(video?.subscribers);
 	const channelName = video?.owner?.fullName || "Channel Name";
+	const description = video?.description || "Video Description";
+	const userId = localStorage.getItem("userId");
 	const videoNo = video?._id || "";
 	const title = video?.title || "Video Title";
-	const description = video?.description || "Video Description";
 	// console.log("videoId:", videoId);
 	// console.log("listId:", listId);
 
 	useEffect(() => {
-		const userId = localStorage.getItem("userId");
-
 		makeApiRequest({
 			method: "get",
 			url: `/api/v1/playlists/${"67502bffd0104e89cbb9be5e"}`,
@@ -47,7 +46,7 @@ const VideoDetail: React.FC = () => {
 				url: `/api/v1/videos/${"67502949d0104e89cbb9be5d"}${(userId ? "/" + userId : "")}`,
 			});
 		}).then((videoInfoRes: any) => { // eslint-disable-line
-			console.log("videoInfoRes:", videoInfoRes.data);
+			// console.log("videoInfoRes:", videoInfoRes.data);
 			setVideo(videoInfoRes.data?.video);
 
 			// find similar videos
@@ -62,7 +61,7 @@ const VideoDetail: React.FC = () => {
 			// navigate(listId ? `/video/${videoId}` : `/`);
 			// navigate("/");
 		})
-	}, [listId, videoId, navigate]);
+	}, [listId, videoId, userId, navigate]);
 
 	return (
 		<div
@@ -78,13 +77,13 @@ const VideoDetail: React.FC = () => {
 				<VideoPlaylist childClass="flex 2lg:hidden" heighlightVideo={videoNo} playlist={playlist} />
 
 				{/* Description */}
-				<div className="border-2 border-white rounded-lg p-2 mt-4 mx-2 lg:mx-0">
+				<div className="border-2 border-primary-border rounded-lg p-2 mt-4 mx-2 lg:mx-0">
 					<div className="flex items-center justify-between mb-2">
-						<div className="text-white">
+						<div className="text-primary-text">
 							<h1 className="text-lg font-bold tracking-wide">
 								{title}
 							</h1>
-							<p className="text-sm">
+							<p className="text-sm text-primary-text2">
 								{views} views · {uploadedAt}
 							</p>
 						</div>
@@ -96,7 +95,7 @@ const VideoDetail: React.FC = () => {
 								alt="thumbnail"
 								className="rounded-full w-10 h-10 aspect-square"
 							/>
-							<div className="text-white text-nowrap w-full">
+							<div className="text-primary-text text-nowrap w-full">
 								<h1 className="font-semibold sm:text-sm">
 									{channelName}
 								</h1>
@@ -107,9 +106,9 @@ const VideoDetail: React.FC = () => {
 						</div>
 
 						{/* Like, Subscribe And Save */}
-						<LikeSubscribeSave likes={video?.likes} dislikes={video?.dislikes} likeStatus={video?.likeStatus} entityType="video" entityId={videoNo} />
+						{userId && <LikeSubscribeSave likes={video?.likes} dislikes={video?.dislikes} likeStatus={video?.likeStatus} entityType="video" entityId={videoNo} />}
 					</div>
-					<div className="w-full bg-white border-b-2 my-3"></div>
+					<div className="w-full border-primary-border border-b-2 my-3"></div>
 
 					<ShowHideText content={description} />
 				</div>

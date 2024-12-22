@@ -11,6 +11,7 @@ export interface CommentType {
 	content: string;
 	_id: string;
 	replies: number;
+	likeStatus: number;
 	likes: number;
 	dislikes: number;
 	createdAt: Date | string;

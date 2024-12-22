@@ -9,32 +9,25 @@ import { BiCommentDetail } from "react-icons/bi";
 import { formatDateToNow } from "../../../utils/FormatDateToNow";
 import { formatNumber } from "../../../utils/FormatNumber";
 import { TweetType } from "../../../Types/Tweet.type";
+import useLikeDislike from "../../../hooks/useLikeDislike";
+import { computeDislikeCount, computeLikeCount }
+	from "../../../utils/ComputeLikeDislikeCount";
 
 interface ChannelTweetListProps {
 	tweetInfo: TweetType | undefined;
 }
 const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo }) => {
+	const { isLiked, isDisliked, handleLike, handleDislike } = useLikeDislike({ entityId: tweetInfo?._id || "", entityType: "tweet", likeStatus: tweetInfo?.likeStatus });
 	const [readMore, setReadMore] = React.useState(false);
-	const [isliked, setIsLiked] = React.useState(false);
-	const [isDisliked, setIsDisliked] = React.useState(false);
 	const UploadedAt = formatDateToNow(tweetInfo?.createdAt);
 	const channelName = tweetInfo?.owner?.fullName || "channel Name";
-	const dislikes = formatNumber(tweetInfo?.dislikes);
-	const likes = formatNumber(tweetInfo?.likes);
+	const dislikes = computeDislikeCount(tweetInfo?.dislikes, tweetInfo?.likeStatus, isDisliked);
+	const likes = computeLikeCount(tweetInfo?.likes, tweetInfo?.likeStatus, isLiked);
 	const comments = formatNumber(tweetInfo?.comments);
 	const description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.";
 	const content = (tweetInfo?.content || description);
 	// store 100 length in description
 	const showContent = readMore ? content : `${content.slice(0, 100)}...`;
-
-	const likeHanlder = () => {
-		setIsLiked(!isliked);
-		setIsDisliked(false);
-	};
-	const dislikeHanlder = () => {
-		setIsDisliked(!isDisliked);
-		setIsLiked(false);
-	};
 
 	return (
 		<div className="flex items-start gap-2 p-2 w-full">
@@ -47,7 +40,7 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo }) => {
 					/>
 				</div>
 			</Link>
-			<div className="flex flex-col text-white w-full">
+			<div className="flex flex-col text-primary-text w-full">
 				<div className="flex gap-2 items-center mb-2">
 					<p className="text-sm font-semibold">{channelName}</p>
 					<p className="text-primary-text2 text-xs">{UploadedAt}</p>
@@ -76,13 +69,13 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo }) => {
 				)}
 				<div className="flex justify-start gap-3 font-semibold tracking-wide">
 					<button
-						onClick={likeHanlder}
+						onClick={handleLike}
 						className="flex items-center gap-1 text-xl hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
-						{isliked ? <BiSolidLike /> : <BiLike />}
+						{isLiked ? <BiSolidLike /> : <BiLike />}
 						<span className="text-xs">{likes}</span>
 					</button>
 					<button
-						onClick={dislikeHanlder}
+						onClick={handleDislike}
 						className="flex items-center gap-1 text-xl hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
 						{isDisliked ? <BiSolidDislike /> : <BiDislike />}
 						<span className="text-xs">{dislikes}</span>

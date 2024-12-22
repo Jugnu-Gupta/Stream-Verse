@@ -43,8 +43,8 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({ email }) => {
 
     return (
         <form onSubmit={handleSubmit}
-            className="w-full text-white border-2 border-white rounded-xl py-2">
-            <div className="px-2 mb-3 text-sm relative">
+            className="w-full text-white border-2 border-primary-border rounded-xl py-2">
+            <div className="px-2 mb-3 text-sm relative text-primary-text">
                 <label htmlFor="curPassword">
                     Current password
                 </label>
@@ -57,14 +57,14 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({ email }) => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     className="px-2 py-1 mt-1 w-full rounded-md bg-background-secondary outline-none transition delay-[50000s]
-				    placeholder:text-gray-300 text-sm border-[1px] border-white"
+				    placeholder:text-primary-text2 text-sm border-2 border-primary-border text-primary-text"
                 />
                 <label htmlFor="curPassword" className="cursor-pointer absolute right-4 top-8" onClick={() => setShowCurPassword(!showCurPassword)}>
                     {showCurPassword ? <FaRegEyeSlash /> : <FaRegEye />}
                 </label>
                 {touched.curPassword && errors.curPassword ? <p className="text-start text-xs mt-0.5">{errors.curPassword}</p> : null}
             </div>
-            <div className="px-2 mb-3 text-sm relative">
+            <div className="px-2 mb-3 text-sm relative text-primary-text">
                 <label htmlFor="newPassword">
                     New password
                 </label>
@@ -77,14 +77,14 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({ email }) => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     className="px-2 py-1 mt-1 w-full rounded-md bg-background-secondary outline-none transition delay-[50000s]
-				placeholder:text-gray-300 text-sm border-[1px] border-white"
+				placeholder:text-primary-text2 text-sm border-2 border-primary-border text-primary-text"
                 />
                 <label htmlFor="newPassword" className="cursor-pointer absolute right-4 top-8" onClick={() => setShowNewPassword(!showNewPassword)}>
                     {showNewPassword ? <FaRegEyeSlash /> : <FaRegEye />}
                 </label>
                 {touched.newPassword && errors.newPassword ? <p className="text-start text-xs mt-0.5">{errors.newPassword}</p> : null}
             </div>
-            <div className="px-2 mb-4 text-sm relative">
+            <div className="px-2 mb-4 text-sm relative text-primary-text">
                 <label htmlFor="confirmPassword">
                     Confirm password
                 </label>
@@ -97,26 +97,26 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({ email }) => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     className="px-2 py-1 mt-1 w-full rounded-md bg-background-secondary outline-none transition delay-[50000s]
-				    placeholder:text-gray-300 text-sm border-[1px] border-white"
+				    placeholder:text-primary-text2 text-sm border-2 border-primary-border text-primary-text"
                 />
                 <label htmlFor="confirmPassword" className="cursor-pointer absolute right-4 top-8" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
                     {showConfirmPassword ? <FaRegEyeSlash /> : <FaRegEye />}
                 </label>
                 {touched.confirmPassword && errors.confirmPassword ? <p className="text-start text-xs mt-0.5">{errors.confirmPassword}</p> : null}
             </div>
-            <div className='w-full h-[1px] text-white bg-white' />
+            <div className='w-full border-y border-primary-border' />
 
-            <div className='flex justify-end px-2 pt-3 text-sm text-nowrap'>
+            <div className='flex justify-end px-2 pt-3 text-sm text-nowrap text-primary-text'>
                 <button
                     type="button"
-                    className="px-3 py-1 mb-1 mr-4 tracking-wide font-medium 
-                    text-white rounded-md outline-none border-[1px] border-white">
+                    className="px-3 py-1 mb-1 mr-4 tracking-wide font-semibold 
+                    rounded-md outline-none border-2 border-primary-border">
                     Cancel
                 </button>
                 <button
                     type="submit"
                     className="px-3 py-1 mb-1 tracking-wide font-semibold 
-                    text-white rounded-md bg-primary outline-none">
+                    rounded-md bg-primary outline-none">
                     Update Password
                 </button>
             </div>

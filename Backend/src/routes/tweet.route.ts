@@ -16,14 +16,16 @@ const router = Router();
 router.route("/").post(verifyJWT, upload.single("image"), createTweet);
 
 // Get all tweets by user
-router.route("/user/:userId").get(getUserTweet);
+router.route("/user/:userId/:curUserId?").get(getUserTweet);
 
 // Update, delete tweet by id (secured route)
 router
     .route("/:tweetId")
-    .get(getTweetById)
     .patch(verifyJWT, updateTweet)
     .delete(verifyJWT, deleteTweet);
+
+// Get tweet details by id
+router.route("/:tweetId/:userId?").get(getTweetById);
 
 // Update tweet image by id (secured route)
 router.route("/:tweetId/Image").patch(verifyJWT, updateTweetImage);

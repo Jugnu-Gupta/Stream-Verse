@@ -22,18 +22,18 @@ const ChannelNavbar: React.FC<ChannelNavbarProps> = ({ channelNavItems }) => {
     }, [url, channelNavItems]);
 
     return (
-        <nav className="bg-background-primary flex justify-between items-center text-center xs:text-sm mt-4 text-primary-text2 font-semibold max-w-2xl">
+        <nav className="bg-background-primary flex justify-between items-center text-center xs:text-sm mt-4 text-primary-text font-semibold max-w-2xl">
             {
                 channelNavItems.map((navItem: ChannelNavItemsProps) => (
                     <Link key={navItem.id}
                         to={`/${adminName}/${navItem.link}`}
-                        className="w-full"
+                        className="w-full "
                         onClick={() => setPage(navItem.link)}>
                         <h3
                             className={twMerge(
                                 "px-2 py-1 duration-300",
                                 page === navItem.link &&
-                                "bg-background-secondary rounded-md text-white"
+                                "bg-background-secondary rounded-md"
                             )}>
                             {navItem.name}
                         </h3>

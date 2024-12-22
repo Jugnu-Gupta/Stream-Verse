@@ -66,13 +66,17 @@ const createTweet = asyncHandler(
 
 interface GetUserTweetParams {
     userId?: string;
+    curUserId?: string;
 }
 
 const getUserTweet = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { userId }: GetUserTweetParams = req.params;
+        let { userId, curUserId }: GetUserTweetParams = req.params;
         if (!isValidObjectId(userId)) {
             throw new ApiError(400, "Invalid user id");
+        }
+        if (!isValidObjectId(curUserId)) {
+            curUserId = null;
         }
 
         const tweets = await Tweet.aggregate([
@@ -142,6 +146,36 @@ const getUserTweet = asyncHandler(
             },
             {
                 $addFields: {
+                    likeStatus: {
+                        $cond: {
+                            if: {
+                                $in: [
+                                    new mongoose.Types.ObjectId(curUserId),
+                                    "$Likes.likedBy",
+                                ],
+                            },
+                            then: {
+                                $cond: {
+                                    if: {
+                                        $arrayElemAt: [
+                                            "$Likes.isLiked",
+                                            {
+                                                $indexOfArray: [
+                                                    "$Likes.likedBy",
+                                                    new mongoose.Types.ObjectId(
+                                                        curUserId
+                                                    ),
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                    then: 1,
+                                    else: -1,
+                                },
+                            },
+                            else: 0,
+                        },
+                    },
                     likes: {
                         $size: {
                             $filter: {
@@ -191,13 +225,17 @@ const getUserTweet = asyncHandler(
 
 interface GetTweetByIdParams {
     tweetId?: string;
+    userId?: string;
 }
 
 const getTweetById = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { tweetId }: GetTweetByIdParams = req.params;
+        let { tweetId, userId }: GetTweetByIdParams = req.params;
         if (!isValidObjectId(tweetId)) {
             throw new ApiError(400, "Invalid user id");
+        }
+        if (!isValidObjectId(userId)) {
+            userId = null;
         }
 
         const tweets = await Tweet.aggregate([
@@ -267,6 +305,36 @@ const getTweetById = asyncHandler(
             },
             {
                 $addFields: {
+                    likeStatus: {
+                        $cond: {
+                            if: {
+                                $in: [
+                                    new mongoose.Types.ObjectId(userId),
+                                    "$Likes.likedBy",
+                                ],
+                            },
+                            then: {
+                                $cond: {
+                                    if: {
+                                        $arrayElemAt: [
+                                            "$Likes.isLiked",
+                                            {
+                                                $indexOfArray: [
+                                                    "$Likes.likedBy",
+                                                    new mongoose.Types.ObjectId(
+                                                        userId
+                                                    ),
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                    then: 1,
+                                    else: -1,
+                                },
+                            },
+                            else: 0,
+                        },
+                    },
                     likes: {
                         $size: {
                             $filter: {

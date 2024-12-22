@@ -61,8 +61,8 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ channelInfo }) => {
 
     return (
         <form onSubmit={handleSubmit}
-            className="w-full text-white border-2 border-white rounded-xl py-2">
-            <div className="px-2 mb-3 text-sm">
+            className="w-full text-white border-2 border-primary-border rounded-xl py-2">
+            <div className="px-2 mb-3 text-sm text-primary-text">
                 <label htmlFor="fullName">
                     Full name
                 </label>
@@ -75,11 +75,11 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ channelInfo }) => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     className="px-2 py-1 mt-1 w-full rounded-md bg-background-secondary transition delay-[50000s]
-				    placeholder:text-gray-300 text-sm border-[1px] border-white outline-none"
+				    placeholder:text-primary-text2 text-primary-text text-sm border-2 border-primary-border outline-none"
                 />
                 {touched.fullName && errors.fullName ? <p className="text-start text-xs mt-0.5">{errors.fullName}</p> : null}
             </div>
-            <div className='px-2 mb-3 text-sm'>
+            <div className='px-2 mb-3 text-sm text-primary-text'>
                 <label htmlFor="userName">
                     User name
                 </label>
@@ -91,14 +91,14 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ channelInfo }) => {
                     placeholder="User name"
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    className="px-2 py-1 mt-1 w-full rounded-md bg-background-secondary transition delay-[50000s]
-				    placeholder:text-gray-300 placeholder:text-sm border-[1px] border-white outline-none"
+                    className="px-2 py-1 mt-1 w-full rounded-md bg-background-secondary transition delay-[50000s] text-primary-text
+				    placeholder:text-primary-text2 placeholder:text-sm border-2 border-primary-border outline-none"
                 />
                 {availableUserName !== "" ? <p className="text-start text-xs mt-0.5">Available user name is '{availableUserName}'</p> :
                     touched.userName && errors.userName ? <p className="text-start text-xs mt-0.5">{errors.userName}</p> : null
                 }
             </div>
-            <div className='px-2 mb-3 text-sm'>
+            <div className='px-2 mb-3 text-sm text-primary-text'>
                 <label htmlFor="email">
                     Email
                 </label>
@@ -107,21 +107,21 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ channelInfo }) => {
                     name="email"
                     id="email"
                     value={channelInfo?.email}
-                    className="px-2 py-1 mt-1 w-full rounded-md bg-background-secondary transition delay-[50000s]
-				    placeholder:text-gray-300 placeholder:text-sm border-[1px] border-white outline-none"
+                    className="px-2 py-1 mt-1 w-full rounded-md bg-background-secondary transition delay-[50000s] text-primary-text
+				    placeholder:text-primary-text2 placeholder:text-sm border-2 border-primary-border outline-none"
                 />
             </div>
-            <div className='w-full h-[1px] text-white bg-white' />
+            <div className='w-full border-y border-primary-border' />
 
             <div className='flex justify-end px-2 pt-3 text-sm text-nowrap'>
                 <button type="button"
                     className="px-3 py-1 mb-1 mr-4 tracking-wide font-medium 
-                    text-white rounded-md outline-none border-[1px] border-white">
+                    text-primary-text rounded-md outline-none border-2 border-primary-border">
                     Cancel
                 </button>
                 <button type="submit"
                     className="px-3 py-1 mb-1 tracking-wide font-semibold 
-                    text-white rounded-md bg-primary outline-none">
+                    text-primary-text rounded-md bg-primary outline-none">
                     Save changes
                 </button>
             </div>

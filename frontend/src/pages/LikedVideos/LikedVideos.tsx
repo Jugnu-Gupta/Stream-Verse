@@ -28,15 +28,15 @@ const LikedVideos: React.FC = () => {
 
 
     return (
-        <div className="sm:grid m-2 max-w-full w-11/12 justify-items-center">
-            <div className='sm:grid hidden'>
+        <div className="sm:flex m-2 max-w-full w-11/12 justify-items-center">
+            <div className='sm:flex hidden flex-col'>
                 {
                     videos?.map((item: VideoWrapper) => (
                         <VideoListView key={item._id} videoInfo={item.video} />
                     ))
                 }
             </div>
-            <div className='sm:hidden grid'>
+            <div className='sm:hidden flex flex-col'>
                 {
                     videos?.map((item: VideoWrapper) => (
                         <VideoCardView key={item._id} videoInfo={item.video} />

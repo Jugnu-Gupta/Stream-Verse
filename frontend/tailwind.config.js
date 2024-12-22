@@ -65,15 +65,19 @@ export default {
         // 'primary2': '#1DE9B6',
         'background-primary': '#161d29', // main bg color dark
         'background-secondary': '#2b384e', // main bg 2 color dark-light
-        'border': '#374151',
+        'background-tertiary': '#1f2836', // main bg 3 color dark
+        'primary-border': 'rgba(164,230,255,.2)',
         'background': '#303030',
+        'primary-icon': '#ffffffcc',
         'background-light': '#424242',
         'background-lighter': '#505050',
         'background-lightest': '#616161',
         'primary-text': '#ffffffcc',
         'primary-text2': '#ffffffa6',
 
-        'primary': '#0078e1',
+        'primary-login': '#0078e1',
+        'primary': '#2b384e',
+        'subscribe': 'rgb(239,68,68)',
         'primaryBg': '#030014',
         'secondaryBg': '#0f172a',
         'secondaryDarkBg': '#020617',

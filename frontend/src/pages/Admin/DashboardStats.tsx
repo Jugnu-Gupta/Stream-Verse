@@ -42,14 +42,14 @@ const DashboardStats: React.FC = () => {
 
             <div className="flex justify-between items-center">
                 <div className="my-2">
-                    <h1 className="text-xl font-bold">
+                    <h1 className="text-xl font-bold text-primary-text">
                         Welcome to the dashboard
                     </h1>
-                    <p className="text-sm">
+                    <p className="text-sm text-primary-text2">
                         Here you can manage your videos
                     </p>
                 </div>
-                <button className="flex items-center justify-between bg-primary rounded-lg px-3 py-1"
+                <button className="flex items-center justify-between bg-primary rounded-lg px-3 py-1 text-primary-text"
                     onClick={() => setShowUploadVideo(true)}>
                     <FaPlus />
                     <span className="pl-1">Upload Video</span>
@@ -59,32 +59,36 @@ const DashboardStats: React.FC = () => {
             {/* Status */}
             {/* <div className="w-full grid grid-cols-4 gap-4 justify-items-center"> */}
             <div className="w-full grid gap-3 justify-between md:grid-cols-4 grid-cols-2">
-                <div className="flex flex-col px-3 py-2 bg-background-secondary rounded-xl border-2 max-w-xs w-full">
-                    <FaRegEye className="text-2xl bg-white text-primary rounded-full p-1" />
-                    <h3 className="text-xs mt-2 opacity-90">Total Views</h3>
-                    <p className="text-xl font-semibold">{Views}</p>
+                <div className="flex flex-col px-3 py-2 bg-background-tertiary rounded-xl border-2 border-primary-border max-w-xs w-full">
+                    <div className='bg-background-secondary rounded-full w-fit p-0.5'>
+                        <FaRegEye className="text-2xl text-primary-text p-1" />
+                    </div>
+                    <h3 className="text-xs mt-2 text-primary-text2">Total Views</h3>
+                    <p className="text-xl font-semibold text-primary-text">{Views}</p>
                 </div>
 
-                <div className="flex flex-col px-3 py-2 bg-background-secondary rounded-xl border-2 max-w-xs w-full">
-                    <FaRegUser className="text-2xl bg-white text-primary rounded-full p-1" />
-                    <h3 className="text-xs mt-2 opacity-90">
-                        Total Subscribers
-                    </h3>
-                    <p className="text-xl font-semibold">{Subscribers}</p>
+                <div className="flex flex-col px-3 py-2 bg-background-tertiary rounded-xl border-2 border-primary-border max-w-xs w-full">
+                    <div className='bg-background-secondary rounded-full w-fit p-0.5'>
+                        <FaRegUser className="text-2xl text-primary-text p-1" />
+                    </div>
+                    <h3 className="text-xs mt-2 text-primary-text2">Total Subscribers</h3>
+                    <p className="text-xl font-semibold text-primary-text">{Subscribers}</p>
                 </div>
 
-                <div className="flex flex-col px-3 py-2 bg-background-secondary rounded-xl border-2 max-w-xs w-full">
-                    <FaRegHeart className="text-2xl bg-white text-primary rounded-full p-1" />
-                    <h3 className="text-xs mt-2 opacity-90">Total Likes</h3>
-                    <p className="text-xl font-semibold">{Likes}</p>
+                <div className="flex flex-col px-3 py-2 bg-background-tertiary rounded-xl border-2 border-primary-border max-w-xs w-full">
+                    <div className='bg-background-secondary rounded-full w-fit p-0.5'>
+                        <FaRegHeart className="text-2xl text-primary-text p-1" />
+                    </div>
+                    <h3 className="text-xs mt-2 text-primary-text2">Total Likes</h3>
+                    <p className="text-xl font-semibold text-primary-text">{Likes}</p>
                 </div>
 
-                <div className="flex flex-col px-3 py-2 bg-background-secondary rounded-xl border-2 max-w-xs w-full">
-                    <BiCommentDetail className="text-2xl bg-white text-primary rounded-full p-1" />
-                    <h3 className="text-xs mt-2 opacity-90">
-                        Total Comments
-                    </h3>
-                    <p className="text-xl font-semibold">{Comments}</p>
+                <div className="flex flex-col px-3 py-2 bg-background-tertiary rounded-xl border-2 border-primary-border max-w-xs w-full">
+                    <div className='bg-background-secondary rounded-full w-fit p-0.5'>
+                        <BiCommentDetail className="text-2xl text-primary-text p-1" />
+                    </div>
+                    <h3 className="text-xs mt-2 text-primary-text2">Total Comments</h3>
+                    <p className="text-xl font-semibold text-primary-text">{Comments}</p>
                 </div>
             </div>
         </>

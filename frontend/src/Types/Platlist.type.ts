@@ -5,6 +5,7 @@ export interface PlaylistType {
 	name: string;
 	description: string;
 	noOfVideos: number;
+	videoId: string;
 	thumbnail: {
 		url: string;
 		publicId: string;

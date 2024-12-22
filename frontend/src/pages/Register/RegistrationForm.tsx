@@ -106,8 +106,8 @@ const RegistrationForm: React.FC = () => {
 			}
 			<button
 				type="submit"
-				className="px-4 py-2 mb-1 tracking-wide font-medium outline-none
-					text-xs text-white rounded-md bg-primary">
+				className="px-3 py-1 mb-1 tracking-wide font-semibold outline-none
+					text-sm text-white rounded-md bg-primary-login">
 				Sign Up
 			</button>
 		</form>

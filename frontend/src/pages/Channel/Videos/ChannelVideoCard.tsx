@@ -24,16 +24,16 @@ const ChannelVideosCard: React.FC<ChannelVideosCardProps> = ({ videoInfo }) => {
 						alt="thumbnail"
 						className="rounded-xl aspect-video group-hover:scale-110 duration-300 relative z-0"
 					/>
-					<p className="px-1 py-[1px] absolute z-10 bottom-2 right-2 text-xs text-white rounded-md bg-black bg-opacity-70">
+					<p className="px-1 py-[1px] absolute z-10 bottom-2 right-2 text-xs text-primary-text rounded-md bg-black bg-opacity-70">
 						{duration}
 					</p>
 				</div>
 			</Link>
 			<div className="flex gap-3">
-				<div className="flex flex-col text-white w-full">
+				<div className="flex flex-col text-primary-text w-full">
 					<Link to="/video/:videoId">
 						<h2 className="font-bold">{title}</h2>
-						<p className="text-sm opacity-80">
+						<p className="text-sm text-primary-text2">
 							{views} views · {uploadedAt}
 						</p>
 					</Link>

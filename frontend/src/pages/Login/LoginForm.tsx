@@ -66,7 +66,7 @@ const LoginForm: React.FC = () => {
 					onChange={handleChange}
 					onBlur={handleBlur}
 					className="pl-2 pr-10 py-1.5 w-72 rounded-md bg-background-primary 
-                	outline-none transition delay-[50000s] placeholder:text-white text-sm"
+                	outline-none transition delay-[50000s] placeholder:text-primary-text text-sm"
 				/>
 				<label htmlFor="email">
 					<MdEmail className="absolute top-2 right-2" />
@@ -83,11 +83,11 @@ const LoginForm: React.FC = () => {
 					onChange={handleChange}
 					onBlur={handleBlur}
 					className="pl-2 pr-10 py-1.5 w-72 rounded-md bg-background-primary
-				outline-none transition delay-[50000s] placeholder:text-white text-sm"
+				outline-none transition delay-[50000s] placeholder:text-primary-text text-sm"
 				/>
 				<label htmlFor="password" className="cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
 					{
-						showPassword ? <FaRegEyeSlash className="absolute top-2 right-2 text-sm" /> :
+						showPassword ? <FaRegEyeSlash className="absolute top-2 right-2 text-sm " /> :
 							<FaRegEye className="absolute top-2 right-2 text-sm" />
 					}
 				</label>
@@ -95,14 +95,14 @@ const LoginForm: React.FC = () => {
 			</div>
 			{
 				showVerifyEmail &&
-				<div className="bg-primary w-72 px-1 py-0.5 mb-1 rounded-md text-sm text-justify">
+				<div className="bg-primary w-72 px-1 py-0.5 mb-1 rounded-md text-sm text-justify text-primary-text">
 					An email has been sent to your email address. Please verify your email address.
 				</div>
 			}
 			<button
 				type="submit"
-				className="px-4 py-2 mb-1 tracking-wide font-medium 
-				text-xs text-white rounded-md bg-primary">
+				className="px-3 py-1 mb-1 tracking-wide font-semibold 
+				text-sm text-white rounded-md bg-primary-login">
 				Sign Up
 			</button>
 		</form>

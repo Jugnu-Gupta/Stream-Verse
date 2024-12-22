@@ -35,8 +35,8 @@ const ChannelInfo: React.FC<ChannelInfoProps> = ({ channelInfo }) => {
                             className="w-28 xs:w-24 aspect-square rounded-full"
                         />
                     </div>
-                    <div className="text-primary-text xs:text-sm">
-                        <h1 className="text-white font-bold text-3xl pb-1 xs:text-xl">
+                    <div className="text-primary-text2 xs:text-sm">
+                        <h1 className="text-primary-text font-bold text-3xl pb-1 xs:text-xl">
                             {channelName}
                         </h1>
                         <p className="pb-1">{adminName}</p>
@@ -47,7 +47,7 @@ const ChannelInfo: React.FC<ChannelInfoProps> = ({ channelInfo }) => {
                 <div className="flex flex-wrap justify-end w-fit">
                     <button
                         onClick={() => navigate(`/${adminName}/dashboard`)}
-                        className={twMerge("bg-primary text-white font-semibold px-4 py-1 mt-4 xs:px-3 xs:text-sm rounded-md hover:bg-white hover:text-primary duration-300",
+                        className={twMerge("bg-primary text-primary-text font-semibold px-4 py-1 mt-4 xs:px-3 xs:text-sm rounded-md hover:bg-white hover:text-primary duration-300",
                             adminName !== curUserName && "hidden")}>
                         Dashboard
                     </button>
@@ -56,8 +56,8 @@ const ChannelInfo: React.FC<ChannelInfoProps> = ({ channelInfo }) => {
                         <button
                             onClick={() => setIsSubscribed(!isSubscribed)}
                             className={twMerge(
-                                "bg-primary text-white font-semibold px-4 py-1 mt-4 xs:px-3 xs:text-sm rounded-md hover:bg-white hover:text-primary duration-300 ml-2",
-                                isSubscribed && "bg-opacity-75"
+                                "bg-subscribe text-primary-text font-semibold px-4 py-1 mt-4 xs:px-3 xs:text-sm rounded-md hover:scale-105 duration-300 ml-2",
+                                isSubscribed && "bg-primary"
                             )}>
                             {isSubscribed ? "Subscribed" : "Subscribe"}
                         </button>

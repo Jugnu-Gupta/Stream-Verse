@@ -24,12 +24,14 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ videoId }) => {
 
 	useEffect(() => {
 		if (!videoId) return;
+		const userId = localStorage.getItem("userId");
 
 		makeApiRequest({
 			method: "get",
-			url: `/api/v1/comments/video/${videoId}`,
+			url: `/api/v1/comments/video/${videoId}${userId ? `?userId=${userId}` : ""}`,
 		}).then((commentsResponse: any) => { // eslint-disable-line
 			const commentsData = commentsResponse.data?.comments || [];
+			// console.log("commentsData:", commentsData);
 			setComments(commentsData);
 
 			dispatch(addComments({ childPathIds: currPath, childs: commentsData }));
@@ -41,8 +43,8 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ videoId }) => {
 
 	return (
 		<div
-			className="border-2 border-white py-2 rounded-lg 2lg:max-h-max max-h-[70vh] overflow-y-scroll my-4 px-2">
-			<h1 className="text-white font-bold tracking-wide mb-2">
+			className="border-2 border-primary-border py-2 rounded-lg 2lg:max-h-max max-h-[70vh] overflow-y-scroll my-4 px-2">
+			<h1 className="text-primary-text font-bold tracking-wide mb-2">
 				{noOfcomments} Comments
 			</h1>
 			<AddComment avatarStyle="w-10" />

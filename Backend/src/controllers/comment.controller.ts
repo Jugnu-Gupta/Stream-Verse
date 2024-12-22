@@ -17,6 +17,7 @@ interface GetCommentsParams {
     parentId?: string | null;
 }
 interface GetCommentsQuery {
+    userId?: string | null;
     page?: number;
     limit?: number;
 }
@@ -28,13 +29,16 @@ const getComments = asyncHandler(
             entityType,
             parentId = null,
         } = req.params as unknown as GetCommentsParams;
-        const { page = 1, limit = 10 }: GetCommentsQuery = req.query;
+        let { page = 1, limit = 10, userId }: GetCommentsQuery = req.query;
 
         if (!isValidObjectId(entityId)) {
             throw new ApiError(400, "Video id is required");
         }
         if (!["video", "tweet"].includes(entityType)) {
             throw new ApiError(400, "Invalid entity type");
+        }
+        if (!isValidObjectId(userId)) {
+            userId = null;
         }
 
         const skip = (page - 1) * limit;
@@ -107,6 +111,7 @@ const getComments = asyncHandler(
                                 },
                             },
                         },
+                        { $project: { likedBy: 1, isLiked: 1 } },
                     ],
                     as: "Likes",
                 },
@@ -115,6 +120,36 @@ const getComments = asyncHandler(
                 $addFields: {
                     owner: { $arrayElemAt: ["$owner", 0] },
                     replies: { $size: "$replies" },
+                    likeStatus: {
+                        $cond: {
+                            if: {
+                                $in: [
+                                    new mongoose.Types.ObjectId(userId),
+                                    "$Likes.likedBy",
+                                ],
+                            },
+                            then: {
+                                $cond: {
+                                    if: {
+                                        $arrayElemAt: [
+                                            "$Likes.isLiked",
+                                            {
+                                                $indexOfArray: [
+                                                    "$Likes.likedBy",
+                                                    new mongoose.Types.ObjectId(
+                                                        userId
+                                                    ),
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                    then: 1,
+                                    else: -1,
+                                },
+                            },
+                            else: 0,
+                        },
+                    },
                     likes: {
                         $size: {
                             $filter: {
@@ -140,6 +175,7 @@ const getComments = asyncHandler(
                 $project: {
                     owner: 1,
                     content: 1,
+                    likeStatus: 1,
                     likes: 1,
                     dislikes: 1,
                     replies: 1,

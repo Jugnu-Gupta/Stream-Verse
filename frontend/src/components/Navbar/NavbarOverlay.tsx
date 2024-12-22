@@ -56,14 +56,14 @@ const Navbar: React.FC = () => {
 					</div>
 
 					<div className="p-2 pt-4 h-[calc(100vh-51px)] flex flex-col justify-between">
-						<div className="text-white text-sm font-semibold flex flex-col gap-1.5 w-full justify-start animate-right">
+						<div className="text-primary-text text-sm font-semibold flex flex-col gap-1.5 w-full justify-start animate-right">
 							{NAVITEMS.filter((item) => item.isTop).map(
 								(item) => (
 									<button
 										key={item.id}
 										className="w-full animate-right outline-none"
 										onClick={() => navigate(addAdminName(item.path))}>
-										<p className={twMerge("h-9 px-2 flex items-center gap-6 rounded-lg border-2 border-white hover:bg-primary",
+										<p className={twMerge("h-9 px-2 flex items-center gap-6 rounded-lg border-2 border-primary-border hover:bg-primary",
 											(comparePaths(item.path, page, adminName ? adminName : null) && "bg-primary"))}>
 											<item.iconOutline
 												className={twMerge(
@@ -88,14 +88,14 @@ const Navbar: React.FC = () => {
 								)
 							)}
 						</div>
-						<div className="text-white text-sm font-semibold flex flex-col gap-1.5 w-full justify-start animate-right">
+						<div className="text-primary-text text-sm font-semibold flex flex-col gap-1.5 w-full justify-start animate-right">
 							{NAVITEMS.filter((item) => !item.isTop).map(
 								(item) => (
 									<button
 										key={item.id}
 										className="w-full animate-right outline-none"
 										onClick={() => navigate(addAdminName(item.path))}>
-										<p className={twMerge("h-9 px-2 flex items-center gap-6 rounded-lg border-2 border-white hover:bg-primary",
+										<p className={twMerge("h-9 px-2 flex items-center gap-6 rounded-lg border-2 border-primary-border hover:bg-primary",
 											(comparePaths(item.path, page, addAdminName(item.path)) && "bg-primary"))}>
 											<item.iconOutline
 												className={twMerge(

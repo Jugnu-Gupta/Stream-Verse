@@ -50,17 +50,17 @@ const ChannelSubscribed: React.FC = () => {
 
 	return (
 		<div className="px-4 mt-4 w-full flex flex-col mx-auto max-w-6xl">
-			<div className="flex items-center border-2 border-white rounded-full bg-white w-[calc(100%-16px)] mx-auto mb-4">
+			<div className="flex items-center border-2 border-primary-border bg-primary-text rounded-full w-[calc(100%-16px)] mx-auto mb-4">
 				<input
 					type="text"
 					value={searchValue}
 					placeholder="Search"
 					onChange={(e) => setSearchValue(e.target.value)}
-					className="outline-none rounded-l-full pl-3 py-1 w-full"
+					className="outline-none rounded-l-full pl-3 py-1 w-full bg-transparent text-primary"
 					required
 				/>
 				<button onClick={handleSearch}
-					className="h-full pr-2 pl-1 rounded-r-full bg-white cursor-pointer outline-none">
+					className="h-full pr-2 pl-1 rounded-r-full bg-transparent cursor-pointer outline-none">
 					<IoSearchSharp className="text-xl h-full text-primary" />
 				</button>
 			</div>

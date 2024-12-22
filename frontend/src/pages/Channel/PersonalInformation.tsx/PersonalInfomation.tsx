@@ -66,17 +66,17 @@ const PersonalInformation: React.FC = () => {
                                 onChange={(e) => updateImage(e, setAvatarImage, 1024 * 1024)} />
                         </div>
 
-                        <div className="text-primary-text xs:text-sm">
-                            <h1 className="text-white font-bold text-3xl pb-1 xs:text-xl">{channelName}</h1>
-                            <p className="pb-1">{adminName}</p>
-                            <p>{subscribers} subscribers · {videos} videos</p>
+                        <div className="xs:text-sm">
+                            <h1 className="text-primary-text font-bold text-3xl pb-1 xs:text-xl">{channelName}</h1>
+                            <p className="pb-1 text-primary-text2">{adminName}</p>
+                            <p className="text-primary-text2">{subscribers} subscribers · {videos} videos</p>
                         </div>
                     </div>
 
                     <div className="flex flex-wrap justify-end w-fit">
                         <button
                             onClick={() => navigate(`/${adminName}/dashboard`)}
-                            className="bg-primary text-white font-semibold px-4 py-1 mt-4 xs:px-3 xs:text-sm rounded-md hover:bg-white hover:text-primary duration-300">
+                            className="bg-primary text-primary-text font-semibold px-4 py-1 mt-4 xs:px-3 xs:text-sm rounded-md hover:bg-white hover:text-primary duration-300">
                             Dashboard
                         </button>
                     </div>
@@ -86,9 +86,9 @@ const PersonalInformation: React.FC = () => {
             </div>
 
             <div className="flex flex-wrap sm:flex-nowrap sm:px-6 px-2 w-full max-w-6xl mx-auto mt-4" >
-                <div className='text-white md:w-full sm:w-3/4 w-full'>
-                    <h2 className='font-semibold text-sm'>Personal Info</h2>
-                    <p className='text-sm text-gray-300'>Update your photo and personal details</p>
+                <div className='md:w-full sm:w-3/4 w-full'>
+                    <h2 className='font-semibold text-sm text-primary-text'>Personal Info</h2>
+                    <p className='text-sm text-primary-text2'>Update your photo and personal details</p>
                 </div>
 
                 <div className='mb-4 w-full'>

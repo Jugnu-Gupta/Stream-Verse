@@ -40,16 +40,17 @@ const createPlaylist = asyncHandler(
     }
 );
 
-interface GetUserPlaylistParams {
+interface GetUserPlaylistQuery {
     userName?: string;
 }
 
 const getUserPlaylists = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { userName }: GetUserPlaylistParams = req.query;
+        const { userName }: GetUserPlaylistQuery = req.query;
         if (!userName) {
             throw new ApiError(400, "userName is required");
         }
+        console.log("userName:", userName);
 
         // get thumbnail of 1st video and no. of videos of each playlist
         const playlists = await User.aggregate([
@@ -76,6 +77,9 @@ const getUserPlaylists = asyncHandler(
                                 description: 1,
                                 thumbnail: {
                                     $arrayElemAt: ["$videos.thumbnail", 0],
+                                },
+                                videoId: {
+                                    $arrayElemAt: ["$videos._id", 0],
                                 },
                                 noOfVideos: { $size: "$videos" },
                                 createdAt: 1,

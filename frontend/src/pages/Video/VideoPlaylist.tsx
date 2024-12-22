@@ -23,25 +23,23 @@ const VideoPlaylist: React.FC<VideoPlaylistProps> = ({ childClass, heighlightVid
     const owner = playlist?.owner?.fullName || "Channel Name";
 
     return (
-        <div className={twMerge(childClass, "flex-col w-full border-2 overflow-hidden rounded-xl mb-4 2lg:ml-2 mt-4 2lg:mt-0")}>
-            <div className="text-white flex justify-between px-2 pt-2 pb-3 bg-background-secondary">
+        <div className={twMerge(childClass, "flex-col w-full border-2 border-primary-border overflow-hidden rounded-xl mb-4 2lg:ml-2 mt-4 2lg:mt-0")}>
+            <div className="flex justify-between px-2 pt-2 pb-3 text-primary-text bg-background-secondary">
                 <div>
-                    {
-                        showPlaylist
-                            ? (<>
-                                <h1 className="text-white text-md font-semibold"> {playlistTitle} </h1>
-                                <p className="text-xs">{owner} - {curVideoIndex + 1}/{totalVideos}</p>
-                            </>)
-                            : (<>
-                                <h1 className="text-white text-md font-semibold"> {curVideoIndex + 1 === totalVideos ? "End of Playlist" : `Next: ${NextVideoTitle}`}</h1>
-                                <p className="text-xs">{playlistTitle} - {curVideoIndex + 1}/{totalVideos}</p>
-                            </>)
+                    {showPlaylist
+                        ? (<>
+                            <h1 className="text-primary-text text-md font-semibold"> {playlistTitle} </h1>
+                            <p className="text-xs">{owner} - {curVideoIndex + 1}/{totalVideos}</p>
+                        </>)
+                        : (<>
+                            <h1 className="text-primary-text text-md font-semibold"> {curVideoIndex + 1 === totalVideos ? "End of Playlist" : `Next: ${NextVideoTitle}`}</h1>
+                            <p className="text-xs">{playlistTitle} - {curVideoIndex + 1}/{totalVideos}</p>
+                        </>)
                     }
                 </div>
-                {
-                    showPlaylist
-                        ? <button onClick={() => setShowPlaylist(false)}> <RxCross2 size={25} /> </button>
-                        : <button onClick={() => setShowPlaylist(true)}> <IoIosArrowDown size={25} className="font-extrabold" /> </button>
+                {showPlaylist
+                    ? <button onClick={() => setShowPlaylist(false)}> <RxCross2 size={25} /> </button>
+                    : <button onClick={() => setShowPlaylist(true)}> <IoIosArrowDown size={25} className="font-extrabold" /> </button>
                 }
             </div>
 

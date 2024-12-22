@@ -1,6 +1,7 @@
 export interface TweetType {
 	_id: string;
 	content: string;
+	likeStatus: number;
 	likes: number;
 	dislikes: number;
 	comments: number;

@@ -40,19 +40,19 @@ const DashboardVideoStatsControl: React.FC<DashboardVideoStatsControlProps> = ({
 	}, [status]);
 
 	return (
-		<tr className="text-white border-b-2 border-background-secondary border-x">
+		<tr className="text-white border-primary-border border-2">
 			<td className="px-4 py-2 justify-items-center">
 				<div
 					ref={divRef}
 					onClick={() => setStatus(!status)}
 					className={twMerge(
 						"relative rounded-full h-[19px] w-9 px-1 cursor-pointer",
-						status ? "bg-primary" : "bg-white"
+						status ? "bg-primary" : "bg-primary-text"
 					)}>
 					<div className="w-3 aspect-square rounded-full bg-background-primary absolute top-[3px] left-1 duration-300"></div>
 				</div>
 			</td>
-			<td className="px-4 py-2 justify-items-center">
+			<td className="px-4 py-2 justify-items-center text-primary-text font-semibold">
 				{status ? (
 					// <p className="text-[#15803D] rounded-full border-2 border-[#15803D] w-fit px-2">
 					<p className="bg-[#15803D] rounded-full w-fit px-2">
@@ -72,7 +72,7 @@ const DashboardVideoStatsControl: React.FC<DashboardVideoStatsControlProps> = ({
 					alt="thumbnail"
 					className="w-8 aspect-square rounded-full"
 				/>
-				<p className="font-semibold text-sm text-nowrap truncate w-full">{title}</p>
+				<p className="font-semibold text-sm text-nowrap truncate w-full text-primary-text">{title}</p>
 			</td>
 			<td className="text-center px-4 py-2 text-nowrap">
 				<p className="bg-[#BBF7D0] text-[#15803D] rounded-xl px-2 inline-block mr-2">
@@ -82,9 +82,9 @@ const DashboardVideoStatsControl: React.FC<DashboardVideoStatsControlProps> = ({
 					{dislikes} dislikes
 				</p>
 			</td>
-			<td className="text-center px-4 py-2 text-nowrap">{uploadedAt}</td>
+			<td className="text-center px-4 py-2 text-nowrap text-primary-text">{uploadedAt}</td>
 
-			<td className="text-center px-4 py-2 text-nowrap">
+			<td className="text-center px-4 py-2 text-nowrap text-primary-icon">
 				<div className="text-start">
 					{showEditVideo && <EditVideoModal setShowEditVideo={setShowEditVideo} />}
 					{showDeleteVideo && <DeleteVideoModal setShowDeleteVideo={setShowDeleteVideo} />}

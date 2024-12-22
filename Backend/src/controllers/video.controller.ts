@@ -215,8 +215,8 @@ const getVideoById = asyncHandler(
         if (!isValidObjectId(videoId)) {
             throw new ApiError(400, "Invalid video id");
         }
-        if (!userId || !isValidObjectId(userId)) {
-            userId = "";
+        if (!isValidObjectId(userId)) {
+            userId = null;
         }
 
         // get video details like likes, dislikes

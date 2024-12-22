@@ -38,7 +38,7 @@ interface LikesAndDislikesProps {
 	entityId: string;
 	likeStatus?: number;
 }
-const useLikesAndDislikes = ({
+const useLikeDislike = ({
 	entityType,
 	entityId,
 	likeStatus,
@@ -80,4 +80,4 @@ const useLikesAndDislikes = ({
 	return { isLiked, isDisliked, handleLike, handleDislike };
 };
 
-export default useLikesAndDislikes;
+export default useLikeDislike;

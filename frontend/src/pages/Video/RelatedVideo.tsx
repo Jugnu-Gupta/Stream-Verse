@@ -28,22 +28,22 @@ const RelatedVideo: React.FC<VideoListViewProps> = ({ heighlightVideo, videoInfo
 						alt="thumbnail"
 						className="rounded-xl aspect-video group-hover:scale-110 duration-300"
 					/>
-					<p className="px-1 py-[1px] absolute bottom-2 right-2 text-xs text-white rounded-md bg-black bg-opacity-70">
+					<p className="px-1 py-[1px] absolute bottom-2 right-2 text-xs text-primary-text rounded-md bg-black bg-opacity-70">
 						{duration}
 					</p>
 				</div>
 			</Link>
-			<div className="flex flex-col text-white w-full overflow-hidden">
+			<div className="flex flex-col text-primary-text w-full overflow-hidden">
 				<Link to="/register" className="w-full">
 					<h2 className="font-semibold truncate-lines-2 2lg:text-sm xs:text-base sm:text-[17px]">
 						{title}
 					</h2>
-					<p className="opacity-80 text-nowrap truncate 2lg:text-xs xs:text-sm sm:text-[15px] 2lg:mt-1 2lg:mb-0.5 xs:mt-0.5 sm:mt-2 sm:mb-1">
+					<p className="text-primary-text2 text-nowrap truncate 2lg:text-xs xs:text-sm sm:text-[15px] 2lg:mt-1 2lg:mb-0.5 xs:mt-0.5 sm:mt-2 sm:mb-1">
 						{views} Views · {uploadedAt}
 					</p>
 				</Link>
 				<Link to="/login">
-					<p className="opacity-80 hover:opacity-100 text-nowrap truncate 2lg:text-[13px] xs:text-sm sm:text-[15px]">
+					<p className="text-primary-text2 hover:text-primary-text text-nowrap truncate 2lg:text-[13px] xs:text-sm sm:text-[15px]">
 						{channelName}
 					</p>
 				</Link>

@@ -13,10 +13,11 @@ const ChannelSubscribedCards: React.FC<ChannelSubscribedCardsProps> = ({ Subscri
 	const [isSubscribed, setIsSubscribed] = React.useState(false);
 	const channelName = SubscribedChannel?.fullName || "Channel Name";
 	const subscribers = formatNumber(SubscribedChannel?.totalSubscribers);
+	const channelUserName = SubscribedChannel?.userName || "Channel User Name";
 
 	return (
 		<div className="flex items-center gap-2 p-2 w-full">
-			<Link to="/register">
+			<Link to={`/@${channelUserName}/videos`}>
 				<div className="overflow-hidden rounded-full w-10">
 					<img
 						src={thumbnail}
@@ -25,33 +26,22 @@ const ChannelSubscribedCards: React.FC<ChannelSubscribedCardsProps> = ({ Subscri
 					/>
 				</div>
 			</Link>
-			<div className="flex text-white justify-between items-center w-full">
-				<div className="flex flex-col items-center gap-1">
-					<p className="text-sm font-semibold">{channelName}</p>
-					<p className="text-primary-text text-xs">
+			<div className="flex justify-between items-center w-full">
+				<div className="flex flex-col gap-1">
+					<p className="text-sm font-semibold text-primary-text">{channelName}</p>
+					<p className="text-primary-text2 text-xs">
 						{subscribers} Subscribers
 					</p>
 				</div>
 				<div>
-					{isSubscribed ? (
-						<button
-							onClick={() => setIsSubscribed(!isSubscribed)}
-							className={twMerge(
-								"bg-primary text-white font-semibold px-4 py-1 mt-4 xs:px-3 xs:text-sm rounded-md hover:bg-white hover:text-primary duration-300",
-								isSubscribed && "bg-opacity-75"
-							)}>
-							Subscribed
-						</button>
-					) : (
-						<button
-							onClick={() => setIsSubscribed(!isSubscribed)}
-							className={twMerge(
-								"bg-white text-primary font-semibold px-4 py-1 mt-4 xs:px-3 xs:text-sm rounded-md duration-300",
-								isSubscribed && "bg-opacity-75"
-							)}>
-							Subscribe
-						</button>
-					)}
+					<button
+						onClick={() => setIsSubscribed(!isSubscribed)}
+						className={twMerge(
+							"bg-subscribe text-primary-text font-semibold px-4 py-1 mt-4 xs:px-3 xs:text-sm rounded-md hover:scale-105 duration-300",
+							isSubscribed && "bg-primary"
+						)}>
+						{isSubscribed ? "Subscribed" : "Subscribe"}
+					</button>
 				</div>
 			</div>
 		</div>

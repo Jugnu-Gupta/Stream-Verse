@@ -7,7 +7,7 @@ const ShowHideText: React.FC<ShowHideTextProps> = ({ content }) => {
 	const [readMore, setReadMore] = React.useState(false);
 
 	const text = content;
-	return (<div className="text-white">
+	return (<div className="text-primary-text">
 		<p className="text-sm">
 			{readMore
 				? text
