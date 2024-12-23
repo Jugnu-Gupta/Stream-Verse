@@ -29,6 +29,7 @@ import ProtectedAdminLayout from "./Layouts/ProtectedAdminLayout.tsx";
 import UploadingVideoModal from "./components/Popup/UploadingVideoModal.tsx";
 
 // check api for subscription and video details using dummy data
+// give fallback values to controller while accesing array elements i.e. $ArrayElemAt: [ "$array", 0 ]
 
 //  add publish or not video feature
 // basic check for no subscribers in videoDetails

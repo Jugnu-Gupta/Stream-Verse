@@ -7,27 +7,28 @@ import { asyncHandler } from "../utils/asyncHandler";
 import { ApiError } from "../utils/apiError";
 import { ApiResponse } from "../utils/apiResponse";
 // import { User } from "models/user.model";
+import { ObjectId } from "mongodb";
 
 interface RequestWithUser extends Request {
     user: UserType;
 }
 interface CreatePlaylistBody {
     name?: string;
-    description?: string;
+    videoId?: string;
 }
 const createPlaylist = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { name, description }: CreatePlaylistBody = req.body;
-        if (!name || !description) {
-            const message = !name
-                ? "Name is required"
-                : "Description is required";
-            throw new ApiError(400, message);
+        const { name, videoId }: CreatePlaylistBody = req.body;
+        if (!name) {
+            throw new ApiError(400, "Playlist name is required");
+        }
+        if (!isValidObjectId(videoId)) {
+            throw new ApiError(400, "Invalid video id");
         }
         const playlist = await Playlist.create({
             name,
-            description,
             ownerId: req.user._id,
+            videos: [new mongoose.Types.ObjectId(videoId)],
         });
 
         if (!playlist) {
@@ -42,15 +43,18 @@ const createPlaylist = asyncHandler(
 
 interface GetUserPlaylistQuery {
     userName?: string;
+    videoId?: string;
 }
 
 const getUserPlaylists = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { userName }: GetUserPlaylistQuery = req.query;
+        let { userName, videoId }: GetUserPlaylistQuery = req.query;
         if (!userName) {
             throw new ApiError(400, "userName is required");
         }
-        console.log("userName:", userName);
+        if (!isValidObjectId(videoId)) {
+            videoId = null;
+        }
 
         // get thumbnail of 1st video and no. of videos of each playlist
         const playlists = await User.aggregate([
@@ -71,10 +75,29 @@ const getUserPlaylists = asyncHandler(
                             },
                         },
                         {
+                            $addFields: {
+                                videoStatus: {
+                                    $cond: {
+                                        if: {
+                                            $in: [
+                                                new mongoose.Types.ObjectId(
+                                                    videoId
+                                                ),
+                                                "$videos._id",
+                                            ],
+                                        },
+                                        then: true,
+                                        else: false,
+                                    },
+                                },
+                            },
+                        },
+                        {
                             $project: {
                                 _id: 1,
                                 name: 1,
                                 description: 1,
+                                videoStatus: 1,
                                 thumbnail: {
                                     $arrayElemAt: ["$videos.thumbnail", 0],
                                 },
@@ -224,28 +247,31 @@ const addVideoInPlaylist = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
         const { playlistId, videoId }: AddVideoInPlaylistParams = req.params;
         if (!playlistId || !videoId) {
-            const message = !playlistId
-                ? "playlist id is required"
-                : "video id is required";
-            throw new ApiError(400, message);
+            throw new ApiError(400, "Playlist id and video id are required");
         }
-        const video_Id = new mongoose.Schema.Types.ObjectId(videoId);
 
         const playlist = await Playlist.findById(playlistId);
         if (!playlist) {
             throw new ApiError(404, "Playlist not found");
         }
-        if (playlist.videos.includes(video_Id)) {
+        if (playlist.videos.some((id) => id.toString() === videoId)) {
             throw new ApiError(400, "Video already exists in playlist");
         }
 
-        playlist.videos.push(video_Id);
-        await playlist.save({ validateBeforeSave: false });
+        const updatedPlaylist = await Playlist.findByIdAndUpdate(
+            playlistId,
+            { $push: { videos: new mongoose.Types.ObjectId(videoId) } },
+            { new: true }
+        );
 
         return res
             .status(200)
             .json(
-                new ApiResponse(200, { playlist }, "Video added to playlist")
+                new ApiResponse(
+                    200,
+                    { playlist: updatedPlaylist },
+                    "Video added to playlist"
+                )
             );
     }
 );
@@ -260,22 +286,20 @@ const deleteVideoFromPlaylist = asyncHandler(
         const { playlistId, videoId }: DeleteVideoFromPlaylistParams =
             req.params;
         if (!playlistId || !videoId) {
-            const message = !playlistId
-                ? "Playlist id is required"
-                : "Video id is required";
-            throw new ApiError(400, message);
+            throw new ApiError(400, "Playlist id and video id are required");
         }
-        const video_Id = new mongoose.Schema.Types.ObjectId(videoId);
 
         const playlist = await Playlist.findById(playlistId);
         if (!playlist) {
             throw new ApiError(404, "Playlist not found");
         }
-        if (!playlist.videos.includes(video_Id)) {
+        if (!playlist.videos.some((id) => id.toString() === videoId)) {
             throw new ApiError(400, "Video does not exist in playlist");
         }
 
-        playlist.videos = playlist.videos.filter((id) => id !== video_Id);
+        playlist.videos = playlist.videos.filter(
+            (id) => id.toString() !== videoId
+        );
         await playlist.save({ validateBeforeSave: false });
 
         return res
@@ -317,16 +341,15 @@ interface UpdatePlaylistParams {
 }
 interface UpdatePlaylistBody {
     name?: string;
-    description?: string;
 }
 const updatePlaylist = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
         const { playlistId }: UpdatePlaylistParams = req.params;
-        const { name, description }: UpdatePlaylistBody = req.body;
+        const { name }: UpdatePlaylistBody = req.body;
         if (!playlistId) {
             throw new ApiError(400, "Playlist id is required");
         }
-        if (!name && !description) {
+        if (!name) {
             throw new ApiError(400, "Name or description is required");
         }
 
@@ -336,8 +359,7 @@ const updatePlaylist = asyncHandler(
         }
 
         // update playlist
-        playlist.name = name ? name : playlist.name;
-        playlist.description = description ? description : playlist.description;
+        playlist.name = name;
         await playlist.save({ validateBeforeSave: false });
 
         return res

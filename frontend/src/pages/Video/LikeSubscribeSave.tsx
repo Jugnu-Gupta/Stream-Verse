@@ -19,6 +19,7 @@ interface LikeSubscribeSaveProps {
 }
 const LikeSubscribeSave: React.FC<LikeSubscribeSaveProps> = ({ likes, dislikes, likeStatus, entityId, entityType }) => {
     const { isLiked, isDisliked, handleLike, handleDislike } = useLikeDislike({ entityId, entityType, likeStatus });
+    const [showSaveToPlaylist, setShowSaveToPlaylist] = React.useState(false);
     const [isSubscribed, setIsSubscribed] = React.useState(false);
     const dislike = computeDislikeCount(dislikes, likeStatus, isDisliked);
     const like = computeLikeCount(likes, likeStatus, isLiked);
@@ -54,14 +55,15 @@ const LikeSubscribeSave: React.FC<LikeSubscribeSaveProps> = ({ likes, dislikes, 
                 </button>
             </div>
 
-            <div className="relative group outline-none cursor-pointer" tabIndex={0}>
-                <div className="flex items-center gap-1 relative rounded-md bg-primary-text px-3 py-1 text-black hover:scale-105 duration-300">
+            <div className="relative outline-none cursor-pointer" tabIndex={0}>
+                <button className="flex items-center gap-1 relative rounded-md bg-primary-text px-3 py-1 text-black hover:scale-105 duration-300"
+                    onClick={() => setShowSaveToPlaylist(!showSaveToPlaylist)}>
                     <HiOutlineFolderAdd className="text-xl" />
                     <span className="sm:text-sm">Save</span>
-                </div>
+                </button>
 
                 {/* Save TO Playlist */}
-                <SaveToPlaylist />
+                {showSaveToPlaylist && <SaveToPlaylist videoId={entityId} setShowSaveToPlaylist={setShowSaveToPlaylist} />}
             </div>
         </div>
     )

@@ -3,19 +3,18 @@ import thumbnail from "../../assets/thumbnail.png";
 import { Link } from "react-router-dom";
 import { CgPlayList } from "react-icons/cg";
 import { FaPlay } from "react-icons/fa";
-import { formatNumber } from "../../utils/FormatNumber";
-import { formatDateToNow } from "../../utils/FormatDateToNow";
-import { PlaylistType } from "../../Types/Platlist.type";
-import EditPlaylist from "./EditPlaylist";
+import { formatNumber } from "../../../utils/FormatNumber";
+import { formatDateToNow } from "../../../utils/FormatDateToNow";
+import { PlaylistType } from "../../../Types/Platlist.type";
 
 interface ChannelVideosCardProps {
 	playlist: PlaylistType; // include video id in playlist type
 }
 
 const ChannelVideosCard: React.FC<ChannelVideosCardProps> = ({ playlist }) => {
-	const [playlistName, setPlaylistName] = React.useState<string>(playlist?.name || "Playlist Title");
 	const noOfvideos = formatNumber(playlist?.noOfVideos);
 	const updatedAt = formatDateToNow(playlist?.updatedAt);
+	const title = playlist?.name || "Playlist Title";
 	const playlistId = playlist?._id || "";
 	const videoId = playlist?.videoId || "";
 	const _thumbnail = thumbnail;
@@ -38,19 +37,15 @@ const ChannelVideosCard: React.FC<ChannelVideosCardProps> = ({ playlist }) => {
 						<span>PLAY ALL</span>
 					</div>
 				</div>
-			</Link >
-			<div className="flex gap-3 mt-2">
-				<div className="flex flex-col w-full relative">
-					<Link to={`/video/${videoId}${playlistId ? `?listId=${playlistId}` : ""}`}>
-						<h2 className="font-bold text-primary-text pr-8">{playlistName}</h2>
+				<div className="flex gap-3 mt-2">
+					<div className="flex flex-col w-full">
+						<h2 className="font-bold text-primary-text">{title}</h2>
 						<p className="text-sm text-primary-text2">Updated {updatedAt}</p>
 						<p className="text-sm text-primary-text2">View full playlist</p>
-					</Link >
-
-					<EditPlaylist playlistId={playlistId} playlist_Name={playlistName} updatePlaylistName={setPlaylistName} />
+					</div>
 				</div>
-			</div>
-		</div >
+			</Link>
+		</div>
 	);
 };
 

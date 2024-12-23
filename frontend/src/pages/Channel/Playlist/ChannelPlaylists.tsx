@@ -1,17 +1,18 @@
 import React from "react";
-import PlaylistCard from "./PlaylistCard";
+import PlaylistCard from "./ChannelPlaylistCard";
 import { PiFolder } from "react-icons/pi";
-import makeApiRequest from "../../utils/MakeApiRequest";
-import { useNavigate } from "react-router-dom";
-import { PlaylistType } from "../../Types/Platlist.type";
+import makeApiRequest from "../../../utils/MakeApiRequest";
+import { useNavigate, useParams } from "react-router-dom";
+import { PlaylistType } from "../../../Types/Platlist.type";
 
-const Playlists: React.FC = () => {
+const ChannelPlaylists: React.FC = () => {
 	const [playlists, setPlaylists] = React.useState<PlaylistType[]>([]);
 	const navigate = useNavigate();
+	const { adminName } = useParams<{ adminName: string }>();
 
 	React.useEffect(() => {
-		const userName = localStorage.getItem("userName");
-		if (!userName) navigate("/");
+		if (!adminName) navigate("/");
+		const userName = adminName?.substring(1);
 
 		makeApiRequest({
 			method: "get",
@@ -23,7 +24,7 @@ const Playlists: React.FC = () => {
 			console.error("Error fetching data:", error);
 			// navigate("/");
 		});
-	}, [navigate]);
+	}, [navigate, adminName]);
 
 	if (playlists?.length === 0) {
 		return (
@@ -36,7 +37,7 @@ const Playlists: React.FC = () => {
 	}
 
 	return (
-		< div className="grid px-4 w-full max-w-6xl mx-auto justify-items-center z-0 2xl:grid-cols-4 2lg:grid-cols-3 2sm:grid-cols-2 grid-cols-1 mt-2" >
+		< div className="grid px-4 w-full max-w-6xl mx-auto justify-items-center z-0 2xl:grid-cols-4 2lg:grid-cols-3 2sm:grid-cols-2 grid-cols-1 mt-4" >
 			{playlists?.map((playlist: PlaylistType) => (
 				<PlaylistCard key={playlist._id} playlist={playlist} />
 			))}
@@ -44,4 +45,4 @@ const Playlists: React.FC = () => {
 	);
 };
 
-export default Playlists;
+export default ChannelPlaylists;

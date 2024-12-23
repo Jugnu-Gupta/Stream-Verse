@@ -6,6 +6,7 @@ export interface PlaylistType {
 	description: string;
 	noOfVideos: number;
 	videoId: string;
+	videoStatus?: boolean;
 	thumbnail: {
 		url: string;
 		publicId: string;
