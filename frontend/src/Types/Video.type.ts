@@ -28,6 +28,7 @@ export interface VideoDetailsType extends VideoType {
 	subscribers: number;
 	likes: number;
 	dislikes: number;
+	noOfComments: number;
 	VideoFile: {
 		url: string;
 		publicId: string;

@@ -20,7 +20,7 @@ const RelatedVideo: React.FC<VideoListViewProps> = ({ heighlightVideo, videoInfo
 	const channelName = videoInfo?.owner?.fullName || "Channel Name";
 
 	return (
-		<div className={twMerge("flex gap-2 pl-2 group w-full p-2", heighlightVideo == videoInfo?._id && "bg-background-secondary")}>
+		<div className={twMerge("flex gap-2 p-2 pl-0 2lg:pl-2 group w-full", heighlightVideo == videoInfo?._id && "bg-background-secondary")}>
 			<Link to="/register" className="min-w-36 w-1/2 max-w-52">
 				<div className="overflow-hidden rounded-xl max-w-md relative">
 					<img

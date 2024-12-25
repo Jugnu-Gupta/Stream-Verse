@@ -28,6 +28,7 @@ const VideoDetail: React.FC = () => {
 	const channelName = video?.owner?.fullName || "Channel Name";
 	const description = video?.description || "Video Description";
 	const userId = localStorage.getItem("userId");
+	const noOfComments: number = video?.noOfComments || 10;
 	const videoNo = video?._id || "";
 	const title = video?.title || "Video Title";
 	// console.log("videoId:", videoId);
@@ -65,19 +66,18 @@ const VideoDetail: React.FC = () => {
 
 	return (
 		<div
-			className="flex flex-col 2lg:flex-row justify-start 2lg:items-start 2lg:gap-4 w-full px-2 mt-4 mx-auto max-w-[1400px]">
+			className="flex flex-col 2lg:flex-row justify-start 2lg:items-start 2lg:gap-4 w-full px-2 mt-4 mx-auto max-w-[1400px] overflow-hidden">
 			<div className="flex flex-col 2lg:w-2/3 w-full">
 				{/* video */}
 				<video
 					src={videoplayback}
-					controls
-					className="px-2 lg:px-0"></video>
+					controls></video>
 
 				{/* Playlist */}
 				<VideoPlaylist childClass="flex 2lg:hidden" heighlightVideo={videoNo} playlist={playlist} />
 
 				{/* Description */}
-				<div className="border-2 border-primary-border rounded-lg p-2 mt-4 mx-2 lg:mx-0">
+				<div className="border-2 border-primary-border rounded-lg p-2 2lg:mt-4">
 					<div className="flex items-center justify-between mb-2">
 						<div className="text-primary-text">
 							<h1 className="text-lg font-bold tracking-wide">
@@ -114,21 +114,19 @@ const VideoDetail: React.FC = () => {
 				</div>
 
 				{/* Comments */}
-				<VideoComments videoId={videoNo} />
+				<VideoComments videoId={videoNo} noOfComments={noOfComments} />
 			</div>
 
-			<div className="flex flex-col w-full 2lg:w-1/3 mt-4 2lg:mt-0">
+			<div className="flex flex-col w-full 2lg:w-1/3">
 
 				{/* Playlist */}
 				<VideoPlaylist childClass="2lg:flex hidden" heighlightVideo={videoNo} playlist={playlist} />
 
 				{/* Related Videos */}
 				<div className="flex flex-col w-full">
-					{
-						similarVideos?.map((video: VideoType) => (
-							<RelatedVideo key={video?._id} videoInfo={video} />
-						))
-					}
+					{similarVideos?.map((video: VideoType) => (
+						<RelatedVideo key={video?._id} videoInfo={video} />
+					))}
 				</div>
 			</div>
 		</div >

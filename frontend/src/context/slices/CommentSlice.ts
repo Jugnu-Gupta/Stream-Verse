@@ -25,6 +25,28 @@ const initialState: TreeNode = {
 	children: [],
 };
 
+const clearAllData = (node: TreeNode) => {
+	node.children.forEach((child) => {
+		clearAllData(child);
+	});
+	node.val = {
+		owner: {
+			_id: "",
+			userName: "",
+			fullName: "",
+		},
+		replies: 0,
+		likeStatus: 0,
+		likes: 0,
+		dislikes: 0,
+		content: "",
+		_id: "",
+		createdAt: new Date().toISOString(),
+		updatedAt: new Date().toISOString(),
+	};
+	node.children = [];
+};
+
 const CommentSlice = createSlice({
 	name: "comment",
 	initialState,
@@ -42,7 +64,6 @@ const CommentSlice = createSlice({
 					isNodeFound = false;
 					break;
 				}
-				// go to the next child
 				root = nextNode;
 			}
 			if (!isNodeFound) {
@@ -52,35 +73,59 @@ const CommentSlice = createSlice({
 					root.children.push({ val: child, children: [] });
 				});
 			}
+			// console.log("state:", JSON.stringify(state, null, 2));
+		},
+		updateComment: (state, action) => {
+			const { childPathIds, content } = action.payload;
+			let root = state;
+			let isNodeFound: boolean = true;
+
+			for (let i = 0; i < childPathIds.length; i++) {
+				const nextNode = root.children.find(
+					(child) => child.val?._id === childPathIds[i]
+				);
+				if (!nextNode) {
+					isNodeFound = false;
+					break;
+				}
+				root = nextNode;
+			}
+			if (!isNodeFound) {
+				console.log("Node not found");
+			} else {
+				root.val.content = content;
+			}
+			// console.log("state:", JSON.stringify(state, null, 2));
 		},
 		clearComments: (state) => {
-			const clearAllData = (node: TreeNode) => {
-				node.children.forEach((child) => {
-					clearAllData(child);
-				});
-				node.val = {
-					owner: {
-						_id: "",
-						userName: "",
-						fullName: "",
-					},
-					replies: 0,
-					likeStatus: 0,
-					likes: 0,
-					dislikes: 0,
-					content: "",
-					_id: "",
-					createdAt: new Date().toISOString(),
-					updatedAt: new Date().toISOString(),
-				};
-				node.children = [];
-			};
 			state.children.forEach((child) => {
 				clearAllData(child);
 			});
 		},
+		deleteComment: (state, action) => {
+			const { childPathIds } = action.payload;
+			let root = state;
+			let isNodeFound: boolean = true;
+
+			for (let i = 0; i < childPathIds.length; i++) {
+				const nextNode = root.children.find(
+					(child) => child.val?._id === childPathIds[i]
+				);
+				if (!nextNode) {
+					isNodeFound = false;
+					break;
+				}
+				root = nextNode;
+			}
+			if (!isNodeFound) {
+				console.log("Node not found");
+			} else {
+				clearAllData(root);
+			}
+		},
 	},
 });
 
-export const { addComments, clearComments } = CommentSlice.actions;
+export const { addComments, updateComment, deleteComment, clearComments } =
+	CommentSlice.actions;
 export default CommentSlice.reducer;

@@ -44,11 +44,9 @@ const VideoPlaylist: React.FC<VideoPlaylistProps> = ({ childClass, heighlightVid
             </div>
 
             <div className={twMerge("flex flex-col w-full pt-2 max-h-[60vh] overflow-y-auto", !showPlaylist && "hidden")}>
-                {
-                    playlist?.videos?.map((video: VideoType) => (
-                        <RelatedVideo key={video?._id} heighlightVideo={heighlightVideo} videoInfo={video} />
-                    ))
-                }
+                {playlist?.videos?.map((video: VideoType) => (
+                    <RelatedVideo key={video?._id} heighlightVideo={heighlightVideo} videoInfo={video} />
+                ))}
             </div>
         </div>
     )

@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import thumbnail from "../../assets/thumbnail.png";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { BiLike } from "react-icons/bi";
 import { BiSolidLike } from "react-icons/bi";
 import { BiDislike } from "react-icons/bi";
@@ -10,7 +10,7 @@ import { FaChevronUp } from "react-icons/fa";
 import { twMerge } from "tailwind-merge";
 import makeApiRequest from "../../utils/MakeApiRequest";
 import { formatDateToNow } from "../../utils/FormatDateToNow";
-import { addComments } from "../../context/slices/CommentSlice";
+import { addComments, updateComment } from "../../context/slices/CommentSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../context/Store";
 import { CommentType } from "../../Types/Comment.type";
@@ -19,17 +19,22 @@ import AddComment from "./AddComment";
 import useLikeDislike from "../../hooks/useLikeDislike";
 import { computeDislikeCount, computeLikeCount }
 	from "../../utils/ComputeLikeDislikeCount";
+import EditDeleteComment from "./EditDeleteComment";
+import { EditDeleteWrapper } from "../../Types/EditDelete.type";
+import toast from "react-hot-toast";
 
-interface CommentProps {
+interface CommentProps extends EditDeleteWrapper {
 	currPath: string[];
 	entityId: string;
 	entityType: string;
 	comment: CommentType;
 }
-
-const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, entityType }) => {
+const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, entityType, editDeleteOption, setEditDeleteOption }) => {
 	const replies: CommentType[] = useSelector((state: RootState) => selectReplies(state, currPath));
-	const { isLiked, isDisliked, handleLike, handleDislike } = useLikeDislike({ entityId: comment?._id, entityType: "comment", likeStatus: comment?.likeStatus });
+	const { isLiked, isDisliked, handleLike, handleDislike } = useLikeDislike(
+		{ entityId: comment?._id, entityType: "comment", likeStatus: comment?.likeStatus });
+	const [commentText, setCommentText] = React.useState(comment?.content || "comment");
+	const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
 	const [showReplies, setShowReplies] = React.useState(false);
 	const dislikes = computeDislikeCount(comment?.dislikes, comment?.likeStatus, isDisliked);
 	const likes = computeLikeCount(comment?.likes, comment?.likeStatus, isLiked);
@@ -37,11 +42,20 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 
 	const UploadedAt = formatDateToNow(new Date(comment.createdAt));
 	const channelName = "@" + (comment?.owner?.userName || "Channel Name");
-	const description = comment?.content || "comment";
+	const curUserName = localStorage.getItem("userName");
 	const commentId = comment?._id;
+	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
-	React.useEffect(() => {
+	useEffect(() => {
+		if (textAreaRef.current) {
+			textAreaRef.current!.style.height = "26px";
+			const scrollHeight = textAreaRef.current!.scrollHeight;
+			textAreaRef.current!.style.height = `${scrollHeight}px`;
+		}
+	}, [commentText]);
+
+	useEffect(() => {
 		if (!entityId || !commentId || replies?.length) return;
 		const userId = localStorage.getItem("userId");
 
@@ -57,50 +71,96 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 		});
 	}, [dispatch, entityType, entityId, commentId, replies, currPath]);
 
+	const handleEditComment = () => {
+		if (commentText === "" || commentId === "") return;
+		makeApiRequest({
+			method: "patch",
+			url: `/api/v1/comments/${commentId}`,
+			data: {
+				content: commentText
+			}
+		}).then(() => {
+			toast.success("Playlist updated successfully");
+			setEditDeleteOption({ ...editDeleteOption, showEditModal: false });
+			dispatch(updateComment({ childPathIds: currPath, content: commentText }));
+		}).catch((error) => {
+			console.error("Error fetching data:", error);
+		});
+	}
+
+	const handleEditClick = () => {
+		setEditDeleteOption({ ...editDeleteOption, showEditModal: false });
+		setCommentText(comment?.content || "comment");
+	}
+
 	return (
-		<div className="pl-2 pt-2 overflow-hidden w-full">
+		<div className="pt-2 overflow-hidden w-full">
 			<div className="flex items-start gap-2 w-full">
-				<Link to={`/${channelName.substring(1)}/videos`}>
-					<div className="overflow-hidden rounded-full w-10">
-						<img
-							src={thumbnail}
-							alt="thumbnail"
-							className="rounded-full w-10 aspect-square"
-						/>
-					</div>
-				</Link>
+				<div onClick={() => navigate(`/${channelName.substring(1)}/videos`)}
+					className="overflow-hidden rounded-full w-10">
+					<img src={thumbnail}
+						alt="thumbnail"
+						className="rounded-full w-10 aspect-square"
+					/>
+				</div>
 				<div className="flex flex-col text-primary-text overflow-hidden w-full">
 					<div className="flex gap-2 items-center">
 						<p className="text-sm font-semibold">{channelName}</p>
-						<p className="text-primary-text2 text-xs">
-							{UploadedAt}
-						</p>
-					</div>
-					<div className="flex flex-col items-start my-2 text-sm">
-						<p>{description}</p>
-					</div>
-					<div className="flex justify-start gap-3 font-semibold tracking-wide mb-2">
-						<button
-							onClick={handleLike}
-							className="flex items-center gap-1 text-xl outline-none hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
-							{isLiked ? <BiSolidLike /> : <BiLike />}
-							<span className="text-xs">{likes}</span>
-						</button>
-						<button
-							onClick={handleDislike}
-							className="flex items-center gap-1 text-xl outline-none hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
-							{isDisliked ? <BiSolidDislike /> : <BiDislike />}
-							<span className="text-xs">{dislikes}</span>
-						</button>
-						<button
-							className="flex items-center gap-1 text-xl outline-none hover:bg-background-secondary px-2 py-1 rounded-xl duration-300"
-							onClick={() => setGiveReply(true)}>
-							{/* <BiCommentDetail className="-scale-x-100" /> */}
-							<span className="text-xs">Reply</span>
-						</button>
+						<p className="text-primary-text2 text-xs">{UploadedAt} </p>
 					</div>
 
-					{giveReply && <AddComment setGiveReply={setGiveReply} avatarStyle="w-7" />}
+					<div className="flex flex-col items-start my-2 text-sm">
+						<textarea ref={textAreaRef}
+							placeholder="Comment"
+							className={twMerge("w-full bg-transparent resize-none outline-none border-primary-border",
+								(editDeleteOption.currentId === commentId && editDeleteOption.showEditModal) && "border-b-2"
+							)}
+							value={commentText}
+							onChange={(e) => setCommentText(e.target.value)}
+							readOnly={!(editDeleteOption.currentId === commentId && editDeleteOption.showEditModal)}
+						/>
+					</div>
+
+					{!(editDeleteOption.currentId === commentId && editDeleteOption.showEditModal) ?
+						(<div className="flex justify-start gap-3 font-semibold tracking-wide mb-2">
+							<button onClick={handleLike}
+								className="flex items-center gap-1 text-xl outline-none hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
+								{isLiked ? <BiSolidLike /> : <BiLike />}
+								<span className="text-xs">{likes}</span>
+							</button>
+							<button onClick={handleDislike}
+								className="flex items-center gap-1 text-xl outline-none hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
+								{isDisliked ? <BiSolidDislike /> : <BiDislike />}
+								<span className="text-xs">{dislikes}</span>
+							</button>
+							<button onClick={() => setGiveReply(true)}
+								className="flex items-center gap-1 text-xl outline-none hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
+								<span className="text-xs">Reply</span>
+							</button>
+						</div>) :
+						(<div className="flex justify-end gap-1 font-semibold tracking-wide mb-0.5">
+							<button onClick={handleEditClick}
+								className="text-sm outline-none hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
+								Cancel
+							</button>
+							<button onClick={handleEditComment}
+								className={twMerge("text-sm outline-none bg-background-secondary px-2 py-1 rounded-xl duration-300",
+									commentText === "" && "opacity-75")}>
+								Save
+							</button>
+						</div>)
+					}
+
+					{giveReply &&
+						(<AddComment
+							setGiveReply={setGiveReply}
+							avatarStyle="w-7"
+							entityType={entityType}
+							entityId={entityId}
+							parentId={commentId}
+							currPath={currPath}>
+						</AddComment>)
+					}
 
 					{replies?.length > 0 && (
 						<button
@@ -113,8 +173,16 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 						</button>
 					)}
 				</div>
+
+				{channelName === `@${curUserName}` &&
+					(<EditDeleteComment
+						commentId={commentId}
+						editDeleteOption={editDeleteOption}
+						setEditDeleteOption={setEditDeleteOption}>
+					</EditDeleteComment>)
+				}
 			</div>
-			{showReplies && currPath.length < 10 && (
+			{showReplies && (
 				<div
 					className={twMerge(
 						"w-full h-full",
@@ -128,7 +196,9 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 						comment={reply}
 						entityId={entityId}
 						entityType={entityType}
-					/>))
+						editDeleteOption={editDeleteOption}
+						setEditDeleteOption={setEditDeleteOption}>
+					</CommentCard >))
 					}
 				</div>
 			)}

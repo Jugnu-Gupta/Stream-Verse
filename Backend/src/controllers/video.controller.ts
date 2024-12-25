@@ -324,12 +324,36 @@ const getVideoById = asyncHandler(
                 },
             },
             {
+                $lookup: {
+                    from: "comments",
+                    let: { videoId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$entityId", "$$videoId"],
+                                        },
+                                        {
+                                            $eq: ["$entityType", "video"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
+                    as: "comments",
+                },
+            },
+            {
                 $project: {
                     title: 1,
                     likeStatus: 1,
                     description: 1,
                     thumbnail: 1,
                     videoFile: 1,
+                    noOfComments: { $size: "$comments" },
                     owner: { $arrayElemAt: ["$owner", 0] },
                     duration: 1,
                     quality: 1,

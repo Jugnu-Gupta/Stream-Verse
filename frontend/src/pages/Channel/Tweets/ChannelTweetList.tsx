@@ -17,7 +17,8 @@ interface ChannelTweetListProps {
 	tweetInfo: TweetType | undefined;
 }
 const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo }) => {
-	const { isLiked, isDisliked, handleLike, handleDislike } = useLikeDislike({ entityId: tweetInfo?._id || "", entityType: "tweet", likeStatus: tweetInfo?.likeStatus });
+	const { isLiked, isDisliked, handleLike, handleDislike } = useLikeDislike(
+		{ entityId: tweetInfo?._id || "", entityType: "tweet", likeStatus: tweetInfo?.likeStatus });
 	const [readMore, setReadMore] = React.useState(false);
 	const UploadedAt = formatDateToNow(tweetInfo?.createdAt);
 	const channelName = tweetInfo?.owner?.fullName || "channel Name";

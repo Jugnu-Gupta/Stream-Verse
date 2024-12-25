@@ -216,10 +216,7 @@ const createComment = asyncHandler(
         const { content }: CreateCommentBody = req.body;
 
         if (!content || !entityId) {
-            const message = !content
-                ? "Content is required"
-                : "Video id is required";
-            throw new ApiError(400, message);
+            throw new ApiError(400, "Content and entityId are required");
         }
         if (!["video", "tweet"].includes(entityType)) {
             throw new ApiError(400, "Invalid entity type");
@@ -229,7 +226,8 @@ const createComment = asyncHandler(
             entityId,
             entityType,
             content,
-            parentId,
+            parentId: parentId ? parentId : null,
+            ownerId: req.user._id,
         });
 
         if (!comment) {
@@ -253,10 +251,7 @@ const updateComment = asyncHandler(
         const { commentId }: UpdateCommentParams = req.params;
         const { content }: UpdateCommentBody = req.body;
         if (!commentId || !content) {
-            const message = !commentId
-                ? "Comment id is required"
-                : "Content is required";
-            throw new ApiError(400, message);
+            throw new ApiError(400, "Comment id and content are required");
         }
 
         const comment = await Comment.findByIdAndUpdate(
@@ -280,14 +275,19 @@ const updateComment = asyncHandler(
 const findRepliesRec = async (commentId: string) => {
     try {
         const replies = await Comment.find({ parentId: commentId });
-        let result: any[] = [];
+        console.log("commentId:", commentId);
+        console.log("replies:", replies);
+
+        let result: string[] = [];
         for (let i = 0; i < replies.length; i++) {
             const reply = replies[i];
             const subReplies = await findRepliesRec(reply._id);
 
-            result.push(reply._id);
+            result.concat(reply._id);
             result.concat(subReplies);
         }
+        console.log("Return commentId:", commentId);
+        console.log("Return replies:", replies);
         return result;
     } catch (error) {
         throw new ApiError(500, "Failed to find replies");
@@ -304,28 +304,35 @@ const deleteComment = asyncHandler(
         if (!commentId) {
             throw new ApiError(400, "Comment id is required");
         }
+        console.log("comment1:", commentId);
 
         const comment = await Comment.findById(commentId);
         if (!comment) {
             throw new ApiError(404, "Comment not found");
         }
+        console.log("comment2:", comment);
 
         // Extract all replies/comments to be deleted.
-        const commentIds = (await findRepliesRec(commentId)).push(commentId);
+        const commentIds = (await findRepliesRec(commentId)).concat(commentId);
 
-        // delete comment, allReplies, and its likes
-        const delComment = await Comment.deleteMany({
-            _id: { $in: commentIds },
-        });
-        const delLikes = await Like.deleteMany({
-            commentId: { $in: commentIds },
-        });
-        if (!delComment?.acknowledged) {
-            throw new ApiError(500, "Failed to delete comment");
-        }
-        if (!delLikes?.acknowledged) {
-            throw new ApiError(500, "Failed to delete comment likes");
-        }
+        console.log("commentIds:", commentIds);
+
+        // // delete comment, allReplies, and its likes
+        // const delComment = await Comment.deleteMany({
+        //     _id: { $in: commentIds },
+        // });
+        // const delLikes = await Like.deleteMany({
+        //     entityId: { $in: commentIds },
+        //     entityType: "comment",
+        // });
+        // console.log("delComment:", delComment);
+        // console.log("delLikes:", delLikes);
+        // if (!delComment?.acknowledged) {
+        //     throw new ApiError(500, "Failed to delete comment");
+        // }
+        // if (!delLikes?.acknowledged) {
+        //     throw new ApiError(500, "Failed to delete comment likes");
+        // }
 
         return res
             .status(200)

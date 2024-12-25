@@ -34,12 +34,3 @@ const makeApiRequest = async ({
 
 export default makeApiRequest;
 export type { ApiRequestOptions };
-
-// Usage example for a GET request
-// makeApiRequest({
-// 	method: "get",
-// 	url: "/api/v1/auths/profile",
-// 	params: { userId: "12345" },
-// })
-// 	.then((data) => console.log(data))
-// 	.catch((error) => console.error("Failed to fetch profile:", error));

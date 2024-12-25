@@ -120,11 +120,9 @@ const ChannelTweets: React.FC = () => {
 
 			{/* Tweets */}
 			<div>
-				{
-					tweets?.map((tweet: TweetType) => (
-						<ChannelTweetList key={tweet._id} tweetInfo={tweet} />
-					))
-				}
+				{tweets?.map((tweet: TweetType) => (
+					<ChannelTweetList key={tweet._id} tweetInfo={tweet} />
+				))}
 			</div>
 		</div>
 	);

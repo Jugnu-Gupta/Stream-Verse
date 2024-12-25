@@ -1,17 +1,26 @@
-import React from 'react';
-import { twMerge } from 'tailwind-merge';
+import React, { useEffect, Dispatch, SetStateAction } from 'react';
 import thumbnail from '../../assets/thumbnail.png';
-
+import makeApiRequest from '../../utils/MakeApiRequest';
+import { twMerge } from 'tailwind-merge';
+import { addComments } from '../../context/slices/CommentSlice';
+import { useDispatch } from 'react-redux';
+import { increaseCount } from '../../context/slices/counterSlice';
 
 interface AddCommentProps {
-    setGiveReply?: React.Dispatch<React.SetStateAction<boolean>>;
+    setGiveReply?: Dispatch<SetStateAction<boolean>>;
     avatarStyle: string;
+    entityType: string;
+    entityId: string;
+    parentId?: string;
+    currPath: string[];
 }
-const AddComment: React.FC<AddCommentProps> = ({ setGiveReply, avatarStyle }) => {
+const AddComment: React.FC<AddCommentProps> = ({ setGiveReply, avatarStyle, entityType, entityId, parentId, currPath }) => {
     const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
     const [addCommentText, setAddCommentText] = React.useState<string>("");
+    const userId = localStorage.getItem("userId");
+    const dispatch = useDispatch();
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (textAreaRef.current) {
             textAreaRef.current!.style.height = "32px";
             const scrollHeight = textAreaRef.current!.scrollHeight;
@@ -19,9 +28,45 @@ const AddComment: React.FC<AddCommentProps> = ({ setGiveReply, avatarStyle }) =>
         }
     }, [addCommentText]);
 
+    const handleCreateComment = () => {
+        if (addCommentText === "") return;
+
+        makeApiRequest({
+            method: "post",
+            url: `/api/v1/comments/${entityType}/${entityId}${parentId ? `/${parentId}` : ""}`,
+            data: {
+                content: addCommentText,
+            },
+        }).then((response: any) => { // eslint-disable-line
+            const data = response.data;
+            console.log("Comment Response:", data);
+            const child = {
+                owner: {
+                    _id: userId,
+                    userName: "root",
+                    fullName: "root",
+                },
+                content: data.content,
+                _id: data._id,
+                replies: 0,
+                likeStatus: 0,
+                likes: 0,
+                dislikes: 0,
+                createdAt: data.createdAt,
+                updatedAt: data.updatedAt,
+            }
+            dispatch(addComments({ childPathIds: currPath, childs: [child] }));
+            dispatch(increaseCount());
+            setAddCommentText("");
+            if (setGiveReply) setGiveReply(false);
+        }).catch((error) => {
+            console.error("Error fetching data:", error);
+        });
+    }
+
     return (
-        <div className={twMerge("flex items-start w-full", "gap-2")}>
-            <div className={twMerge("overflow-hidden rounded-full", avatarStyle)}>
+        <div className="flex items-start w-full gap-2">
+            <div className={twMerge("overflow-hidden rounded-full min-w-7", avatarStyle)}>
                 {/* // current user image */}
                 <img
                     src={thumbnail}
@@ -42,10 +87,10 @@ const AddComment: React.FC<AddCommentProps> = ({ setGiveReply, avatarStyle }) =>
                         onClick={() => (setGiveReply ? setGiveReply(false) : setAddCommentText(""))}>
                         Cancel
                     </button>
-                    <button
+                    <button onClick={handleCreateComment}
                         className={twMerge(
-                            "px-3 py-1 rounded-full outline-none bg-primary opacity-75 font-semibold",
-                            addCommentText != "" && "opacity-100"
+                            "px-3 py-1 rounded-full outline-none bg-primary font-semibold",
+                            addCommentText != "" ? "opacity-100" : "opacity-75"
                         )}>
                         Comment
                     </button>

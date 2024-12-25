@@ -6,13 +6,14 @@ import { FaPlay } from "react-icons/fa";
 import { formatNumber } from "../../utils/FormatNumber";
 import { formatDateToNow } from "../../utils/FormatDateToNow";
 import { PlaylistType } from "../../Types/Platlist.type";
-import EditPlaylist from "./EditPlaylist";
+import EditDeletePlaylist from "./EditDeletePlaylist";
+import { EditDeleteWrapper } from "../../Types/EditDelete.type";
 
-interface ChannelVideosCardProps {
+interface ChannelVideosCardProps extends EditDeleteWrapper {
 	playlist: PlaylistType; // include video id in playlist type
 }
 
-const ChannelVideosCard: React.FC<ChannelVideosCardProps> = ({ playlist }) => {
+const ChannelVideosCard: React.FC<ChannelVideosCardProps> = ({ playlist, editDeleteOption, setEditDeleteOption }) => {
 	const [playlistName, setPlaylistName] = React.useState<string>(playlist?.name || "Playlist Title");
 	const noOfvideos = formatNumber(playlist?.noOfVideos);
 	const updatedAt = formatDateToNow(playlist?.updatedAt);
@@ -33,7 +34,7 @@ const ChannelVideosCard: React.FC<ChannelVideosCardProps> = ({ playlist }) => {
 						<CgPlayList className="text-lg mt-[2px]" />
 						<span>{noOfvideos} videos</span>
 					</p>
-					<div className="absolute text-primary-text z-10 top-0 left-0 w-full h-full bg-black opacity-0 hover:opacity-70 duration-300 flex gap-1 justify-center items-center">
+					<div className="absolute text-primary-text z-[1] top-0 left-0 w-full h-full bg-black opacity-0 hover:opacity-70 duration-300 flex gap-1 justify-center items-center">
 						<FaPlay />
 						<span>PLAY ALL</span>
 					</div>
@@ -47,7 +48,7 @@ const ChannelVideosCard: React.FC<ChannelVideosCardProps> = ({ playlist }) => {
 						<p className="text-sm text-primary-text2">View full playlist</p>
 					</Link >
 
-					<EditPlaylist playlistId={playlistId} playlist_Name={playlistName} updatePlaylistName={setPlaylistName} />
+					<EditDeletePlaylist playlistId={playlistId} playlist_Name={playlistName} updatePlaylistName={setPlaylistName} editDeleteOption={editDeleteOption} setEditDeleteOption={setEditDeleteOption} />
 				</div>
 			</div>
 		</div >

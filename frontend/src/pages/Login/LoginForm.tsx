@@ -32,7 +32,8 @@ const LoginForm: React.FC = () => {
 
 				// data in localStorage for future use
 				localStorage.setItem("userId", responseData.user._id);
-				localStorage.setItem("token", responseData.accessToken);
+				localStorage.setItem("accessToken", responseData.accessToken);
+				localStorage.setItem("refreshToken", responseData.refreshToken);
 				localStorage.setItem("userName", responseData.user.userName);
 				localStorage.setItem("fullName", responseData.user.fullName);
 				localStorage.setItem("email", responseData.user.email);
