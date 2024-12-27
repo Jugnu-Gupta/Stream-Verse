@@ -7,13 +7,13 @@ import { useNavigate } from "react-router-dom";
 import { generateAvatar } from '../../utils/GenerateAvatar';
 import { setShowNavbar } from "../../context/slices/NavbarSlice";
 import makeApiRequest from "../../utils/MakeApiRequest";
-import { RootState } from "../../context/Store";
+import { AppDispatch, RootState } from "../../context/store";
 import { useAuth } from "../../hooks/useAuth";
 
 
 const Header: React.FC = () => {
-	const dispatch = useDispatch();
 	const navigate = useNavigate();
+	const dispatch = useDispatch<AppDispatch>();
 	const { loggedIn, setLoggedIn } = useAuth();
 	const [userImage, setUserImage] = React.useState("");
 	const curUser: string = "@" + localStorage.getItem("userName");

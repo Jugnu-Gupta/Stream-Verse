@@ -4,31 +4,31 @@ import { twMerge } from "tailwind-merge";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { MdOutlineEdit } from "react-icons/md";
 import EditVideoModal from "../../components/Popup/EditVideoModal";
-import DeleteVideoModal from "../../components/Popup/DeleteVideoModal";
+import DeleteModal from "../../components/Popup/DeleteModal";
 import { format } from "date-fns";
 import { formatNumber } from "../../utils/FormatNumber";
+import { DashboardVideoType } from "../../Types/Video.type";
 
 interface DashboardVideoStatsControlProps {
-	videoInfo: any;
+	videoInfo: DashboardVideoType;
 }
 const DashboardVideoStatsControl: React.FC<DashboardVideoStatsControlProps> = ({ videoInfo }) => {
-	const [showEditVideo, setShowEditVideo] = React.useState(false);
-	const [showDeleteVideo, setShowDeleteVideo] = React.useState(false);
+	const [showEditVideo, setShowEditVideo] = React.useState<boolean>(false);
+	const [showDeleteVideo, setShowDeleteVideo] = React.useState<boolean>(false);
 	const divRef = React.useRef<HTMLDivElement>(null);
 	const [status, setStatus] = React.useState<boolean>(false);
 	const likes = formatNumber(videoInfo?.likes);
 	const dislikes = formatNumber(videoInfo?.dislikes);
 	const title = videoInfo?.title || "Video Title";
-	const uploadedAt = format(new Date(videoInfo?.uploadedAt || Date.now()), "yyyy-MM-dd");
+	const uploadedAt = format(videoInfo.createdAt, "yyyy-MM-dd");
 
 	useEffect(() => {
-		setStatus(videoInfo?.status);
+		setStatus(videoInfo?.isPublished);
 	}, [videoInfo]);
 
 	useEffect(() => {
 		if (divRef.current) {
 			const divChild = divRef.current.children[0] as HTMLDivElement;
-
 			if (status) {
 				divChild.classList.add("translate-x-4");
 				divChild.classList.remove("translate-x-0");
@@ -87,7 +87,7 @@ const DashboardVideoStatsControl: React.FC<DashboardVideoStatsControlProps> = ({
 			<td className="text-center px-4 py-2 text-nowrap text-primary-icon">
 				<div className="text-start">
 					{showEditVideo && <EditVideoModal setShowEditVideo={setShowEditVideo} />}
-					{showDeleteVideo && <DeleteVideoModal setShowDeleteVideo={setShowDeleteVideo} />}
+					{showDeleteVideo && <DeleteModal Name="Video" Url="/api/v1/videos" setShowDeleteModal={setShowDeleteVideo} />}
 				</div>
 
 				<button className="pr-2" onClick={() => setShowDeleteVideo(true)}><RiDeleteBin6Line /></button>

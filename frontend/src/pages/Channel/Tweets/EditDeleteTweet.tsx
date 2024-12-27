@@ -7,10 +7,11 @@ import { EditDeleteWrapper } from '../../../Types/EditDelete.type';
 interface EditDeleteCommentProps extends EditDeleteWrapper {
     tweetId: string;
     tweetText: string;
+    discardImageChange?: () => void;
     setTweetText: Dispatch<SetStateAction<string>>;
 }
 const EditDeleteTweet: React.FC<EditDeleteCommentProps> =
-    ({ tweetId, tweetText, setTweetText, editDeleteOption, setEditDeleteOption }) => {
+    ({ tweetId, tweetText, setTweetText, discardImageChange, editDeleteOption, setEditDeleteOption }) => {
         const handleOptions = (tweetId: string) => {
             if (editDeleteOption.currentId === tweetId) {
                 setEditDeleteOption({
@@ -20,6 +21,7 @@ const EditDeleteTweet: React.FC<EditDeleteCommentProps> =
                     showEditDeletePopup: false
                 });
                 setTweetText(tweetText);
+                if (discardImageChange) discardImageChange();
             } else {
                 setEditDeleteOption({
                     currentId: tweetId,

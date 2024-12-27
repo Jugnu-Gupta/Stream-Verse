@@ -4,7 +4,7 @@ import { PiFolder } from "react-icons/pi";
 import makeApiRequest from "../../utils/MakeApiRequest";
 import { useNavigate } from "react-router-dom";
 import { PlaylistType } from "../../Types/Platlist.type";
-import DeleteVideoModal from "../../components/Popup/DeleteVideoModal";
+import DeleteModal from "../../components/Popup/DeleteModal";
 import { EditDeleteType } from "../../Types/EditDelete.type";
 
 const Playlists: React.FC = () => {
@@ -50,7 +50,7 @@ const Playlists: React.FC = () => {
 
 	return (
 		< div className="grid px-4 w-full h-fit max-w-6xl justify-items-center mx-auto z-0 2xl:grid-cols-4 2lg:grid-cols-3 2sm:grid-cols-2 grid-cols-1 mt-2" >
-			{editDeleteOption.showDeleteModal && <DeleteVideoModal Name="Playlist" Url={`/api/v1/playlists/${editDeleteOption.currentId}`} setShowDeleteModal={setShowDeleteModal} />}
+			{editDeleteOption.showDeleteModal && <DeleteModal Name="Playlist" Url={`/api/v1/playlists/${editDeleteOption.currentId}`} setShowDeleteModal={setShowDeleteModal} />}
 
 			{playlists?.map((playlist: PlaylistType) => (
 				<PlaylistCard key={playlist._id} playlist={playlist} editDeleteOption={editDeleteOption} setEditDeleteOption={setEditDeleteOption} />

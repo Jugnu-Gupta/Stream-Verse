@@ -2,16 +2,17 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import makeApiRequest from '../../utils/MakeApiRequest';
 import DashboardVideoStatsControl from "./DashboardVideoStatsControl";
+import { DashboardVideoType } from '../../Types/Video.type';
 
 const DashboardVideos: React.FC = () => {
     const navigate = useNavigate();
-    const [videos, setVideos] = React.useState<any[]>([]);
+    const [videos, setVideos] = React.useState<DashboardVideoType[]>([]);
 
     React.useEffect(() => {
         makeApiRequest({
             method: "get",
             url: "/api/v1/dashboard/channel-videos",
-        }).then((response: any) => {
+        }).then((response: any) => { // eslint-disable-line
             console.log("videos:", response.data);
             setVideos(response.data?.videos);
         }).catch((error) => {
@@ -34,11 +35,9 @@ const DashboardVideos: React.FC = () => {
                     </tr>
                 </thead>
                 <tbody className='text-primary-text'>
-                    {
-                        videos?.map((video: any) => (
-                            <DashboardVideoStatsControl key={video._id} videoInfo={video} />
-                        ))
-                    }
+                    {videos?.map((video: DashboardVideoType) => (
+                        <DashboardVideoStatsControl key={video._id} videoInfo={video} />
+                    ))}
                 </tbody>
             </table>
         </div>

@@ -26,12 +26,12 @@ router.route("/password").patch(verifyJWT, UpdateUserPassword);
 // Update user avatar (secured route)
 router
     .route("/avatar")
-    .patch(verifyJWT, upload.single("avatar"), updateUserAvatar);
+    .patch(verifyJWT, upload.single("image"), updateUserAvatar);
 
 // Update user cover image (secured route)
 router
     .route("/cover-image")
-    .patch(verifyJWT, upload.single("coverImage"), updateUserCoverImage);
+    .patch(verifyJWT, upload.single("image"), updateUserCoverImage);
 
 // Get channel page by username (secured route)
 router.route("/channel/:userName").get(verifyJWT, getUserChannelPage);

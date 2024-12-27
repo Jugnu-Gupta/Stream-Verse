@@ -5,7 +5,7 @@ import { twMerge } from "tailwind-merge";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { useDispatch, useSelector } from "react-redux";
 import { setShowNavbar } from "../../context/slices/NavbarSlice";
-import { RootState } from "../../context/Store";
+import { AppDispatch, RootState } from "../../context/store";
 import { useNavigate, useParams } from "react-router-dom";
 import { comparePaths } from "../../utils/ComparePaths";
 import { addAdminName } from "../../utils/AddAdminName";
@@ -13,8 +13,8 @@ import { addAdminName } from "../../utils/AddAdminName";
 
 const Navbar: React.FC = () => {
 	const navigate = useNavigate();
-	const dispatch = useDispatch();
 	const page = window.location.pathname;
+	const dispatch = useDispatch<AppDispatch>();
 	const { adminName } = useParams<{ adminName: string }>();
 	const showNavbar: boolean = useSelector(
 		(state: RootState) => state.navbar.showNavbar

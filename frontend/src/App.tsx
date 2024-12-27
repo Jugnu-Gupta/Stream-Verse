@@ -16,7 +16,7 @@ import VideoDetail from "./pages/Video/VideoDetails.tsx";
 import Help from "./pages/Help/Help.tsx";
 import TermsAndConditions from "./pages/TermsAndConditions/TermsAndConditions.tsx";
 import EditVideoModal from "./components/Popup/EditVideoModal.tsx";
-import DeleteVideoModal from "./components/Popup/DeleteVideoModal.tsx";
+import DeleteModal from "./components/Popup/DeleteModal.tsx";
 import UploadVideoModal from "./components/Popup/UploadVideoModal.tsx";
 import ChannelLayout from "./Layouts/ChannelLayout.tsx";
 import ChangePassword from "./pages/Channel/ChangePassword/ChangePassword.tsx";
@@ -61,7 +61,7 @@ function App() {
 					<Route path="search" element={<Search />} />
 					<Route path="video/:videoId" element={<VideoDetail />} />
 					<Route path="search2" element={<EditVideoModal setShowEditVideo={() => { console.log("hello") }} />} />
-					<Route path="search3" element={<DeleteVideoModal Name="SampleName" Url="SampleUrl" setShowDeleteModal={() => { console.log("hello") }} />} />
+					<Route path="search3" element={<DeleteModal Name="SampleName" Url="SampleUrl" setShowDeleteModal={() => { console.log("hello") }} />} />
 					<Route path="search4" element={<UploadVideoModal setShowUploadVideo={() => { console.log("hello") }} />} />
 					<Route path="search5" element={<UploadingVideoModal setShowUploadingVideo={() => { console.log("hello") }} />} />
 					<Route path="help" element={<Help />} />

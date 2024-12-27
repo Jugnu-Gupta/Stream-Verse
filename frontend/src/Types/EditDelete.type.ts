@@ -1,13 +1,15 @@
 import { Dispatch, SetStateAction } from "react";
 
-export interface EditDeleteType {
+interface EditDeleteType {
 	currentId: string;
 	showEditModal: boolean;
 	showDeleteModal: boolean;
 	showEditDeletePopup: boolean;
 }
 
-export interface EditDeleteWrapper {
+interface EditDeleteWrapper {
 	editDeleteOption: EditDeleteType;
 	setEditDeleteOption: Dispatch<SetStateAction<EditDeleteType>>;
 }
+
+export type { EditDeleteType, EditDeleteWrapper };

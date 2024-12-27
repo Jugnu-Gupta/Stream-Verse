@@ -1,4 +1,4 @@
-export interface ChannelInfoType {
+interface ChannelInfoType {
 	_id: string;
 	fullName: string;
 	userName: string;
@@ -18,7 +18,7 @@ export interface ChannelInfoType {
 	updatedAt: Date;
 }
 
-export interface SubscribedChannelType {
+interface SubscribedChannelType {
 	_id: string;
 	fullName: string;
 	userName: string;
@@ -29,3 +29,5 @@ export interface SubscribedChannelType {
 		publicId: string;
 	};
 }
+
+export type { ChannelInfoType, SubscribedChannelType };

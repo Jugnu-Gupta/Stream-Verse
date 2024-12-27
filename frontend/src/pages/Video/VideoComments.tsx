@@ -1,17 +1,17 @@
 import React, { useEffect } from "react";
 import CommentCard from "../../components/Comment/CommentCard";
-import { useNavigate } from "react-router-dom";
 import makeApiRequest from "../../utils/MakeApiRequest";
-import { addComments, clearComments, deleteComment } from "../../context/slices/CommentSlice";
+import { addComments, clearComments, deleteComment }
+	from "../../context/slices/CommentSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { CommentType } from "../../Types/Comment.type";
 import AddComment from "../../components/Comment/AddComment";
-import { RootState } from "../../context/Store";
+import { AppDispatch, RootState } from "../../context/store";
 import { selectReplies } from "../Tweet/SelectReplies";
 import { setCounter } from "../../context/slices/counterSlice";
 import { formatNumber } from "../../utils/FormatNumber";
 import { EditDeleteType } from "../../Types/EditDelete.type";
-import DeleteVideoModal from "../../components/Popup/DeleteVideoModal";
+import DeleteModal from "../../components/Popup/DeleteModal";
 
 interface VideoCommentsProps {
 	videoId: string;
@@ -24,10 +24,10 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ videoId, noOfComments }) 
 	const currPath: string[] = [];
 	const comments: CommentType[] = useSelector(
 		(state: RootState) => selectReplies(state, currPath));
-	const commentCount: number = useSelector((state: RootState) => state.counter.value);
+	const commentCount: number = useSelector(
+		(state: RootState) => state.counter.value);
 	const commentCnt = formatNumber(commentCount);
-	const navigate = useNavigate();
-	const dispatch = useDispatch();
+	const dispatch = useDispatch<AppDispatch>();
 
 	const setShowDeleteModal = (value: boolean) => {
 		if (value) { // delete Comment
@@ -60,9 +60,8 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ videoId, noOfComments }) 
 			dispatch(addComments({ childPathIds: [], childs: commentsData }));
 		}).catch((error) => {
 			console.error("Error fetching data:", error);
-			// navigate("/");
 		});
-	}, [navigate, videoId, dispatch, comments.length]);
+	}, [videoId, dispatch, comments.length]);
 
 	return (<div className="border-2 border-primary-border py-2 rounded-lg 2lg:max-h-max max-h-[70vh] overflow-y-auto my-4 px-2">
 		<h1 className="text-primary-text font-bold tracking-wide text-lg mb-2">
@@ -71,10 +70,10 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ videoId, noOfComments }) 
 		<AddComment avatarStyle="w-10" entityType="video" entityId={videoId} currPath={currPath} />
 
 		{editDeleteOption.showDeleteModal &&
-			(<DeleteVideoModal Name="Comment"
+			(<DeleteModal Name="Comment"
 				Url={`/api/v1/comments/${editDeleteOption.currentId}`}
 				setShowDeleteModal={setShowDeleteModal}>
-			</DeleteVideoModal>)
+			</DeleteModal>)
 		}
 
 		{comments?.map((comment: CommentType) => (

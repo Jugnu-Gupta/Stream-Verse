@@ -4,13 +4,13 @@ import { RxCross2 } from "react-icons/rx";
 import makeApiRequest from '../../utils/MakeApiRequest';
 import toast from 'react-hot-toast';
 
-interface DeleteVideoModalProps {
+interface DeleteModalProps {
     Name: string;
     Url: string;
     setShowDeleteModal: Dispatch<SetStateAction<boolean>> | ((show: boolean) => void);
 }
 
-const DeleteVideoModal: React.FC<DeleteVideoModalProps> = ({ Name, Url, setShowDeleteModal }) => {
+const DeleteModal: React.FC<DeleteModalProps> = ({ Name, Url, setShowDeleteModal }) => {
     const heading = `Delete ${Name}`;
     const description = `Are you sure you want to delete this ${Name}? Once its deleted, you will not be able to recover it.`;
 
@@ -54,4 +54,4 @@ const DeleteVideoModal: React.FC<DeleteVideoModalProps> = ({ Name, Url, setShowD
     )
 }
 
-export default DeleteVideoModal;
+export default DeleteModal;

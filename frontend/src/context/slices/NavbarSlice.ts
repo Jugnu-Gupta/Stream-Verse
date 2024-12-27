@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface NavbarState {
 	showNavbar: boolean;
@@ -12,10 +12,8 @@ const navbarSlice = createSlice({
 	name: "navbar",
 	initialState,
 	reducers: {
-		setShowNavbar: (state, action) => {
+		setShowNavbar: (state: NavbarState, action: PayloadAction<boolean>) => {
 			state.showNavbar = action.payload;
-			// directly modify the state over here.
-			// action.payload is the parameter and state is the initial/current state.
 		},
 	},
 });

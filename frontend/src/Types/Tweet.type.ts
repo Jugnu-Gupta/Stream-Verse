@@ -1,4 +1,4 @@
-export interface TweetType {
+interface TweetType {
 	_id: string;
 	content: string;
 	likeStatus: number;
@@ -21,3 +21,5 @@ export interface TweetType {
 	createdAt: Date;
 	updatedAt: Date;
 }
+
+export type { TweetType };

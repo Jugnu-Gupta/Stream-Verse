@@ -1,6 +1,6 @@
 import { VideoType } from "./Video.type";
 
-export interface PlaylistType {
+interface PlaylistType {
 	_id: string;
 	name: string;
 	description: string;
@@ -15,7 +15,7 @@ export interface PlaylistType {
 	createdAt: Date;
 }
 
-export interface PlaylistVideosType extends PlaylistType {
+interface PlaylistVideosType extends PlaylistType {
 	videos: VideoType[];
 	owner: {
 		_id: string;
@@ -27,3 +27,5 @@ export interface PlaylistVideosType extends PlaylistType {
 		};
 	};
 }
+
+export type { PlaylistType, PlaylistVideosType };

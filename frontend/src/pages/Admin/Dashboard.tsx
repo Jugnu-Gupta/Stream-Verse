@@ -5,7 +5,7 @@ import DashboardVideos from "./DashboardVideos";
 const Dashboard: React.FC = () => {
 	return (
 		<div className="w-full mt-4 max-w-6xl mx-auto relative overflow-auto">
-			{/* {showDeleteVideo && <DeleteVideoModal setShowDeleteVideo={setShowDeleteVideo} />} */}
+			{/* {showDeleteVideo && <DeleteModal setShowDeleteVideo={setShowDeleteVideo} />} */}
 			{/* {showUploadVideo && <UploadVideoModal setShowUploadVideo={setShowUploadVideo} />} */}
 
 			<section className="text-white px-6">

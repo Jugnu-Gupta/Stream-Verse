@@ -1,9 +1,21 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { CommentType } from "../../Types/Comment.type";
 
 export interface TreeNode {
 	val: CommentType;
 	children: TreeNode[];
+}
+interface AddCommentPayloadType {
+	childPathIds: string[];
+	childs: CommentType[];
+}
+interface UpdateCommentPayloadType {
+	childPathIds: string[];
+	content: string;
+}
+
+interface DeleteCommentPayloadType {
+	childPathIds: string[];
 }
 
 const initialState: TreeNode = {
@@ -51,7 +63,10 @@ const CommentSlice = createSlice({
 	name: "comment",
 	initialState,
 	reducers: {
-		addComments: (state, action) => {
+		addComments: (
+			state: TreeNode,
+			action: PayloadAction<AddCommentPayloadType>
+		) => {
 			const { childPathIds, childs } = action.payload;
 			let root = state;
 			let isNodeFound: boolean = true;
@@ -73,9 +88,11 @@ const CommentSlice = createSlice({
 					root.children.push({ val: child, children: [] });
 				});
 			}
-			// console.log("state:", JSON.stringify(state, null, 2));
 		},
-		updateComment: (state, action) => {
+		updateComment: (
+			state: TreeNode,
+			action: PayloadAction<UpdateCommentPayloadType>
+		) => {
 			const { childPathIds, content } = action.payload;
 			let root = state;
 			let isNodeFound: boolean = true;
@@ -95,15 +112,17 @@ const CommentSlice = createSlice({
 			} else {
 				root.val.content = content;
 			}
-			// console.log("state:", JSON.stringify(state, null, 2));
 		},
-		clearComments: (state) => {
+		clearComments: (state: TreeNode) => {
 			state.children.forEach((child) => {
 				clearAllData(child);
 			});
 			state.children = [];
 		},
-		deleteComment: (state, action) => {
+		deleteComment: (
+			state: TreeNode,
+			action: PayloadAction<DeleteCommentPayloadType>
+		) => {
 			const { childPathIds } = action.payload;
 			let root = state;
 			let isNodeFound: boolean = true;

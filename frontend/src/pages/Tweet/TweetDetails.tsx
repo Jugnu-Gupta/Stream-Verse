@@ -9,10 +9,10 @@ import AddComment from "../../components/Comment/AddComment";
 import { formatNumber } from "../../utils/FormatNumber";
 import { TweetType } from "../../Types/Tweet.type";
 import { selectReplies } from "./SelectReplies";
-import { RootState } from "../../context/Store";
+import { AppDispatch, RootState } from "../../context/store";
 import { setCounter } from "../../context/slices/counterSlice";
 import { EditDeleteType } from "../../Types/EditDelete.type";
-import DeleteVideoModal from "../../components/Popup/DeleteVideoModal";
+import DeleteModal from "../../components/Popup/DeleteModal";
 import TweetDetailsInfo from "./TweetDetailsInfo";
 
 const TweetDetails: React.FC = () => {
@@ -24,12 +24,12 @@ const TweetDetails: React.FC = () => {
 	const [tweet, setTweet] = React.useState<TweetType>();
 	const { tweetId } = useParams<string>();
 	const userId = localStorage.getItem("userId");
-	const tweetNo = tweet?._id || "";
-	const navigate = useNavigate();
-	const dispatch = useDispatch();
 	const noOfcomments = tweet?.comments;
-	const commentCount = useSelector((state: RootState) => state.counter.value);
+	const commentCount = useSelector(
+		(state: RootState) => state.counter.value);
 	const commentCnt = formatNumber(commentCount);
+	const dispatch = useDispatch<AppDispatch>();
+	const navigate = useNavigate();
 
 	const setShowDeleteModal = (value: boolean) => {
 		if (value) { // delete Comment
@@ -45,32 +45,30 @@ const TweetDetails: React.FC = () => {
 	}, [dispatch]);
 
 	useEffect(() => {
-		dispatch(setCounter({ value: noOfcomments }));
+		dispatch(setCounter({ value: noOfcomments || 0 }));
 	}, [noOfcomments, dispatch]);
 
 	useEffect(() => {
 		if (comments.length) return;
 		makeApiRequest({
 			method: "get",
-			url: `/api/v1/tweets/${"67509b2d90f1874c266f0644"}${userId ? `/${userId}` : ""}`, //tweetId
+			url: `/api/v1/tweets/${tweetId}${userId ? `/${userId}` : ""}`,
 		}).then((tweetRes: any) => { // eslint-disable-line
-			console.log("tweetRes", tweetRes);
 			setTweet(tweetRes.data?.tweets?.[0]);
 
 			// find details of current video
 			return makeApiRequest({
 				method: "get",
-				url: `/api/v1/comments/tweet/${"67509b2d90f1874c266f0644"}${userId ? `?userId=${userId}` : ""}`,
+				url: `/api/v1/comments/tweet/${tweetId}${userId ? `?userId=${userId}` : ""}`,
 			});
 		}).then((commentsRes: any) => { // eslint-disable-line
 			const commentsData = commentsRes.data?.comments || [];
-			console.log("commentsData", commentsData);
 
 			if (commentsData.length === 0) return;
 			dispatch(addComments({ childPathIds: [], childs: commentsData }));
 		}).catch((error) => {
 			console.error("Error fetching data:", error);
-			// navigate("/");
+			navigate("/");
 		})
 	}, [tweetId, userId, navigate, dispatch, comments.length]);
 
@@ -81,13 +79,13 @@ const TweetDetails: React.FC = () => {
 			<div className="text-primary-text font-bold text-xl">
 				<h1>{commentCnt} Comments</h1>
 			</div>
-			<AddComment avatarStyle="w-11" entityType="tweet" entityId={tweetNo} currPath={currPath} />
+			<AddComment avatarStyle="w-11" entityType="tweet" entityId={tweetId || ""} currPath={currPath} />
 
 			{editDeleteOption.showDeleteModal &&
-				(<DeleteVideoModal Name="Comment"
+				(<DeleteModal Name="Comment"
 					Url={`/api/v1/comments/${editDeleteOption.currentId}`}
 					setShowDeleteModal={setShowDeleteModal}>
-				</DeleteVideoModal>)
+				</DeleteModal>)
 			}
 
 			{comments?.map((comment: CommentType) => (
@@ -95,7 +93,7 @@ const TweetDetails: React.FC = () => {
 					key={comment._id}
 					currPath={currPath.concat([comment._id])}
 					comment={comment}
-					entityId={tweetNo}
+					entityId={tweetId || ""}
 					entityType="tweet"
 					editDeleteOption={editDeleteOption}
 					setEditDeleteOption={setEditDeleteOption}>

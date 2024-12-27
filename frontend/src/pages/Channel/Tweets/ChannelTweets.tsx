@@ -4,15 +4,13 @@ import thumbnail from "../../../assets/thumbnail.png";
 import { IoImageOutline } from "react-icons/io5";
 import { twMerge } from "tailwind-merge";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
-import makeApiRequest from "../../../utils/MakeApiRequest";
+import makeApiRequest, { makeApiMediaRequest } from "../../../utils/MakeApiRequest";
 import { TweetType } from "../../../Types/Tweet.type";
 import { ChannelInfoType } from "../../../Types/Channel.type";
 import { EditDeleteType } from "../../../Types/EditDelete.type";
-import { BASE_URL } from "../../../Constants";
 import { useImage } from "../../../hooks/useImage";
-import DeleteVideoModal from "../../../components/Popup/DeleteVideoModal";
+import DeleteModal from "../../../components/Popup/DeleteModal";
 import toast from "react-hot-toast";
-import axios from "axios";
 
 interface ChannelInfoWrapper {
 	channelInfo: ChannelInfoType;
@@ -22,8 +20,8 @@ const ChannelTweets: React.FC = () => {
 	const [editDeleteOption, setEditDeleteOption] = React.useState<EditDeleteType>(
 		{ currentId: "", showEditModal: false, showDeleteModal: false, showEditDeletePopup: false });
 	const [addTweetText, setAddTweetText] = React.useState<string>("");
-	const { fileInputRef, imagePreview, newTweetImage, setNewTweetImage, setImagePreview,
-		handleImageChange, handleCancelClick } = useImage(setAddTweetText);
+	const { fileInputRef, imagePreview, newImage, handleImageChange, discardImageChange } =
+		useImage(setAddTweetText);
 	const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
 	const channelName = channelInfo?.fullName || "Channel Name";
 	const { adminName } = useParams<{ adminName: string }>();
@@ -31,6 +29,7 @@ const ChannelTweets: React.FC = () => {
 	const curUserName = "@" + localStorage.getItem("userName");
 	const [tweets, setTweets] = React.useState<TweetType[]>([]);
 	const userId = localStorage.getItem("userId") || "";
+	const avatarInfo = localStorage.getItem("avatar");
 	const navigate = useNavigate();
 
 	const setShowDeleteModal = (value: boolean) => {
@@ -45,47 +44,40 @@ const ChannelTweets: React.FC = () => {
 	const handleCreateTweet = () => {
 		if (addTweetText === "") return;
 
-		const formData = new FormData(); // supports multipart/form-data or binary data
-		formData.append("content", addTweetText);
-		if (newTweetImage)
-			formData.append("image", newTweetImage);
+		const data = new FormData();
+		data.append("content", addTweetText);
+		if (newImage) data.append("image", newImage);
 
-		const token = localStorage.getItem("accessToken");
-		axios.post(`${BASE_URL}/api/v1/tweets`, formData,
-			{
-				headers: {
-					"Content-Type": "multiform/form-data",
-					"Authorization": `Bearer ${token}`
-				}
-			}).then((response) => {
-				const responseData = response.data.data;
-				console.log("response:", responseData);
-				const avatar = localStorage.getItem("avatar");
-				const newTweet: TweetType = {
-					_id: responseData._id,
-					content: responseData.content,
-					likeStatus: 0,
-					likes: 0,
-					dislikes: 0,
-					comments: 0,
-					image: responseData?.image,
-					owner: {
-						_id: userId,
-						fullName: channelName,
-						userName: curUserName.substring(1),
-						avatar: avatar ? JSON.parse(avatar) : null
-					},
-					createdAt: responseData.createdAt,
-					updatedAt: responseData.updatedAt
-				}
-				setTweets([newTweet, ...tweets]);
-				toast.success("Tweet created successfully");
-				setAddTweetText("");
-				setNewTweetImage(null);
-				setImagePreview("");
-			}).catch((error) => {
-				console.error("Error fetching data:", error);
-			});
+		makeApiMediaRequest({
+			method: "post",
+			url: `/api/v1/tweets`,
+			data
+		}).then((response: any) => { // eslint-disable-line
+			const data = response.data;
+			console.log("data:", data);
+			const newTweet: TweetType = {
+				_id: data._id,
+				content: data.content,
+				likeStatus: 0,
+				likes: 0,
+				dislikes: 0,
+				comments: 0,
+				image: data?.image,
+				owner: {
+					_id: userId,
+					fullName: channelName,
+					userName: curUserName.substring(1),
+					avatar: avatarInfo ? JSON.parse(avatarInfo) : null
+				},
+				createdAt: data.createdAt,
+				updatedAt: data.updatedAt
+			}
+			setTweets([newTweet, ...tweets]);
+			toast.success("Tweet created successfully");
+			discardImageChange();
+		}).catch((error) => {
+			console.error("Error fetching data:", error);
+		});
 	}
 
 	useEffect(() => {
@@ -163,12 +155,12 @@ const ChannelTweets: React.FC = () => {
 						/>
 					</div>
 					<div className="flex gap-2 xs:gap-1">
-						<button onClick={handleCancelClick}
+						<button onClick={discardImageChange}
 							className="font-semibold text-primary-text xs:text-sm hover:bg-primary px-3 py-1 rounded-full duration-300">
 							Cancel
 						</button>
 						<button className={twMerge("px-3 py-1 rounded-full text-primary-text bg-primary xs:text-sm font-semibold opacity-75",
-							(addTweetText != "" || newTweetImage) && "opacity-100")}
+							(addTweetText != "" || newImage) && "opacity-100")}
 							onClick={handleCreateTweet}>
 							Tweet
 						</button>
@@ -177,10 +169,10 @@ const ChannelTweets: React.FC = () => {
 			</div>
 
 			{editDeleteOption.showDeleteModal &&
-				(<DeleteVideoModal Name="Tweet"
+				(<DeleteModal Name="Tweet"
 					Url={`/api/v1/tweets/${editDeleteOption.currentId}`}
 					setShowDeleteModal={setShowDeleteModal}>
-				</DeleteVideoModal>)
+				</DeleteModal>)
 			}
 
 			{/* Tweets */}

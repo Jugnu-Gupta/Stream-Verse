@@ -1,4 +1,4 @@
-export interface CommentType {
+interface CommentType {
 	owner: {
 		_id: string;
 		userName: string;
@@ -17,3 +17,5 @@ export interface CommentType {
 	createdAt: Date | string;
 	updatedAt: Date | string;
 }
+
+export type { CommentType };

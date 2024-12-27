@@ -6,7 +6,6 @@ import {
     getUserTweet,
     updateTweet,
     getTweetById,
-    updateTweetImage,
     deleteTweet,
 } from "../controllers/tweet.controller";
 
@@ -21,13 +20,10 @@ router.route("/user/:userId/:curUserId?").get(getUserTweet);
 // Update, delete tweet by id (secured route)
 router
     .route("/:tweetId")
-    .patch(verifyJWT, updateTweet)
+    .patch(verifyJWT, upload.single("image"), updateTweet)
     .delete(verifyJWT, deleteTweet);
 
 // Get tweet details by id
 router.route("/:tweetId/:userId?").get(getTweetById);
-
-// Update tweet image by id (secured route)
-router.route("/:tweetId/Image").patch(verifyJWT, updateTweetImage);
 
 export default router;

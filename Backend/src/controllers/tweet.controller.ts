@@ -9,7 +9,6 @@ import { ApiError } from "../utils/apiError";
 import { ApiResponse } from "../utils/apiResponse";
 import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary";
 import { UploadApiResponse } from "cloudinary";
-import fs from "fs";
 
 interface RequestWithUser extends Request {
     user: UserType;
@@ -393,37 +392,11 @@ const updateTweet = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
         const { tweetId }: UpdateTweetParams = req.params;
         const { content }: UpdateTweetBody = req.body;
+        const imageLocalPath: string | undefined = req.file?.path;
         if (!tweetId || !content) {
-            throw new ApiError(400, "Tweet id and Content are required");
-        }
-
-        const tweet = await Tweet.findByIdAndUpdate(
-            tweetId,
-            { $set: { content } },
-            { new: true }
-        );
-        if (!tweet) {
-            throw new ApiError(500, "Failed to update tweet");
-        }
-
-        return res
-            .status(200)
-            .json(new ApiResponse(200, tweet, "Tweet updated successfully"));
-    }
-);
-
-interface UpdateTweetImageParams {
-    tweetId?: string;
-}
-
-const updateTweetImage = asyncHandler(
-    async (req: RequestWithUser, res: Response) => {
-        const { tweetId }: UpdateTweetImageParams = req.params;
-        const ImageLocalPath: string | undefined = req.file?.path;
-        if (!tweetId || !ImageLocalPath) {
             const message = !tweetId
                 ? "Tweet id is required"
-                : "Image is required";
+                : "Image or content are required";
             throw new ApiError(400, message);
         }
 
@@ -432,30 +405,35 @@ const updateTweetImage = asyncHandler(
             throw new ApiError(404, "No tweet found");
         }
 
-        if (tweet?.image?.publicId) {
-            const oldImage = await deleteFromCloudinary(
-                tweet.image.publicId,
-                "image"
-            );
-            if (!oldImage) {
-                fs.unlinkSync(ImageLocalPath);
-                throw new ApiError(500, "Failed to delete old image");
-            }
-        }
+        // if (tweet?.image?.publicId && imageLocalPath) {
+        //     const oldImage = await deleteFromCloudinary(
+        //         tweet.image.publicId,
+        //         "image"
+        //     );
+        //     if (!oldImage) {
+        //         fs.unlinkSync(imageLocalPath);
+        //         throw new ApiError(500, "Failed to delete old image");
+        //     }
+        // }
 
-        const Image = await uploadOnCloudinary(ImageLocalPath, "image");
-        if (!Image) {
-            throw new ApiError(500, "Failed to upload image");
-        }
+        // let uploadImage: UploadApiResponse | null = null;
+        // if (imageLocalPath) {
+        //     uploadImage = await uploadOnCloudinary(imageLocalPath, "image");
+        //     if (!uploadImage) {
+        //         throw new ApiError(500, "Failed to upload image");
+        //     }
+        // }
 
-        tweet.image = { publicId: Image.public_id, url: Image.secure_url };
-        await tweet.save({ validateBeforeSave: false });
+        // tweet.image = {
+        //     publicId: uploadImage.public_id,
+        //     url: uploadImage.secure_url,
+        // };
+        if (content) tweet.content = content;
+        await tweet.save();
 
         return res
             .status(200)
-            .json(
-                new ApiResponse(200, tweet, "Tweet image updated successfully")
-            );
+            .json(new ApiResponse(200, tweet, "Tweet updated successfully"));
     }
 );
 
@@ -625,11 +603,4 @@ const deleteTweet = asyncHandler(
     }
 );
 
-export {
-    createTweet,
-    getUserTweet,
-    updateTweet,
-    getTweetById,
-    updateTweetImage,
-    deleteTweet,
-};
+export { createTweet, getUserTweet, updateTweet, getTweetById, deleteTweet };

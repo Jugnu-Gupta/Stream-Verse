@@ -20,8 +20,7 @@ const ChannelInfo: React.FC<ChannelInfoProps> = ({ channelInfo }) => {
     return (
         <>
             <div className="w-full">
-                <img
-                    src={Background}
+                <img src={Background}
                     alt="Background"
                     className="w-full aspect-[5] rounded-2xl object-cover"
                 />
@@ -29,8 +28,7 @@ const ChannelInfo: React.FC<ChannelInfoProps> = ({ channelInfo }) => {
             <div className="flex items-center justify-between">
                 <div className="flex mt-4 gap-4 items-center w-fit mr-2">
                     <div>
-                        <img
-                            src={Background}
+                        <img src={Background}
                             alt="Background"
                             className="w-28 xs:w-24 aspect-square rounded-full"
                         />
@@ -45,16 +43,13 @@ const ChannelInfo: React.FC<ChannelInfoProps> = ({ channelInfo }) => {
                 </div>
 
                 <div className="flex flex-wrap justify-end w-fit">
-                    <button
-                        onClick={() => navigate(`/${adminName}/dashboard`)}
-                        className={twMerge("bg-primary text-primary-text font-semibold px-4 py-1 mt-4 xs:px-3 xs:text-sm rounded-md hover:bg-white hover:text-primary duration-300",
+                    <button onClick={() => navigate(`/${adminName}/dashboard`)}
+                        className={twMerge("bg-primary text-primary-text font-semibold px-4 py-1 mt-4 xs:px-3 xs:text-sm rounded-md hover:scale-105 duration-300",
                             adminName !== curUserName && "hidden")}>
                         Dashboard
                     </button>
-                    {
-                        adminName !== curUserName &&
-                        <button
-                            onClick={() => setIsSubscribed(!isSubscribed)}
+                    {adminName !== curUserName &&
+                        <button onClick={() => setIsSubscribed(!isSubscribed)}
                             className={twMerge(
                                 "bg-subscribe text-primary-text font-semibold px-4 py-1 mt-4 xs:px-3 xs:text-sm rounded-md hover:scale-105 duration-300 ml-2",
                                 isSubscribed && "bg-primary"

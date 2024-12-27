@@ -12,7 +12,7 @@ import makeApiRequest from "../../utils/MakeApiRequest";
 import { formatDateToNow } from "../../utils/FormatDateToNow";
 import { addComments, updateComment } from "../../context/slices/CommentSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../context/Store";
+import { AppDispatch, RootState } from "../../context/store";
 import { CommentType } from "../../Types/Comment.type";
 import { selectReplies } from "../../pages/Tweet/SelectReplies";
 import AddComment from "./AddComment";
@@ -43,9 +43,9 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 	const UploadedAt = formatDateToNow(new Date(comment.createdAt));
 	const channelName = "@" + (comment?.owner?.userName || "Channel Name");
 	const curUserName = localStorage.getItem("userName");
+	const dispatch = useDispatch<AppDispatch>();
 	const commentId = comment?._id;
 	const navigate = useNavigate();
-	const dispatch = useDispatch();
 
 	useEffect(() => {
 		if (textAreaRef.current) {
@@ -178,6 +178,7 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 				{channelName === `@${curUserName}` &&
 					(<EditDeleteComment
 						commentId={commentId}
+						commentText={comment?.content}
 						setCommentText={setCommentText}
 						editDeleteOption={editDeleteOption}
 						setEditDeleteOption={setEditDeleteOption}>

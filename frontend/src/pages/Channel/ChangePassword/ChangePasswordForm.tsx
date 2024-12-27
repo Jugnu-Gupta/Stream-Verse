@@ -5,6 +5,7 @@ import { ChangePasswordValidationSchema } from './ChangePasswordValidationSchema
 import toast from 'react-hot-toast';
 import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa";
+import { twMerge } from 'tailwind-merge';
 
 interface ChangePasswordFormProps {
     email: string | undefined;
@@ -115,8 +116,9 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({ email }) => {
                 </button>
                 <button
                     type="submit"
-                    className="px-3 py-1 mb-1 tracking-wide font-semibold 
-                    rounded-md bg-primary outline-none">
+                    className={twMerge(["px-3 py-1 mb-1 tracking-wide font-semibold",
+                        "rounded-md bg-primary outline-none border-2 border-primary-border",
+                        (values.curPassword === "" || values.newPassword === "" || values.confirmPassword === "") && "opacity-75"])}>
                     Update Password
                 </button>
             </div>

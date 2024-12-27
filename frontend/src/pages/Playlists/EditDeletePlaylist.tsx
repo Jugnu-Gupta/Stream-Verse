@@ -81,7 +81,7 @@ const EditDeletePlaylist: React.FC<EditPlaylistProps> = ({ playlistId, playlist_
                         className="rounded-md p-1 mb-1 outline-none text-black font-semibold"
                         placeholder="Playlist name"
                     />
-                    <button className="bg-primary text-primary-text outline-none font-semibold px-3 py-1 xs:text-sm rounded-md mt-2 w-full"
+                    <button className="bg-primary text-primary-text outline-none font-semibold px-3 py-1 xs:text-sm rounded-md mt-2 w-full border-2 border-primary-border"
                         onClick={handleEditPlaylist}>
                         Save Changes
                     </button>

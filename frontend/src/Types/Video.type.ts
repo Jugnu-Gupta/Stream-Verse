@@ -1,4 +1,4 @@
-export interface VideoType {
+interface VideoType {
 	_id: string;
 	title: string;
 	description: string;
@@ -21,7 +21,7 @@ export interface VideoType {
 	createdAt: Date;
 }
 
-export interface VideoDetailsType extends VideoType {
+interface VideoDetailsType extends VideoType {
 	likeStatus: number;
 	isPublished: boolean;
 	quality: string;
@@ -34,3 +34,21 @@ export interface VideoDetailsType extends VideoType {
 		publicId: string;
 	};
 }
+
+interface DashboardVideoType {
+	_id: string;
+	title: string;
+	description: string;
+	thumbnail: {
+		url: string;
+		publicId: string;
+	};
+	views: number;
+	likes: number;
+	dislikes: number;
+	isPublished: boolean;
+	createdAt: Date;
+	updatedAt: Date;
+}
+
+export type { VideoType, VideoDetailsType, DashboardVideoType };

@@ -5,6 +5,8 @@ import { twMerge } from 'tailwind-merge';
 import { addComments } from '../../context/slices/CommentSlice';
 import { useDispatch } from 'react-redux';
 import { increaseCount } from '../../context/slices/counterSlice';
+import { AppDispatch } from '../../context/store';
+import { CommentType } from '../../Types/Comment.type';
 
 interface AddCommentProps {
     setGiveReply?: Dispatch<SetStateAction<boolean>>;
@@ -17,11 +19,11 @@ interface AddCommentProps {
 const AddComment: React.FC<AddCommentProps> = ({ setGiveReply, avatarStyle, entityType, entityId, parentId, currPath }) => {
     const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
     const [addCommentText, setAddCommentText] = React.useState<string>("");
-    const userId = localStorage.getItem("userId");
-    const userName = localStorage.getItem("userName");
-    const fullName = localStorage.getItem("fullName");
+    const userId = localStorage.getItem("userId") || "";
+    const userName = localStorage.getItem("userName") || "";
+    const fullName = localStorage.getItem("fullName") || "";
     const avatarInfo = localStorage.getItem("avatar");
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
 
     useEffect(() => {
         if (textAreaRef.current) {
@@ -42,8 +44,7 @@ const AddComment: React.FC<AddCommentProps> = ({ setGiveReply, avatarStyle, enti
             },
         }).then((response: any) => { // eslint-disable-line
             const data = response.data;
-            console.log("Comment Response:", data);
-            const child = {
+            const child: CommentType = {
                 owner: {
                     _id: userId,
                     avatar: avatarInfo ? JSON.parse(avatarInfo) : null,

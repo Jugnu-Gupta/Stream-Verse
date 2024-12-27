@@ -15,7 +15,6 @@ const ChannelLayout: React.FC = () => {
             method: "get",
             url: `/api/v1/users/channel/${adminName?.substring(1)}`,
         }).then((response: any) => { // eslint-disable-line
-            console.log("Fetched ChannelInfo2:", response.data);
             setChannelInfo(response.data);
         }).catch((error) => {
             console.error("Error fetching data:", error);

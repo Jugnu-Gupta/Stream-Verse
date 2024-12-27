@@ -17,7 +17,6 @@ const VideoListView: React.FC<VideoListViewProps> = ({ videoInfo }) => {
 	const ownerName = videoInfo?.owner?.userName || "Channel Name";
 	const title = videoInfo?.title || "Video Title";
 	const videoId = videoInfo?._id || "";
-	// const thumbnail = videoInfo?.thumbnail || "https://via.placeholder.com/150";
 
 	return (
 		<div className="flex gap-4 p-2 group w-full justify-start">

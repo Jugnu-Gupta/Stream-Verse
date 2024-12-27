@@ -13,10 +13,12 @@ import useLikeDislike from "../../../hooks/useLikeDislike";
 import { computeDislikeCount, computeLikeCount }
 	from "../../../utils/ComputeLikeDislikeCount";
 import { EditDeleteWrapper } from "../../../Types/EditDelete.type";
+import { makeApiMediaRequest } from "../../../utils/MakeApiRequest";
 import EditDeleteTweet from "./EditDeleteTweet";
-import toast from "react-hot-toast";
-import makeApiRequest from "../../../utils/MakeApiRequest";
+import { IoImageOutline } from "react-icons/io5";
+import { useImage } from "../../../hooks/useImage";
 import { twMerge } from "tailwind-merge";
+import toast from "react-hot-toast";
 
 interface ChannelTweetListProps extends EditDeleteWrapper {
 	tweetInfo: TweetType | undefined;
@@ -30,9 +32,12 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo, editDele
 	const channelName = tweetInfo?.owner?.fullName || "channel Name";
 	const dislikes = computeDislikeCount(tweetInfo?.dislikes, tweetInfo?.likeStatus, isDisliked);
 	const likes = computeLikeCount(tweetInfo?.likes, tweetInfo?.likeStatus, isLiked);
+	const { fileInputRef, imagePreview, newImage, handleImageChange, discardImageChange } =
+		useImage();
 	const comments = formatNumber(tweetInfo?.comments);
+	const tweetImage = tweetInfo?.image?.url;
 
-	const tweetId = tweetInfo?._id || "";
+	const tweetId = tweetInfo?._id;
 	const [description, setDescription] = React.useState<string>(tweetInfo?.content || "description");
 	const [tweetText, setTweetText] = React.useState<string>(description);
 	const showContent = (editDeleteOption.currentId === tweetId && editDeleteOption.showEditModal)
@@ -40,12 +45,15 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo, editDele
 
 	const handleEditTweet = () => {
 		if (tweetText === "" || tweetId === "") return;
-		makeApiRequest({
+
+		const data = new FormData();
+		data.append("content", tweetText);
+		if (newImage) data.append("image", newImage);
+
+		makeApiMediaRequest({
 			method: "patch",
 			url: `/api/v1/tweets/${tweetId}`,
-			data: {
-				content: tweetText
-			}
+			data
 		}).then(() => {
 			toast.success("Tweet updated successfully");
 			setEditDeleteOption({ ...editDeleteOption, showEditModal: false });
@@ -55,9 +63,10 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo, editDele
 		});
 	};
 
-	const handleEditClick = () => {
+	const handleEditCancel = () => {
 		setEditDeleteOption({ ...editDeleteOption, showEditModal: false });
 		setTweetText(description);
+		discardImageChange();
 	}
 
 	useEffect(() => {
@@ -95,26 +104,44 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo, editDele
 						{readMore ? "Show less" : "Read more"}
 					</button>
 				)}
-
 			</div>
-			{thumbnail && (
-				<Link to={`/tweets/${tweetId}`}>
-					<div className="overflow-hidden rounded-lg m-2 w-fit">
-						<img src={thumbnail} alt="thumbnail"
-							className="rounded-lg w-full aspect-auto" />
-					</div>
-				</Link>
-			)}
+
+			<div className="w-full mb-3">
+				{(imagePreview || tweetImage) &&
+					<img src={imagePreview ? imagePreview : tweetImage}
+						alt="selected"
+						className="w-full h-full object-cover rounded-xl"
+					/>
+				}
+			</div>
 			{editDeleteOption.currentId === tweetId && editDeleteOption.showEditModal ?
-				<div className="flex justify-end gap-3 font-semibold tracking-wide">
-					<button onClick={handleEditClick}
-						className="text-sm hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
-						Cancel
-					</button>
-					<button onClick={handleEditTweet}
-						className={twMerge("text-sm bg-background-secondary px-2 py-1 rounded-xl duration-300", tweetText === "" && "opacity-75")}>
-						Save
-					</button>
+				<div className="flex justify-between gap-3 font-semibold tracking-wide">
+					<div className="w-fit text-primary-text">
+						<label htmlFor="image-update"
+							className="bg-primary flex gap-2 xs:gap-1 items-center px-3 py-1 rounded-2xl cursor-pointer text-sm">
+							<IoImageOutline className="text-lg xs:text-base text-primary-icon" />
+							<span className="xs:text-sm text-primary-text">Image</span>
+						</label>
+
+						<input type="file"
+							ref={fileInputRef}
+							id="image-update"
+							name="image"
+							accept="image/png,image/jpeg"
+							className="hidden"
+							onChange={(e) => handleImageChange(e, 1024 * 1024)}
+						/>
+					</div>
+					<div className="flex gap-2 xs:gap-1">
+						<button onClick={handleEditCancel}
+							className="text-sm hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
+							Cancel
+						</button>
+						<button onClick={handleEditTweet}
+							className={twMerge("text-sm bg-background-secondary px-2 py-1 rounded-xl duration-300", tweetText === "" && "opacity-75")}>
+							Save
+						</button>
+					</div>
 				</div>
 				:
 				<div className="flex justify-start gap-3 font-semibold tracking-wide">
@@ -137,9 +164,10 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo, editDele
 				</div>
 			}
 		</div>
-		<EditDeleteTweet tweetId={tweetId}
+		<EditDeleteTweet tweetId={tweetId || ""}
 			tweetText={description}
 			setTweetText={setTweetText}
+			discardImageChange={discardImageChange}
 			editDeleteOption={editDeleteOption}
 			setEditDeleteOption={setEditDeleteOption}>
 		</EditDeleteTweet>
