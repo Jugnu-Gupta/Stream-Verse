@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import CommentCard from "../../components/Comment/CommentCard";
 import { useNavigate } from "react-router-dom";
 import makeApiRequest from "../../utils/MakeApiRequest";
-import { addComments, deleteComment } from "../../context/slices/CommentSlice";
+import { addComments, clearComments, deleteComment } from "../../context/slices/CommentSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { CommentType } from "../../Types/Comment.type";
 import AddComment from "../../components/Comment/AddComment";
@@ -12,6 +12,7 @@ import { setCounter } from "../../context/slices/counterSlice";
 import { formatNumber } from "../../utils/FormatNumber";
 import { EditDeleteType } from "../../Types/EditDelete.type";
 import DeleteVideoModal from "../../components/Popup/DeleteVideoModal";
+
 interface VideoCommentsProps {
 	videoId: string;
 	noOfComments: number;
@@ -40,6 +41,10 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ videoId, noOfComments }) 
 	useEffect(() => {
 		dispatch(setCounter({ value: noOfComments }));
 	}, [noOfComments, dispatch]);
+
+	useEffect(() => {
+		dispatch(clearComments());
+	}, [dispatch]);
 
 	useEffect(() => {
 		if (!videoId || comments?.length) return;
