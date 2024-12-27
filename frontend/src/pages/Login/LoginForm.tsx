@@ -37,7 +37,7 @@ const LoginForm: React.FC = () => {
 				localStorage.setItem("userName", responseData.user.userName);
 				localStorage.setItem("fullName", responseData.user.fullName);
 				localStorage.setItem("email", responseData.user.email);
-				// localStorage.setItem("avatar", responseData.user.avatar.url);
+				localStorage.setItem("avatar", JSON.stringify(responseData.user.avatar));
 				// localStorage.setItem("cover", responseData.user.coverImage.url);
 
 				navigate("/");

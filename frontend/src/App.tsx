@@ -102,7 +102,7 @@ function App() {
 				<Route path="email-verification" element={<EmailVerification />} />
 
 				{/* Catch-all for undefined routes */}
-				<Route path="*" element={<Register />} />
+				{/* <Route path="*" element={<Register />} /> */}
 			</Routes>
 		</BrowserRouter >
 	);

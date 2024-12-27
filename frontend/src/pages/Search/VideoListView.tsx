@@ -16,11 +16,12 @@ const VideoListView: React.FC<VideoListViewProps> = ({ videoInfo }) => {
 	const description = videoInfo?.description || "This is a video description";
 	const ownerName = videoInfo?.owner?.userName || "Channel Name";
 	const title = videoInfo?.title || "Video Title";
+	const videoId = videoInfo?._id || "";
 	// const thumbnail = videoInfo?.thumbnail || "https://via.placeholder.com/150";
 
 	return (
 		<div className="flex gap-4 p-2 group w-full justify-start">
-			<Link to="/video/:videoId">
+			<Link to={`/video/${videoId}`}>
 				<div className="overflow-hidden rounded-xl max-w-md w-fit relative">
 					<img
 						src={thumbnail}
@@ -33,7 +34,7 @@ const VideoListView: React.FC<VideoListViewProps> = ({ videoInfo }) => {
 				</div>
 			</Link>
 			<div className="flex flex-col text-primary-text sm:w-2/3">
-				<Link to="/video/:videoId">
+				<Link to={`/video/${videoId}`}>
 					<h2 className="font-semibold text-lg truncate-lines-2">{title}</h2>
 					<p className="text-xs text-nowrap mb-3 mt-1 text-primary-text2">
 						{views} views · {uploadedAt}
@@ -51,7 +52,7 @@ const VideoListView: React.FC<VideoListViewProps> = ({ videoInfo }) => {
 						</p>
 					</div>
 				</Link>
-				<Link to="/video/:videoId">
+				<Link to={`/video/${videoId}`}>
 					<p className="text-sm">{description}</p>
 				</Link>
 			</div>

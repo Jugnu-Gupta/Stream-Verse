@@ -40,6 +40,7 @@ const EditDeletePlaylist: React.FC<EditPlaylistProps> = ({ playlistId, playlist_
                 showDeleteModal: false,
                 showEditDeletePopup: false
             });
+            setPlaylistName(playlist_Name);
         } else {
             setEditDeleteOption({
                 currentId: playlistId,

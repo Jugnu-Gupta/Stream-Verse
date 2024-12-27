@@ -13,4 +13,23 @@ const storage = multer.diskStorage({
     },
 });
 
-export const upload = multer({ storage: storage });
+export const upload = multer({
+    storage: storage,
+    limits: { fileSize: 1024 * 1024 }, // 1MB
+    fileFilter: (req, file, cb) => {
+        const filetypes = /jpeg|jpg|png|jfif|pjp|pjpeg/;
+        const extname = filetypes.test(
+            path.extname(file.originalname).toLowerCase()
+        );
+
+        if (extname) {
+            return cb(null, true);
+        } else {
+            cb(
+                new Error(
+                    "Images only of one of the type jpeg, jpg, png, jfif, pjpand pjpeg!"
+                )
+            );
+        }
+    },
+});

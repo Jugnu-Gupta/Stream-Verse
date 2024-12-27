@@ -1,13 +1,16 @@
 import axios, { AxiosRequestConfig } from "axios";
-// import makeApiRequest from "./MakeApiRequest";
+import makeApiRequest from "./MakeApiRequest";
+import { BASE_URL } from "../Constants";
 
-let isRefreshing = false; // Tracks if a refresh token request is in progress
+// Tracks if a refresh token request is in progress
+let isRefreshing = false;
 let failedQueue: {
 	resolve: (value?: unknown) => void;
 	reject: (reason?: unknown) => void;
 }[] = []; // Queue to hold pending requests
 
-const processQueue = (error: any, token: string | null = null) => {
+// eslint-disable-next-line
+const processQueue = (error: any, token: string | null) => {
 	failedQueue.forEach((prom) => {
 		if (token) {
 			prom.resolve(token);
@@ -19,7 +22,7 @@ const processQueue = (error: any, token: string | null = null) => {
 };
 
 const axiosInstance = axios.create({
-	baseURL: "http://localhost:4000",
+	baseURL: BASE_URL,
 	// timeout: 10000,
 	headers: {
 		"Content-Type": "application/json",
@@ -63,17 +66,16 @@ axiosInstance.interceptors.response.use(
 			try {
 				// Perform the refresh token request
 				const refreshToken = localStorage.getItem("refreshToken");
-				const response: any = await axios.post(
-					"http://localhost:4000/api/v1/auths/refresh-token",
-					{ refreshToken }
-				);
+				// eslint-disable-next-line
+				const { data }: any = await makeApiRequest({
+					method: "post",
+					url: "/api/v1/auths/refresh-token",
+					data: { refreshToken },
+				});
 
-				const newAccessToken = response.data.accessToken; // Replace with the actual field from the response
+				const newAccessToken = data.accessToken; // Replace with the actual field from the response
 				localStorage.setItem("accessToken", newAccessToken);
-				localStorage.setItem(
-					"refreshToken",
-					response.data.refreshToken
-				);
+				localStorage.setItem("refreshToken", data.refreshToken);
 
 				processQueue(null, newAccessToken); // Resolve all pending requests with the new token
 				originalRequest.headers = originalRequest.headers || {};

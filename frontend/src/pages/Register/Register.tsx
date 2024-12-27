@@ -14,8 +14,7 @@ const Register: React.FC = () => {
 					<p className="text-white text-sm text-center pb-3">
 						Already have an account?
 					</p>
-					<button
-						onClick={() => navigate("/login")}
+					<button onClick={() => navigate("/login")}
 						className="bg-white px-3 py-1 tracking-wide rounded-lg text-sm font-semibold">
 						Sign In
 					</button>

@@ -18,6 +18,9 @@ const AddComment: React.FC<AddCommentProps> = ({ setGiveReply, avatarStyle, enti
     const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
     const [addCommentText, setAddCommentText] = React.useState<string>("");
     const userId = localStorage.getItem("userId");
+    const userName = localStorage.getItem("userName");
+    const fullName = localStorage.getItem("fullName");
+    const avatarInfo = localStorage.getItem("avatar");
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -43,8 +46,9 @@ const AddComment: React.FC<AddCommentProps> = ({ setGiveReply, avatarStyle, enti
             const child = {
                 owner: {
                     _id: userId,
-                    userName: "root",
-                    fullName: "root",
+                    avatar: avatarInfo ? JSON.parse(avatarInfo) : null,
+                    userName,
+                    fullName,
                 },
                 content: data.content,
                 _id: data._id,

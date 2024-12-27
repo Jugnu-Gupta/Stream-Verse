@@ -394,10 +394,7 @@ const updateTweet = asyncHandler(
         const { tweetId }: UpdateTweetParams = req.params;
         const { content }: UpdateTweetBody = req.body;
         if (!tweetId || !content) {
-            const message: string = !tweetId
-                ? "Tweet id is required"
-                : "Content is required";
-            throw new ApiError(400, message);
+            throw new ApiError(400, "Tweet id and Content are required");
         }
 
         const tweet = await Tweet.findByIdAndUpdate(

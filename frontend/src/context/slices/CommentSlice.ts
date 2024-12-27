@@ -101,6 +101,7 @@ const CommentSlice = createSlice({
 			state.children.forEach((child) => {
 				clearAllData(child);
 			});
+			state.children = [];
 		},
 		deleteComment: (state, action) => {
 			const { childPathIds } = action.payload;

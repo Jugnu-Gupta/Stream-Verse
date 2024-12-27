@@ -18,10 +18,12 @@ const RelatedVideo: React.FC<VideoListViewProps> = ({ heighlightVideo, videoInfo
 	const uploadedAt = formatDateToNow(videoInfo?.createdAt || new Date());
 	const title = videoInfo?.title || "Video Title";
 	const channelName = videoInfo?.owner?.fullName || "Channel Name";
+	const videoId = videoInfo?._id || "";
+	const ownerName = videoInfo?.owner?.userName || "Channel Name";
 
 	return (
 		<div className={twMerge("flex gap-2 p-2 pl-0 2lg:pl-2 group w-full", heighlightVideo == videoInfo?._id && "bg-background-secondary")}>
-			<Link to="/register" className="min-w-36 w-1/2 max-w-52">
+			<Link to={`/video/${videoId}`} className="min-w-36 w-1/2 max-w-52">
 				<div className="overflow-hidden rounded-xl max-w-md relative">
 					<img
 						src={thumbnail}
@@ -34,7 +36,7 @@ const RelatedVideo: React.FC<VideoListViewProps> = ({ heighlightVideo, videoInfo
 				</div>
 			</Link>
 			<div className="flex flex-col text-primary-text w-full overflow-hidden">
-				<Link to="/register" className="w-full">
+				<Link to={`/video/${videoId}`} className="w-full">
 					<h2 className="font-semibold truncate-lines-2 2lg:text-sm xs:text-base sm:text-[17px]">
 						{title}
 					</h2>
@@ -42,7 +44,7 @@ const RelatedVideo: React.FC<VideoListViewProps> = ({ heighlightVideo, videoInfo
 						{views} Views · {uploadedAt}
 					</p>
 				</Link>
-				<Link to="/login">
+				<Link to={`/${ownerName}/videos`}				>
 					<p className="text-primary-text2 hover:text-primary-text text-nowrap truncate 2lg:text-[13px] xs:text-sm sm:text-[15px]">
 						{channelName}
 					</p>

@@ -64,6 +64,7 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 			url: `/api/v1/comments/${entityType}/${entityId}/${commentId}${userId ? `?userId=${userId}` : ""}`,
 		}).then((RepliesResponse: any) => { // eslint-disable-line
 			const RepliesData = RepliesResponse.data?.comments || [];
+			console.log("RepliesData:", RepliesData);
 
 			dispatch(addComments({ childPathIds: currPath, childs: RepliesData }));
 		}).catch((error) => {
@@ -112,7 +113,7 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 					<div className="flex flex-col items-start my-2 text-sm">
 						<textarea ref={textAreaRef}
 							placeholder="Comment"
-							className={twMerge("w-full bg-transparent resize-none outline-none border-primary-border",
+							className={twMerge("w-full bg-transparent resize-none outline-none border-primary-border overflow-hidden",
 								(editDeleteOption.currentId === commentId && editDeleteOption.showEditModal) && "border-b-2"
 							)}
 							value={commentText}
@@ -177,6 +178,7 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 				{channelName === `@${curUserName}` &&
 					(<EditDeleteComment
 						commentId={commentId}
+						setCommentText={setCommentText}
 						editDeleteOption={editDeleteOption}
 						setEditDeleteOption={setEditDeleteOption}>
 					</EditDeleteComment>)

@@ -34,7 +34,7 @@ const Playlists: React.FC = () => {
 			setPlaylists(response.data?.playlists);
 		}).catch((error) => {
 			console.error("Error fetching data:", error);
-			// navigate("/");
+			navigate("/");
 		});
 	}, [navigate]);
 

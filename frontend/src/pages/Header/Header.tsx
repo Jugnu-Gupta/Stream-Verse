@@ -33,7 +33,8 @@ const Header: React.FC = () => {
 			setUserImage("");
 
 			setLoggedIn(false);
-			localStorage.removeItem("token");
+			localStorage.removeItem("accessToken");
+			localStorage.removeItem("refreshToken");
 			localStorage.removeItem("userId");
 			localStorage.removeItem("userName");
 			localStorage.removeItem("fullName");

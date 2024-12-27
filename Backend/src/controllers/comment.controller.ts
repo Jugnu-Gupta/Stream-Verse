@@ -272,22 +272,16 @@ const updateComment = asyncHandler(
 );
 
 // Recursive function to find all replies of a comment
-const findRepliesRec = async (commentId: string) => {
+const findRepliesRec = async (commentId: string): Promise<string[]> => {
     try {
         const replies = await Comment.find({ parentId: commentId });
-        console.log("commentId:", commentId);
-        console.log("replies:", replies);
-
         let result: string[] = [];
         for (let i = 0; i < replies.length; i++) {
-            const reply = replies[i];
-            const subReplies = await findRepliesRec(reply._id);
+            const subReplies = await findRepliesRec(replies[i]._id);
 
-            result.concat(reply._id);
-            result.concat(subReplies);
+            result.push(replies[i]._id.toString());
+            result = result.concat(subReplies);
         }
-        console.log("Return commentId:", commentId);
-        console.log("Return replies:", replies);
         return result;
     } catch (error) {
         throw new ApiError(500, "Failed to find replies");
@@ -304,35 +298,29 @@ const deleteComment = asyncHandler(
         if (!commentId) {
             throw new ApiError(400, "Comment id is required");
         }
-        console.log("comment1:", commentId);
 
         const comment = await Comment.findById(commentId);
         if (!comment) {
             throw new ApiError(404, "Comment not found");
         }
-        console.log("comment2:", comment);
 
         // Extract all replies/comments to be deleted.
         const commentIds = (await findRepliesRec(commentId)).concat(commentId);
 
-        console.log("commentIds:", commentIds);
-
-        // // delete comment, allReplies, and its likes
-        // const delComment = await Comment.deleteMany({
-        //     _id: { $in: commentIds },
-        // });
-        // const delLikes = await Like.deleteMany({
-        //     entityId: { $in: commentIds },
-        //     entityType: "comment",
-        // });
-        // console.log("delComment:", delComment);
-        // console.log("delLikes:", delLikes);
-        // if (!delComment?.acknowledged) {
-        //     throw new ApiError(500, "Failed to delete comment");
-        // }
-        // if (!delLikes?.acknowledged) {
-        //     throw new ApiError(500, "Failed to delete comment likes");
-        // }
+        // delete comment, allReplies, and its likes
+        const delComment = await Comment.deleteMany({
+            _id: { $in: commentIds },
+        });
+        const delLikes = await Like.deleteMany({
+            entityId: { $in: commentIds },
+            entityType: "comment",
+        });
+        if (!delComment?.acknowledged) {
+            throw new ApiError(500, "Failed to delete comment");
+        }
+        if (!delLikes?.acknowledged) {
+            throw new ApiError(500, "Failed to delete comment likes");
+        }
 
         return res
             .status(200)

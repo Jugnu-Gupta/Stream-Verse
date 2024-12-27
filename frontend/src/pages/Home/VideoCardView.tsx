@@ -15,10 +15,11 @@ const VideoCardView: React.FC<VideoCardViewProps> = ({ videoInfo }) => {
 	const uploadedAt = formatDateToNow(videoInfo?.updatedAt);
 	const ownerName = videoInfo?.owner?.userName || "Channel Name";
 	const title = videoInfo?.title || "Video Title";
+	const videoId = videoInfo?._id || "";
 
 	return (
 		<div className="flex flex-col gap-2 p-2 group max-w-[400px]">
-			<Link to="/video/:videoId">
+			<Link to={`/video/${videoId}`}>
 				<div className="overflow-hidden rounded-xl relative">
 					<img
 						src={thumbnail}
@@ -40,7 +41,7 @@ const VideoCardView: React.FC<VideoCardViewProps> = ({ videoInfo }) => {
 					</div>
 				</Link>
 				<div className="flex flex-col text-primary-text w-full">
-					<Link to="/video/:videoId">
+					<Link to={`/video/${videoId}`}>
 						<h2 className="font-bold w-full truncate">{title}</h2>
 						<p className="text-sm text-primary-text text-nowrap">
 							{views} views · {uploadedAt}
