@@ -3,7 +3,7 @@ import { RxCross2 } from "react-icons/rx";
 import thumbnail from '../../assets/thumbnail.png';
 import { useMedia } from '../../hooks/useMedia';
 import { makeApiMediaRequest } from '../../utils/MakeApiRequest';
-import { DashboardVideoType } from '../../Types/Video.type';
+import { DashboardVideoType } from '../../Types/Dashboard.type';
 import toast from 'react-hot-toast';
 import { twMerge } from 'tailwind-merge';
 

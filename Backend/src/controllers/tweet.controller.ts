@@ -64,15 +64,15 @@ const createTweet = asyncHandler(
 );
 
 interface GetUserTweetParams {
-    userId?: string;
+    userId: string;
     curUserId?: string;
 }
 
 const getUserTweet = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        let { userId, curUserId }: GetUserTweetParams = req.params;
+        let { userId, curUserId } = req.params as unknown as GetUserTweetParams;
         if (!isValidObjectId(userId)) {
-            throw new ApiError(400, "Invalid user id");
+            throw new ApiError(400, "Invalid user Id");
         }
         if (!isValidObjectId(curUserId)) {
             curUserId = null;
@@ -224,13 +224,13 @@ const getUserTweet = asyncHandler(
 );
 
 interface GetTweetByIdParams {
-    tweetId?: string;
+    tweetId: string;
     userId?: string;
 }
 
 const getTweetById = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        let { tweetId, userId }: GetTweetByIdParams = req.params;
+        let { tweetId, userId } = req.params as unknown as GetTweetByIdParams;
         if (!isValidObjectId(tweetId)) {
             throw new ApiError(400, "Invalid user id");
         }
@@ -383,7 +383,7 @@ const getTweetById = asyncHandler(
 );
 
 interface UpdateTweetParams {
-    tweetId?: string;
+    tweetId: string;
 }
 interface UpdateTweetBody {
     content?: string;
@@ -391,14 +391,14 @@ interface UpdateTweetBody {
 
 const updateTweet = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { tweetId }: UpdateTweetParams = req.params;
+        const { tweetId } = req.params as unknown as UpdateTweetParams;
         const { content }: UpdateTweetBody = req.body;
         const imageLocalPath: string | undefined = req.file?.path;
-        if (!tweetId || !content) {
-            const message = !tweetId
-                ? "Tweet id is required"
-                : "Image or content are required";
-            throw new ApiError(400, message);
+        if (!isValidObjectId(tweetId)) {
+            throw new ApiError(400, "Invalid tweet Id");
+        }
+        if (!content) {
+            throw new ApiError(400, "Content is required");
         }
 
         const tweet = await Tweet.findById(tweetId);
@@ -439,7 +439,7 @@ const updateTweet = asyncHandler(
 );
 
 interface DeleteTweetParams {
-    tweetId?: string;
+    tweetId: string;
 }
 interface LikeType {
     _id: mongoose.Types.ObjectId;
@@ -450,8 +450,8 @@ interface CommentType {
 }
 const deleteTweet = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { tweetId }: DeleteTweetParams = req.params;
-        if (!tweetId) {
+        const { tweetId } = req.params as unknown as DeleteTweetParams;
+        if (!isValidObjectId(tweetId)) {
             throw new ApiError(400, "Tweet id is required");
         }
 

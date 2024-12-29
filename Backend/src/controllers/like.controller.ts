@@ -12,14 +12,14 @@ interface RequestWithUser extends Request {
 }
 
 interface ToggleLikeParams {
-    entityId?: string;
-    entityType?: string;
+    entityId: string;
+    entityType: string;
 }
 
 const toggleLike = asyncHandler(async (req: RequestWithUser, res: Response) => {
-    const { entityId, entityType }: ToggleLikeParams = req.params;
-    if (!entityId) {
-        throw new ApiError(400, "Video id is required");
+    const { entityId, entityType } = req.params as unknown as ToggleLikeParams;
+    if (!isValidObjectId(entityId)) {
+        throw new ApiError(400, "Invalid entity Id");
     }
     if (!["comment", "video", "tweet"].includes(entityType)) {
         throw new ApiError(400, "Invalid entity type");
@@ -62,15 +62,16 @@ const toggleLike = asyncHandler(async (req: RequestWithUser, res: Response) => {
 });
 
 interface ToggleDislikeParams {
-    entityId?: string;
-    entityType?: string;
+    entityId: string;
+    entityType: string;
 }
 
 const toggleDislike = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { entityId, entityType }: ToggleDislikeParams = req.params;
-        if (!entityId) {
-            throw new ApiError(400, "Video id is required");
+        const { entityId, entityType } =
+            req.params as unknown as ToggleDislikeParams;
+        if (!isValidObjectId(entityId)) {
+            throw new ApiError(400, "Invalid entity Id");
         }
         if (!["comment", "video", "tweet"].includes(entityType)) {
             throw new ApiError(400, "Invalid entity type");

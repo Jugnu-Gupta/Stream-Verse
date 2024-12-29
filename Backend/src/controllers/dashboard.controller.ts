@@ -171,7 +171,7 @@ const getAdminChannelVideos = asyncHandler(
             { $match: { ownerId: userId } },
             {
                 $lookup: {
-                    from: "Like",
+                    from: "likes",
                     let: { videoId: "$_id" },
                     pipeline: [
                         {
@@ -227,6 +227,7 @@ const getAdminChannelVideos = asyncHandler(
                     updatedAt: 1,
                 },
             },
+            { $sort: { createdAt: -1 } },
         ]);
 
         if (!videos?.length) {

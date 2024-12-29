@@ -67,11 +67,10 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setShowUploadVideo 
             method: "post",
             url: "/api/v1/videos",
             data
-        }).then((response) => {
-            console.log("response:", response);
+        }).then(() => {
             toast.success("Video uploaded successfully");
             setShowUploadVideo(false);
-            // window.location.reload();
+            window.location.reload();
         }).catch((error) => {
             console.error("Error uploading video:", error);
         })

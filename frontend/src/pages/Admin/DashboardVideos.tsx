@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import makeApiRequest from '../../utils/MakeApiRequest';
 import DashboardVideoStatsControl from "./DashboardVideoStatsControl";
-import { DashboardVideoType } from '../../Types/Video.type';
+import { DashboardVideoType } from '../../Types/Dashboard.type';
 
 const DashboardVideos: React.FC = () => {
     const navigate = useNavigate();

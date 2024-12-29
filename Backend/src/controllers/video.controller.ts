@@ -194,16 +194,13 @@ const uploadVideo = asyncHandler(
 );
 
 interface GetVideoByIdParams {
-    videoId?: string;
+    videoId: string;
     userId?: string;
 }
 
 const getVideoById = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        let { videoId, userId }: GetVideoByIdParams = req.params;
-        if (!videoId) {
-            throw new ApiError(400, "Video id is required");
-        }
+        let { videoId, userId } = req.params as unknown as GetVideoByIdParams;
         if (!isValidObjectId(videoId)) {
             throw new ApiError(400, "Invalid video id");
         }
@@ -376,7 +373,7 @@ const getVideoById = asyncHandler(
 );
 
 interface VideoUpdateParams {
-    videoId?: string;
+    videoId: string;
 }
 interface VideoUpdateBody {
     title?: string;
@@ -386,12 +383,12 @@ interface VideoUpdateBody {
 // controller to update video details like title, description, thumbnail
 const videoUpdate = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { videoId }: VideoUpdateParams = req.params;
+        const { videoId } = req.params as unknown as VideoUpdateParams;
         const { title, description }: VideoUpdateBody = req.body;
         const thumbnailLocalPath: string | undefined = req.file?.path;
 
-        if (!videoId) {
-            throw new ApiError(400, "Video id is required");
+        if (!isValidObjectId(videoId)) {
+            throw new ApiError(400, "Invalid Video Id");
         }
         if (!title && !description && !thumbnailLocalPath) {
             throw new ApiError(
@@ -447,7 +444,7 @@ const videoUpdate = asyncHandler(
 );
 
 interface DeleteVideoParams {
-    videoId?: string;
+    videoId: string;
 }
 interface LikeType {
     _id: mongoose.Types.ObjectId;
@@ -458,7 +455,7 @@ interface CommentType {
 }
 const deleteVideo = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { videoId }: DeleteVideoParams = req.params;
+        const { videoId } = req.params as unknown as DeleteVideoParams;
         if (!isValidObjectId(videoId)) {
             throw new ApiError(400, "Video id is required");
         }
@@ -491,7 +488,7 @@ const deleteVideo = asyncHandler(
             { $match: { _id: new mongoose.Types.ObjectId(videoId) } },
             {
                 $lookup: {
-                    from: "Like",
+                    from: "likes",
                     let: { videoId: "$_id" },
                     pipeline: [
                         {
@@ -515,7 +512,7 @@ const deleteVideo = asyncHandler(
             },
             {
                 $lookup: {
-                    from: "Comment",
+                    from: "comments",
                     let: { videoId: "$_id" },
                     pipeline: [
                         {
@@ -534,7 +531,7 @@ const deleteVideo = asyncHandler(
                         },
                         {
                             $lookup: {
-                                from: "Like",
+                                from: "likes",
                                 let: { commentId: "$_id" },
                                 pipeline: [
                                     {
@@ -634,14 +631,15 @@ const deleteVideo = asyncHandler(
 );
 
 interface ToggleVideoPublishStatusParams {
-    videoId?: string;
+    videoId: string;
 }
 
 const ToggleVideoPublishStatus = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { videoId }: ToggleVideoPublishStatusParams = req.params;
-        if (!videoId) {
-            throw new ApiError(400, "Video id is required");
+        const { videoId } =
+            req.params as unknown as ToggleVideoPublishStatusParams;
+        if (!isValidObjectId(videoId)) {
+            throw new ApiError(400, "Invalid video id");
         }
 
         const video = await Video.findById(videoId);

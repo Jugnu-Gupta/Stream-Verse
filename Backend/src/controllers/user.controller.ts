@@ -244,13 +244,13 @@ const updateUserCoverImage = asyncHandler(
 );
 
 interface GetUserChannelPageParams {
-    userName?: string;
+    userName: string;
 }
 const getUserChannelPage = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { userName }: GetUserChannelPageParams = req.params;
+        const { userName } = req.params as unknown as GetUserChannelPageParams;
         if (!userName) {
-            throw new ApiError(404, "Username is missing");
+            throw new ApiError(404, "User name is required");
         }
 
         const channel = await User.aggregate([
@@ -319,13 +319,14 @@ const getUserChannelPage = asyncHandler(
 );
 
 interface GetUserChannelVideosParams {
-    userName?: string;
+    userName: string;
 }
 const getUserChannelVideos = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { userName }: GetUserChannelVideosParams = req.params;
+        const { userName } =
+            req.params as unknown as GetUserChannelVideosParams;
         if (!userName) {
-            throw new ApiError(404, "Username is missing");
+            throw new ApiError(404, "User name is required");
         }
 
         const channelVideos = await User.aggregate([

@@ -32,7 +32,7 @@ const getComments = asyncHandler(
         let { page = 1, limit = 10, userId }: GetCommentsQuery = req.query;
 
         if (!isValidObjectId(entityId)) {
-            throw new ApiError(400, "Video id is required");
+            throw new ApiError(400, "Invalid entity Id");
         }
         if (!["video", "tweet"].includes(entityType)) {
             throw new ApiError(400, "Invalid entity type");
@@ -215,8 +215,11 @@ const createComment = asyncHandler(
         } = req.params as unknown as CreateCommentParams;
         const { content }: CreateCommentBody = req.body;
 
-        if (!content || !entityId) {
-            throw new ApiError(400, "Content and entityId are required");
+        if (!content) {
+            throw new ApiError(400, "Content is required");
+        }
+        if (!isValidObjectId(entityId)) {
+            throw new ApiError(400, "Invalid entity Id");
         }
         if (!["video", "tweet"].includes(entityType)) {
             throw new ApiError(400, "Invalid entity type");
@@ -241,17 +244,20 @@ const createComment = asyncHandler(
 );
 
 interface UpdateCommentParams {
-    commentId?: string;
+    commentId: string;
 }
 interface UpdateCommentBody {
     content?: string;
 }
 const updateComment = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { commentId }: UpdateCommentParams = req.params;
+        const { commentId } = req.params as unknown as UpdateCommentParams;
         const { content }: UpdateCommentBody = req.body;
-        if (!commentId || !content) {
-            throw new ApiError(400, "Comment id and content are required");
+        if (!content) {
+            throw new ApiError(400, "Content is required");
+        }
+        if (!isValidObjectId(commentId)) {
+            throw new ApiError(400, "Invalid comment id");
         }
 
         const comment = await Comment.findByIdAndUpdate(
@@ -289,14 +295,14 @@ const findRepliesRec = async (commentId: string): Promise<string[]> => {
 };
 
 interface DeleteCommentParams {
-    commentId?: string;
+    commentId: string;
 }
 
 const deleteComment = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { commentId }: DeleteCommentParams = req.params;
-        if (!commentId) {
-            throw new ApiError(400, "Comment id is required");
+        const { commentId } = req.params as unknown as DeleteCommentParams;
+        if (!isValidObjectId(commentId)) {
+            throw new ApiError(400, "Invalid Comment Id");
         }
 
         const comment = await Comment.findById(commentId);

@@ -7,6 +7,7 @@ import { FaPlus } from "react-icons/fa6";
 import UploadVideoModal from "../../components/Popup/UploadVideoModal";
 import makeApiRequest from '../../utils/MakeApiRequest';
 import { useNavigate } from 'react-router-dom';
+import { DashboardStatsType } from '../../Types/Dashboard.type';
 // import UploadingVideoModal from '../../components/Popup/UploadingVideoModal';
 
 
@@ -14,8 +15,7 @@ const DashboardStats: React.FC = () => {
     const navigate = useNavigate();
     const [showUploadVideo, setShowUploadVideo] = React.useState(false);
     // const [showUploadingVideo, setShowUploadingVideo] = React.useState(false);
-    const [stats, setStats] = React.useState<any>({});
-
+    const [stats, setStats] = React.useState<DashboardStatsType>();
     const Views = stats?.totalViews || 100;
     const Subscribers = stats?.totalSubscribers || 100;
     const Likes = stats?.totalLikes || 100;
@@ -25,8 +25,7 @@ const DashboardStats: React.FC = () => {
         makeApiRequest({
             method: "get",
             url: "/api/v1/dashboard/channel-stats",
-        }).then((response: any) => {
-            console.log("response:", response.data);
+        }).then((response: any) => { // eslint-disable-line
             setStats(response.data?.stats);
         }).catch((error) => {
             console.error("Error fetching data:", error);

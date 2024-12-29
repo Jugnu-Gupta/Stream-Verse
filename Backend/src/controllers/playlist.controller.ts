@@ -240,14 +240,15 @@ const getPlaylistById = asyncHandler(
 );
 
 interface AddVideoInPlaylistParams {
-    playlistId?: string;
-    videoId?: string;
+    playlistId: string;
+    videoId: string;
 }
 const addVideoInPlaylist = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { playlistId, videoId }: AddVideoInPlaylistParams = req.params;
-        if (!playlistId || !videoId) {
-            throw new ApiError(400, "Playlist id and video id are required");
+        const { playlistId, videoId } =
+            req.params as unknown as AddVideoInPlaylistParams;
+        if (!isValidObjectId(playlistId) || !isValidObjectId(videoId)) {
+            throw new ApiError(400, "Invalid playlist or video Id");
         }
 
         const playlist = await Playlist.findById(playlistId);
@@ -277,16 +278,16 @@ const addVideoInPlaylist = asyncHandler(
 );
 
 interface DeleteVideoFromPlaylistParams {
-    playlistId?: string;
-    videoId?: string;
+    playlistId: string;
+    videoId: string;
 }
 
 const deleteVideoFromPlaylist = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { playlistId, videoId }: DeleteVideoFromPlaylistParams =
-            req.params;
-        if (!playlistId || !videoId) {
-            throw new ApiError(400, "Playlist id and video id are required");
+        const { playlistId, videoId } =
+            req.params as unknown as DeleteVideoFromPlaylistParams;
+        if (!isValidObjectId(playlistId) || !isValidObjectId(videoId)) {
+            throw new ApiError(400, "Invalid playlist or video Id");
         }
 
         const playlist = await Playlist.findById(playlistId);
@@ -315,14 +316,14 @@ const deleteVideoFromPlaylist = asyncHandler(
 );
 
 interface DeletePlaylistParams {
-    playlistId?: string;
+    playlistId: string;
 }
 
 const deletePlaylist = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { playlistId }: DeletePlaylistParams = req.params;
-        if (!playlistId) {
-            throw new ApiError(400, "Playlist id is required");
+        const { playlistId } = req.params as unknown as DeletePlaylistParams;
+        if (!isValidObjectId(playlistId)) {
+            throw new ApiError(400, "Invalid playlist Id");
         }
 
         const playlist = await Playlist.findByIdAndDelete(playlistId);
@@ -337,17 +338,17 @@ const deletePlaylist = asyncHandler(
 );
 
 interface UpdatePlaylistParams {
-    playlistId?: string;
+    playlistId: string;
 }
 interface UpdatePlaylistBody {
     name?: string;
 }
 const updatePlaylist = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { playlistId }: UpdatePlaylistParams = req.params;
+        const { playlistId } = req.params as unknown as UpdatePlaylistParams;
         const { name }: UpdatePlaylistBody = req.body;
-        if (!playlistId) {
-            throw new ApiError(400, "Playlist id is required");
+        if (!isValidObjectId(playlistId)) {
+            throw new ApiError(400, "Invalid playlist Id");
         }
         if (!name) {
             throw new ApiError(400, "Name or description is required");

@@ -10,14 +10,13 @@ interface RequestWithUser extends Request {
     user: UserType;
 }
 interface ToggleSubscriptionParams {
-    channelId?: string;
+    channelId: string;
 }
 const toggleSubscription = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { channelId }: ToggleSubscriptionParams = req.params;
-
-        if (!channelId) {
-            throw new ApiError(400, "Channel id is required");
+        const { channelId } = req.params as unknown as ToggleSubscriptionParams;
+        if (!isValidObjectId(channelId)) {
+            throw new ApiError(400, "Invalid channel Id");
         }
 
         const subscription = await Subscription.findOneAndDelete({
@@ -51,13 +50,14 @@ const toggleSubscription = asyncHandler(
 );
 
 interface GetUserChannelSubscribersParams {
-    channelId?: string;
+    channelId: string;
 }
 const getUserChannelSubscribers = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { channelId }: GetUserChannelSubscribersParams = req.params;
-        if (!channelId) {
-            throw new ApiError(400, "Channel id is required");
+        const { channelId } =
+            req.params as unknown as GetUserChannelSubscribersParams;
+        if (!isValidObjectId(channelId)) {
+            throw new ApiError(400, "Invalid channel Id");
         }
 
         const subscribers = await Subscription.find({ channelId });
@@ -72,13 +72,14 @@ const getUserChannelSubscribers = asyncHandler(
 );
 
 interface GetSubscribedChannelsParams {
-    subscriberId?: string;
+    subscriberId: string;
 }
 const getSubscribedChannels = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { subscriberId }: GetSubscribedChannelsParams = req.params;
+        const { subscriberId } =
+            req.params as unknown as GetSubscribedChannelsParams;
         if (!isValidObjectId(subscriberId)) {
-            throw new ApiError(400, "Subscriber id is required");
+            throw new ApiError(400, "Invalid subscriber Id");
         }
 
         const subscriptions = await Subscription.aggregate([

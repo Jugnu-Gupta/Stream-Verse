@@ -20,7 +20,6 @@ const ChannelVideos: React.FC = () => {
 		});
 	}, [adminName]);
 
-
 	if (videos?.length === 0) {
 		return (
 			<div className="flex flex-col justify-between items-center text-center text-primary-text px-4 w-full max-w-6xl mx-auto mt-4 z-0 mb-4">
