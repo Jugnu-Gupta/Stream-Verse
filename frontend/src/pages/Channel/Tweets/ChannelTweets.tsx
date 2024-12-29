@@ -8,7 +8,7 @@ import makeApiRequest, { makeApiMediaRequest } from "../../../utils/MakeApiReque
 import { TweetType } from "../../../Types/Tweet.type";
 import { ChannelInfoType } from "../../../Types/Channel.type";
 import { EditDeleteType } from "../../../Types/EditDelete.type";
-import { useImage } from "../../../hooks/useImage";
+import { useMedia } from "../../../hooks/useMedia";
 import DeleteModal from "../../../components/Popup/DeleteModal";
 import toast from "react-hot-toast";
 
@@ -20,8 +20,8 @@ const ChannelTweets: React.FC = () => {
 	const [editDeleteOption, setEditDeleteOption] = React.useState<EditDeleteType>(
 		{ currentId: "", showEditModal: false, showDeleteModal: false, showEditDeletePopup: false });
 	const [addTweetText, setAddTweetText] = React.useState<string>("");
-	const { fileInputRef, imagePreview, newImage, handleImageChange, discardImageChange } =
-		useImage(setAddTweetText);
+	const { fileInputRef, mediaPreview, newMedia, handleMediaChange, discardMediaChange } =
+		useMedia(setAddTweetText);
 	const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
 	const channelName = channelInfo?.fullName || "Channel Name";
 	const { adminName } = useParams<{ adminName: string }>();
@@ -46,7 +46,7 @@ const ChannelTweets: React.FC = () => {
 
 		const data = new FormData();
 		data.append("content", addTweetText);
-		if (newImage) data.append("image", newImage);
+		if (newMedia) data.append("image", newMedia);
 
 		makeApiMediaRequest({
 			method: "post",
@@ -54,7 +54,6 @@ const ChannelTweets: React.FC = () => {
 			data
 		}).then((response: any) => { // eslint-disable-line
 			const data = response.data;
-			console.log("data:", data);
 			const newTweet: TweetType = {
 				_id: data._id,
 				content: data.content,
@@ -74,7 +73,7 @@ const ChannelTweets: React.FC = () => {
 			}
 			setTweets([newTweet, ...tweets]);
 			toast.success("Tweet created successfully");
-			discardImageChange();
+			discardMediaChange();
 		}).catch((error) => {
 			console.error("Error fetching data:", error);
 		});
@@ -87,8 +86,7 @@ const ChannelTweets: React.FC = () => {
 			method: "get",
 			url: `/api/v1/tweets/user/${channelId}${userId ? `/${userId}` : ""}`,
 		}).then((response: any) => { // eslint-disable-line
-			console.log("channelsResponse tweets:", response.data);
-			setTweets(response.data?.tweets);
+			setTweets(response.data?.tweets.reverse());
 		}).catch((error) => {
 			console.error("Error fetching data:", error);
 			navigate("/");
@@ -128,9 +126,9 @@ const ChannelTweets: React.FC = () => {
 					ref={textAreaRef}>
 				</textarea>
 
-				{imagePreview && (
+				{mediaPreview && (
 					<div className="w-full mb-3">
-						<img src={imagePreview}
+						<img src={mediaPreview}
 							alt="selected"
 							className="w-full h-full object-cover rounded-xl"
 						/>
@@ -151,16 +149,16 @@ const ChannelTweets: React.FC = () => {
 							name="image"
 							accept="image/png,image/jpeg"
 							className="hidden"
-							onChange={(e) => handleImageChange(e, 1024 * 1024)}
+							onChange={(e) => handleMediaChange(e, 1)}
 						/>
 					</div>
 					<div className="flex gap-2 xs:gap-1">
-						<button onClick={discardImageChange}
+						<button onClick={discardMediaChange}
 							className="font-semibold text-primary-text xs:text-sm hover:bg-primary px-3 py-1 rounded-full duration-300">
 							Cancel
 						</button>
 						<button className={twMerge("px-3 py-1 rounded-full text-primary-text bg-primary xs:text-sm font-semibold opacity-75",
-							(addTweetText != "" || newImage) && "opacity-100")}
+							(addTweetText != "" || newMedia) && "opacity-100")}
 							onClick={handleCreateTweet}>
 							Tweet
 						</button>

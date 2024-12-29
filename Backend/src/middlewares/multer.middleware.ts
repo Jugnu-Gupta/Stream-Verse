@@ -1,11 +1,20 @@
-import multer from "multer";
+import { Request } from "express";
+import multer, { FileFilterCallback, Multer } from "multer";
 import path from "path";
 
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
+    destination: (
+        req: Request,
+        file: Express.Multer.File,
+        cb: (error: Error | null, destination: string | undefined) => void
+    ) => {
         cb(null, "./public/temp");
     },
-    filename: (req, file, cb) => {
+    filename: (
+        req: Request,
+        file: Express.Multer.File,
+        cb: (error: Error | null, destination: string | undefined) => void
+    ) => {
         cb(
             null,
             file.fieldname + "-" + Date.now() + path.extname(file.originalname)
@@ -13,10 +22,12 @@ const storage = multer.diskStorage({
     },
 });
 
-export const upload = multer({
-    storage: storage,
-    limits: { fileSize: 1024 * 1024 }, // 1MB
-    fileFilter: (req, file, cb) => {
+const fileFilter = (
+    req: Request,
+    file: Express.Multer.File,
+    cb: FileFilterCallback
+) => {
+    if (file.fieldname === "image") {
         const filetypes = /jpeg|jpg|png|jfif|pjp|pjpeg/;
         const extname = filetypes.test(
             path.extname(file.originalname).toLowerCase()
@@ -25,11 +36,26 @@ export const upload = multer({
         if (extname) {
             return cb(null, true);
         } else {
-            cb(
-                new Error(
-                    "Images only of one of the type jpeg, jpg, png, jfif, pjpand pjpeg!"
-                )
-            );
+            cb(new Error("Images only of type jpeg,jpg,png,jfif,pjp,pjpeg!"));
         }
-    },
+    } else if (file.fieldname === "video") {
+        const filetypes = /mp4/;
+        const extname = filetypes.test(
+            path.extname(file.originalname).toLowerCase()
+        );
+
+        if (extname) {
+            return cb(null, true);
+        } else {
+            cb(new Error("Videos only of type mp4!"));
+        }
+    } else {
+        cb(new Error("Invalid file type!"));
+    }
+};
+
+export const upload = multer({
+    storage: storage,
+    limits: { fileSize: 50 * 1024 * 1024 },
+    fileFilter,
 });

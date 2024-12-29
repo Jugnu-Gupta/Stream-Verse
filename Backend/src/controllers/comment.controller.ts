@@ -170,7 +170,7 @@ const getComments = asyncHandler(
                     },
                 },
             },
-            { $sort: { createdAt: -1 } },
+            { $sort: { createdAt: 1 } },
             {
                 $project: {
                     owner: 1,
@@ -183,8 +183,8 @@ const getComments = asyncHandler(
                     updatedAt: 1,
                 },
             },
-            { $skip: skip },
-            { $limit: limit },
+            // { $skip: skip },
+            // { $limit: limit },
         ]);
 
         if (!comments) {

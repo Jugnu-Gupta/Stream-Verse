@@ -19,7 +19,7 @@ router
     .post(
         verifyJWT,
         upload.fields([
-            { name: "thumbnail", maxCount: 1 },
+            { name: "image", maxCount: 1 },
             { name: "video", maxCount: 1 },
         ]),
         uploadVideo

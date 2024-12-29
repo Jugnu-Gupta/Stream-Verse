@@ -9,8 +9,6 @@ import { ApiResponse } from "../utils/apiResponse";
 import { UserType } from "types/user.type";
 import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary";
 import { getVideoQuality } from "../utils/getVideoQuality";
-import { subscribe } from "diagnostics_channel";
-import path from "path";
 
 interface RequestWithUser extends Request {
     user: UserType;
@@ -121,13 +119,12 @@ const getAllVideo = asyncHandler(
 interface UploadVideoBody {
     title?: string;
     description?: string;
-    isPublished?: boolean;
 }
 interface UploadedFile {
     path: string;
 }
 interface CustomFiles {
-    thumbnail?: UploadedFile[];
+    image?: UploadedFile[];
     video?: UploadedFile[];
 }
 interface FileType {
@@ -136,18 +133,15 @@ interface FileType {
 
 const uploadVideo = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { title, description, isPublished }: UploadVideoBody = req.body;
-        if (!title || !description || !isPublished) {
+        const { title, description }: UploadVideoBody = req.body;
+        if (!title || !description) {
             const message = !title
                 ? "Title is required"
-                : !description
-                  ? "Description is required"
-                  : "isPublished is required";
+                : "Description is required";
             throw new ApiError(400, message);
         }
 
-        const thumbnailLocalPath = (req as FileType).files?.thumbnail?.[0]
-            ?.path;
+        const thumbnailLocalPath = (req as FileType).files?.image?.[0]?.path;
         const videoLocalPath = (req as FileType).files?.video?.[0]?.path;
         if (!videoLocalPath || !thumbnailLocalPath) {
             const message = !videoLocalPath
@@ -180,7 +174,6 @@ const uploadVideo = asyncHandler(
             description,
             duration: videoFile?.duration,
             ownerId: req.user?._id,
-            isPublished: isPublished,
         });
 
         // check if video is created
@@ -189,15 +182,14 @@ const uploadVideo = asyncHandler(
             throw new ApiError(500, "Failed to upload video");
         }
 
-        return res
-            .status(201)
-            .json(
-                new ApiResponse(
-                    201,
-                    uploadedVideo,
-                    "Video uploaded successfully"
-                )
-            );
+        return res.status(201).json(
+            new ApiResponse(
+                201,
+                null,
+                // uploadedVideo,
+                "Video uploaded successfully"
+            )
+        );
     }
 );
 
@@ -447,11 +439,10 @@ const videoUpdate = asyncHandler(
             throw new ApiError(500, "Failed to update video");
         }
 
-        return res
-            .status(200)
-            .json(
-                new ApiResponse(200, updatedVideo, "Video updated successfully")
-            );
+        return res.status(200).json(
+            new ApiResponse(200, null, "Video updated successfully")
+            // new ApiResponse(200, updatedVideo, "Video updated successfully")
+        );
     }
 );
 

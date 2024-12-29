@@ -204,6 +204,7 @@ const getUserTweet = asyncHandler(
                     ownerId: 0,
                 },
             },
+            { $sort: { createdAt: 1 } },
         ]);
 
         if (!tweets?.length) {

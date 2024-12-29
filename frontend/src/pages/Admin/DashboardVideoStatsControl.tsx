@@ -8,6 +8,7 @@ import DeleteModal from "../../components/Popup/DeleteModal";
 import { format } from "date-fns";
 import { formatNumber } from "../../utils/FormatNumber";
 import { DashboardVideoType } from "../../Types/Video.type";
+import makeApiRequest from "../../utils/MakeApiRequest";
 
 interface DashboardVideoStatsControlProps {
 	videoInfo: DashboardVideoType;
@@ -16,15 +17,24 @@ const DashboardVideoStatsControl: React.FC<DashboardVideoStatsControlProps> = ({
 	const [showEditVideo, setShowEditVideo] = React.useState<boolean>(false);
 	const [showDeleteVideo, setShowDeleteVideo] = React.useState<boolean>(false);
 	const divRef = React.useRef<HTMLDivElement>(null);
-	const [status, setStatus] = React.useState<boolean>(false);
+	const [status, setStatus] = React.useState<boolean>(videoInfo?.isPublished);
 	const likes = formatNumber(videoInfo?.likes);
 	const dislikes = formatNumber(videoInfo?.dislikes);
-	const title = videoInfo?.title || "Video Title";
+	const title = videoInfo?.title;
 	const uploadedAt = format(videoInfo.createdAt, "yyyy-MM-dd");
 
-	useEffect(() => {
-		setStatus(videoInfo?.isPublished);
-	}, [videoInfo]);
+	const updatePushishStatus = () => {
+		makeApiRequest({
+			method: "patch",
+			url: `/api/v1/videos/${videoInfo._id}/publish`,
+			data: { isPublished: !status }
+		}).then((response: any) => { // eslint-disable-line
+			console.log("response:", response);
+			setStatus(!status);
+		}).catch((error) => {
+			console.error("Error updating video status:", error);
+		});
+	}
 
 	useEffect(() => {
 		if (divRef.current) {
@@ -42,9 +52,8 @@ const DashboardVideoStatsControl: React.FC<DashboardVideoStatsControlProps> = ({
 	return (
 		<tr className="text-white border-primary-border border-2">
 			<td className="px-4 py-2 justify-items-center">
-				<div
-					ref={divRef}
-					onClick={() => setStatus(!status)}
+				<div ref={divRef}
+					onClick={updatePushishStatus}
 					className={twMerge(
 						"relative rounded-full h-[19px] w-9 px-1 cursor-pointer",
 						status ? "bg-primary" : "bg-primary-text"
@@ -86,8 +95,8 @@ const DashboardVideoStatsControl: React.FC<DashboardVideoStatsControlProps> = ({
 
 			<td className="text-center px-4 py-2 text-nowrap text-primary-icon">
 				<div className="text-start">
-					{showEditVideo && <EditVideoModal setShowEditVideo={setShowEditVideo} />}
-					{showDeleteVideo && <DeleteModal Name="Video" Url="/api/v1/videos" setShowDeleteModal={setShowDeleteVideo} />}
+					{showEditVideo && <EditVideoModal videoInfo={videoInfo} setShowEditVideo={setShowEditVideo} />}
+					{showDeleteVideo && <DeleteModal Name="Video" Url={`/api/v1/videos/${videoInfo._id}`} setShowDeleteModal={setShowDeleteVideo} />}
 				</div>
 
 				<button className="pr-2" onClick={() => setShowDeleteVideo(true)}><RiDeleteBin6Line /></button>

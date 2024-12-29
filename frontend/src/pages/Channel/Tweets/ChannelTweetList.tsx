@@ -16,7 +16,7 @@ import { EditDeleteWrapper } from "../../../Types/EditDelete.type";
 import { makeApiMediaRequest } from "../../../utils/MakeApiRequest";
 import EditDeleteTweet from "./EditDeleteTweet";
 import { IoImageOutline } from "react-icons/io5";
-import { useImage } from "../../../hooks/useImage";
+import { useMedia } from "../../../hooks/useMedia";
 import { twMerge } from "tailwind-merge";
 import toast from "react-hot-toast";
 
@@ -32,8 +32,8 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo, editDele
 	const channelName = tweetInfo?.owner?.fullName || "channel Name";
 	const dislikes = computeDislikeCount(tweetInfo?.dislikes, tweetInfo?.likeStatus, isDisliked);
 	const likes = computeLikeCount(tweetInfo?.likes, tweetInfo?.likeStatus, isLiked);
-	const { fileInputRef, imagePreview, newImage, handleImageChange, discardImageChange } =
-		useImage();
+	const { fileInputRef, mediaPreview, newMedia, handleMediaChange, discardMediaChange } =
+		useMedia();
 	const comments = formatNumber(tweetInfo?.comments);
 	const tweetImage = tweetInfo?.image?.url;
 
@@ -48,7 +48,7 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo, editDele
 
 		const data = new FormData();
 		data.append("content", tweetText);
-		if (newImage) data.append("image", newImage);
+		if (newMedia) data.append("image", newMedia);
 
 		makeApiMediaRequest({
 			method: "patch",
@@ -66,7 +66,7 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo, editDele
 	const handleEditCancel = () => {
 		setEditDeleteOption({ ...editDeleteOption, showEditModal: false });
 		setTweetText(description);
-		discardImageChange();
+		discardMediaChange();
 	}
 
 	useEffect(() => {
@@ -106,14 +106,14 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo, editDele
 				)}
 			</div>
 
-			<div className="w-full mb-3">
-				{(imagePreview || tweetImage) &&
-					<img src={imagePreview ? imagePreview : tweetImage}
+			<Link to={`/tweets/${tweetId}`} className="w-full mb-3">
+				{(mediaPreview || tweetImage) &&
+					<img src={mediaPreview ? mediaPreview : tweetImage}
 						alt="selected"
 						className="w-full h-full object-cover rounded-xl"
 					/>
 				}
-			</div>
+			</Link>
 			{editDeleteOption.currentId === tweetId && editDeleteOption.showEditModal ?
 				<div className="flex justify-between gap-3 font-semibold tracking-wide">
 					<div className="w-fit text-primary-text">
@@ -129,7 +129,7 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo, editDele
 							name="image"
 							accept="image/png,image/jpeg"
 							className="hidden"
-							onChange={(e) => handleImageChange(e, 1024 * 1024)}
+							onChange={(e) => handleMediaChange(e, 1)}
 						/>
 					</div>
 					<div className="flex gap-2 xs:gap-1">
@@ -155,7 +155,7 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo, editDele
 						{isDisliked ? <BiSolidDislike /> : <BiDislike />}
 						<span className="text-xs">{dislikes}</span>
 					</button>
-					<Link to="../../tweets/:tweetId">
+					<Link to={`/tweets/${tweetId}`}>
 						<button className="flex items-center gap-1 text-xl hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
 							<BiCommentDetail className="-scale-x-100" />
 							<span className="text-xs">{comments}</span>
@@ -167,7 +167,7 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo, editDele
 		<EditDeleteTweet tweetId={tweetId || ""}
 			tweetText={description}
 			setTweetText={setTweetText}
-			discardImageChange={discardImageChange}
+			discardImageChange={discardMediaChange}
 			editDeleteOption={editDeleteOption}
 			setEditDeleteOption={setEditDeleteOption}>
 		</EditDeleteTweet>

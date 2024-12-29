@@ -8,7 +8,7 @@ import ChannelNavbar from "../Navbar/ChannelNavbar";
 import makeApiRequest from "../../../utils/MakeApiRequest";
 import { formatNumber } from "../../../utils/FormatNumber";
 import { ChannelInfoType } from "../../../Types/Channel.type";
-import { useImage } from "../../../hooks/useImage";
+import { useMedia } from "../../../hooks/useMedia";
 
 const PersonalInformation: React.FC = () => {
     const [channelInfo, setChannelInfo] = React.useState<ChannelInfoType>();
@@ -17,10 +17,10 @@ const PersonalInformation: React.FC = () => {
     const adminName: string = "@" + localStorage.getItem("userName");
     const channelName: string = localStorage.getItem("fullName") || "Channel Title";
     const subscribers = formatNumber(channelInfo?.subscriberCount);
-    const { fileInputRef: coverFileRef, imagePreview: coverImgPreview, newImage: newCoverImg, handleImageChange: handleCoverImgChange, discardImageChange: discardCoverImgChange } =
-        useImage();
-    const { fileInputRef: avatarFileRef, imagePreview: avatarPreview, newImage: newavatar, handleImageChange: handleAvatarChange, discardImageChange: discardAvatarChange } =
-        useImage();
+    const { fileInputRef: coverFileRef, mediaPreview: coverImgPreview, newMedia: newCoverImg, handleMediaChange: handleCoverImgChange, discardMediaChange: discardCoverImgChange } =
+        useMedia();
+    const { fileInputRef: avatarFileRef, mediaPreview: avatarPreview, newMedia: newavatar, handleMediaChange: handleAvatarChange, discardMediaChange: discardAvatarChange } =
+        useMedia();
     const videos = formatNumber(channelInfo?.videoCount);
     const navigate = useNavigate();
 
@@ -52,7 +52,7 @@ const PersonalInformation: React.FC = () => {
                         <FiUpload className="text-white text-xl blur-xs" />
                     </label>
                     <input type="file" name="coverImage" id="coverImage" className="hidden" accept="image/png,image/jpeg"
-                        onChange={(e) => handleCoverImgChange(e, 1024 * 1024)} ref={coverFileRef} />
+                        onChange={(e) => handleCoverImgChange(e, 1)} ref={coverFileRef} />
                 </div>
                 <div className="flex items-center justify-between">
                     <div className="flex mt-4 gap-4 items-center w-fit mr-2">
@@ -67,7 +67,7 @@ const PersonalInformation: React.FC = () => {
                                 <FiUpload className="text-white text-xl blur-xs" />
                             </label>
                             <input type="file" name="avatarImage" id="avatarImage" className="hidden" accept="image/png,image/jpeg"
-                                onChange={(e) => handleAvatarChange(e, 1024 * 1024)} ref={avatarFileRef} />
+                                onChange={(e) => handleAvatarChange(e, 1)} ref={avatarFileRef} />
                         </div>
 
                         <div className="xs:text-sm">

@@ -1,5 +1,5 @@
 import { createSelector } from "reselect";
-import { RootState } from "../../context/Store";
+import { RootState } from "../../context/store";
 
 const selectComments = (state: RootState) => state.comments;
 
@@ -17,6 +17,6 @@ export const selectReplies = createSelector(
 			node = nextNode;
 		}
 
-		return node.children.map((child) => child.val);
+		return node.children.map((child) => child.val).reverse();
 	}
 );
