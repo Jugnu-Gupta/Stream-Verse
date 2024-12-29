@@ -35,20 +35,4 @@ interface VideoDetailsType extends VideoType {
 	};
 }
 
-interface DashboardVideoType {
-	_id: string;
-	title: string;
-	description: string;
-	thumbnail: {
-		url: string;
-		publicId: string;
-	};
-	views: number;
-	likes: number;
-	dislikes: number;
-	isPublished: boolean;
-	createdAt: Date;
-	updatedAt: Date;
-}
-
-export type { VideoType, VideoDetailsType, DashboardVideoType };
+export type { VideoType, VideoDetailsType };
