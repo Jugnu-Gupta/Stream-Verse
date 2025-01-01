@@ -4,6 +4,7 @@ interface VideoType {
 	description: string;
 	views: number;
 	duration: number;
+	isPublished?: boolean;
 	thumbnail: {
 		url: string;
 		publicId: string;
@@ -23,7 +24,6 @@ interface VideoType {
 
 interface VideoDetailsType extends VideoType {
 	likeStatus: number;
-	isPublished: boolean;
 	quality: string;
 	subscribers: number;
 	likes: number;

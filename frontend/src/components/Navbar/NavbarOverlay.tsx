@@ -4,7 +4,7 @@ import logo from "../../assets/logo.png";
 import { twMerge } from "tailwind-merge";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { useDispatch, useSelector } from "react-redux";
-import { setShowNavbar } from "../../context/slices/NavbarSlice";
+import { setShowNavbar } from "../../context/slices/Navbar.slice";
 import { AppDispatch, RootState } from "../../context/store";
 import { useNavigate, useParams } from "react-router-dom";
 import { comparePaths } from "../../utils/ComparePaths";

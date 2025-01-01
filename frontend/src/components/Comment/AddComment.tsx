@@ -2,9 +2,9 @@ import React, { useEffect, Dispatch, SetStateAction } from 'react';
 import thumbnail from '../../assets/thumbnail.png';
 import makeApiRequest from '../../utils/MakeApiRequest';
 import { twMerge } from 'tailwind-merge';
-import { addComments } from '../../context/slices/CommentSlice';
+import { addComments } from '../../context/slices/Comment.slice';
 import { useDispatch } from 'react-redux';
-import { increaseCount } from '../../context/slices/counterSlice';
+import { increaseCount } from '../../context/slices/Counter.slice';
 import { AppDispatch } from '../../context/store';
 import { CommentType } from '../../Types/Comment.type';
 
@@ -34,13 +34,13 @@ const AddComment: React.FC<AddCommentProps> = ({ setGiveReply, avatarStyle, enti
     }, [addCommentText]);
 
     const handleCreateComment = () => {
-        if (addCommentText === "") return;
+        if (addCommentText.trim() === "") return;
 
         makeApiRequest({
             method: "post",
             url: `/api/v1/comments/${entityType}/${entityId}${parentId ? `/${parentId}` : ""}`,
             data: {
-                content: addCommentText,
+                content: addCommentText.trim(),
             },
         }).then((response: any) => { // eslint-disable-line
             const data = response.data;
@@ -95,7 +95,7 @@ const AddComment: React.FC<AddCommentProps> = ({ setGiveReply, avatarStyle, enti
                     <button onClick={handleCreateComment}
                         className={twMerge(
                             "px-3 py-1 rounded-full outline-none bg-primary font-semibold",
-                            addCommentText != "" ? "opacity-100" : "opacity-75"
+                            addCommentText.trim() !== "" ? "opacity-100" : "opacity-50"
                         )}>
                         Comment
                     </button>

@@ -23,7 +23,7 @@ const VideoDetail: React.FC = () => {
 	const [video, setVideo] = React.useState<VideoDetailsType>();
 	const [similarVideos, setSimilarVideos] = React.useState<VideoType[]>([]);
 	const views = formatNumber(video?.views);
-	const uploadedAt = formatDateToNow(video?.createdAt);
+	const createdAt = formatDateToNow(video?.createdAt);
 	const Subscribers = formatNumber(video?.subscribers);
 	const channelName = video?.owner?.fullName || "Channel Name";
 	const description = video?.description || "Video Description";
@@ -44,34 +44,44 @@ const VideoDetail: React.FC = () => {
 			// find details of current video
 			return makeApiRequest({
 				method: "get",
-				url: `/api/v1/videos/${"67502949d0104e89cbb9be5d"}${(userId ? "/" + userId : "")}`,
+				url: `/api/v1/videos/${"67502949d0104e89cbb9be5d"}`,
+				params: { userId }
 			});
 		}).then((videoInfoRes: any) => { // eslint-disable-line
-			// console.log("videoInfoRes:", videoInfoRes.data);
-			setVideo(videoInfoRes.data?.video);
+			const data = videoInfoRes.data?.video;
+			setVideo(data);
 
 			// find similar videos
 			return makeApiRequest({
 				method: "get",
-				url: `/api/v1/videos?query=${"advanced"}}`,
+				url: "/api/v1/videos",
+				params: {
+					query: data?.title + " " + data?.description,
+					limit: 5,
+				}
 			})
 		}).then((SimilarVideosRes: any) => { // eslint-disable-line
-			setSimilarVideos(SimilarVideosRes.data?.videos);
+			const data = SimilarVideosRes.data?.videos || [];
+			setSimilarVideos(data.filter((video: VideoType) => video._id !== videoNo));
+
+			makeApiRequest({
+				method: "post",
+				url: `/api/v1/videos/${videoNo}/views`,
+			});
+			console.log("View Added");
 		}).catch((error) => {
 			console.error("Error fetching data:", error);
 			// navigate(listId ? `/video/${videoId}` : `/`);
 			// navigate("/");
 		})
-	}, [listId, videoId, userId, navigate]);
+	}, [listId, videoId, videoNo, userId, navigate]);
 
 	return (
 		<div
 			className="flex flex-col 2lg:flex-row justify-start 2lg:items-start 2lg:gap-4 w-full px-2 mt-4 mx-auto max-w-[1400px] overflow-hidden">
 			<div className="flex flex-col 2lg:w-2/3 w-full">
 				{/* video */}
-				<video
-					src={videoplayback}
-					controls></video>
+				<video src={videoplayback} controls></video>
 
 				{/* Playlist */}
 				<VideoPlaylist childClass="flex 2lg:hidden" heighlightVideo={videoNo} playlist={playlist} />
@@ -84,7 +94,7 @@ const VideoDetail: React.FC = () => {
 								{title}
 							</h1>
 							<p className="text-sm text-primary-text2">
-								{views} views · {uploadedAt}
+								{views} views · {createdAt}
 							</p>
 						</div>
 					</div>

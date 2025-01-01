@@ -21,7 +21,8 @@ const SaveToPlaylist: React.FC<SaveToPlaylistProps> = ({ videoId, setShowSaveToP
         if (!userName) return;
         makeApiRequest({
             method: "get",
-            url: `/api/v1/playlists?userName=${userName}${videoId ? `&videoId=${videoId}` : ""}`,
+            url: `/api/v1/playlists`,
+            params: { userName, videoId },
         }).then((playlistsRes: any) => { // eslint-disable-line
             const playlistsData = playlistsRes.data?.playlists || [];
             setPlaylists(playlistsData.map((playlist: PlaylistType) =>

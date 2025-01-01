@@ -18,6 +18,7 @@ interface UserTypeDoc extends mongoose.Document, UserType {}
 interface Option {
     httpOnly: boolean;
     secure: boolean;
+    sameSite?: "lax" | "strict" | "none";
 }
 interface accessTokenAndRefreshToken {
     accessToken: string;
@@ -182,9 +183,10 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
         );
     }
 
-    const options = {
+    const options: Option = {
         httpOnly: true,
         secure: true,
+        sameSite: "lax",
     };
     return res
         .status(200)
@@ -298,6 +300,7 @@ const logoutUser = asyncHandler(async (req: RequestWithUser, res: Response) => {
     const options: Option = {
         httpOnly: true,
         secure: true,
+        sameSite: "lax",
     };
 
     return res
@@ -341,6 +344,7 @@ const refreshAccessToken = asyncHandler(async (req: Request, res: Response) => {
     const options: Option = {
         httpOnly: true,
         secure: true,
+        sameSite: "lax",
     };
 
     return res

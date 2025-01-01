@@ -10,7 +10,7 @@ import { FaChevronUp } from "react-icons/fa";
 import { twMerge } from "tailwind-merge";
 import makeApiRequest from "../../utils/MakeApiRequest";
 import { formatDateToNow } from "../../utils/FormatDateToNow";
-import { addComments, updateComment } from "../../context/slices/CommentSlice";
+import { addComments, updateComment } from "../../context/slices/Comment.slice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../context/store";
 import { CommentType } from "../../Types/Comment.type";
@@ -61,7 +61,10 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 
 		makeApiRequest({
 			method: "get",
-			url: `/api/v1/comments/${entityType}/${entityId}/${commentId}${userId ? `?userId=${userId}` : ""}`,
+			url: `/api/v1/comments/${entityType}/${entityId}/${commentId}`,
+			params: {
+				userId,
+			}
 		}).then((RepliesResponse: any) => { // eslint-disable-line
 			const RepliesData = RepliesResponse.data?.comments || [];
 			console.log("RepliesData:", RepliesData);
@@ -73,23 +76,24 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 	}, [dispatch, entityType, entityId, commentId, replies, currPath]);
 
 	const handleEditComment = () => {
-		if (commentText === "" || commentId === "") return;
+		if (commentText.trim() === comment?.content || commentId === "") return;
 		makeApiRequest({
 			method: "patch",
 			url: `/api/v1/comments/${commentId}`,
 			data: {
-				content: commentText
+				content: commentText.trim(),
 			}
 		}).then(() => {
 			toast.success("Playlist updated successfully");
 			setEditDeleteOption({ ...editDeleteOption, showEditModal: false });
-			dispatch(updateComment({ childPathIds: currPath, content: commentText }));
+			dispatch(updateComment({ childPathIds: currPath, content: commentText.trim() }));
+			setCommentText(commentText.trim());
 		}).catch((error) => {
 			console.error("Error fetching data:", error);
 		});
 	}
 
-	const handleEditClick = () => {
+	const discardChanges = () => {
 		setEditDeleteOption({ ...editDeleteOption, showEditModal: false });
 		setCommentText(comment?.content || "comment");
 	}
@@ -140,13 +144,13 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 							</button>
 						</div>) :
 						(<div className="flex justify-end gap-1 font-semibold tracking-wide mb-0.5">
-							<button onClick={handleEditClick}
+							<button onClick={discardChanges}
 								className="text-sm outline-none hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
 								Cancel
 							</button>
 							<button onClick={handleEditComment}
 								className={twMerge("text-sm outline-none bg-background-secondary px-2 py-1 rounded-xl duration-300",
-									commentText === "" && "opacity-75")}>
+									commentText.trim() === comment?.content && "opacity-50")}>
 								Save
 							</button>
 						</div>)

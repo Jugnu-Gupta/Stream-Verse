@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 import makeApiRequest from "./MakeApiRequest";
 import { BASE_URL } from "../Constants";
+import Cookies from "js-cookie";
 
 // Tracks if a refresh token request is in progress
 let isRefreshing = false;
@@ -23,7 +24,6 @@ const processQueue = (error: any, token: string | null) => {
 
 const axiosInstance = axios.create({
 	baseURL: BASE_URL,
-	// timeout: 10000,
 	headers: {
 		"Content-Type": "application/json",
 	},
@@ -31,7 +31,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use((config) => {
 	try {
-		const token = localStorage.getItem("accessToken");
+		const token = Cookies.get("accessToken");
 		if (token) {
 			config.headers.Authorization = `Bearer ${token}`;
 		}
@@ -65,7 +65,7 @@ axiosInstance.interceptors.response.use(
 
 			try {
 				// Perform the refresh token request
-				const refreshToken = localStorage.getItem("refreshToken");
+				const refreshToken = Cookies.get("refreshToken");
 				// eslint-disable-next-line
 				const { data }: any = await makeApiRequest({
 					method: "post",

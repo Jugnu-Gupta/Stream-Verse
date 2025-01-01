@@ -2,13 +2,13 @@ import React, { useEffect } from "react";
 import CommentCard from "../../components/Comment/CommentCard";
 import makeApiRequest from "../../utils/MakeApiRequest";
 import { addComments, clearComments, deleteComment }
-	from "../../context/slices/CommentSlice";
+	from "../../context/slices/Comment.slice";
 import { useDispatch, useSelector } from "react-redux";
 import { CommentType } from "../../Types/Comment.type";
 import AddComment from "../../components/Comment/AddComment";
 import { AppDispatch, RootState } from "../../context/store";
 import { selectReplies } from "../Tweet/SelectReplies";
-import { setCounter } from "../../context/slices/counterSlice";
+import { setCounter } from "../../context/slices/Counter.slice";
 import { formatNumber } from "../../utils/FormatNumber";
 import { EditDeleteType } from "../../Types/EditDelete.type";
 import DeleteModal from "../../components/Popup/DeleteModal";

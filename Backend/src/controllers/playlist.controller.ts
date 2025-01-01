@@ -137,19 +137,12 @@ const getUserPlaylists = asyncHandler(
     }
 );
 
-interface GetPlaylistByIdParams {
-    playlistId?: string;
-}
-
 const getPlaylistById = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { playlistId }: GetPlaylistByIdParams = req.params;
+        const { playlistId } = req.params as { playlistId: string };
 
         if (!isValidObjectId(playlistId)) {
             throw new ApiError(400, "Invalid playlist id");
-        }
-        if (!playlistId) {
-            throw new ApiError(400, "Playlist id is required");
         }
 
         // get videos of playlist and owner info
@@ -315,13 +308,9 @@ const deleteVideoFromPlaylist = asyncHandler(
     }
 );
 
-interface DeletePlaylistParams {
-    playlistId: string;
-}
-
 const deletePlaylist = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { playlistId } = req.params as unknown as DeletePlaylistParams;
+        const { playlistId } = req.params as { playlistId: string };
         if (!isValidObjectId(playlistId)) {
             throw new ApiError(400, "Invalid playlist Id");
         }
@@ -337,16 +326,10 @@ const deletePlaylist = asyncHandler(
     }
 );
 
-interface UpdatePlaylistParams {
-    playlistId: string;
-}
-interface UpdatePlaylistBody {
-    name?: string;
-}
 const updatePlaylist = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { playlistId } = req.params as unknown as UpdatePlaylistParams;
-        const { name }: UpdatePlaylistBody = req.body;
+        const { playlistId } = req.params as { playlistId: string };
+        const { name } = req.body as { name: string };
         if (!isValidObjectId(playlistId)) {
             throw new ApiError(400, "Invalid playlist Id");
         }

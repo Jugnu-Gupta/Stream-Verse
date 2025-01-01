@@ -13,9 +13,6 @@ import { UploadApiResponse } from "cloudinary";
 interface RequestWithUser extends Request {
     user: UserType;
 }
-interface CreateTweetBody {
-    content?: string;
-}
 interface CreateTweetData {
     ownerId: string;
     content: string;
@@ -27,7 +24,7 @@ interface CreateTweetData {
 
 const createTweet = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { content }: CreateTweetBody = req.body;
+        const { content } = req.body as { content: string };
         const imageLocalPath: string | undefined = req.file?.path;
         if (!content) {
             throw new ApiError(400, "Content is required");
@@ -382,17 +379,10 @@ const getTweetById = asyncHandler(
     }
 );
 
-interface UpdateTweetParams {
-    tweetId: string;
-}
-interface UpdateTweetBody {
-    content?: string;
-}
-
 const updateTweet = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { tweetId } = req.params as unknown as UpdateTweetParams;
-        const { content }: UpdateTweetBody = req.body;
+        const { tweetId } = req.params as { tweetId: string };
+        const { content } = req.body as { content: string };
         const imageLocalPath: string | undefined = req.file?.path;
         if (!isValidObjectId(tweetId)) {
             throw new ApiError(400, "Invalid tweet Id");
@@ -438,9 +428,6 @@ const updateTweet = asyncHandler(
     }
 );
 
-interface DeleteTweetParams {
-    tweetId: string;
-}
 interface LikeType {
     _id: mongoose.Types.ObjectId;
 }
@@ -450,7 +437,7 @@ interface CommentType {
 }
 const deleteTweet = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { tweetId } = req.params as unknown as DeleteTweetParams;
+        const { tweetId } = req.params as { tweetId: string };
         if (!isValidObjectId(tweetId)) {
             throw new ApiError(400, "Tweet id is required");
         }

@@ -18,6 +18,19 @@ interface ChannelInfoType {
 	updatedAt: Date;
 }
 
+interface ChannelType {
+	_id: string;
+	fullName: string;
+	userName: string;
+	subsribers: number;
+	avatar: {
+		url: string;
+		publicId: string;
+	};
+	createdAt: Date;
+	updatedAt: Date;
+}
+
 interface SubscribedChannelType {
 	_id: string;
 	fullName: string;
@@ -30,4 +43,4 @@ interface SubscribedChannelType {
 	};
 }
 
-export type { ChannelInfoType, SubscribedChannelType };
+export type { ChannelType, ChannelInfoType, SubscribedChannelType };

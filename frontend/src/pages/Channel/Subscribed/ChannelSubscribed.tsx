@@ -4,6 +4,7 @@ import { IoSearchSharp } from "react-icons/io5";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import makeApiRequest from "../../../utils/MakeApiRequest";
 import { ChannelInfoType, SubscribedChannelType } from "../../../Types/Channel.type";
+import NoResultsFound from "../../Search/NoResultsFound";
 
 interface SubscribedChannelWrapper {
 	_id: string;
@@ -34,7 +35,7 @@ const ChannelSubscribed: React.FC = () => {
 			setFilteredChannels(channels);
 		}).catch((error) => {
 			console.error("Error fetching data:", error);
-			navigate("/");
+			// navigate("/");
 		});
 	}, [navigate, channelId]);
 
@@ -48,11 +49,11 @@ const ChannelSubscribed: React.FC = () => {
 		setFilteredChannels(filtered);
 	}
 
-	return (
-		<div className="px-4 mt-4 w-full flex flex-col mx-auto max-w-6xl">
+	return (filteredChannels.length === 0 ? <NoResultsFound style="mt-16" entityName="subscriber"
+		heading="No people subscribed" message="This channel has yet to subscribe a new channel." />
+		: <div className="px-4 mt-4 w-full flex flex-col mx-auto max-w-6xl">
 			<div className="flex items-center border-2 border-primary-border bg-primary-text rounded-full w-[calc(100%-16px)] mx-auto mb-4">
-				<input
-					type="text"
+				<input type="text"
 					value={searchValue}
 					placeholder="Search"
 					onChange={(e) => setSearchValue(e.target.value)}
@@ -65,10 +66,9 @@ const ChannelSubscribed: React.FC = () => {
 				</button>
 			</div>
 			<div className="w-full">
-				{
-					filteredChannels?.map((channel: SubscribedChannelType) => (
-						<ChannelSubcribedCards key={channel._id} SubscribedChannel={channel} />
-					))
+				{filteredChannels?.map((channel: SubscribedChannelType) => (
+					<ChannelSubcribedCards key={channel._id} SubscribedChannel={channel} />
+				))
 				}
 			</div>
 		</div>

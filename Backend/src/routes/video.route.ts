@@ -2,6 +2,7 @@ import { upload } from "../middlewares/multer.middleware";
 import { verifyJWT } from "../middlewares/auth.middleware";
 import { Router } from "express";
 import {
+    addView,
     getAllVideo,
     uploadVideo,
     getVideoById,
@@ -30,6 +31,8 @@ router
     .route("/:videoId")
     .patch(verifyJWT, upload.single("image"), videoUpdate)
     .delete(verifyJWT, deleteVideo);
+
+router.route("/:videoId/views").post(verifyJWT, addView);
 
 router.route("/:videoId/:userId?").get(getVideoById);
 

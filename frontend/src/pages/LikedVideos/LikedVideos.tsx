@@ -4,6 +4,7 @@ import VideoCardView from '../Home/VideoCardView';
 import makeApiRequest from '../../utils/MakeApiRequest';
 import { useNavigate } from 'react-router-dom';
 import { VideoType } from '../../Types/Video.type';
+import NoResultsFound from '../Search/NoResultsFound';
 
 interface VideoWrapper {
     _id: string;
@@ -18,7 +19,6 @@ const LikedVideos: React.FC = () => {
             method: "get",
             url: "/api/v1/likes/video",
         }).then((response: any) => { // eslint-disable-line
-            console.log("data:", response.data);
             setVideos(response.data?.likedVideos);
         }).catch((error) => {
             console.error("Error fetching data:", error);
@@ -27,21 +27,18 @@ const LikedVideos: React.FC = () => {
     }, [navigate]);
 
 
-    return (
-        <div className="sm:flex m-2 max-w-full w-11/12 justify-items-center">
+    return (videos?.length === 0 ? <NoResultsFound style='mt-40' entityName='video'
+        heading='No videos found' message="You haven't liked any video." />
+        : <div className="sm:flex m-2 max-w-full w-11/12 justify-items-center">
             <div className='sm:flex hidden flex-col'>
-                {
-                    videos?.map((item: VideoWrapper) => (
-                        <VideoListView key={item._id} videoInfo={item.video} />
-                    ))
-                }
+                {videos?.map((item: VideoWrapper) => (
+                    <VideoListView key={item._id} videoInfo={item.video} />
+                ))}
             </div>
             <div className='sm:hidden flex flex-col'>
-                {
-                    videos?.map((item: VideoWrapper) => (
-                        <VideoCardView key={item._id} videoInfo={item.video} />
-                    ))
-                }
+                {videos?.map((item: VideoWrapper) => (
+                    <VideoCardView key={item._id} videoInfo={item.video} />
+                ))}
             </div>
         </div>
     )

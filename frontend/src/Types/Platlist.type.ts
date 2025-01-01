@@ -3,7 +3,7 @@ import { VideoType } from "./Video.type";
 interface PlaylistType {
 	_id: string;
 	name: string;
-	description: string;
+	description?: string;
 	noOfVideos: number;
 	videoId: string;
 	videoStatus?: boolean;
@@ -11,13 +11,7 @@ interface PlaylistType {
 		url: string;
 		publicId: string;
 	};
-	updatedAt: Date;
-	createdAt: Date;
-}
-
-interface PlaylistVideosType extends PlaylistType {
-	videos: VideoType[];
-	owner: {
+	owner?: {
 		_id: string;
 		userName: string;
 		fullName: string;
@@ -26,6 +20,12 @@ interface PlaylistVideosType extends PlaylistType {
 			publicId: string;
 		};
 	};
+	updatedAt: Date;
+	createdAt: Date;
+}
+
+interface PlaylistVideosType extends PlaylistType {
+	videos: VideoType[];
 }
 
 export type { PlaylistType, PlaylistVideosType };

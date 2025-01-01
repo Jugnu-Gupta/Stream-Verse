@@ -23,6 +23,7 @@ import Login from "./pages/Login/Login.js";
 import Home from "./pages/Home/Home.tsx";
 import Search from "./pages/Search/Search.tsx";
 import Help from "./pages/Help/Help.tsx";
+import ChannelPlaylists from "./pages/Channel/Playlist/ChannelPlaylists.tsx";
 // import EditVideoModal from "./components/Popup/EditVideoModal.tsx";
 // import DeleteModal from "./components/Popup/DeleteModal.tsx";
 // import UploadVideoModal from "./components/Popup/UploadVideoModal.tsx";
@@ -61,7 +62,7 @@ function App() {
 						{/* // No params after adminName, then send to No page found */}
 						<Route index element={<Navigate to="/register" />} />
 						<Route path="videos" element={<ChannelVideos />} />
-						<Route path="playlists" element={<Playlists />} />
+						<Route path="playlists" element={<ChannelPlaylists />} />
 						<Route path="tweets" element={<ChannelTweets />} />
 						<Route path="subscribed" element={<ChannelSubscribed />} />
 					</Route >

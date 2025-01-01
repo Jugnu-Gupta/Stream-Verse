@@ -11,6 +11,7 @@ import { EditDeleteType } from "../../../Types/EditDelete.type";
 import { useMedia } from "../../../hooks/useMedia";
 import DeleteModal from "../../../components/Popup/DeleteModal";
 import toast from "react-hot-toast";
+import NoResultsFound from "../../Search/NoResultsFound";
 
 interface ChannelInfoWrapper {
 	channelInfo: ChannelInfoType;
@@ -42,10 +43,10 @@ const ChannelTweets: React.FC = () => {
 	};
 
 	const handleCreateTweet = () => {
-		if (addTweetText === "") return;
+		if (addTweetText.trim() === "") return;
 
 		const data = new FormData();
-		data.append("content", addTweetText);
+		data.append("content", addTweetText.trim());
 		if (newMedia) data.append("image", newMedia);
 
 		makeApiMediaRequest({
@@ -157,8 +158,8 @@ const ChannelTweets: React.FC = () => {
 							className="font-semibold text-primary-text xs:text-sm hover:bg-primary px-3 py-1 rounded-full duration-300">
 							Cancel
 						</button>
-						<button className={twMerge("px-3 py-1 rounded-full text-primary-text bg-primary xs:text-sm font-semibold opacity-75",
-							(addTweetText != "" || newMedia) && "opacity-100")}
+						<button className={twMerge("px-3 py-1 rounded-full text-primary-text bg-primary xs:text-sm font-semibold",
+							(addTweetText.trim() !== "" || newMedia) ? "opacity-100" : "opacity-50")}
 							onClick={handleCreateTweet}>
 							Tweet
 						</button>
@@ -175,13 +176,16 @@ const ChannelTweets: React.FC = () => {
 
 			{/* Tweets */}
 			<div>
-				{tweets?.map((tweet: TweetType) => (
-					<ChannelTweetList key={tweet._id}
-						tweetInfo={tweet}
-						editDeleteOption={editDeleteOption}
-						setEditDeleteOption={setEditDeleteOption}>
-					</ChannelTweetList>
-				))}
+				{tweets.length === 0 ? <NoResultsFound entityName="tweet" style="mt-16"
+					heading="No tweets" message="This channel has yet to make a Tweet." />
+					: tweets?.map((tweet: TweetType) => (
+						<ChannelTweetList key={tweet._id}
+							tweetInfo={tweet}
+							editDeleteOption={editDeleteOption}
+							setEditDeleteOption={setEditDeleteOption}>
+						</ChannelTweetList>
+					))
+				}
 			</div>
 		</div>
 	);

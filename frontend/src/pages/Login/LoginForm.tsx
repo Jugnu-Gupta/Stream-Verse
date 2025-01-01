@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const LoginForm: React.FC = () => {
 	const navigate = useNavigate();
@@ -25,19 +26,21 @@ const LoginForm: React.FC = () => {
 				url: "/api/v1/auths/login",
 				data: values,
 			}).then((response: any) => { // eslint-disable-line
-				const responseData = response.data;
-				console.log("Login Info:", responseData);
+				const data = response.data;
+				console.log("Login Info:", response);
 				toast.success("Logged in successfully");
 				setShowVerifyEmail(false);
 
+				// data in cookies for future use
+				Cookies.set("accessToken", data.accessToken, { secure: true, sameSite: "lax" });
+				Cookies.set("refreshToken", data.refreshToken, { secure: true, sameSite: "lax" });
+
 				// data in localStorage for future use
-				localStorage.setItem("userId", responseData.user._id);
-				localStorage.setItem("accessToken", responseData.accessToken);
-				localStorage.setItem("refreshToken", responseData.refreshToken);
-				localStorage.setItem("userName", responseData.user.userName);
-				localStorage.setItem("fullName", responseData.user.fullName);
-				localStorage.setItem("email", responseData.user.email);
-				localStorage.setItem("avatar", JSON.stringify(responseData.user.avatar));
+				localStorage.setItem("userId", data.user._id);
+				localStorage.setItem("userName", data.user.userName);
+				localStorage.setItem("fullName", data.user.fullName);
+				localStorage.setItem("email", data.user.email);
+				localStorage.setItem("avatar", JSON.stringify(data.user.avatar));
 				// localStorage.setItem("cover", responseData.user.coverImage.url);
 
 				navigate("/");

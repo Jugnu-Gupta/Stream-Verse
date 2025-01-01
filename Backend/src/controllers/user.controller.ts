@@ -243,12 +243,9 @@ const updateUserCoverImage = asyncHandler(
     }
 );
 
-interface GetUserChannelPageParams {
-    userName: string;
-}
 const getUserChannelPage = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { userName } = req.params as unknown as GetUserChannelPageParams;
+        const { userName } = req.params as { userName: string };
         if (!userName) {
             throw new ApiError(404, "User name is required");
         }
@@ -318,13 +315,9 @@ const getUserChannelPage = asyncHandler(
     }
 );
 
-interface GetUserChannelVideosParams {
-    userName: string;
-}
 const getUserChannelVideos = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { userName } =
-            req.params as unknown as GetUserChannelVideosParams;
+        const { userName } = req.params as { userName: string };
         if (!userName) {
             throw new ApiError(404, "User name is required");
         }
@@ -345,6 +338,7 @@ const getUserChannelVideos = asyncHandler(
                                 thumbnail: 1,
                                 views: 1,
                                 duration: 1,
+                                isPublished: 1,
                                 createdAt: 1,
                                 updatedAt: 1,
                             },

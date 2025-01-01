@@ -243,16 +243,10 @@ const createComment = asyncHandler(
     }
 );
 
-interface UpdateCommentParams {
-    commentId: string;
-}
-interface UpdateCommentBody {
-    content?: string;
-}
 const updateComment = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { commentId } = req.params as unknown as UpdateCommentParams;
-        const { content }: UpdateCommentBody = req.body;
+        const { commentId } = req.params as { commentId: string };
+        const { content } = req.body as { content: string };
         if (!content) {
             throw new ApiError(400, "Content is required");
         }
@@ -294,13 +288,9 @@ const findRepliesRec = async (commentId: string): Promise<string[]> => {
     }
 };
 
-interface DeleteCommentParams {
-    commentId: string;
-}
-
 const deleteComment = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { commentId } = req.params as unknown as DeleteCommentParams;
+        const { commentId } = req.params as { commentId: string };
         if (!isValidObjectId(commentId)) {
             throw new ApiError(400, "Invalid Comment Id");
         }

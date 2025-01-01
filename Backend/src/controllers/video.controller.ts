@@ -9,112 +9,292 @@ import { ApiResponse } from "../utils/apiResponse";
 import { UserType } from "types/user.type";
 import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary";
 import { getVideoQuality } from "../utils/getVideoQuality";
+import { User } from "../models/user.model";
+import { Playlist } from "../models/playlist.model";
+import {
+    durationCriteria,
+    sortCritieria,
+    uploadDateCriteria,
+} from "../config/constants/controllers.constants";
 
 interface RequestWithUser extends Request {
     user: UserType;
 }
 
 interface GetAllVideoQuery {
-    page?: number;
-    limit?: number;
-    query?: string;
-    sortBy?: string;
-    duration?: number;
-    userId?: string;
+    // page?: string;
+    // limit?: string;
+    uploadDate: string;
+    type: string;
+    query: string;
+    sortBy: string;
+    duration: string;
 }
 
 // controller to fetch all videos based on query, sort, pagination
 const getAllVideo = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
         const {
-            page = 1,
-            limit = 10,
-            query,
-            // sortBy,
-            // duration,
-            // userId,
-        }: GetAllVideoQuery = req.query;
+            // page = "1",
+            // limit = "10",
+            query = "",
+            uploadDate = "anytime",
+            type = "video",
+            sortBy = "relevance",
+            duration = "any",
+        } = req.query as unknown as GetAllVideoQuery;
+        console.log(query, uploadDate, type, sortBy, duration);
 
-        if (!query) {
-            throw new ApiError(400, "Query is required");
-        }
+        // const skip: number = (Page - 1) * Limit;
 
-        const skip = (page - 1) * limit;
-        // if (userId) {
-        //     if (!isValidObjectId(userId))
-        //         filter.ownerId = new mongoose.Types.ObjectId(userId);
-        //     else throw new ApiError(400, "Invalid user id");
-        // }
+        const uploadDateOption: number = uploadDateCriteria.get(uploadDate);
+        const durationOption: [number, number] = durationCriteria.get(duration);
+        const sortOption: string = sortCritieria.get(sortBy);
 
-        const sortCritieria = {}; // define
-
-        const videos = await Video.aggregate([
-            {
-                $search: {
-                    index: "default",
-                    text: {
-                        query,
-                        path: ["title", "description"],
+        let data;
+        if (type === "video") {
+            const pipeline = [
+                ...(query !== ""
+                    ? [
+                          {
+                              $search: {
+                                  index: "default",
+                                  text: {
+                                      query,
+                                      path: ["title", "description"],
+                                      fuzzy: { maxEdits: 2, prefixLength: 1 },
+                                  },
+                              },
+                          },
+                      ]
+                    : []),
+                {
+                    $match: {
+                        isPublished: true,
+                        duration: {
+                            $gte: durationOption[0],
+                            $lte: durationOption[1],
+                        },
+                        createdAt: {
+                            $gte: new Date(
+                                new Date().getTime() -
+                                    uploadDateOption * 24 * 60 * 60 * 1000
+                            ),
+                        },
                     },
                 },
-            },
-            {
-                $limit: 10,
-            },
-            { $match: { isPublished: true } },
-            {
-                $lookup: {
-                    from: "users",
-                    localField: "ownerId",
-                    foreignField: "_id",
-                    as: "owner",
-                    pipeline: [
-                        {
-                            $project: {
-                                fullName: 1,
-                                userName: 1,
-                                avatar: 1,
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "ownerId",
+                        foreignField: "_id",
+                        as: "owner",
+                        pipeline: [
+                            {
+                                $project: {
+                                    fullName: 1,
+                                    userName: 1,
+                                    avatar: 1,
+                                },
                             },
+                        ],
+                    },
+                },
+                {
+                    $addFields: {
+                        owner: { $arrayElemAt: ["$owner", 0] },
+                        score: { $meta: "searchScore" },
+                    },
+                },
+                {
+                    $sort: { [sortOption]: -1 as -1 | 1 }, // Use computed property for dynamic field
+                },
+                {
+                    $project: {
+                        title: 1,
+                        description: 1,
+                        thumbnail: 1,
+                        owner: 1,
+                        duration: 1,
+                        views: 1,
+                        createdAt: 1,
+                        updatedAt: 1,
+                    },
+                },
+            ];
+            data = await Video.aggregate(pipeline);
+            if (!data) {
+                throw new ApiError(404, "No videos found");
+            }
+        } else if (type === "channel") {
+            const pipeline = [
+                ...(query !== ""
+                    ? [
+                          {
+                              $search: {
+                                  index: "users",
+                                  text: {
+                                      query,
+                                      path: ["fullName", "userName"],
+                                      fuzzy: { maxEdits: 2, prefixLength: 1 },
+                                  },
+                              },
+                          },
+                      ]
+                    : []),
+                {
+                    $match: {
+                        createdAt: {
+                            $gte: new Date(
+                                new Date().getTime() -
+                                    uploadDateOption * 24 * 60 * 60 * 1000
+                            ),
                         },
-                    ],
+                    },
                 },
-            },
-            {
-                $addFields: {
-                    owner: { $arrayElemAt: ["$owner", 0] },
-                    score: { $meta: "searchScore" },
+                {
+                    $lookup: {
+                        from: "subscriptions",
+                        localField: "_id",
+                        foreignField: "channelId",
+                        as: "subscribers",
+                    },
                 },
-            },
-            {
-                $sort: { score: -1 }, // descending order
-            },
-            { $skip: skip },
-            { $limit: limit },
-            {
-                $project: {
-                    title: 1,
-                    description: 1,
-                    thumbnail: 1,
-                    owner: 1,
-                    duration: 1,
-                    views: 1,
-                    createdAt: 1,
-                    updatedAt: 1,
+                {
+                    $addFields: {
+                        score: { $meta: "searchScore" },
+                        subscribers: { $size: "$subscribers" },
+                    },
                 },
-            },
-        ]);
-
-        if (!videos) {
-            throw new ApiError(404, "No videos found");
+                {
+                    $sort: { [sortOption]: -1 as -1 | 1 }, // Use computed property for dynamic field
+                },
+                {
+                    $project: {
+                        fullName: 1,
+                        userName: 1,
+                        avatar: 1,
+                        subscribers: 1,
+                        createdAt: 1,
+                        updatedAt: 1,
+                    },
+                },
+            ];
+            data = await User.aggregate(pipeline);
+            if (!data) {
+                throw new ApiError(404, "No channels found");
+            }
+        } else if (type === "playlist") {
+            const pipeline = [
+                ...(query !== ""
+                    ? [
+                          {
+                              $search: {
+                                  index: "playlists",
+                                  text: {
+                                      query,
+                                      path: ["name"],
+                                      fuzzy: { maxEdits: 2, prefixLength: 1 },
+                                  },
+                              },
+                          },
+                      ]
+                    : []),
+                {
+                    $match: {
+                        createdAt: {
+                            $gte: new Date(
+                                new Date().getTime() -
+                                    uploadDateOption * 24 * 60 * 60 * 1000
+                            ),
+                        },
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "ownerId",
+                        foreignField: "_id",
+                        as: "owner",
+                        pipeline: [
+                            {
+                                $project: {
+                                    fullName: 1,
+                                    userName: 1,
+                                    avatar: 1,
+                                },
+                            },
+                        ],
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "videos",
+                        localField: "videos",
+                        foreignField: "_id",
+                        as: "videos",
+                    },
+                },
+                {
+                    $addFields: {
+                        score: { $meta: "searchScore" },
+                        owner: { $arrayElemAt: ["$owner", 0] },
+                        thumbnail: { $arrayElemAt: ["$videos.thumbnail", 0] },
+                        videoId: { $arrayElemAt: ["$videos._id", 0] },
+                        noOfVideos: { $size: "$videos" },
+                        description: {
+                            $arrayElemAt: ["$videos.description", 0],
+                        },
+                    },
+                },
+                {
+                    $sort: { [sortOption]: -1 as -1 | 1 }, // Use computed property for dynamic field
+                },
+                {
+                    $project: {
+                        name: 1,
+                        thumbnail: 1,
+                        noOfVideos: 1,
+                        videoId: 1,
+                        description: 1,
+                        owner: 1,
+                        createdAt: 1,
+                        updatedAt: 1,
+                    },
+                },
+            ];
+            data = await Playlist.aggregate(pipeline);
+            if (!data) {
+                throw new ApiError(404, "No playlist found");
+            }
         }
 
         return res
             .status(200)
             .json(
-                new ApiResponse(200, { videos }, "Videos fetched successfully")
+                new ApiResponse(200, { data }, "Videos fetched successfully")
             );
     }
 );
+
+const addView = asyncHandler(async (req: RequestWithUser, res: Response) => {
+    const { videoId } = req.params as { videoId: string };
+    if (!isValidObjectId(videoId)) {
+        throw new ApiError(400, "Invalid video id");
+    }
+
+    const video = await Video.findById(videoId);
+    if (!video) {
+        throw new ApiError(404, "Video not found");
+    }
+
+    video.views += 1;
+    await video.save({ validateBeforeSave: false });
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, null, "View added successfully"));
+});
 
 interface UploadVideoBody {
     title?: string;
@@ -372,9 +552,6 @@ const getVideoById = asyncHandler(
     }
 );
 
-interface VideoUpdateParams {
-    videoId: string;
-}
 interface VideoUpdateBody {
     title?: string;
     description?: string;
@@ -383,7 +560,7 @@ interface VideoUpdateBody {
 // controller to update video details like title, description, thumbnail
 const videoUpdate = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { videoId } = req.params as unknown as VideoUpdateParams;
+        const { videoId } = req.params as { videoId: string };
         const { title, description }: VideoUpdateBody = req.body;
         const thumbnailLocalPath: string | undefined = req.file?.path;
 
@@ -443,9 +620,6 @@ const videoUpdate = asyncHandler(
     }
 );
 
-interface DeleteVideoParams {
-    videoId: string;
-}
 interface LikeType {
     _id: mongoose.Types.ObjectId;
 }
@@ -455,7 +629,7 @@ interface CommentType {
 }
 const deleteVideo = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { videoId } = req.params as unknown as DeleteVideoParams;
+        const { videoId } = req.params as { videoId: string };
         if (!isValidObjectId(videoId)) {
             throw new ApiError(400, "Video id is required");
         }
@@ -630,14 +804,9 @@ const deleteVideo = asyncHandler(
     }
 );
 
-interface ToggleVideoPublishStatusParams {
-    videoId: string;
-}
-
 const ToggleVideoPublishStatus = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { videoId } =
-            req.params as unknown as ToggleVideoPublishStatusParams;
+        const { videoId } = req.params as { videoId: string };
         if (!isValidObjectId(videoId)) {
             throw new ApiError(400, "Invalid video id");
         }
@@ -663,6 +832,7 @@ const ToggleVideoPublishStatus = asyncHandler(
 );
 
 export {
+    addView,
     getAllVideo,
     uploadVideo,
     getVideoById,

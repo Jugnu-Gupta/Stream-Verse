@@ -1,9 +1,10 @@
 import React from "react";
-import PlaylistCard from "./ChannelPlaylistCard";
-import { PiFolder } from "react-icons/pi";
+import ChannelPlaylistCard from "./ChannelPlaylistCard";
 import makeApiRequest from "../../../utils/MakeApiRequest";
 import { useNavigate, useParams } from "react-router-dom";
 import { PlaylistType } from "../../../Types/Platlist.type";
+// import NoPlaylistFound from "../../Playlists/NoPlaylistFound";
+import NoResultsFound from "../../Search/NoResultsFound";
 
 const ChannelPlaylists: React.FC = () => {
 	const [playlists, setPlaylists] = React.useState<PlaylistType[]>([]);
@@ -16,7 +17,8 @@ const ChannelPlaylists: React.FC = () => {
 
 		makeApiRequest({
 			method: "get",
-			url: `/api/v1/playlists?userName=${userName}`,
+			url: `/api/v1/playlists`,
+			params: { userName },
 		}).then((response: any) => { // eslint-disable-line
 			console.log("channelsResponse playlists:", response.data);
 			setPlaylists(response.data?.playlists);
@@ -26,20 +28,11 @@ const ChannelPlaylists: React.FC = () => {
 		});
 	}, [navigate, adminName]);
 
-	if (playlists?.length === 0) {
-		return (
-			<div className="flex flex-col justify-center items-center text-center text-primary-text px-4 w-full max-w-6xl mx-auto mt-4 z-0 mb-4">
-				<PiFolder className="text-4xl text-primary bg-blue-100 rounded-full p-1.5" />
-				<h1 className="text-md font-semibold">No Playlists Created</h1>
-				<p className="text-sm">There are no playlist created on this channel.</p>
-			</div>
-		);
-	}
-
-	return (
-		< div className="grid px-4 w-full max-w-6xl mx-auto justify-items-center z-0 2xl:grid-cols-4 2lg:grid-cols-3 2sm:grid-cols-2 grid-cols-1 mt-4" >
+	return (playlists?.length === 0 ? <NoResultsFound entityName="playlist" style="mt-16"
+		heading="No playlist created" message="There are no playlist created on this channel." />
+		: < div className="grid px-4 w-full max-w-6xl mx-auto justify-items-center z-0 2xl:grid-cols-4 2lg:grid-cols-3 2sm:grid-cols-2 grid-cols-1 mt-4" >
 			{playlists?.map((playlist: PlaylistType) => (
-				<PlaylistCard key={playlist._id} playlist={playlist} />
+				<ChannelPlaylistCard key={playlist._id} playlist={playlist} />
 			))}
 		</div >
 	);

@@ -116,8 +116,8 @@ const getSubscribedChannels = asyncHandler(
                                     $cond: {
                                         if: {
                                             $in: [
-                                                req?.user?._id, // Replace with the actual subscriber ID value
-                                                "$subscribers.subscriberId", // Path to the subscriber IDs array
+                                                req?.user?._id,
+                                                "$subscribers.subscriberId",
                                             ],
                                         },
                                         then: true,

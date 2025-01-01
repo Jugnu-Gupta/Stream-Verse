@@ -4,7 +4,7 @@ import VideoListView from '../Search/VideoListView';
 import { useNavigate } from 'react-router-dom';
 import makeApiRequest from '../../utils/MakeApiRequest';
 import { VideoType } from '../../Types/Video.type';
-
+import NoResultsFound from '../Search/NoResultsFound';
 
 // interface SubscriptionsChildProps {
 interface VideoWrapper {
@@ -20,7 +20,6 @@ const Subscriptions: React.FC = () => {
             method: "get",
             url: "/api/v1/subscriptions",
         }).then((response: any) => { // eslint-disable-line
-            console.log("response:", response.data);
             setVideos(response.data?.subscriptions);
         }).catch((error) => {
             console.error("Error fetching data:", error);
@@ -28,21 +27,18 @@ const Subscriptions: React.FC = () => {
         });
     }, [navigate]);
 
-    return (
-        <div className="sm:grid m-2 max-w-full w-11/12 justify-items-center">
-            <div className='sm:grid hidden'>
-                {
-                    videos?.map((item: VideoWrapper) => (
-                        <VideoListView key={item?._id} videoInfo={item.video} />
-                    ))
-                }
+    return (videos?.length === 0 ? <NoResultsFound style='mt-40' entityName="video"
+        heading="No videos found" message="No videos found of any Subscribed channels." />
+        : <div className="sm:flex m-2 max-w-full w-11/12 justify-items-center">
+            <div className='sm:flex hidden flex-col'>
+                {videos?.map((item: VideoWrapper) => (
+                    <VideoListView key={item._id} videoInfo={item.video} />
+                ))}
             </div>
-            <div className='sm:hidden grid'>
-                {
-                    videos?.map((item: VideoWrapper) => (
-                        <VideoCardView key={item?._id} videoInfo={item.video} />
-                    ))
-                }
+            <div className='sm:hidden flex flex-col'>
+                {videos?.map((item: VideoWrapper) => (
+                    <VideoCardView key={item._id} videoInfo={item.video} />
+                ))}
             </div>
         </div>
     )

@@ -1,4 +1,4 @@
-import { websiteName } from "../contants";
+import { websiteName } from "../config/constants/db.constants";
 
 export const getEmailVerificationText = (
     receiverName: string,
