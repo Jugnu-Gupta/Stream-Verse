@@ -13,7 +13,7 @@ import { AppDispatch, RootState } from "../../context/store";
 import { setCounter } from "../../context/slices/Counter.slice";
 import { EditDeleteType } from "../../Types/EditDelete.type";
 import DeleteModal from "../../components/Popup/DeleteModal";
-import TweetDetailsInfo from "./TweetDetailsInfo";
+import ChannelTweetList2 from "../Channel/Tweets/ChannelTweetList2";
 
 const TweetDetails: React.FC = () => {
 	const currPath: string[] = [];
@@ -73,7 +73,7 @@ const TweetDetails: React.FC = () => {
 	}, [tweetId, userId, navigate, dispatch, comments.length]);
 
 	return (<div className="px-4 pt-4 mx-auto w-full max-w-6xl flex justify-items-center flex-col overflow-hidden">
-		<TweetDetailsInfo tweetInfo={tweet} />
+		<ChannelTweetList2 tweetInfo={tweet} />
 
 		<div className="flex flex-col items-start gap-2 px-6 xs:px-2 w-full mt-4">
 			<div className="text-primary-text font-bold text-xl">

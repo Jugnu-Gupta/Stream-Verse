@@ -1,24 +1,26 @@
-import { Dispatch, SetStateAction, useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Dispatch, SetStateAction } from "react";
 import validateMediaSize from "../utils/ValidateMediaSize";
 
-const useMedia = (setText?: Dispatch<SetStateAction<string>>) => {
+const useMedia = () => {
 	const [mediaPreview, setMediaPreview] = useState<string>("");
 	const [newMedia, setNewMedia] = useState<File | null>();
 	const fileInputRef = useRef<HTMLInputElement | null>(null);
 
 	const handleMediaChange = (
 		e: React.ChangeEvent<HTMLInputElement>,
-		fileSize: number
+		fileSize: number,
+		updateMedia?: (files: FileList) => void
 	) => {
 		if (e.target.files && validateMediaSize(e.target.files, fileSize)) {
 			const file = e.target.files?.[0];
 			if (!file) return;
 			setNewMedia(file);
 			setMediaPreview(URL.createObjectURL(file));
+			if (updateMedia) updateMedia(e.target.files);
 		}
 	};
 
-	const discardMediaChange = () => {
+	const discardMediaChange = (setText?: Dispatch<SetStateAction<string>>) => {
 		if (setText) setText("");
 		setNewMedia(null);
 		setMediaPreview("");

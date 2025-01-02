@@ -43,10 +43,6 @@ const getAllVideo = asyncHandler(
             sortBy = "relevance",
             duration = "any",
         } = req.query as unknown as GetAllVideoQuery;
-        console.log(query, uploadDate, type, sortBy, duration);
-
-        // const skip: number = (Page - 1) * Limit;
-
         const uploadDateOption: number = uploadDateCriteria.get(uploadDate);
         const durationOption: [number, number] = durationCriteria.get(duration);
         const sortOption: string = sortCritieria.get(sortBy);
@@ -333,7 +329,12 @@ const uploadVideo = asyncHandler(
         const videoFile = await uploadOnCloudinary(videoLocalPath, "video");
         const videoQuality = getVideoQuality(videoFile.width, videoFile.height);
         const thumbnail = await uploadOnCloudinary(thumbnailLocalPath, "image");
-        if (!videoFile?.secure_url || !thumbnail?.secure_url) {
+        if (
+            !videoFile?.secure_url ||
+            !videoFile?.public_id ||
+            !thumbnail?.secure_url ||
+            !thumbnail?.public_id
+        ) {
             const message = !videoFile
                 ? "Failed to upload video"
                 : "Failed to upload thumbnail";
@@ -343,11 +344,11 @@ const uploadVideo = asyncHandler(
         const video = await Video.create({
             videoFile: {
                 publicId: videoFile?.public_id,
-                url: videoFile?.secure_url || "",
+                url: videoFile?.secure_url,
             },
             thumbnail: {
                 publicId: thumbnail?.public_id,
-                url: thumbnail?.secure_url || "",
+                url: thumbnail?.secure_url,
             },
             quality: videoQuality,
             title,
@@ -362,14 +363,15 @@ const uploadVideo = asyncHandler(
             throw new ApiError(500, "Failed to upload video");
         }
 
-        return res.status(201).json(
-            new ApiResponse(
-                201,
-                null,
-                // uploadedVideo,
-                "Video uploaded successfully"
-            )
-        );
+        return res
+            .status(201)
+            .json(
+                new ApiResponse(
+                    201,
+                    uploadedVideo,
+                    "Video uploaded successfully"
+                )
+            );
     }
 );
 
@@ -536,7 +538,7 @@ const getVideoById = asyncHandler(
                 },
             },
         ]);
-        if (!video?.length) {
+        if (!video) {
             throw new ApiError(404, "Video not found");
         }
 
@@ -745,7 +747,7 @@ const deleteVideo = asyncHandler(
                 },
             },
         ]);
-        if (!videoDetails?.length) {
+        if (!videoDetails) {
             throw new ApiError(500, "No likes or comments found");
         }
 

@@ -3,24 +3,6 @@ import VideoCardView from "./VideoCardView";
 import makeApiRequest from "../../utils/MakeApiRequest";
 import { VideoType } from "../../Types/Video.type";
 
-// const videoInfo = {
-// 	_id: "1",
-// 	title: "Title",
-// 	description: "Description",
-// 	views: 100,
-// 	duration: 100,
-// 	owner: {
-// 		_id: "1",
-// 		userName: "Username",
-// 		fullName: "Full Name",
-// 	},
-// 	thumbnail: {
-// 		url: "https://via.placeholder.com/150",
-// 		publicId: "1",
-// 	},
-// 	createdAt: new Date(),
-// 	updatedAt: new Date(),
-// };
 const Home: React.FC = () => {
 	const [videos, setVideos] = React.useState<VideoType[]>([]);
 

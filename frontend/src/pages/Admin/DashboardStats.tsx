@@ -1,27 +1,30 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { FaPlus } from "react-icons/fa6";
 import { FaRegEye } from "react-icons/fa";
 import { FaRegUser } from "react-icons/fa";
 import { FaRegHeart } from "react-icons/fa";
 import { BiCommentDetail } from "react-icons/bi";
-import { FaPlus } from "react-icons/fa6";
-import UploadVideoModal from "../../components/Popup/UploadVideoModal";
-import makeApiRequest from '../../utils/MakeApiRequest';
 import { useNavigate } from 'react-router-dom';
+import makeApiRequest from '../../utils/MakeApiRequest';
 import { DashboardStatsType } from '../../Types/Dashboard.type';
-// import UploadingVideoModal from '../../components/Popup/UploadingVideoModal';
+import UploadVideoModal from "../../components/Popup/UploadVideoModal";
+import UploadingVideoModal from '../../components/Popup/UploadingVideoModal';
 
 
 const DashboardStats: React.FC = () => {
     const navigate = useNavigate();
     const [showUploadVideo, setShowUploadVideo] = React.useState(false);
-    // const [showUploadingVideo, setShowUploadingVideo] = React.useState(false);
+    const [showUploadingVideo, setShowUploadingVideo] = React.useState(false);
+    const [uploadProgress, setUploadProgress] = React.useState<number>(0);
+    const [videoName, setVideoName] = React.useState<string>("");
+    const [videoSize, setVideoSize] = React.useState<number>(0);
     const [stats, setStats] = React.useState<DashboardStatsType>();
     const Views = stats?.totalViews || 100;
     const Subscribers = stats?.totalSubscribers || 100;
     const Likes = stats?.totalLikes || 100;
     const Comments = stats?.totalComments || 100;
 
-    React.useEffect(() => {
+    useEffect(() => {
         makeApiRequest({
             method: "get",
             url: "/api/v1/dashboard/channel-stats",
@@ -35,9 +38,24 @@ const DashboardStats: React.FC = () => {
 
     return (
         <>
-            {showUploadVideo && <UploadVideoModal setShowUploadVideo={setShowUploadVideo} />}
+            {showUploadVideo &&
+                <UploadVideoModal
+                    setVideoName={setVideoName}
+                    setVideoSize={setVideoSize}
+                    setUploadProgress={setUploadProgress}
+                    setShowUploadVideo={setShowUploadVideo}
+                    setShowUploadingVideo={setShowUploadingVideo}
+                />
+            }
             {/* set true in uploading video modal */}
-            {/* {showUploadingVideo && <UploadingVideoModal setShowUploadingVideo={setShowUploadingVideo} />} */}
+            {showUploadingVideo &&
+                <UploadingVideoModal
+                    videoName={videoName}
+                    videoSize={videoSize}
+                    uploadProgress={uploadProgress}
+                    setShowUploadingVideo={setShowUploadingVideo}
+                />
+            }
 
             <div className="flex justify-between items-center">
                 <div className="my-2">

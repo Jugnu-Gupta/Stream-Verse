@@ -78,12 +78,10 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo, editDele
 	}, [showContent]);
 
 	return (<div className="flex items-start gap-2 p-2 w-full">
-		<Link to={`/tweets/${tweetId}`}>
-			<div className="overflow-hidden rounded-full w-10">
-				<img src={thumbnail} alt="thumbnail"
-					className="rounded-full w-10 aspect-square" />
-			</div>
-		</Link>
+		<div className="overflow-hidden rounded-full w-10">
+			<img src={thumbnail} alt="thumbnail"
+				className="rounded-full w-10 aspect-square" />
+		</div>
 		<div className="flex flex-col text-primary-text w-full">
 			<div className="flex gap-2 items-center mb-2">
 				<p className="text-sm font-semibold">{channelName}</p>
@@ -143,8 +141,7 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo, editDele
 						</button>
 					</div>
 				</div>
-				:
-				<div className="flex justify-start gap-3 font-semibold tracking-wide">
+				: <div className="flex justify-start gap-3 font-semibold tracking-wide">
 					<button onClick={handleLike}
 						className="flex items-center gap-1 text-xl hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
 						{isLiked ? <BiSolidLike /> : <BiLike />}

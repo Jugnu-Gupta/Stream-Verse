@@ -1,5 +1,6 @@
 import axiosInstance from "./Interceptor";
 import axiosMediaInstance from "./MediaInterceptor";
+import { AxiosProgressEvent } from "axios";
 
 interface CustomFormData {
 	[key: string]: unknown;
@@ -11,6 +12,9 @@ interface ApiRequestOptions {
 	url: string;
 	data?: CustomFormData | FormData;
 	params?: CustomFormData;
+}
+interface ApiMediaRequestOptions extends ApiRequestOptions {
+	onUploadProgress?: (progressEvent: AxiosProgressEvent) => void;
 }
 
 const makeApiRequest = async ({
@@ -38,13 +42,15 @@ const makeApiMediaRequest = async ({
 	url,
 	data,
 	params,
-}: ApiRequestOptions): Promise<unknown> => {
+	onUploadProgress,
+}: ApiMediaRequestOptions): Promise<unknown> => {
 	try {
 		const res = await axiosMediaInstance({
 			method,
 			url,
 			data,
 			params,
+			onUploadProgress,
 		});
 		return res.data;
 	} catch (error) {
@@ -55,4 +61,4 @@ const makeApiMediaRequest = async ({
 
 export default makeApiRequest;
 export { makeApiMediaRequest };
-export type { ApiRequestOptions };
+export type { ApiRequestOptions, ApiMediaRequestOptions };

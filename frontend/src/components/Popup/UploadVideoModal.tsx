@@ -8,23 +8,31 @@ import { makeApiMediaRequest } from '../../utils/MakeApiRequest';
 import toast from 'react-hot-toast';
 
 interface UploadVideoModalProps {
+    setVideoName: Dispatch<SetStateAction<string>>;
+    setVideoSize: Dispatch<SetStateAction<number>>;
+    setUploadProgress: Dispatch<SetStateAction<number>>;
     setShowUploadVideo: Dispatch<SetStateAction<boolean>>;
+    setShowUploadingVideo: Dispatch<SetStateAction<boolean>>;
 }
 
-const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setShowUploadVideo }) => {
+const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setUploadProgress, setVideoName, setVideoSize, setShowUploadVideo, setShowUploadingVideo }) => {
     const [thumbnail, setThumbnail] = React.useState<File | null>(null);
+    const divRef = React.useRef<HTMLDivElement>(null);
+    const thumbnailRef = React.useRef<HTMLInputElement>(null);
     const { fileInputRef: videoRef, mediaPreview: videoPreview, setMediaPreview: setVideoPreview,
         newMedia: newVideo, setNewMedia: setNewVideo, handleMediaChange: handleVideoChange,
         discardMediaChange: discardVideoChanges } = useMedia();
-    const divRef = React.useRef<HTMLDivElement>(null);
-    const thumbnailRef = React.useRef<HTMLInputElement>(null);
     const [videoTitle, setVideoTitle] = React.useState<string>("");
     const [videoDescription, setVideoDescription] = React.useState<string>("");
-
     const updateThumbnail = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files?.[0] && validateMediaSize(e.target.files, 1)) {
             setThumbnail(e.target.files![0]);
         }
+    }
+
+    const updateMedia = (files: FileList) => {
+        setVideoName(files[0].name);
+        setVideoSize(files[0].size);
     }
 
     const discardChanges = () => {
@@ -50,6 +58,7 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setShowUploadVideo 
             if (e.dataTransfer.files && validateMediaSize(e.dataTransfer.files, 15)) {
                 setVideoPreview(URL.createObjectURL(e.dataTransfer.files[0]));
                 setNewVideo(e.dataTransfer.files[0]);
+                updateMedia(e.dataTransfer.files);
             }
         }
     }
@@ -63,14 +72,19 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setShowUploadVideo 
         data.append("title", videoTitle);
         data.append("description", videoDescription);
 
+        setShowUploadVideo(false);
+        setShowUploadingVideo(true);
         makeApiMediaRequest({
             method: "post",
             url: "/api/v1/videos",
-            data
+            data,
+            onUploadProgress: (progressEvent) => {
+                const progress = progressEvent.total ? Math.round((progressEvent.loaded * 100) / (progressEvent.total)) : 0;
+                setUploadProgress(progress);
+            }
         }).then(() => {
             toast.success("Video uploaded successfully");
-            setShowUploadVideo(false);
-            window.location.reload();
+            // window.location.reload();
         }).catch((error) => {
             console.error("Error uploading video:", error);
         })
@@ -108,7 +122,7 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setShowUploadVideo 
                             </div>
                         </label>
                         <input type="file" name="video" id="video" accept="video/mp4" className='hidden' ref={videoRef}
-                            onChange={(e) => handleVideoChange(e, 15)}
+                            onChange={(e) => handleVideoChange(e, 15, updateMedia)}
                         />
                     </div>
 
@@ -145,7 +159,7 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setShowUploadVideo 
                         Upload</button>
                 </div>
             </div>
-        </div >
+        </div>
     )
 }
 

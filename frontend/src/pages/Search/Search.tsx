@@ -13,25 +13,6 @@ import ChannelCardView from "./ChannelCardView";
 import { ChannelType } from "../../Types/Channel.type";
 import NoResultsFound from "./NoResultsFound";
 
-// const videoInfo = {
-// 	_id: "1",
-// 	title: "Title",
-// 	description: "Description",
-// 	views: 100,
-// 	duration: 100,
-// 	owner: {
-// 		_id: "1",
-// 		userName: "Username",
-// 		fullName: "Full Name",
-// 	},
-// 	thumbnail: {
-// 		url: "https://via.placeholder.com/150",
-// 		publicId: "1",
-// 	},
-// 	createdAt: new Date(),
-// 	updatedAt: new Date(),
-// };
-
 
 const Search: React.FC = () => {
 	const dispatch = useDispatch<AppDispatch>();
@@ -91,7 +72,7 @@ const Search: React.FC = () => {
 					searchValues.curSearch === "video" &&
 					(searchValues.videos.length === 0 ?
 						<NoResultsFound style="mt-40" entityName="video" heading="No videos found"
-							message="Try different keywords or remove search filters" />
+							message="Please try to search something else or remove filters." />
 						: <>
 							<div className="sm:flex hidden flex-col">
 								{searchValues.videos?.map((video: VideoType) => (
@@ -109,7 +90,7 @@ const Search: React.FC = () => {
 					searchValues.curSearch === "playlist" &&
 					(searchValues.playlists.length === 0 ?
 						<NoResultsFound style="mt-40" entityName="playlist" heading="No playlists found"
-							message="Try different keywords or remove search filters" />
+							message="Please try to search something else or remove filters." />
 						: <>
 							<div className="sm:flex hidden flex-col">
 								{searchValues.playlists?.map((video: PlaylistType) => (
@@ -126,7 +107,7 @@ const Search: React.FC = () => {
 				{
 					searchValues.curSearch === "channel" &&
 					(searchValues.channels.length === 0 ? <NoResultsFound style="mt-40" entityName="channel"
-						heading="No playlists found" message="Try different keywords or remove search filters" />
+						heading="No channels found" message="Please try to search something else or remove filters." />
 						: <>
 							<div className="flex wrap">
 								{searchValues.channels?.map((channel: ChannelType) => (

@@ -12,6 +12,7 @@ import { useMedia } from "../../../hooks/useMedia";
 import DeleteModal from "../../../components/Popup/DeleteModal";
 import toast from "react-hot-toast";
 import NoResultsFound from "../../Search/NoResultsFound";
+import ChannelTweetList2 from "./ChannelTweetList2";
 
 interface ChannelInfoWrapper {
 	channelInfo: ChannelInfoType;
@@ -22,7 +23,7 @@ const ChannelTweets: React.FC = () => {
 		{ currentId: "", showEditModal: false, showDeleteModal: false, showEditDeletePopup: false });
 	const [addTweetText, setAddTweetText] = React.useState<string>("");
 	const { fileInputRef, mediaPreview, newMedia, handleMediaChange, discardMediaChange } =
-		useMedia(setAddTweetText);
+		useMedia();
 	const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
 	const channelName = channelInfo?.fullName || "Channel Name";
 	const { adminName } = useParams<{ adminName: string }>();
@@ -74,7 +75,7 @@ const ChannelTweets: React.FC = () => {
 			}
 			setTweets([newTweet, ...tweets]);
 			toast.success("Tweet created successfully");
-			discardMediaChange();
+			discardMediaChange(setAddTweetText);
 		}).catch((error) => {
 			console.error("Error fetching data:", error);
 		});
@@ -90,7 +91,7 @@ const ChannelTweets: React.FC = () => {
 			setTweets(response.data?.tweets.reverse());
 		}).catch((error) => {
 			console.error("Error fetching data:", error);
-			navigate("/");
+			// navigate("/");
 		});
 	}, [navigate, channelId, userId]);
 
@@ -154,7 +155,7 @@ const ChannelTweets: React.FC = () => {
 						/>
 					</div>
 					<div className="flex gap-2 xs:gap-1">
-						<button onClick={discardMediaChange}
+						<button onClick={() => discardMediaChange(setAddTweetText)}
 							className="font-semibold text-primary-text xs:text-sm hover:bg-primary px-3 py-1 rounded-full duration-300">
 							Cancel
 						</button>
@@ -179,11 +180,13 @@ const ChannelTweets: React.FC = () => {
 				{tweets.length === 0 ? <NoResultsFound entityName="tweet" style="mt-16"
 					heading="No tweets" message="This channel has yet to make a Tweet." />
 					: tweets?.map((tweet: TweetType) => (
-						<ChannelTweetList key={tweet._id}
-							tweetInfo={tweet}
-							editDeleteOption={editDeleteOption}
-							setEditDeleteOption={setEditDeleteOption}>
-						</ChannelTweetList>
+						adminName !== curUserName ?
+							<ChannelTweetList key={tweet._id}
+								tweetInfo={tweet}
+								editDeleteOption={editDeleteOption}
+								setEditDeleteOption={setEditDeleteOption}>
+							</ChannelTweetList>
+							: <ChannelTweetList2 key={tweet._id} tweetInfo={tweet} />
 					))
 				}
 			</div>
