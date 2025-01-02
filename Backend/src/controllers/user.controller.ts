@@ -299,7 +299,7 @@ const getUserChannelPage = asyncHandler(
             },
         ]);
 
-        if (!channel?.length) {
+        if (!channel) {
             throw new ApiError(404, "Channel does not exists");
         }
 
@@ -353,7 +353,7 @@ const getUserChannelVideos = asyncHandler(
             },
         ]);
 
-        if (!channelVideos?.length) {
+        if (!channelVideos) {
             throw new ApiError(404, "Channel does not exists");
         }
 

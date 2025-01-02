@@ -61,7 +61,7 @@ const getUserChannelSubscribers = asyncHandler(
         }
 
         const subscribers = await Subscription.find({ channelId });
-        if (!subscribers?.length) {
+        if (!subscribers) {
             throw new ApiError(404, "No subscribers found");
         }
 
@@ -131,7 +131,7 @@ const getSubscribedChannels = asyncHandler(
             },
             { $project: { channel: { $arrayElemAt: ["$channel", 0] } } },
         ]);
-        if (!subscriptions?.length) {
+        if (!subscriptions) {
             throw new ApiError(404, "No subscriptions found");
         }
 

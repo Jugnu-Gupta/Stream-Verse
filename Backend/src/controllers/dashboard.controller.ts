@@ -142,7 +142,7 @@ const getAdminChannelStats = asyncHandler(
                 },
             },
         ]);
-        if (!user?.length) {
+        if (!user) {
             throw new ApiError(404, "No user found with this id");
         }
 
@@ -161,7 +161,6 @@ const getAdminChannelStats = asyncHandler(
 // controller to Get all the videos uploaded by the channel
 const getAdminChannelVideos = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        // check if the user id is valid.
         if (!isValidObjectId(req?.user?._id)) {
             throw new ApiError(400, "Invalid user id");
         }

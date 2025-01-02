@@ -204,7 +204,7 @@ const getUserTweet = asyncHandler(
             { $sort: { createdAt: 1 } },
         ]);
 
-        if (!tweets?.length) {
+        if (!tweets) {
             throw new ApiError(404, "No tweets found");
         }
 
@@ -534,7 +534,7 @@ const deleteTweet = asyncHandler(
                 },
             },
         ]);
-        if (!tweetDetails?.length) {
+        if (!tweetDetails) {
             throw new ApiError(500, "No likes or comments found");
         }
 

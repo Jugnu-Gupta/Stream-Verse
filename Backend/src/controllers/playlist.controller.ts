@@ -6,8 +6,6 @@ import { User } from "../models/user.model";
 import { asyncHandler } from "../utils/asyncHandler";
 import { ApiError } from "../utils/apiError";
 import { ApiResponse } from "../utils/apiResponse";
-// import { User } from "models/user.model";
-import { ObjectId } from "mongodb";
 
 interface RequestWithUser extends Request {
     user: UserType;
@@ -121,7 +119,7 @@ const getUserPlaylists = asyncHandler(
                 },
             },
         ]);
-        if (!playlists?.length) {
+        if (!playlists) {
             throw new ApiError(404, "No playlists found");
         }
 
@@ -216,7 +214,7 @@ const getPlaylistById = asyncHandler(
                 },
             },
         ]);
-        if (!playlist?.length) {
+        if (!playlist) {
             throw new ApiError(404, "Playlist not found");
         }
 

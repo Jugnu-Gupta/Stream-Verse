@@ -185,7 +185,7 @@ const getLikedVideos = asyncHandler(
             { $project: { video: 1 } },
         ]);
 
-        if (!likedVideos?.length) {
+        if (!likedVideos) {
             throw new ApiError(404, "No liked videos found");
         }
 
