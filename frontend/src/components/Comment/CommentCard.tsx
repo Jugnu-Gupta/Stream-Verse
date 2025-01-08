@@ -22,6 +22,7 @@ import { computeDislikeCount, computeLikeCount }
 import EditDeleteComment from "./EditDeleteComment";
 import { EditDeleteWrapper } from "../../Types/EditDelete.type";
 import toast from "react-hot-toast";
+import { usePagination } from "../../hooks/usePagination";
 
 interface CommentProps extends EditDeleteWrapper {
 	currPath: string[];
@@ -47,6 +48,35 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 	const commentId = comment?._id;
 	const navigate = useNavigate();
 
+	const handleGetComments = (page: number, loading: boolean, hasMore: boolean, commentId: string) => {
+		if (!entityId || !commentId || loading || !hasMore) return;
+		const userId = localStorage.getItem("userId");
+
+		setLoading(true);
+		makeApiRequest({
+			method: "get",
+			url: `/api/v1/comments/${entityType}/${entityId}/${commentId}`,
+			params: {
+				userId,
+				page,
+				limit: 10
+			}
+		}).then((RepliesResponse: any) => { // eslint-disable-line
+			const RepliesData = RepliesResponse.data?.comments || [];
+			console.log("RepliesData2:", RepliesData);
+
+			setPage((prevPage) => prevPage + 1);
+			setHasMore(RepliesData.length > 0);
+			dispatch(addComments({ childPathIds: currPath, childs: RepliesData }));
+		}).catch((error) => {
+			console.error("Error fetching data:", error);
+		});
+		setLoading(false);
+	}
+
+	const { page, setPage, loading, setLoading, hasMore, setHasMore, lastItemRef } =
+		usePagination(handleGetComments, entityId);
+
 	useEffect(() => {
 		if (textAreaRef.current) {
 			textAreaRef.current!.style.height = "26px";
@@ -56,24 +86,8 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 	}, [commentText]);
 
 	useEffect(() => {
-		if (!entityId || !commentId || replies?.length) return;
-		const userId = localStorage.getItem("userId");
-
-		makeApiRequest({
-			method: "get",
-			url: `/api/v1/comments/${entityType}/${entityId}/${commentId}`,
-			params: {
-				userId,
-			}
-		}).then((RepliesResponse: any) => { // eslint-disable-line
-			const RepliesData = RepliesResponse.data?.comments || [];
-			console.log("RepliesData:", RepliesData);
-
-			dispatch(addComments({ childPathIds: currPath, childs: RepliesData }));
-		}).catch((error) => {
-			console.error("Error fetching data:", error);
-		});
-	}, [dispatch, entityType, entityId, commentId, replies, currPath]);
+		handleGetComments(page, loading, hasMore, commentId);
+	}, [commentId]);
 
 	const handleEditComment = () => {
 		if (commentText.trim() === comment?.content || commentId === "") return;
@@ -103,8 +117,7 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 			<div className="flex items-start gap-2 w-full">
 				<div onClick={() => navigate(`/${channelName.substring(1)}/videos`)}
 					className="overflow-hidden rounded-full w-10">
-					<img src={thumbnail}
-						alt="thumbnail"
+					<img src={thumbnail} alt="thumbnail" loading='lazy'
 						className="rounded-full w-10 aspect-square"
 					/>
 				</div>
@@ -188,14 +201,14 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 						setEditDeleteOption={setEditDeleteOption}>
 					</EditDeleteComment>)
 				}
+				<div ref={lastItemRef}></div>
 			</div>
-			{showReplies && (
-				<div
-					className={twMerge(
-						"w-full h-full",
-						currPath.length < 5 ? "pl-4" : "pl-0"
-					)}>
 
+			{showReplies && (
+				<div className={twMerge(
+					"w-full h-full",
+					currPath.length < 5 ? "pl-4" : "pl-0"
+				)}>
 					{replies?.map((reply: CommentType) =>
 					(<CommentCard
 						key={reply?._id}

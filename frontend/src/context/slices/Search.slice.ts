@@ -18,10 +18,10 @@ const initialState: SearchType = {
 	type: "video",
 	duration: "any",
 	sortBy: "relevance",
+	curSearch: "video",
 	videos: [],
 	playlists: [],
 	channels: [],
-	curSearch: "video",
 };
 
 const searchSlice = createSlice({

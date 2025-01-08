@@ -14,6 +14,8 @@ import { setCounter } from "../../context/slices/Counter.slice";
 import { EditDeleteType } from "../../Types/EditDelete.type";
 import DeleteModal from "../../components/Popup/DeleteModal";
 import ChannelTweetList2 from "../Channel/Tweets/ChannelTweetList2";
+import NoResultsFound from "../Search/NoResultsFound";
+import { usePagination } from "../../hooks/usePagination";
 
 const TweetDetails: React.FC = () => {
 	const currPath: string[] = [];
@@ -48,29 +50,49 @@ const TweetDetails: React.FC = () => {
 		dispatch(setCounter({ value: noOfcomments || 0 }));
 	}, [noOfcomments, dispatch]);
 
-	useEffect(() => {
-		if (comments.length) return;
+	const handleGetComments = (page: number, loading: boolean, hasMore: boolean, tweetId: string) => {
+		console.log("before page:", page, tweetId, userId, loading, hasMore);
+		if (loading || !hasMore) return;
+		console.log("after page:", page, tweetId, userId, loading, hasMore);
+
+		setLoading(true);
 		makeApiRequest({
 			method: "get",
-			url: `/api/v1/tweets/${tweetId}${userId ? `/${userId}` : ""}`,
-		}).then((tweetRes: any) => { // eslint-disable-line
-			setTweet(tweetRes.data?.tweets?.[0]);
-
-			// find details of current video
-			return makeApiRequest({
-				method: "get",
-				url: `/api/v1/comments/tweet/${tweetId}${userId ? `?userId=${userId}` : ""}`,
-			});
+			url: `/api/v1/comments/tweet/${tweetId}`,
+			params: {
+				userId,
+				page,
+				limit: 10
+			}
 		}).then((commentsRes: any) => { // eslint-disable-line
 			const commentsData = commentsRes.data?.comments || [];
 
+			setPage((prevPage) => prevPage + 1);
+			setHasMore(commentsData.length > 0);
 			if (commentsData.length === 0) return;
 			dispatch(addComments({ childPathIds: [], childs: commentsData }));
 		}).catch((error) => {
 			console.error("Error fetching data:", error);
 			navigate("/");
 		})
-	}, [tweetId, userId, navigate, dispatch, comments.length]);
+		setLoading(false);
+	};
+	const { setPage, setLoading, setHasMore, lastItemRef } =
+		usePagination(handleGetComments, tweetId || "");
+
+	useEffect(() => {
+		if (!tweetId) return;
+
+		makeApiRequest({
+			method: "get",
+			url: `/api/v1/tweets/${tweetId}${userId ? `/${userId}` : ""}`,
+		}).then((tweetRes: any) => { // eslint-disable-line
+			setTweet(tweetRes.data?.tweets?.[0]);
+		}).catch((error) => {
+			console.error("Error fetching data:", error);
+			navigate("/");
+		});
+	}, [tweetId, userId, navigate]);
 
 	return (<div className="px-4 pt-4 mx-auto w-full max-w-6xl flex justify-items-center flex-col overflow-hidden">
 		<ChannelTweetList2 tweetInfo={tweet} />
@@ -88,17 +110,20 @@ const TweetDetails: React.FC = () => {
 				</DeleteModal>)
 			}
 
-			{comments?.map((comment: CommentType) => (
-				<CommentCard
-					key={comment._id}
-					currPath={currPath.concat([comment._id])}
-					comment={comment}
-					entityId={tweetId || ""}
-					entityType="tweet"
-					editDeleteOption={editDeleteOption}
-					setEditDeleteOption={setEditDeleteOption}>
-				</CommentCard>
-			))}
+			{comments?.length === 0 ? <NoResultsFound style="mt-0" entityName="comment"
+				heading="No comments" message="This video has no comments, drop your below!" />
+				: comments?.map((comment: CommentType) => (
+					<CommentCard
+						key={comment._id}
+						currPath={currPath.concat([comment._id])}
+						comment={comment}
+						entityId={tweetId || ""}
+						entityType="tweet"
+						editDeleteOption={editDeleteOption}
+						setEditDeleteOption={setEditDeleteOption}>
+					</CommentCard>
+				))}
+			<div key={"lastItemRef"} ref={lastItemRef} className="h-1 mb-1 w-full bg-transparent"></div>
 		</div>
 	</div>);
 };

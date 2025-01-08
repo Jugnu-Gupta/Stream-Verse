@@ -12,6 +12,8 @@ import { setCounter } from "../../context/slices/Counter.slice";
 import { formatNumber } from "../../utils/FormatNumber";
 import { EditDeleteType } from "../../Types/EditDelete.type";
 import DeleteModal from "../../components/Popup/DeleteModal";
+import NoResultsFound from "../Search/NoResultsFound";
+import { usePagination } from "../../hooks/usePagination";
 
 interface VideoCommentsProps {
 	videoId: string;
@@ -38,6 +40,34 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ videoId, noOfComments }) 
 		}
 	};
 
+	const handleGetComments = (page: number, loading: boolean, hasMore: boolean, videoId: string) => {
+		if (!videoId || loading || !hasMore) return;
+		const userId = localStorage.getItem("userId");
+
+		setLoading(true);
+		makeApiRequest({
+			method: "get",
+			url: `/api/v1/comments/video/${videoId}`,
+			params: {
+				page,
+				limit: 10,
+				userId
+			}
+		}).then((commentsResponse: any) => { // eslint-disable-line
+			const commentsData = commentsResponse.data?.comments || [];
+
+			setPage((prevPage) => prevPage + 1);
+			setHasMore(commentsData.length > 0);
+			if (commentsData.length === 0) return;
+			dispatch(addComments({ childPathIds: [], childs: commentsData }));
+		}).catch((error) => {
+			console.error("Error fetching data:", error);
+		});
+		setLoading(false);
+	};
+	const { setPage, setLoading, setHasMore, lastItemRef } =
+		usePagination(handleGetComments, videoId);
+
 	useEffect(() => {
 		dispatch(setCounter({ value: noOfComments }));
 	}, [noOfComments, dispatch]);
@@ -45,23 +75,6 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ videoId, noOfComments }) 
 	useEffect(() => {
 		dispatch(clearComments());
 	}, [dispatch]);
-
-	useEffect(() => {
-		if (!videoId || comments?.length) return;
-		const userId = localStorage.getItem("userId");
-
-		makeApiRequest({
-			method: "get",
-			url: `/api/v1/comments/video/${videoId}${userId ? `?userId=${userId}` : ""}`,
-		}).then((commentsResponse: any) => { // eslint-disable-line
-			const commentsData = commentsResponse.data?.comments || [];
-
-			if (commentsData.length === 0) return;
-			dispatch(addComments({ childPathIds: [], childs: commentsData }));
-		}).catch((error) => {
-			console.error("Error fetching data:", error);
-		});
-	}, [videoId, dispatch, comments.length]);
 
 	return (<div className="border-2 border-primary-border py-2 rounded-lg 2lg:max-h-max max-h-[70vh] overflow-y-auto my-4 px-2">
 		<h1 className="text-primary-text font-bold tracking-wide text-lg mb-2">
@@ -76,17 +89,20 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ videoId, noOfComments }) 
 			</DeleteModal>)
 		}
 
-		{comments?.map((comment: CommentType) => (
-			<CommentCard
-				key={comment?._id}
-				currPath={currPath.concat(comment?._id)}
-				comment={comment}
-				entityId={videoId}
-				entityType="video"
-				editDeleteOption={editDeleteOption}
-				setEditDeleteOption={setEditDeleteOption}>
-			</CommentCard>)
-		)}
+		{comments?.length === 0 ? <NoResultsFound style="mt-0" entityName="comment"
+			heading="No comments" message="This video has no comments, drop your below!" />
+			: comments?.map((comment: CommentType) => (
+				<CommentCard
+					key={comment?._id}
+					currPath={currPath.concat(comment?._id)}
+					comment={comment}
+					entityId={videoId}
+					entityType="video"
+					editDeleteOption={editDeleteOption}
+					setEditDeleteOption={setEditDeleteOption}>
+				</CommentCard>)
+			)}
+		<div key={"lastItemRef"} ref={lastItemRef} className="h-1 w-full bg-transparent"></div>
 	</div>);
 };
 

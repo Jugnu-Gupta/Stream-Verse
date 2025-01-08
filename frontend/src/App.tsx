@@ -40,6 +40,9 @@ import Help from "./pages/Help/Help.tsx";
 // add video filter feature
 // add video watch later, subscription, liked-videos, playlist feature
 
+// remove empty search query from search bar
+
+// fix if incorrect video id or tweet id is given in url.
 
 function App() {
 	return (

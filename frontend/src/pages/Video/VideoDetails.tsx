@@ -33,13 +33,19 @@ const VideoDetail: React.FC = () => {
 	const title = video?.title || "Video Title";
 	// console.log("videoId:", videoId);
 	// console.log("listId:", listId);
+	//--------------------- videoId and videoNo are same ------------------
 
 	useEffect(() => {
 		makeApiRequest({
 			method: "get",
 			url: `/api/v1/playlists/${"67502bffd0104e89cbb9be5e"}`,
 		}).then((playlistRes: any) => { // eslint-disable-line
-			setPlaylist(playlistRes.data?.playlist);
+			const data = playlistRes.data?.playlist;
+			if (data?.videos.some((video: VideoType) => video._id === "67502bffd0104e89cbb9be5e")) {
+				setPlaylist(data);
+			} else {
+				navigate(`/video/${videoId}`);
+			}
 
 			// find details of current video
 			return makeApiRequest({
@@ -51,30 +57,27 @@ const VideoDetail: React.FC = () => {
 			const data = videoInfoRes.data?.video;
 			setVideo(data);
 
+			makeApiRequest({
+				method: "post",
+				url: `/api/v1/videos/${data?._id}/views`,
+			});
+
 			// find similar videos
 			return makeApiRequest({
 				method: "get",
 				url: "/api/v1/videos",
 				params: {
-					query: data?.title + " " + data?.description,
+					query: encodeURIComponent(data?.title + " " + data?.description),
 					limit: 5,
 				}
 			})
 		}).then((SimilarVideosRes: any) => { // eslint-disable-line
-			const data = SimilarVideosRes.data?.videos || [];
-			setSimilarVideos(data.filter((video: VideoType) => video._id !== videoNo));
-
-			makeApiRequest({
-				method: "post",
-				url: `/api/v1/videos/${videoNo}/views`,
-			});
-			console.log("View Added");
+			setSimilarVideos(SimilarVideosRes?.data?.data);
 		}).catch((error) => {
 			console.error("Error fetching data:", error);
-			// navigate(listId ? `/video/${videoId}` : `/`);
-			// navigate("/");
+			navigate(listId ? `/video/${videoId}` : `/`);
 		})
-	}, [listId, videoId, videoNo, userId, navigate]);
+	}, [listId, videoId, userId, navigate]);
 
 	return (
 		<div
@@ -100,11 +103,8 @@ const VideoDetail: React.FC = () => {
 					</div>
 					<div className="flex justify-between items-start gap-2">
 						<div className="flex items-center gap-2 w-fit min-w-[150px]">
-							<img
-								src={thumbnail}
-								alt="thumbnail"
-								className="rounded-full w-10 h-10 aspect-square"
-							/>
+							<img src={thumbnail} alt="thumbnail" loading='lazy'
+								className="rounded-full w-10 h-10 aspect-square" />
 							<div className="text-primary-text text-nowrap w-full">
 								<h1 className="font-semibold sm:text-sm">
 									{channelName}
@@ -134,7 +134,7 @@ const VideoDetail: React.FC = () => {
 
 				{/* Related Videos */}
 				<div className="flex flex-col w-full">
-					{similarVideos?.map((video: VideoType) => (
+					{similarVideos?.map((video: VideoType) => video._id !== videoNo && (
 						<RelatedVideo key={video?._id} videoInfo={video} />
 					))}
 				</div>

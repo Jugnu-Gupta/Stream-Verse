@@ -10,7 +10,6 @@ import makeApiRequest from "../../utils/MakeApiRequest";
 import { AppDispatch, RootState } from "../../context/store";
 import { useAuth } from "../../hooks/useAuth";
 import Cookies from "js-cookie";
-import { SearchType, updateFilters } from "../../context/slices/Search.slice";
 
 
 const Header: React.FC = () => {
@@ -21,36 +20,14 @@ const Header: React.FC = () => {
 	const [searchText, setSearchText] = React.useState("");
 	const curUser: string = "@" + localStorage.getItem("userName");
 	const showNavbar: boolean = useSelector((state: RootState) => state.navbar.showNavbar);
-	const searchValues: SearchType = useSelector((state: RootState) => state.search);
 
 	useEffect(() => {
 		setUserImage(generateAvatar(curUser.substring(1), "0078e1", "ffffffcc"));
 	}, [curUser]);
 
 	const handleSearch = () => {
-		makeApiRequest({
-			method: "get",
-			url: `/api/v1/videos`,
-			params: {
-				query: searchText,
-				type: searchValues.type,
-				duration: searchValues.duration,
-				sortBy: searchValues.sortBy,
-				uploadDate: searchValues.uploadDate,
-			}
-		}).then((response: any) => { // eslint-disable-line
-			console.log(response.data.data);
-			if (searchValues.type === "video") {
-				dispatch(updateFilters({ ...searchValues, videos: response.data.data, playlists: [], channels: [], curSearch: "video" }));
-			} else if (searchValues.type === "playlist") {
-				dispatch(updateFilters({ ...searchValues, playlists: response.data.data, videos: [], channels: [], curSearch: "playlist" }));
-			} else if (searchValues.type === "channel") {
-				dispatch(updateFilters({ ...searchValues, channels: response.data.data, videos: [], playlists: [], curSearch: "channel" }));
-			}
-			navigate('/search');
-		}).catch((error: any) => { // eslint-disable-line
-			console.error(error.response.data.message);
-		});
+		if (searchText.trim() === "") return;
+		navigate(`/search?searchText=${searchText}`);
 	}
 
 	const logOutHandler = async () => {
@@ -87,7 +64,7 @@ const Header: React.FC = () => {
 					<RxHamburgerMenu className="text-3xl ml-2 hover:bg-background-secondary p-[6px] rounded-full duration-300" />
 				</button>
 				<button className="w-8 flex sm:ml-4 outline-none" onClick={() => navigate('/')}>
-					<img src={logo} alt="StreamVerse" className="aspect-square w-8 rounded-full" />
+					<img src={logo} alt="StreamVerse" loading='lazy' className="aspect-square w-8 rounded-full" />
 				</button>
 				<h1 className="sm:0 ml-1.5 xs:hidden text-primary-text">StreamVerse</h1>
 			</div>
@@ -100,7 +77,7 @@ const Header: React.FC = () => {
 			</div>
 			<div className="flex items-center pr-4 text-nowrap">
 				{loggedIn ? (<>
-					<img onClick={() => navigate(`/${curUser}/personal-information`)} src={userImage} alt="userImage" className="text-sm w-7 h-7 cursor-pointer" />
+					<img onClick={() => navigate(`/${curUser}/personal-information`)} src={userImage} alt="userImage" loading='lazy' className="text-sm w-7 h-7 cursor-pointer" />
 					<button onClick={logOutHandler}
 						className="bg-primary outline-none text-primary-text font-semibold px-2.5 py-1 xs:px-2 text-sm xs:text-xs xs:py-1.5 rounded-md ml-2">Log Out
 					</button>
