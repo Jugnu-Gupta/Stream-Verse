@@ -43,7 +43,7 @@ const PersonalInformation: React.FC = () => {
             <div className="flex flex-col px-6 xs:px-2 w-full mt-4 max-w-6xl mx-auto">
                 <div className="w-full relative">
                     <img src={coverImgPreview ? coverImgPreview : coverImage !== "" ? coverImage : Background}
-                        alt="Background"
+                        alt="Background" loading='lazy'
                         className="w-full aspect-[5] rounded-2xl object-cover"
                     />
                     <label htmlFor="coverImage"
@@ -58,7 +58,7 @@ const PersonalInformation: React.FC = () => {
                     <div className="flex mt-4 gap-4 items-center w-fit mr-2">
                         <div className="relative">
                             <img src={avatarPreview ? avatarPreview : avatarImage !== "" ? avatarImage : Background}
-                                alt="Background"
+                                alt="Background" loading='lazy'
                                 className="w-28 xs:w-24 aspect-square rounded-full"
                             />
                             <label htmlFor="avatarImage"

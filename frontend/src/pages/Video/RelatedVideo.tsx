@@ -25,11 +25,8 @@ const RelatedVideo: React.FC<VideoListViewProps> = ({ heighlightVideo, videoInfo
 		<div className={twMerge("flex gap-2 p-2 pl-0 2lg:pl-2 group w-full", heighlightVideo == videoInfo?._id && "bg-background-secondary")}>
 			<Link to={`/video/${videoId}`} className="min-w-36 w-1/2 max-w-52">
 				<div className="overflow-hidden rounded-xl max-w-md relative">
-					<img
-						src={thumbnail}
-						alt="thumbnail"
-						className="rounded-xl aspect-video group-hover:scale-110 duration-300"
-					/>
+					<img src={thumbnail} alt="thumbnail" loading='lazy'
+						className="rounded-xl aspect-video group-hover:scale-110 duration-300" />
 					<p className="px-1 py-[1px] absolute bottom-2 right-2 text-xs text-primary-text rounded-md bg-black bg-opacity-70">
 						{duration}
 					</p>
@@ -44,7 +41,7 @@ const RelatedVideo: React.FC<VideoListViewProps> = ({ heighlightVideo, videoInfo
 						{views} Views · {uploadedAt}
 					</p>
 				</Link>
-				<Link to={`/${ownerName}/videos`}				>
+				<Link to={`/${ownerName}/videos`}>
 					<p className="text-primary-text2 hover:text-primary-text text-nowrap truncate 2lg:text-[13px] xs:text-sm sm:text-[15px]">
 						{channelName}
 					</p>

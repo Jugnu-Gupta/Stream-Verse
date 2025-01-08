@@ -8,7 +8,7 @@ const ProtectedLayout: React.FC = () => {
 
     if (loading === true) {
         return (<div className='mx-auto my-auto'>
-            <img src={loadingGIf} alt="loading" className='w-24' />
+            <img src={loadingGIf} alt="loading" loading='lazy' className='w-24' />
         </div>)
     }
 

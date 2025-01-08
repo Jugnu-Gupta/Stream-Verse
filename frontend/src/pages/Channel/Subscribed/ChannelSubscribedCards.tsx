@@ -19,9 +19,7 @@ const ChannelSubscribedCards: React.FC<ChannelSubscribedCardsProps> = ({ Subscri
 		<div className="flex items-center gap-2 p-2 w-full">
 			<Link to={`/@${channelUserName}/videos`}>
 				<div className="overflow-hidden rounded-full w-10">
-					<img
-						src={thumbnail}
-						alt="thumbnail"
+					<img src={thumbnail} alt="thumbnail" loading='lazy'
 						className="rounded-full w-10 aspect-square"
 					/>
 				</div>

@@ -73,9 +73,7 @@ const AddComment: React.FC<AddCommentProps> = ({ setGiveReply, avatarStyle, enti
         <div className="flex items-start w-full gap-2">
             <div className={twMerge("overflow-hidden rounded-full min-w-7", avatarStyle)}>
                 {/* // current user image */}
-                <img
-                    src={thumbnail}
-                    alt="thumbnail"
+                <img src={thumbnail} alt="thumbnail" loading='lazy'
                     className="rounded-full w-full aspect-square"
                 />
             </div>

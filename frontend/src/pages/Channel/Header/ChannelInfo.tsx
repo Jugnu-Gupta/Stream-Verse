@@ -20,16 +20,14 @@ const ChannelInfo: React.FC<ChannelInfoProps> = ({ channelInfo }) => {
     return (
         <>
             <div className="w-full">
-                <img src={Background}
-                    alt="Background"
+                <img src={Background} alt="Background" loading='lazy'
                     className="w-full aspect-[5] rounded-2xl object-cover"
                 />
             </div>
             <div className="flex items-center justify-between">
                 <div className="flex mt-4 gap-4 items-center w-fit mr-2">
                     <div>
-                        <img src={Background}
-                            alt="Background"
+                        <img src={Background} alt="Background" loading='lazy'
                             className="w-28 xs:w-24 aspect-square rounded-full"
                         />
                     </div>

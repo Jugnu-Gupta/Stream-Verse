@@ -1,7 +1,6 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
-import { store } from "./context/Store.ts";
+import { store } from "./context/store.ts";
 import { Toaster } from "react-hot-toast";
 import App from "./App.tsx";
 import "./index.css";

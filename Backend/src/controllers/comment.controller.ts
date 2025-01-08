@@ -18,8 +18,8 @@ interface GetCommentsParams {
 }
 interface GetCommentsQuery {
     userId?: string | null;
-    page?: number;
-    limit?: number;
+    page?: string;
+    limit?: string;
 }
 
 const getComments = asyncHandler(
@@ -29,7 +29,7 @@ const getComments = asyncHandler(
             entityType,
             parentId = null,
         } = req.params as unknown as GetCommentsParams;
-        let { page = 1, limit = 10, userId }: GetCommentsQuery = req.query;
+        let { page = "1", limit = "10", userId }: GetCommentsQuery = req.query;
 
         if (!isValidObjectId(entityId)) {
             throw new ApiError(400, "Invalid entity Id");
@@ -40,8 +40,8 @@ const getComments = asyncHandler(
         if (!isValidObjectId(userId)) {
             userId = null;
         }
+        const skip = (parseInt(page) - 1) * parseInt(limit);
 
-        const skip = (page - 1) * limit;
         const comments = await Comment.aggregate([
             {
                 $match: {
@@ -171,6 +171,8 @@ const getComments = asyncHandler(
                 },
             },
             { $sort: { createdAt: 1 } },
+            { $skip: skip },
+            { $limit: parseInt(limit) },
             {
                 $project: {
                     owner: 1,
@@ -183,8 +185,6 @@ const getComments = asyncHandler(
                     updatedAt: 1,
                 },
             },
-            // { $skip: skip },
-            // { $limit: limit },
         ]);
 
         if (!comments) {

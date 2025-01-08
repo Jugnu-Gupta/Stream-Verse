@@ -16,7 +16,7 @@ const router = Router();
 // Get all videos, upload video (secured routes)
 router
     .route("/")
-    .get(getAllVideo) // incomplete
+    .get(getAllVideo)
     .post(
         verifyJWT,
         upload.fields([

@@ -79,7 +79,7 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo, editDele
 
 	return (<div className="flex items-start gap-2 p-2 w-full">
 		<div className="overflow-hidden rounded-full w-10">
-			<img src={thumbnail} alt="thumbnail"
+			<img src={thumbnail} alt="thumbnail" loading='lazy'
 				className="rounded-full w-10 aspect-square" />
 		</div>
 		<div className="flex flex-col text-primary-text w-full">
@@ -107,7 +107,7 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo, editDele
 			<Link to={`/tweets/${tweetId}`} className="w-full mb-3">
 				{(mediaPreview || tweetImage) &&
 					<img src={mediaPreview ? mediaPreview : tweetImage}
-						alt="selected"
+						alt="selected" loading='lazy'
 						className="w-full h-full object-cover rounded-xl"
 					/>
 				}

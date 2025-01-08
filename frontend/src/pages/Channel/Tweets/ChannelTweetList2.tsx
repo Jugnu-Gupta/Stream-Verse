@@ -34,7 +34,7 @@ const ChannelTweetList2: React.FC<ChannelTweetListProps> = ({ tweetInfo }) => {
     return (<div className="flex items-start gap-2 p-2 w-full">
         <Link to={`/@${channelUserName}/videos`}>
             <div className="overflow-hidden rounded-full w-10">
-                <img src={thumbnail} alt="thumbnail"
+                <img src={thumbnail} alt="thumbnail" loading='lazy'
                     className="rounded-full w-10 aspect-square" />
             </div>
         </Link>
@@ -57,7 +57,7 @@ const ChannelTweetList2: React.FC<ChannelTweetListProps> = ({ tweetInfo }) => {
             {thumbnail && (
                 <Link to={`/tweets/${tweetId}`}>
                     <div className="overflow-hidden rounded-lg m-2 w-fit">
-                        <img src={thumbnail} alt="thumbnail"
+                        <img src={thumbnail} alt="thumbnail" loading='lazy'
                             className="rounded-lg w-full aspect-auto" />
                     </div>
                 </Link>

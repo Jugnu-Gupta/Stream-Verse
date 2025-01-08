@@ -66,8 +66,8 @@ const EditVideoModal: React.FC<EditVideoModalProps> = ({ videoInfo, setShowEditV
                         <label htmlFor="thumbnail" className='text-sm mb-1'>
                             <p>Thumbnail<sup>*</sup></p>
                             <div className='border-dashed border-2 border-primary-border rounded-lg p-1 cursor-pointer'>
-                                {mediaPreview !== "" ? <img src={mediaPreview} alt="thumbnail" className='rounded-lg aspect-video object-cover' /> :
-                                    <img src={thumbnail} alt="thumbnail" className='rounded-lg aspect-video object-cover' />
+                                {mediaPreview !== "" ? <img src={mediaPreview} alt="thumbnail" loading='lazy' className='rounded-lg aspect-video object-cover' /> :
+                                    <img src={thumbnail} alt="thumbnail" loading='lazy' className='rounded-lg aspect-video object-cover' />
                                 }
                             </div>
                         </label>

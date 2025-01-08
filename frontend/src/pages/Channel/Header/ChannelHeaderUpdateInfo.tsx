@@ -27,18 +27,14 @@ const ChannelHeaderUpdateInfo: React.FC = () => {
     return (
         <div className="flex flex-col px-6 xs:px-2 w-full mt-4 max-w-6xl mx-auto">
             <div className="w-full">
-                <img
-                    src={Background}
-                    alt="Background"
+                <img src={Background} alt="Background" loading='lazy'
                     className="w-full aspect-[5] rounded-2xl object-cover"
                 />
             </div>
             <div className="flex items-center justify-between">
                 <div className="flex mt-4 gap-4 items-center w-fit mr-2">
                     <div>
-                        <img
-                            src={Background}
-                            alt="Background"
+                        <img src={Background} alt="Background" loading='lazy'
                             className="w-28 xs:w-24 aspect-square rounded-full"
                         />
                     </div>

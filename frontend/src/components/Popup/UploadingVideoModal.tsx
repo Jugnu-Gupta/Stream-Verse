@@ -54,7 +54,7 @@ const UploadingVideoModal: React.FC<UploadingVideoModalProps> = ({ uploadProgres
                 </div>
                 <div className='flex justify-center gap-4 mt-4'>
                     <button className='border-2 border-primary-border bg-transparent text-primary-text rounded-lg px-4 py-2 w-full'
-                        onClick={() => setShowUploadingVideo(false)}>Cancel</button>
+                        onClick={() => setShowUploadingVideo(false)}>Hide</button>
                     <button className={twMerge('bg-red-500 text-primary-text font-semibold rounded-lg px-4 py-2 w-full', uploadProgress < 100 && 'opacity-50')}
                         onClick={handleFinishUpload}>Finish</button>
                 </div>

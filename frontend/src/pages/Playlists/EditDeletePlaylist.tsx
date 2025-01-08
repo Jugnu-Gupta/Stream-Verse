@@ -69,7 +69,7 @@ const EditDeletePlaylist: React.FC<EditPlaylistProps> = ({ playlistId, playlist_
 
         {editDeleteOption.currentId === playlistId && editDeleteOption.showEditModal &&
             (<div className="absolute z-10 p-4 rounded-lg bg-background-primary text-primary-text cursor-auto bottom-10 right-0 border-primary-border border-2">
-                <h3 className="text-sm font-semibold text-nowrap text-center">
+                <h3 className="text-sm font-semibold text-center">
                     Edit Playlist
                 </h3>
 

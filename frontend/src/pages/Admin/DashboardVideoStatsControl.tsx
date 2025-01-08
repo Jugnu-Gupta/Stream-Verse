@@ -76,9 +76,7 @@ const DashboardVideoStatsControl: React.FC<DashboardVideoStatsControlProps> = ({
 			</td>
 			{/* <td className="flex items-center gap-2 px-4 py-2 justify-items-center"> */}
 			<td className="px-4 py-2 justify-items-start flex items-center gap-2 overflow-hidden">
-				<img
-					src={thumbnail}
-					alt="thumbnail"
+				<img src={thumbnail} alt="thumbnail" loading='lazy'
 					className="w-8 aspect-square rounded-full"
 				/>
 				<p className="font-semibold text-sm text-nowrap truncate w-full text-primary-text">{title}</p>

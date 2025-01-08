@@ -22,8 +22,8 @@ interface RequestWithUser extends Request {
 }
 
 interface GetAllVideoQuery {
-    // page?: string;
-    // limit?: string;
+    page: string;
+    limit: string;
     uploadDate: string;
     type: string;
     query: string;
@@ -35,17 +35,21 @@ interface GetAllVideoQuery {
 const getAllVideo = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
         const {
-            // page = "1",
-            // limit = "10",
+            page = "1",
+            limit = "10",
             query = "",
             uploadDate = "anytime",
             type = "video",
             sortBy = "relevance",
             duration = "any",
         } = req.query as unknown as GetAllVideoQuery;
+        const skip: number = (parseInt(page) - 1) * parseInt(limit);
+        // console.log("skip:", skip, page, limit);
+        const searchQuery: string = decodeURIComponent(query);
         const uploadDateOption: number = uploadDateCriteria.get(uploadDate);
         const durationOption: [number, number] = durationCriteria.get(duration);
         const sortOption: string = sortCritieria.get(sortBy);
+        const sortOptionValue: -1 | 1 = -1;
 
         let data;
         if (type === "video") {
@@ -56,7 +60,7 @@ const getAllVideo = asyncHandler(
                               $search: {
                                   index: "default",
                                   text: {
-                                      query,
+                                      query: searchQuery,
                                       path: ["title", "description"],
                                       fuzzy: { maxEdits: 2, prefixLength: 1 },
                                   },
@@ -102,9 +106,9 @@ const getAllVideo = asyncHandler(
                         score: { $meta: "searchScore" },
                     },
                 },
-                {
-                    $sort: { [sortOption]: -1 as -1 | 1 }, // Use computed property for dynamic field
-                },
+                { $sort: { [sortOption]: sortOptionValue } },
+                { $skip: skip },
+                { $limit: parseInt(limit) },
                 {
                     $project: {
                         title: 1,
@@ -123,21 +127,23 @@ const getAllVideo = asyncHandler(
                 throw new ApiError(404, "No videos found");
             }
         } else if (type === "channel") {
-            const pipeline = [
-                ...(query !== ""
-                    ? [
-                          {
-                              $search: {
-                                  index: "users",
-                                  text: {
-                                      query,
-                                      path: ["fullName", "userName"],
-                                      fuzzy: { maxEdits: 2, prefixLength: 1 },
-                                  },
-                              },
-                          },
-                      ]
-                    : []),
+            if (!searchQuery) {
+                throw new ApiError(
+                    400,
+                    "Search query is required for channel search"
+                );
+            }
+            data = await User.aggregate([
+                {
+                    $search: {
+                        index: "users",
+                        text: {
+                            query: searchQuery,
+                            path: ["fullName", "userName"],
+                            fuzzy: { maxEdits: 2, prefixLength: 1 },
+                        },
+                    },
+                },
                 {
                     $match: {
                         createdAt: {
@@ -162,9 +168,9 @@ const getAllVideo = asyncHandler(
                         subscribers: { $size: "$subscribers" },
                     },
                 },
-                {
-                    $sort: { [sortOption]: -1 as -1 | 1 }, // Use computed property for dynamic field
-                },
+                { $sort: { [sortOption]: sortOptionValue } },
+                { $skip: skip },
+                { $limit: parseInt(limit) },
                 {
                     $project: {
                         fullName: 1,
@@ -175,27 +181,28 @@ const getAllVideo = asyncHandler(
                         updatedAt: 1,
                     },
                 },
-            ];
-            data = await User.aggregate(pipeline);
+            ]);
             if (!data) {
                 throw new ApiError(404, "No channels found");
             }
         } else if (type === "playlist") {
-            const pipeline = [
-                ...(query !== ""
-                    ? [
-                          {
-                              $search: {
-                                  index: "playlists",
-                                  text: {
-                                      query,
-                                      path: ["name"],
-                                      fuzzy: { maxEdits: 2, prefixLength: 1 },
-                                  },
-                              },
-                          },
-                      ]
-                    : []),
+            if (!searchQuery) {
+                throw new ApiError(
+                    400,
+                    "Search query is required for playlist search"
+                );
+            }
+            data = await Playlist.aggregate([
+                {
+                    $search: {
+                        index: "playlists",
+                        text: {
+                            query: searchQuery,
+                            path: ["name"],
+                            fuzzy: { maxEdits: 2, prefixLength: 1 },
+                        },
+                    },
+                },
                 {
                     $match: {
                         createdAt: {
@@ -243,9 +250,9 @@ const getAllVideo = asyncHandler(
                         },
                     },
                 },
-                {
-                    $sort: { [sortOption]: -1 as -1 | 1 }, // Use computed property for dynamic field
-                },
+                { $sort: { [sortOption]: sortOptionValue } },
+                { $skip: skip },
+                { $limit: parseInt(limit) },
                 {
                     $project: {
                         name: 1,
@@ -258,8 +265,7 @@ const getAllVideo = asyncHandler(
                         updatedAt: 1,
                     },
                 },
-            ];
-            data = await Playlist.aggregate(pipeline);
+            ]);
             if (!data) {
                 throw new ApiError(404, "No playlist found");
             }
@@ -326,52 +332,51 @@ const uploadVideo = asyncHandler(
             throw new ApiError(400, message);
         }
 
-        const videoFile = await uploadOnCloudinary(videoLocalPath, "video");
-        const videoQuality = getVideoQuality(videoFile.width, videoFile.height);
-        const thumbnail = await uploadOnCloudinary(thumbnailLocalPath, "image");
-        if (
-            !videoFile?.secure_url ||
-            !videoFile?.public_id ||
-            !thumbnail?.secure_url ||
-            !thumbnail?.public_id
-        ) {
-            const message = !videoFile
-                ? "Failed to upload video"
-                : "Failed to upload thumbnail";
-            throw new ApiError(500, message);
-        }
+        // const videoFile = await uploadOnCloudinary(videoLocalPath, "video");
+        // const videoQuality = getVideoQuality(videoFile.width, videoFile.height);
+        // const thumbnail = await uploadOnCloudinary(thumbnailLocalPath, "image");
+        // if (
+        //     !videoFile?.secure_url ||
+        //     !videoFile?.public_id ||
+        //     !thumbnail?.secure_url ||
+        //     !thumbnail?.public_id
+        // ) {
+        //     const message = !videoFile
+        //         ? "Failed to upload video"
+        //         : "Failed to upload thumbnail";
+        //     throw new ApiError(500, message);
+        // }
 
-        const video = await Video.create({
-            videoFile: {
-                publicId: videoFile?.public_id,
-                url: videoFile?.secure_url,
-            },
-            thumbnail: {
-                publicId: thumbnail?.public_id,
-                url: thumbnail?.secure_url,
-            },
-            quality: videoQuality,
-            title,
-            description,
-            duration: videoFile?.duration,
-            ownerId: req.user?._id,
-        });
+        // const video = await Video.create({
+        //     videoFile: {
+        //         publicId: videoFile?.public_id,
+        //         url: videoFile?.secure_url,
+        //     },
+        //     thumbnail: {
+        //         publicId: thumbnail?.public_id,
+        //         url: thumbnail?.secure_url,
+        //     },
+        //     quality: videoQuality,
+        //     title,
+        //     description,
+        //     duration: videoFile?.duration,
+        //     ownerId: req.user?._id,
+        // });
 
-        // check if video is created
-        const uploadedVideo = await Video.findById(video?._id);
-        if (!uploadedVideo) {
-            throw new ApiError(500, "Failed to upload video");
-        }
+        // // check if video is created
+        // const uploadedVideo = await Video.findById(video?._id);
+        // if (!uploadedVideo) {
+        //     throw new ApiError(500, "Failed to upload video");
+        // }
 
-        return res
-            .status(201)
-            .json(
-                new ApiResponse(
-                    201,
-                    uploadedVideo,
-                    "Video uploaded successfully"
-                )
-            );
+        return res.status(201).json(
+            new ApiResponse(
+                201,
+                null,
+                // uploadedVideo,
+                "Video uploaded successfully"
+            )
+        );
     }
 );
 

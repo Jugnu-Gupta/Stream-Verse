@@ -111,8 +111,7 @@ const ChannelTweets: React.FC = () => {
 
 				<div className="flex items-center gap-2 w-full pt-1 pb-2 xs:pt-0.5">
 					<div className="overflow-hidden rounded-full w-9">
-						<img src={thumbnail}
-							alt="thumbnail"
+						<img src={thumbnail} alt="thumbnail" loading='lazy'
 							className="rounded-full w-10 aspect-square"
 						/>
 					</div>
@@ -130,8 +129,7 @@ const ChannelTweets: React.FC = () => {
 
 				{mediaPreview && (
 					<div className="w-full mb-3">
-						<img src={mediaPreview}
-							alt="selected"
+						<img src={mediaPreview} alt="selected" loading='lazy'
 							className="w-full h-full object-cover rounded-xl"
 						/>
 					</div>

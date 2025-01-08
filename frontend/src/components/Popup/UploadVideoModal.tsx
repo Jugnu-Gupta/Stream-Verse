@@ -122,7 +122,7 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setUploadProgress, 
                             </div>
                         </label>
                         <input type="file" name="video" id="video" accept="video/mp4" className='hidden' ref={videoRef}
-                            onChange={(e) => handleVideoChange(e, 15, updateMedia)}
+                            onChange={(e) => handleVideoChange(e, 50, updateMedia)}
                         />
                     </div>
 
