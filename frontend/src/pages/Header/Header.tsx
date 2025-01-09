@@ -3,7 +3,7 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import logo from "../../assets/logo.jpg";
 import { IoSearchSharp } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { generateAvatar } from '../../utils/GenerateAvatar';
 import { setShowNavbar } from "../../context/slices/Navbar.slice";
 import makeApiRequest from "../../utils/MakeApiRequest";
@@ -11,13 +11,13 @@ import { AppDispatch, RootState } from "../../context/store";
 import { useAuth } from "../../hooks/useAuth";
 import Cookies from "js-cookie";
 
-
 const Header: React.FC = () => {
+	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
 	const dispatch = useDispatch<AppDispatch>();
 	const { loggedIn, setLoggedIn } = useAuth();
 	const [userImage, setUserImage] = React.useState("");
-	const [searchText, setSearchText] = React.useState("");
+	const [searchText, setSearchText] = React.useState(searchParams.get("searchText") || "");
 	const curUser: string = "@" + localStorage.getItem("userName");
 	const showNavbar: boolean = useSelector((state: RootState) => state.navbar.showNavbar);
 

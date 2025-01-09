@@ -14,6 +14,7 @@ import { EditDeleteType } from "../../Types/EditDelete.type";
 import DeleteModal from "../../components/Popup/DeleteModal";
 import NoResultsFound from "../Search/NoResultsFound";
 import { usePagination } from "../../hooks/usePagination";
+import loadingGIF from "../../assets/loading.gif";
 
 interface VideoCommentsProps {
 	videoId: string;
@@ -40,7 +41,7 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ videoId, noOfComments }) 
 		}
 	};
 
-	const handleGetComments = (page: number, loading: boolean, hasMore: boolean, videoId: string) => {
+	const getComments = (page: number, loading: boolean, hasMore: boolean, videoId: string) => {
 		if (!videoId || loading || !hasMore) return;
 		const userId = localStorage.getItem("userId");
 
@@ -62,11 +63,12 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ videoId, noOfComments }) 
 			dispatch(addComments({ childPathIds: [], childs: commentsData }));
 		}).catch((error) => {
 			console.error("Error fetching data:", error);
+		}).finally(() => {
+			setLoading(false);
 		});
-		setLoading(false);
 	};
-	const { setPage, setLoading, setHasMore, lastItemRef } =
-		usePagination(handleGetComments, videoId);
+	const { setPage, setLoading, hasMore, setHasMore, lastItemRef } =
+		usePagination(getComments, videoId);
 
 	useEffect(() => {
 		dispatch(setCounter({ value: noOfComments }));
@@ -89,9 +91,13 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ videoId, noOfComments }) 
 			</DeleteModal>)
 		}
 
-		{comments?.length === 0 ? <NoResultsFound style="mt-0" entityName="comment"
-			heading="No comments" message="This video has no comments, drop your below!" />
-			: comments?.map((comment: CommentType) => (
+		{comments?.length === 0 ?
+			(!hasMore ? <NoResultsFound style="mt-0" entityName="comment"
+				heading="No comments" message="This video has no comments, drop your below!" />
+				: (<div className='mx-auto my-auto'>
+					<img src={loadingGIF} alt="loading" loading='lazy' className='w-24' />
+				</div>)
+			) : comments?.map((comment: CommentType) => (
 				<CommentCard
 					key={comment?._id}
 					currPath={currPath.concat(comment?._id)}

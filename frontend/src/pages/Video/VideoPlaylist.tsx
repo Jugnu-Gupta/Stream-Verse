@@ -23,7 +23,7 @@ const VideoPlaylist: React.FC<VideoPlaylistProps> = ({ childClass, heighlightVid
     const owner = playlist?.owner?.fullName || "Channel Name";
 
     return (
-        <div className={twMerge(childClass, "flex-col w-full border-2 border-primary-border overflow-hidden rounded-xl mb-4 2lg:ml-2 mt-4 2lg:mt-0")}>
+        <div className={twMerge(childClass, "flex-col w-full border-2 border-primary-border overflow-hidden rounded-xl 2lg:ml-2 mt-4 2lg:mt-0")}>
             <div className="flex justify-between px-2 pt-2 pb-3 text-primary-text bg-background-secondary">
                 <div>
                     {showPlaylist

@@ -6,7 +6,6 @@ import makeApiRequest from '../../utils/MakeApiRequest';
 import { VideoType } from '../../Types/Video.type';
 import NoResultsFound from '../Search/NoResultsFound';
 
-// interface SubscriptionsChildProps {
 interface VideoWrapper {
     _id: string;
     video: VideoType;

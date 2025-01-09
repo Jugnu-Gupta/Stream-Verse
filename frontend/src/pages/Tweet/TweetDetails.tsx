@@ -16,6 +16,8 @@ import DeleteModal from "../../components/Popup/DeleteModal";
 import ChannelTweetList2 from "../Channel/Tweets/ChannelTweetList2";
 import NoResultsFound from "../Search/NoResultsFound";
 import { usePagination } from "../../hooks/usePagination";
+import loadingGIF from "../../assets/loading.gif";
+
 
 const TweetDetails: React.FC = () => {
 	const currPath: string[] = [];
@@ -50,7 +52,7 @@ const TweetDetails: React.FC = () => {
 		dispatch(setCounter({ value: noOfcomments || 0 }));
 	}, [noOfcomments, dispatch]);
 
-	const handleGetComments = (page: number, loading: boolean, hasMore: boolean, tweetId: string) => {
+	const getComments = (page: number, loading: boolean, hasMore: boolean, tweetId: string) => {
 		console.log("before page:", page, tweetId, userId, loading, hasMore);
 		if (loading || !hasMore) return;
 		console.log("after page:", page, tweetId, userId, loading, hasMore);
@@ -74,11 +76,12 @@ const TweetDetails: React.FC = () => {
 		}).catch((error) => {
 			console.error("Error fetching data:", error);
 			navigate("/");
-		})
-		setLoading(false);
+		}).finally(() => {
+			setLoading(false);
+		});
 	};
-	const { setPage, setLoading, setHasMore, lastItemRef } =
-		usePagination(handleGetComments, tweetId || "");
+	const { setPage, setLoading, hasMore, setHasMore, lastItemRef } =
+		usePagination(getComments, tweetId || "");
 
 	useEffect(() => {
 		if (!tweetId) return;
@@ -110,9 +113,13 @@ const TweetDetails: React.FC = () => {
 				</DeleteModal>)
 			}
 
-			{comments?.length === 0 ? <NoResultsFound style="mt-0" entityName="comment"
-				heading="No comments" message="This video has no comments, drop your below!" />
-				: comments?.map((comment: CommentType) => (
+			{comments?.length === 0 ?
+				(!hasMore ? <NoResultsFound style="mt-0" entityName="comment"
+					heading="No comments" message="This video has no comments, drop your below!" />
+					: (<div className='mx-auto my-auto'>
+						<img src={loadingGIF} alt="loading" loading='lazy' className='w-24' />
+					</div>)
+				) : comments?.map((comment: CommentType) => (
 					<CommentCard
 						key={comment._id}
 						currPath={currPath.concat([comment._id])}

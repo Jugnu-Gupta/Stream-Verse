@@ -1,14 +1,14 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import loadingGIf from '../assets/loading.gif';
+import loadingGIF from '../assets/loading.gif';
 
 const ProtectedLayout: React.FC = () => {
     const { loading } = useAuth();
 
     if (loading === true) {
         return (<div className='mx-auto my-auto'>
-            <img src={loadingGIf} alt="loading" loading='lazy' className='w-24' />
+            <img src={loadingGIF} alt="loading" loading='lazy' className='w-24' />
         </div>)
     }
 

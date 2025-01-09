@@ -48,7 +48,7 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 	const commentId = comment?._id;
 	const navigate = useNavigate();
 
-	const handleGetComments = (page: number, loading: boolean, hasMore: boolean, commentId: string) => {
+	const getComments = (page: number, loading: boolean, hasMore: boolean, commentId: string) => {
 		if (!entityId || !commentId || loading || !hasMore) return;
 		const userId = localStorage.getItem("userId");
 
@@ -70,12 +70,13 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 			dispatch(addComments({ childPathIds: currPath, childs: RepliesData }));
 		}).catch((error) => {
 			console.error("Error fetching data:", error);
+		}).finally(() => {
+			setLoading(false);
 		});
-		setLoading(false);
 	}
 
 	const { page, setPage, loading, setLoading, hasMore, setHasMore, lastItemRef } =
-		usePagination(handleGetComments, entityId);
+		usePagination(getComments, entityId);
 
 	useEffect(() => {
 		if (textAreaRef.current) {
@@ -86,7 +87,7 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 	}, [commentText]);
 
 	useEffect(() => {
-		handleGetComments(page, loading, hasMore, commentId);
+		getComments(page, loading, hasMore, commentId);
 	}, [commentId]);
 
 	const handleEditComment = () => {

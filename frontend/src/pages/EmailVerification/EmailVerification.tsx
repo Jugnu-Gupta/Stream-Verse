@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import makeApiRequest from "../../utils/MakeApiRequest";
 import emailVerification from "../../assets/email-verification.gif";
 
 const EmailVerification: React.FC = () => {
 	const navigate = useNavigate();
-	const location = useLocation();
-	const searchParams = new URLSearchParams(location.search);
+	const [searchParams] = useSearchParams();
 	const token: string | null = searchParams.get("token");
 
 	useEffect(() => {

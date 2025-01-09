@@ -12,13 +12,15 @@ import { formatDateToNow } from "../../utils/FormatDateToNow";
 import ShowHideText from "../../components/Text/ShowHideText";
 import { VideoDetailsType, VideoType } from "../../Types/Video.type";
 import { PlaylistVideosType } from "../../Types/Platlist.type";
+import { usePagination } from "../../hooks/usePagination";
+import loadingGIF from '../../assets/loading.gif';
+import NoResultsFound from "../Search/NoResultsFound";
 
 const VideoDetail: React.FC = () => {
+	const navigate = useNavigate();
 	const [searchParams] = useSearchParams();
 	const { videoId } = useParams<string>();
-	const navigate = useNavigate();
-	const listId = searchParams.get("listId");
-
+	const listId: string | null = searchParams.get("listId");
 	const [playlist, setPlaylist] = React.useState<PlaylistVideosType>();
 	const [video, setVideo] = React.useState<VideoDetailsType>();
 	const [similarVideos, setSimilarVideos] = React.useState<VideoType[]>([]);
@@ -61,36 +63,61 @@ const VideoDetail: React.FC = () => {
 				method: "post",
 				url: `/api/v1/videos/${data?._id}/views`,
 			});
-
-			// find similar videos
-			return makeApiRequest({
-				method: "get",
-				url: "/api/v1/videos",
-				params: {
-					query: encodeURIComponent(data?.title + " " + data?.description),
-					limit: 5,
-				}
-			})
-		}).then((SimilarVideosRes: any) => { // eslint-disable-line
-			setSimilarVideos(SimilarVideosRes?.data?.data);
 		}).catch((error) => {
 			console.error("Error fetching data:", error);
 			navigate(listId ? `/video/${videoId}` : `/`);
 		})
 	}, [listId, videoId, userId, navigate]);
 
+	const getSimilarVideos = (page: number, loading: boolean, hasMore: boolean, searchText: string) => {
+		// console.log("before searching...", searchText, loading, hasMore, page);
+		if (searchText.trim() === "" || loading || !hasMore) return;
+		// console.log("after searching...", searchText, loading, hasMore, page);
+
+		setLoading(true);
+		// find similar videos
+		makeApiRequest({
+			method: "get",
+			url: "/api/v1/videos",
+			params: {
+				page,
+				limit: 10,
+				query: encodeURIComponent(searchText),
+			}
+		}).then((SimilarVideosRes: any) => { // eslint-disable-line
+			const data = SimilarVideosRes?.data?.data || [];
+			// console.log("data:", data);
+			setPage((prevPage) => prevPage + 1);
+			setHasMore(SimilarVideosRes?.data?.data?.length > 0);
+			setSimilarVideos((prev) => [...prev, ...data]);
+		}).catch((error) => {
+			console.error("Error fetching data:", error);
+		}).finally(() => {
+			setLoading(false);
+		});
+	};
+
+	const { loading, setPage, setLoading, hasMore, setHasMore, lastItemRef } =
+		usePagination(getSimilarVideos, video?.title + " " + video?.description);
+
+	useEffect(() => {
+		if (!video?._id) return;
+		setPage(1);
+		setHasMore(true);
+		getSimilarVideos(1, loading, true, video?.title + " " + video?.description);
+	}, [video]);
+
 	return (
-		<div
-			className="flex flex-col 2lg:flex-row justify-start 2lg:items-start 2lg:gap-4 w-full px-2 mt-4 mx-auto max-w-[1400px] overflow-hidden">
+		<div className="flex flex-col 2lg:flex-row justify-start 2lg:items-start 2lg:gap-4 w-full px-2 mt-4 mx-auto max-w-[1400px] overflow-hidden">
 			<div className="flex flex-col 2lg:w-2/3 w-full">
 				{/* video */}
 				<video src={videoplayback} controls></video>
 
 				{/* Playlist */}
-				<VideoPlaylist childClass="flex 2lg:hidden" heighlightVideo={videoNo} playlist={playlist} />
+				<VideoPlaylist childClass={listId ? "flex 2lg:hidden" : "hidden"} heighlightVideo={videoNo} playlist={playlist} />
 
 				{/* Description */}
-				<div className="border-2 border-primary-border rounded-lg p-2 2lg:mt-4">
+				<div className="border-2 border-primary-border rounded-lg p-2 mt-4">
 					<div className="flex items-center justify-between mb-2">
 						<div className="text-primary-text">
 							<h1 className="text-lg font-bold tracking-wide">
@@ -130,13 +157,22 @@ const VideoDetail: React.FC = () => {
 			<div className="flex flex-col w-full 2lg:w-1/3">
 
 				{/* Playlist */}
-				<VideoPlaylist childClass="2lg:flex hidden" heighlightVideo={videoNo} playlist={playlist} />
+				<VideoPlaylist childClass={listId ? "2lg:flex hidden" : "hidden"} heighlightVideo={videoNo} playlist={playlist} />
 
 				{/* Related Videos */}
 				<div className="flex flex-col w-full">
-					{similarVideos?.map((video: VideoType) => video._id !== videoNo && (
-						<RelatedVideo key={video?._id} videoInfo={video} />
-					))}
+					{similarVideos.length > 0 ?
+						similarVideos?.map((video: VideoType) => video._id !== videoNo && (
+							<RelatedVideo key={video?._id} videoInfo={video} />
+						))
+						: ((!video?._id && !hasMore) ?
+							<NoResultsFound style="mt-40" entityName="video" heading="No videos found"
+								message="We couldn't find any similar videos at the moment. Please try again later." />
+							: (<div className='mx-auto my-auto'>
+								<img src={loadingGIF} alt="loading" loading='lazy' className='w-24' />
+							</div>))
+					}
+					<div ref={lastItemRef} key={"lastItemRef"} className="h-2 bg-transparent"></div>
 				</div>
 			</div>
 		</div >

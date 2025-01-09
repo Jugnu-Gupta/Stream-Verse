@@ -3,6 +3,8 @@ import VideoCardView from "./VideoCardView";
 import makeApiRequest from "../../utils/MakeApiRequest";
 import { VideoType } from "../../Types/Video.type";
 import { usePagination } from "../../hooks/usePagination";
+import NoResultsFound from "../Search/NoResultsFound";
+import loadingGIF from "../../assets/loading.gif";
 
 const Home: React.FC = () => {
 	const [videos, setVideos] = React.useState<VideoType[]>([]);
@@ -27,17 +29,26 @@ const Home: React.FC = () => {
 			setVideos((prevVideos) => [...prevVideos, ...data]);
 		}).catch((error: any) => { // eslint-disable-line
 			console.error(error.response.data.message);
+		}).finally(() => {
+			setLoading(false);
 		});
-		setLoading(false);
 	};
-	const { setPage, setLoading, setHasMore, lastItemRef } =
+	const { setPage, setLoading, hasMore, setHasMore, lastItemRef } =
 		usePagination(handleSearch);
 
 	return (
 		<div className="h-fit grid m-2 max-w-7xl w-full items-start 2xl:grid-cols-4 2lg:grid-cols-3 2sm:grid-cols-2 grid-cols-1">
-			{videos?.map((video: VideoType, index: number) => (
-				<VideoCardView key={video._id + index} videoInfo={video} />
-			))}
+			{videos.length > 0 ?
+				videos?.map((video: VideoType) => (
+					<VideoCardView key={video._id} videoInfo={video} />
+				))
+				: (!hasMore ?
+					<NoResultsFound style="mt-40" entityName="video" heading="No videos found"
+						message="We couldn't find any similar videos at the moment. Please try again later." />
+					: (<div className='mx-auto my-auto'>
+						<img src={loadingGIF} alt="loading" loading='lazy' className='w-24' />
+					</div>))
+			}
 
 			<div key={"lastItemRef"} ref={lastItemRef} className="w-full h-1">
 			</div>

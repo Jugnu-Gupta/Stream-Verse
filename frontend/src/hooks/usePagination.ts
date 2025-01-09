@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 
 const usePagination = (
-	handleGetData: (
+	getData: (
 		page: number,
 		loading: boolean,
 		hasMore: boolean,
@@ -14,25 +14,28 @@ const usePagination = (
 	const [hasMore, setHasMore] = React.useState<boolean>(true);
 	const observer = React.useRef<IntersectionObserver | null>(null);
 	const lastItemRef = React.useRef<HTMLDivElement | null>(null);
-	console.log("page:", page);
 
+	const handleObserver = useCallback(
+		(entries: IntersectionObserverEntry[]) => {
+			console.log("entries:", entries[0].intersectionRatio * 100);
+			console.log("entries:", entries[0].isIntersecting);
+			if (entries[0].isIntersecting) {
+				getData(page, loading, hasMore, entityId || "");
+			}
+		},
+		[page, entityId, loading, hasMore, getData]
+	);
 	useEffect(() => {
 		if (observer.current) observer.current.disconnect();
 
-		observer.current = new IntersectionObserver(
-			(entries) => {
-				if (entries[0].isIntersecting) {
-					handleGetData(page, loading, hasMore, entityId || "");
-				}
-			},
-			{ threshold: 1.0 }
-		);
-
+		observer.current = new IntersectionObserver(handleObserver, {
+			threshold: 1.0,
+		});
 		if (lastItemRef.current) {
 			observer.current.observe(lastItemRef.current);
 		}
 		return () => observer.current?.disconnect();
-	}, [lastItemRef, page, entityId, loading, hasMore]);
+	}, [lastItemRef, handleObserver]);
 
 	return {
 		page,

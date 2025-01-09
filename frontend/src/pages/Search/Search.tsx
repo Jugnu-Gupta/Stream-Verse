@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import VideoListView from "./VideoListView";
 import VideoCardView from "../Home/VideoCardView";
 import { VideoType } from "../../Types/Video.type";
@@ -8,16 +8,16 @@ import PlaylistCardView from "./PlaylistCardView";
 import ChannelCardView from "./ChannelCardView";
 import { ChannelType } from "../../Types/Channel.type";
 import NoResultsFound from "./NoResultsFound";
-import { useLocation } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import makeApiRequest from "../../utils/MakeApiRequest";
 import { SearchType } from "../../Types/Search.type";
 import { usePagination } from "../../hooks/usePagination";
+import loadingGIF from "../../assets/loading.gif";
 
 
 const Search: React.FC = () => {
-	const location = useLocation();
-	const query = new URLSearchParams(location.search);
-	const searchText = query.get("searchText");
+	const [searchParams] = useSearchParams();
+	const searchText: string | null = searchParams.get("searchText");
 	const [searchValues, setSearchValues] = React.useState<SearchType>({
 		uploadDate: "anytime",
 		type: "video",
@@ -40,10 +40,10 @@ const Search: React.FC = () => {
 		}
 	};
 
-	const handleSearch = (page: number, loading: boolean, hasMore: boolean, searchText: string) => {
-		console.log("before searching...", searchText, loading, hasMore);
+	const handleSearch = useCallback((page: number, loading: boolean, hasMore: boolean, searchText: string) => {
+		// console.log("before searching...", searchText, loading, hasMore, page);
 		if (searchText?.trim() === "" || loading || !hasMore) return;
-		console.log("after searching...", searchText, loading, hasMore);
+		// console.log("after searching...", searchText, loading, hasMore, page);
 
 		setLoading(true);
 		makeApiRequest({
@@ -51,7 +51,7 @@ const Search: React.FC = () => {
 			url: `/api/v1/videos`,
 			params: {
 				page: page,
-				limit: 2,
+				limit: 10,
 				query: encodeURIComponent(searchText?.trim() || ""),
 				type: searchValues.type,
 				duration: searchValues.duration,
@@ -60,7 +60,7 @@ const Search: React.FC = () => {
 			}
 		}).then((response: any) => { // eslint-disable-line
 			const data = response.data.data;
-			console.log("video:", response.data);
+			console.log("video:", data);
 			if (searchValues.type === "video") {
 				setSearchValues({ ...searchValues, videos: (page !== 1 ? searchValues.videos : []).concat(data), playlists: [], channels: [], curSearch: "video" });
 			} else if (searchValues.type === "playlist") {
@@ -72,18 +72,19 @@ const Search: React.FC = () => {
 			setHasMore(data.length > 0);
 		}).catch((error: any) => { // eslint-disable-line
 			console.error(error.response.data.message);
+		}).finally(() => {
+			setLoading(false);
 		});
-		setLoading(false);
-	}
+	}, [searchValues]);
 
-	const { page, setPage, loading, setLoading, hasMore, setHasMore, lastItemRef } =
-		usePagination(handleSearch);
+	const { setPage, loading, setLoading, hasMore, setHasMore, lastItemRef } =
+		usePagination(handleSearch, searchText || "");
 
 	useEffect(() => {
 		setHasMore(true);
 		setPage(1);
-		handleSearch(page, loading, hasMore, searchText || "");
-	}, [searchText]); // Dependency on searchText
+		handleSearch(1, loading, true, searchText || "");
+	}, [searchText, setHasMore, setPage]);
 
 	return (
 		<div className="sm:flex w-11/12 mx-auto max-w-7xl mt-2 md:px-2 px-1">
@@ -128,9 +129,12 @@ const Search: React.FC = () => {
 				{
 					searchValues.curSearch === "video" &&
 					(searchValues.videos.length === 0 ?
-						<NoResultsFound style="mt-40" entityName="video" heading="No videos found"
+						(!hasMore ? <NoResultsFound style="mt-40" entityName="video" heading="No videos found"
 							message="Please try to search something else or remove filters." />
-						: <div className="w-full">
+							: (<div className='mx-auto my-auto'>
+								<img src={loadingGIF} alt="loading" loading='lazy' className='w-24' />
+							</div>)
+						) : <div className="w-full">
 							<div className="sm:flex hidden flex-col">
 								{searchValues.videos?.map((video: VideoType) => (
 									<VideoListView key={video._id} videoInfo={video} />
@@ -146,9 +150,12 @@ const Search: React.FC = () => {
 				{
 					searchValues.curSearch === "playlist" &&
 					(searchValues.playlists.length === 0 ?
-						<NoResultsFound style="mt-40" entityName="playlist" heading="No playlists found"
+						(!hasMore ? <NoResultsFound style="mt-40" entityName="playlist" heading="No playlists found"
 							message="Please try to search something else or remove filters." />
-						: <div className="w-full">
+							: (<div className='mx-auto my-auto'>
+								<img src={loadingGIF} alt="loading" loading='lazy' className='w-24' />
+							</div>)
+						) : <div className="w-full">
 							<div className="sm:flex hidden flex-col">
 								{searchValues.playlists?.map((video: PlaylistType) => (
 									<PlaylistListView key={video._id} playlistInfo={video} />
@@ -163,9 +170,13 @@ const Search: React.FC = () => {
 				}
 				{
 					searchValues.curSearch === "channel" &&
-					(searchValues.channels.length === 0 ? <NoResultsFound style="mt-40" entityName="channel"
-						heading="No channels found" message="Please try to search something else or remove filters." />
-						: <div className="w-full">
+					(searchValues.channels.length === 0 ?
+						(!hasMore ? <NoResultsFound style="mt-40" entityName="channel"
+							heading="No channels found" message="Please try to search something else or remove filters." />
+							: (<div className='mx-auto my-auto'>
+								<img src={loadingGIF} alt="loading" loading='lazy' className='w-24' />
+							</div>)
+						) : <div className="w-full">
 							<div className="flex wrap">
 								{searchValues.channels?.map((channel: ChannelType) => (
 									<ChannelCardView key={channel._id} channelInfo={channel} />
