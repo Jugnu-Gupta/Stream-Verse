@@ -31,6 +31,7 @@ import Help from "./pages/Help/Help.tsx";
 // basic check for no subscribers in videoDetails
 // add video pagination feature
 
+// update video details for actual video
 
 function App() {
 	return (

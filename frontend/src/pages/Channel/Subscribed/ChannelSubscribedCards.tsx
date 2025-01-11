@@ -1,5 +1,4 @@
 import React from "react";
-import thumbnail from "../../../assets/thumbnail.png";
 import { Link } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 import { formatNumber } from "../../../utils/FormatNumber";
@@ -11,15 +10,16 @@ interface ChannelSubscribedCardsProps {
 }
 const ChannelSubscribedCards: React.FC<ChannelSubscribedCardsProps> = ({ SubscribedChannel }) => {
 	const [isSubscribed, setIsSubscribed] = React.useState(false);
-	const channelName = SubscribedChannel?.fullName || "Channel Name";
-	const subscribers = formatNumber(SubscribedChannel?.totalSubscribers);
-	const channelUserName = SubscribedChannel?.userName || "Channel User Name";
+	const channelName = SubscribedChannel.fullName;
+	const subscribers = formatNumber(SubscribedChannel.totalSubscribers);
+	const channelUserName = SubscribedChannel.userName;
+	const avatar = SubscribedChannel.avatar.url;
 
 	return (
 		<div className="flex items-center gap-2 p-2 w-full">
 			<Link to={`/channel/@${channelUserName}/videos`}>
 				<div className="overflow-hidden rounded-full w-10">
-					<img src={thumbnail} alt="thumbnail" loading='lazy'
+					<img src={avatar} alt="thumbnail" loading='lazy'
 						className="rounded-full w-10 aspect-square"
 					/>
 				</div>

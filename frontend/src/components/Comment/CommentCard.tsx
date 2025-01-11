@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import thumbnail from "../../assets/thumbnail.png";
 import { useNavigate } from "react-router-dom";
 import { BiLike } from "react-icons/bi";
 import { BiSolidLike } from "react-icons/bi";
@@ -46,6 +45,7 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 	const UploadedAt = formatDateDistanceToNow(new Date(comment.createdAt));
 	const channelName = "@" + (comment?.owner?.userName || "Channel Name");
 	const curUserName = localStorage.getItem("userName");
+	const avatar = comment?.owner?.avatar?.url;
 	const dispatch = useDispatch<AppDispatch>();
 	const commentId = comment?._id;
 	const navigate = useNavigate();
@@ -117,7 +117,7 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 			<div className="flex items-start gap-2 w-full">
 				<div onClick={() => navigate(`/channel/${channelName}/videos`)}
 					className="overflow-hidden rounded-full w-10">
-					<img src={thumbnail} alt="thumbnail" loading='lazy'
+					<img src={avatar} alt="avatar" loading='lazy'
 						className="rounded-full w-10 aspect-square"
 					/>
 				</div>

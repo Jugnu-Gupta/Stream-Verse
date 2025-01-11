@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import thumbnail from "../../assets/thumbnail.png";
 import { formatDateDistanceToNow } from "../../utils/FormatDateDistanceToNow";
 import { PlaylistType } from "../../Types/Platlist.type";
 import { formatNumber } from "../../utils/FormatNumber";
@@ -16,7 +15,7 @@ const PlaylistListView: React.FC<VideoListViewProps> = ({ playlistInfo }) => {
     const description = playlistInfo?.description || "This is a playlist description";
     const ownerName = playlistInfo?.owner?.userName || "Channel Name";
     const title = playlistInfo?.name || "Video Title";
-    // const _thumbnail = playlistInfo?.thumbnail || "";
+    const thumbnail = playlistInfo?.thumbnail.url || "";
     const playlistId = playlistInfo?._id || "";
     const videoId = playlistInfo?.videoId || "";
 

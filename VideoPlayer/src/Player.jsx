@@ -56,6 +56,7 @@ const VideoPlayer = () => {
 				// duration={30}
 				cloudName={cloudName}
 				publicId={videoPublicId}
+				// src={"https://www.youtube.com/watch?v=w9ugVVikWd0"}
 				ref={videoRef}
 				width="100%"
 				height="auto"

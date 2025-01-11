@@ -1,5 +1,4 @@
 import React from "react";
-import thumbnail from "../../assets/thumbnail.png";
 import { useNavigate } from "react-router-dom";
 import { formatDuration } from "../../utils/FormatDuration";
 import { formatDateDistanceToNow } from "../../utils/FormatDateDistanceToNow";
@@ -13,19 +12,19 @@ interface VideoListViewProps {
 const VideoListView: React.FC<VideoListViewProps> = ({ videoInfo }) => {
 	const duration = formatDuration(videoInfo?.duration);
 	const views = formatNumber(videoInfo?.views);
-	const uploadedAt = formatDateDistanceToNow(videoInfo?.createdAt || new Date());
-	const description = videoInfo?.description || "This is a video description";
-	const ownerName = videoInfo?.owner?.userName || "Channel Name";
-	const ownerFullName = videoInfo?.owner?.fullName || "Channel Name";
-	const title = videoInfo?.title || "Video Title";
+	const uploadedAt = formatDateDistanceToNow(videoInfo.createdAt);
+	const description = videoInfo.description;
+	const ownerName = videoInfo?.owner?.userName;
+	const ownerFullName = videoInfo?.owner?.fullName || "ownerName";
+	const title = videoInfo?.title;
 	const avatar = videoInfo?.owner?.avatar?.url || generateAvatar(ownerFullName, "0078e1", "ffffffcc");
-	const videoId = videoInfo?._id || "";
+	const videoId = videoInfo._id;
 	const navigate = useNavigate();
 
 	return (
 		<div className="flex gap-4 p-2 group w-full justify-start">
 			<div className="overflow-hidden rounded-xl max-w-md w-fit relative" onClick={() => navigate(`/video/${videoId}`)}>
-				<img src={thumbnail} alt="thumbnail" loading='lazy'
+				<img src={videoInfo.thumbnail.url} alt="thumbnail" loading='lazy'
 					className="rounded-xl aspect-video group-hover:scale-110 duration-300 relative z-0"
 				/>
 				<p className="px-1 py-[1px] z-10 absolute bottom-2 right-2 text-xs text-white rounded-md bg-black bg-opacity-70">

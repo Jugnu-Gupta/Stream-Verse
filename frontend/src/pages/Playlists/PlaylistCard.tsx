@@ -1,5 +1,4 @@
 import React from "react";
-import thumbnail from "../../assets/thumbnail.png";
 import { Link } from "react-router-dom";
 import { CgPlayList } from "react-icons/cg";
 import { FaPlay } from "react-icons/fa";
@@ -10,22 +9,21 @@ import EditDeletePlaylist from "./EditDeletePlaylist";
 import { EditDeleteWrapper } from "../../Types/EditDelete.type";
 
 interface ChannelVideosCardProps extends EditDeleteWrapper {
-	playlist: PlaylistType; // include video id in playlist type
+	playlist: PlaylistType;
 }
 
 const ChannelVideosCard: React.FC<ChannelVideosCardProps> = ({ playlist, editDeleteOption, setEditDeleteOption }) => {
-	const [playlistName, setPlaylistName] = React.useState<string>(playlist?.name || "Playlist Title");
+	const [playlistName, setPlaylistName] = React.useState<string>(playlist.name);
 	const noOfVideos = formatNumber(playlist?.noOfVideos);
 	const updatedAt = formatDateDistanceToNow(playlist?.updatedAt);
-	const playlistId = playlist?._id || "";
-	const videoId = playlist?.videoId || "";
-	const _thumbnail = thumbnail;
+	const playlistId = playlist._id;
+	const videoId = playlist.videoId;
 
 	return (
 		<div className="flex flex-col gap-2 p-2 max-w-[400px]">
 			<Link to={`/video/${videoId}${playlistId ? `?listId=${playlistId}` : ""}`}>
 				<div className="overflow-hidden rounded-xl relative">
-					<img src={_thumbnail} alt="thumbnail" loading='lazy'
+					<img src={playlist.thumbnail.url} alt="thumbnail" loading='lazy'
 						className="rounded-xl aspect-video duration-300"
 					/>
 					<p className="px-1 py-[1px] absolute bottom-2 right-2 text-xs text-primary-text rounded-md bg-black bg-opacity-70 flex items-center">

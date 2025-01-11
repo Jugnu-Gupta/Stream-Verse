@@ -1,6 +1,5 @@
 import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import { RxCross2 } from "react-icons/rx";
-import thumbnail from '../../assets/thumbnail.png';
 import { useMedia } from '../../hooks/useMedia';
 import { makeApiMediaRequest } from '../../utils/MakeApiRequest';
 import { DashboardVideoType } from '../../Types/Dashboard.type';
@@ -17,12 +16,11 @@ const EditVideoModal: React.FC<EditVideoModalProps> = ({ videoInfo, setShowEditV
     const [videoDescription, setVideoDescription] = React.useState<string>(videoInfo.description);
     const [videoTitle, setVideoTitle] = React.useState<string>(videoInfo.title);
     const videoId = videoInfo._id;
-    console.log("videoInfo:", newMedia);
 
     useEffect(() => {
         setVideoDescription(videoInfo.description);
         setVideoTitle(videoInfo.title);
-        setMediaPreview(videoInfo.thumbnail.url || thumbnail);
+        setMediaPreview(videoInfo.thumbnail.url);
     }, [videoInfo, setMediaPreview]);
 
     const updateVideo = () => {
@@ -67,9 +65,7 @@ const EditVideoModal: React.FC<EditVideoModalProps> = ({ videoInfo, setShowEditV
                         <label htmlFor="thumbnail" className='text-sm mb-1'>
                             <p>Thumbnail<sup>*</sup></p>
                             <div className='border-dashed border-2 border-primary-border rounded-lg p-1 cursor-pointer'>
-                                {mediaPreview !== "" ? <img src={mediaPreview} alt="thumbnail" loading='lazy' className='rounded-lg aspect-video object-cover' /> :
-                                    <img src={thumbnail} alt="thumbnail" loading='lazy' className='rounded-lg aspect-video object-cover' />
-                                }
+                                <img src={mediaPreview} alt="thumbnail" loading='lazy' className='rounded-lg aspect-video object-cover' />
                             </div>
                         </label>
                         <input type="file" name="thumbnail" id="thumbnail" accept="image/png,image/jpeg" className='hidden'

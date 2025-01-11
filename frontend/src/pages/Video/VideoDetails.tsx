@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import videoplayback from "../../assets/videoplayback.mp4";
-import thumbnail from "../../assets/thumbnail.png";
 import VideoComments from "./VideoComments";
 import RelatedVideo from "./RelatedVideo";
 import LikeSubscribeSave from "./LikeSubscribeSave";
@@ -72,12 +71,9 @@ const VideoDetail: React.FC = () => {
 	}, [listId, videoId, userId, navigate]);
 
 	const getSimilarVideos = (page: number, loading: boolean, hasMore: boolean, searchText: string) => {
-		// console.log("before searching...", searchText, loading, hasMore, page);
 		if (searchText.trim() === "" || loading || !hasMore) return;
-		// console.log("after searching...", searchText, loading, hasMore, page);
 
 		setLoading(true);
-		// find similar videos
 		makeApiRequest({
 			method: "get",
 			url: "/api/v1/videos",
@@ -133,7 +129,7 @@ const VideoDetail: React.FC = () => {
 					</div>
 					<div className="flex justify-between items-start gap-2">
 						<div className="flex items-center gap-2 w-fit min-w-[150px]">
-							<img src={thumbnail} alt="thumbnail" loading='lazy'
+							<img src={video?.owner?.avatar?.url} alt="thumbnail" loading='lazy'
 								className="rounded-full w-10 h-10 aspect-square" />
 							<div className="text-primary-text text-nowrap w-full">
 								<h1 className="font-semibold sm:text-sm">

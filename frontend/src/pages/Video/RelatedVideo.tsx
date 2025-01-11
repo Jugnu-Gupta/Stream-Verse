@@ -1,5 +1,4 @@
 import React from "react";
-import thumbnail from "../../assets/thumbnail.png";
 import { Link } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 import { formatDuration } from "../../utils/FormatDuration";
@@ -13,19 +12,19 @@ interface VideoListViewProps {
 }
 
 const RelatedVideo: React.FC<VideoListViewProps> = ({ heighlightVideo, videoInfo }) => {
-	const duration = formatDuration(videoInfo?.duration);
+	const duration = formatDuration(videoInfo.duration);
 	const views = formatNumber(videoInfo?.views);
-	const uploadedAt = formatDateDistanceToNow(videoInfo?.createdAt || new Date());
-	const title = videoInfo?.title || "Video Title";
-	const channelName = videoInfo?.owner?.fullName || "Channel Name";
-	const videoId = videoInfo?._id || "";
-	const ownerName = videoInfo?.owner?.userName || "Channel Name";
+	const uploadedAt = formatDateDistanceToNow(videoInfo.createdAt);
+	const title = videoInfo.title;
+	const channelName = videoInfo.owner?.fullName;
+	const videoId = videoInfo._id;
+	const ownerName = videoInfo.owner?.userName;
 
 	return (
 		<div className={twMerge("flex gap-2 p-2 pl-0 2lg:pl-2 group w-full", heighlightVideo == videoInfo?._id && "bg-background-secondary")}>
 			<Link to={`/video/${videoId}`} className="min-w-36 w-1/2 max-w-52">
 				<div className="overflow-hidden rounded-xl max-w-md relative">
-					<img src={thumbnail} alt="thumbnail" loading='lazy'
+					<img src={videoInfo.thumbnail.url} alt="thumbnail" loading='lazy'
 						className="rounded-xl aspect-video group-hover:scale-110 duration-300" />
 					<p className="px-1 py-[1px] absolute bottom-2 right-2 text-xs text-primary-text rounded-md bg-black bg-opacity-70">
 						{duration}

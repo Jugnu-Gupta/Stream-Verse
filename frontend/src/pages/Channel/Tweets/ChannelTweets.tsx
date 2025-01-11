@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import ChannelTweetList from "./ChannelTweetList";
-import thumbnail from "../../../assets/thumbnail.png";
 import { IoImageOutline } from "react-icons/io5";
 import { twMerge } from "tailwind-merge";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
@@ -28,7 +27,7 @@ const ChannelTweets: React.FC = () => {
 	const { fileInputRef, mediaPreview, newMedia, handleMediaChange, discardMediaChange } =
 		useMedia();
 	const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
-	const channelName = channelInfo?.fullName || "Channel Name";
+	const channelName = channelInfo.fullName;
 	const { adminName } = useParams<{ adminName: string }>();
 	const channelId = channelInfo?._id;
 	const curUserName = "@" + localStorage.getItem("userName");
@@ -117,7 +116,7 @@ const ChannelTweets: React.FC = () => {
 
 				<div className="flex items-center gap-2 w-full pt-1 pb-2 xs:pt-0.5">
 					<div className="overflow-hidden rounded-full w-9">
-						<img src={thumbnail} alt="thumbnail" loading='lazy'
+						<img src={channelInfo.avatar.url} alt="thumbnail" loading='lazy'
 							className="rounded-full w-10 aspect-square"
 						/>
 					</div>

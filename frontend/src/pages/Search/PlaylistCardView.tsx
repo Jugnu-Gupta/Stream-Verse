@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import thumbnail from "../../assets/thumbnail.png";
 import { formatDateDistanceToNow } from "../../utils/FormatDateDistanceToNow";
 import { formatNumber } from "../../utils/FormatNumber";
 import { PlaylistType } from "../../Types/Platlist.type";
@@ -12,19 +11,17 @@ interface PlaylistCardViewProps {
 }
 const PlaylistCardView: React.FC<PlaylistCardViewProps> = ({ playlistInfo }) => {
     const noOfVideos = formatNumber(playlistInfo?.noOfVideos);
-    const uploadedAt = formatDateDistanceToNow(playlistInfo?.createdAt || new Date());
-    // const description = playlistInfo?.description || "This is a playlist description";
-    const ownerName = playlistInfo?.owner?.userName || "Channel user Name";
-    const title = playlistInfo?.name || "Video Title";
-    // const _thumbnail = playlistInfo?.thumbnail || "";
-    const playlistId = playlistInfo?._id || "";
-    const videoId = playlistInfo?.videoId || "";
+    const uploadedAt = formatDateDistanceToNow(playlistInfo.createdAt);
+    const ownerName = playlistInfo?.owner?.userName;
+    const title = playlistInfo.name;
+    const playlistId = playlistInfo._id;
+    const videoId = playlistInfo.videoId;
 
     return (
         <div className="flex flex-col gap-2 p-2 group max-w-[400px]">
             <Link to={`/video/${videoId}?listId=${playlistId}`}>
                 <div className="overflow-hidden rounded-xl max-w-md w-fit relative">
-                    <img src={thumbnail} alt="thumbnail" loading='lazy'
+                    <img src={playlistInfo.thumbnail.url} alt="thumbnail" loading='lazy'
                         className="rounded-xl aspect-video duration-300" />
                     <p className="px-1 py-[1px] absolute bottom-2 right-2 text-xs text-primary-text rounded-md bg-black bg-opacity-70 flex items-center">
                         <CgPlayList className="text-lg mt-[2px]" />

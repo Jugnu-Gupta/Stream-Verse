@@ -1,5 +1,4 @@
 import React, { useEffect, Dispatch, SetStateAction } from 'react';
-import thumbnail from '../../assets/thumbnail.png';
 import makeApiRequest from '../../utils/MakeApiRequest';
 import { twMerge } from 'tailwind-merge';
 import { addComments } from '../../context/slices/Comment.slice';
@@ -25,6 +24,7 @@ const AddComment: React.FC<AddCommentProps> = ({ setGiveReply, avatarStyle, enti
     const userName = localStorage.getItem("userName") || "";
     const fullName = localStorage.getItem("fullName") || "";
     const avatarInfo = localStorage.getItem("avatar");
+    const avatar = avatarInfo ? JSON.parse(avatarInfo) : null;
     const dispatch = useDispatch<AppDispatch>();
 
     useEffect(() => {
@@ -49,7 +49,7 @@ const AddComment: React.FC<AddCommentProps> = ({ setGiveReply, avatarStyle, enti
             const child: CommentType = {
                 owner: {
                     _id: userId,
-                    avatar: avatarInfo ? JSON.parse(avatarInfo) : null,
+                    avatar: avatar,
                     userName,
                     fullName,
                 },
@@ -75,7 +75,7 @@ const AddComment: React.FC<AddCommentProps> = ({ setGiveReply, avatarStyle, enti
         <div className="flex items-start w-full gap-2">
             <div className={twMerge("overflow-hidden rounded-full min-w-7", avatarStyle)}>
                 {/* // current user image */}
-                <img src={thumbnail} alt="thumbnail" loading='lazy'
+                <img src={avatar.url} alt="avatar" loading='lazy'
                     className="rounded-full w-full aspect-square"
                 />
             </div>

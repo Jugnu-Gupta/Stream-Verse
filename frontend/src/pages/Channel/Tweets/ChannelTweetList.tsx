@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import thumbnail from "../../../assets/thumbnail.png";
 import { Link } from "react-router-dom";
 import { BiLike } from "react-icons/bi";
 import { BiSolidLike } from "react-icons/bi";
@@ -37,6 +36,7 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo, editDele
 		useMedia();
 	const comments = formatNumber(tweetInfo?.comments);
 	const tweetImage = tweetInfo?.image?.url;
+	const ownerAvatar = tweetInfo?.owner.avatar.url;
 
 	const tweetId = tweetInfo?._id;
 	const [description, setDescription] = React.useState<string>(tweetInfo?.content || "description");
@@ -80,7 +80,7 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo, editDele
 
 	return (<div className="flex items-start gap-2 p-2 w-full">
 		<div className="overflow-hidden rounded-full w-10">
-			<img src={thumbnail} alt="thumbnail" loading='lazy'
+			<img src={ownerAvatar} alt="thumbnail" loading='lazy'
 				className="rounded-full w-10 aspect-square" />
 		</div>
 		<div className="flex flex-col text-primary-text w-full">

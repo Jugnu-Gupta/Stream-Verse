@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import thumbnail from "../../assets/thumbnail.png";
 import { twMerge } from "tailwind-merge";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { MdOutlineEdit } from "react-icons/md";
@@ -64,20 +63,13 @@ const DashboardVideoStatsControl: React.FC<DashboardVideoStatsControlProps> = ({
 			</td>
 			<td className="px-4 py-2 justify-items-center text-primary-text font-semibold">
 				{status ? (
-					// <p className="text-[#15803D] rounded-full border-2 border-[#15803D] w-fit px-2">
-					<p className="bg-[#15803D] rounded-full w-fit px-2">
-						Published
-					</p>
+					<p className="bg-[#15803D] rounded-full w-fit px-2">Published</p>
 				) : (
-					// <p className="text-[#B91C1C] rounded-full border-2 border-[#B91C1C] w-fit px-2">
-					<p className="bg-[#B91C1C] rounded-full w-fit px-2">
-						Unpublished
-					</p>
+					<p className="bg-[#B91C1C] rounded-full w-fit px-2">Unpublished</p>
 				)}
 			</td>
-			{/* <td className="flex items-center gap-2 px-4 py-2 justify-items-center"> */}
 			<td className="px-4 py-2 justify-items-start flex items-center gap-2 overflow-hidden">
-				<img src={thumbnail} alt="thumbnail" loading='lazy'
+				<img src={videoInfo.thumbnail.url} alt="thumbnail" loading='lazy'
 					className="w-8 aspect-square rounded-full"
 				/>
 				<p className="font-semibold text-sm text-nowrap truncate w-full text-primary-text">{title}</p>

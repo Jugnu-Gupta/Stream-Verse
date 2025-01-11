@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import PersonalInfoForm from './PersonalInfoForm';
-import Background from "../../../assets/thumbnail.png";
 import { useNavigate } from "react-router-dom";
 import { FiUpload } from "react-icons/fi";
 import { CHANNELNAVITEMS2 } from "../../../Constants/ChannelNavbar";
@@ -45,7 +44,7 @@ const PersonalInformation: React.FC = () => {
             {/* <ChannelHeader /> */}
             <div className="flex flex-col px-6 xs:px-2 w-full mt-4 max-w-6xl mx-auto">
                 <div className="w-full relative">
-                    <img src={coverImgPreview ? coverImgPreview : coverImage !== "" ? coverImage : Background}
+                    <img src={coverImgPreview ? coverImgPreview : coverImage}
                         alt="Background" loading='lazy'
                         className="w-full aspect-[5] rounded-2xl object-cover"
                     />
@@ -60,7 +59,7 @@ const PersonalInformation: React.FC = () => {
                 <div className="flex items-center justify-between">
                     <div className="flex mt-4 gap-4 items-center w-fit mr-2">
                         <div className="relative">
-                            <img src={avatarPreview ? avatarPreview : avatarImage !== "" ? avatarImage : Background}
+                            <img src={avatarPreview ? avatarPreview : avatarImage}
                                 alt="Background" loading='lazy'
                                 className="w-28 xs:w-24 aspect-square rounded-full"
                             />
