@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { CgPlayList } from "react-icons/cg";
 import { FaPlay } from "react-icons/fa";
 import { formatNumber } from "../../utils/FormatNumber";
-import { formatDateToNow } from "../../utils/FormatDateToNow";
+import { formatDateDistanceToNow } from "../../utils/FormatDateDistanceToNow";
 import { PlaylistType } from "../../Types/Platlist.type";
 import EditDeletePlaylist from "./EditDeletePlaylist";
 import { EditDeleteWrapper } from "../../Types/EditDelete.type";
@@ -16,7 +16,7 @@ interface ChannelVideosCardProps extends EditDeleteWrapper {
 const ChannelVideosCard: React.FC<ChannelVideosCardProps> = ({ playlist, editDeleteOption, setEditDeleteOption }) => {
 	const [playlistName, setPlaylistName] = React.useState<string>(playlist?.name || "Playlist Title");
 	const noOfVideos = formatNumber(playlist?.noOfVideos);
-	const updatedAt = formatDateToNow(playlist?.updatedAt);
+	const updatedAt = formatDateDistanceToNow(playlist?.updatedAt);
 	const playlistId = playlist?._id || "";
 	const videoId = playlist?.videoId || "";
 	const _thumbnail = thumbnail;

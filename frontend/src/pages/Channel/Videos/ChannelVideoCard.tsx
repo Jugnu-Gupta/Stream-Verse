@@ -2,7 +2,7 @@ import React from "react";
 import thumbnail from "../../../assets/thumbnail.png";
 import { Link } from "react-router-dom";
 import { formatNumber } from "../../../utils/FormatNumber";
-import { formatDateToNow } from "../../../utils/FormatDateToNow";
+import { formatDateDistanceToNow } from "../../../utils/FormatDateDistanceToNow";
 import { formatDuration } from "../../../utils/FormatDuration";
 import { VideoType } from "../../../Types/Video.type";
 
@@ -12,7 +12,7 @@ interface ChannelVideosCardProps {
 const ChannelVideosCard: React.FC<ChannelVideosCardProps> = ({ videoInfo }) => {
 	const duration = formatDuration(videoInfo?.duration);
 	const views = formatNumber(videoInfo?.views);
-	const uploadedAt = formatDateToNow(videoInfo?.updatedAt);
+	const uploadedAt = formatDateDistanceToNow(videoInfo?.updatedAt);
 	const title = videoInfo?.title || "Video Title";
 	const videoId = videoInfo?._id || "";
 

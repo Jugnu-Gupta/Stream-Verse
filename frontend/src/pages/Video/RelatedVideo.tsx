@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 import { formatDuration } from "../../utils/FormatDuration";
 import { formatNumber } from "../../utils/FormatNumber";
-import { formatDateToNow } from "../../utils/FormatDateToNow";
+import { formatDateDistanceToNow } from "../../utils/FormatDateDistanceToNow";
 import { VideoType } from "../../Types/Video.type";
 
 interface VideoListViewProps {
@@ -15,7 +15,7 @@ interface VideoListViewProps {
 const RelatedVideo: React.FC<VideoListViewProps> = ({ heighlightVideo, videoInfo }) => {
 	const duration = formatDuration(videoInfo?.duration);
 	const views = formatNumber(videoInfo?.views);
-	const uploadedAt = formatDateToNow(videoInfo?.createdAt || new Date());
+	const uploadedAt = formatDateDistanceToNow(videoInfo?.createdAt || new Date());
 	const title = videoInfo?.title || "Video Title";
 	const channelName = videoInfo?.owner?.fullName || "Channel Name";
 	const videoId = videoInfo?._id || "";
