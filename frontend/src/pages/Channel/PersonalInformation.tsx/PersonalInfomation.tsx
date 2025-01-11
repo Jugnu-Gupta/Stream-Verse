@@ -9,6 +9,8 @@ import makeApiRequest from "../../../utils/MakeApiRequest";
 import { formatNumber } from "../../../utils/FormatNumber";
 import { ChannelInfoType } from "../../../Types/Channel.type";
 import { useMedia } from "../../../hooks/useMedia";
+import { ErrorType } from "../../../Types/Error.type";
+import { ResponseType } from "../../../Types/Response.type";
 
 const PersonalInformation: React.FC = () => {
     const [channelInfo, setChannelInfo] = React.useState<ChannelInfoType>();
@@ -29,10 +31,11 @@ const PersonalInformation: React.FC = () => {
         makeApiRequest({
             method: "get",
             url: `/api/v1/users/channel/${adminName?.substring(1)}`,
-        }).then((response: any) => { // eslint-disable-line
-            setChannelInfo(response.data);
-        }).catch((error) => {
-            console.error("Error fetching data:", error);
+        }).then((response) => {
+            const data = (response as ResponseType).data;
+            setChannelInfo(data);
+        }).catch((error: ErrorType) => {
+            console.error(error.response.data.message);
             navigate("/");
         });
     }, [navigate, adminName]);

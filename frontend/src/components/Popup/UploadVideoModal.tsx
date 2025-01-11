@@ -6,6 +6,7 @@ import validateMediaSize from '../../utils/ValidateMediaSize';
 import { useMedia } from '../../hooks/useMedia';
 import { makeApiMediaRequest } from '../../utils/MakeApiRequest';
 import toast from 'react-hot-toast';
+import { ErrorType } from '../../Types/Error.type';
 
 interface UploadVideoModalProps {
     setVideoName: Dispatch<SetStateAction<string>>;
@@ -85,8 +86,8 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setUploadProgress, 
         }).then(() => {
             toast.success("Video uploaded successfully");
             // window.location.reload();
-        }).catch((error) => {
-            console.error("Error uploading video:", error);
+        }).catch((error: ErrorType) => {
+            console.error(error.response.data.message);
         })
     }
 

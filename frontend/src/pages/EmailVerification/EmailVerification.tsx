@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import makeApiRequest from "../../utils/MakeApiRequest";
 import emailVerification from "../../assets/email-verification.gif";
+import { ResponseType } from "../../Types/Response.type";
 
 const EmailVerification: React.FC = () => {
 	const navigate = useNavigate();
@@ -14,13 +15,13 @@ const EmailVerification: React.FC = () => {
 				method: "get",
 				url: `/api/v1/auths/email-verification`,
 				params: { token }
-			}).then((res: any) => { // eslint-disable-line
-				if (res.status === 200) {
+			}).then((response) => {
+				if ((response as ResponseType).statusCode === 200) {
 					console.log("Email verified successfully");
 				} else {
 					console.log("Resend email verification link or try again or Invalid token");
 				}
-				console.log(res);
+				console.log(response);
 			});
 		}
 	}, [token, navigate]);

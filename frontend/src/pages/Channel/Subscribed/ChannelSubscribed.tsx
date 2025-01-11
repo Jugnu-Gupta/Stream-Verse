@@ -5,7 +5,9 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import makeApiRequest from "../../../utils/MakeApiRequest";
 import { ChannelInfoType, SubscribedChannelType } from "../../../Types/Channel.type";
 import NoResultsFound from "../../Search/NoResultsFound";
-
+import loadingGIF from "../../../assets/loading.gif";
+import { ErrorType } from "../../../Types/Error.type";
+import { ResponseType } from "../../../Types/Response.type";
 interface SubscribedChannelWrapper {
 	_id: string;
 	channel: SubscribedChannelType;
@@ -16,6 +18,7 @@ interface ChannelInfoWrapper {
 const ChannelSubscribed: React.FC = () => {
 	const [subscribedChannels, setSubscribedChannels] = React.useState<SubscribedChannelType[]>([]);
 	const [filteredChannels, setFilteredChannels] = React.useState<SubscribedChannelType[]>([]);
+	const [loading, setLoading] = React.useState<boolean>(true);
 	const [searchValue, setSearchValue] = React.useState<string>("");
 	const { channelInfo }: ChannelInfoWrapper = useOutletContext();
 	const navigate = useNavigate();
@@ -25,17 +28,19 @@ const ChannelSubscribed: React.FC = () => {
 		makeApiRequest({
 			method: "get",
 			url: `/api/v1/subscriptions/channel/${channelId}`,
-		}).then((response: any) => { // eslint-disable-line
-			const channels = response.data?.subscribedChannels.reduce(
+		}).then((response) => {
+			const data = (response as ResponseType).data;
+			const channels = data?.subscribedChannels.reduce(
 				(acc: SubscribedChannelType[], item: SubscribedChannelWrapper) => {
 					acc.push(item.channel);
 					return acc;
 				}, []);
 			setSubscribedChannels(channels);
 			setFilteredChannels(channels);
-		}).catch((error) => {
-			console.error("Error fetching data:", error);
-			// navigate("/");
+		}).catch((error: ErrorType) => {
+			console.error(error.response.data.message);
+		}).finally(() => {
+			setLoading(false);
 		});
 	}, [navigate, channelId]);
 
@@ -49,8 +54,12 @@ const ChannelSubscribed: React.FC = () => {
 		setFilteredChannels(filtered);
 	}
 
-	return (filteredChannels.length === 0 ? <NoResultsFound style="mt-16" entityName="subscriber"
-		heading="No people subscribed" message="This channel has yet to subscribe a new channel." />
+	return (filteredChannels.length === 0 ?
+		(!loading ? <NoResultsFound style="mt-16" entityName="subscriber"
+			heading="No people subscribed" message="This channel has yet to subscribe a new channel." />
+			: (<div className='w-full h-full flex justify-center items-center'>
+				<img src={loadingGIF} alt="loading" loading='lazy' className='w-24' />
+			</div>))
 		: <div className="px-4 mt-4 w-full flex flex-col mx-auto max-w-6xl">
 			<div className="flex items-center border-2 border-primary-border bg-primary-text rounded-full w-[calc(100%-16px)] mx-auto mb-4">
 				<input type="text"
@@ -68,8 +77,7 @@ const ChannelSubscribed: React.FC = () => {
 			<div className="w-full">
 				{filteredChannels?.map((channel: SubscribedChannelType) => (
 					<ChannelSubcribedCards key={channel._id} SubscribedChannel={channel} />
-				))
-				}
+				))}
 			</div>
 		</div>
 	);

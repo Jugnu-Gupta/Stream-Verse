@@ -8,6 +8,8 @@ import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import { ErrorType } from "../../Types/Error.type";
+import { ResponseType } from "../../Types/Response.type";
 
 const LoginForm: React.FC = () => {
 	const navigate = useNavigate();
@@ -25,9 +27,8 @@ const LoginForm: React.FC = () => {
 				method: "post",
 				url: "/api/v1/auths/login",
 				data: values,
-			}).then((response: any) => { // eslint-disable-line
-				const data = response.data;
-				console.log("Login Info:", response);
+			}).then((response) => {
+				const data = (response as ResponseType).data;
 				toast.success("Logged in successfully");
 				setShowVerifyEmail(false);
 
@@ -41,11 +42,11 @@ const LoginForm: React.FC = () => {
 				localStorage.setItem("fullName", data.user.fullName);
 				localStorage.setItem("email", data.user.email);
 				localStorage.setItem("avatar", JSON.stringify(data.user.avatar));
-				// localStorage.setItem("cover", responseData.user.coverImage.url);
+				localStorage.setItem("cover", JSON.stringify(data.user.coverImage));
 
 				navigate("/");
-			}).catch((error) => {
-				if (error.status === 403) {
+			}).catch((error: ErrorType) => {
+				if (error.response.data.statusCode === 403) {
 					setShowVerifyEmail(true);
 					console.error(error.response.data.message);
 				} else {

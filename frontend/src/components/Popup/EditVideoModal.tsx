@@ -6,6 +6,7 @@ import { makeApiMediaRequest } from '../../utils/MakeApiRequest';
 import { DashboardVideoType } from '../../Types/Dashboard.type';
 import toast from 'react-hot-toast';
 import { twMerge } from 'tailwind-merge';
+import { ErrorType } from '../../Types/Error.type';
 
 interface EditVideoModalProps {
     videoInfo: DashboardVideoType;
@@ -38,13 +39,13 @@ const EditVideoModal: React.FC<EditVideoModalProps> = ({ videoInfo, setShowEditV
             method: "patch",
             url: `/api/v1/videos/${videoId}`,
             data
-        }).then((response: any) => { // eslint-disable-line
+        }).then((response) => {
             console.log("response:", response);
             toast.success("Video uploaded successfully");
             setShowEditVideo(false);
             // window.location.reload();
-        }).catch((error: any) => { // eslint-disable-line
-            console.error("Error uploading video:", error);
+        }).catch((error: ErrorType) => {
+            console.error(error.response.data.message);
         })
     }
 

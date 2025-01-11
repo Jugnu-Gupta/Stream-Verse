@@ -3,6 +3,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { RxCross2 } from "react-icons/rx";
 import makeApiRequest from '../../utils/MakeApiRequest';
 import toast from 'react-hot-toast';
+import { ErrorType } from '../../Types/Error.type';
 
 interface DeleteModalProps {
     Name: string;
@@ -18,12 +19,11 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ Name, Url, setShowDeleteModal
         makeApiRequest({
             method: "delete",
             url: Url,
-        }).then((response: any) => { // eslint-disable-line
-            console.log("channelsResponse playlists:", response.data);
+        }).then(() => {
             toast.success(`${Name} deleted successfully`);
             setShowDeleteModal(true);
-        }).catch((error) => {
-            console.error("Error fetching data:", error);
+        }).catch((error: ErrorType) => {
+            console.error(error.response.data.message);
         });
     }
     return (

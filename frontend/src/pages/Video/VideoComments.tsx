@@ -15,6 +15,8 @@ import DeleteModal from "../../components/Popup/DeleteModal";
 import NoResultsFound from "../Search/NoResultsFound";
 import { usePagination } from "../../hooks/usePagination";
 import loadingGIF from "../../assets/loading.gif";
+import { ErrorType } from "../../Types/Error.type";
+import { ResponseType } from "../../Types/Response.type";
 
 interface VideoCommentsProps {
 	videoId: string;
@@ -54,15 +56,16 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ videoId, noOfComments }) 
 				limit: 10,
 				userId
 			}
-		}).then((commentsResponse: any) => { // eslint-disable-line
-			const commentsData = commentsResponse.data?.comments || [];
+		}).then((commentsResponse) => {
+			const commentsData = (commentsResponse as ResponseType).data?.comments;
 
 			setPage((prevPage) => prevPage + 1);
 			setHasMore(commentsData.length > 0);
 			if (commentsData.length === 0) return;
 			dispatch(addComments({ childPathIds: [], childs: commentsData }));
-		}).catch((error) => {
-			console.error("Error fetching data:", error);
+		}).catch((error: ErrorType) => {
+			setHasMore(false);
+			console.error(error.response.data.message);
 		}).finally(() => {
 			setLoading(false);
 		});
@@ -94,7 +97,7 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ videoId, noOfComments }) 
 		{comments?.length === 0 ?
 			(!hasMore ? <NoResultsFound style="mt-0" entityName="comment"
 				heading="No comments" message="This video has no comments, drop your below!" />
-				: (<div className='mx-auto my-auto'>
+				: (<div className='w-full h-full flex justify-center items-center'>
 					<img src={loadingGIF} alt="loading" loading='lazy' className='w-24' />
 				</div>)
 			) : comments?.map((comment: CommentType) => (

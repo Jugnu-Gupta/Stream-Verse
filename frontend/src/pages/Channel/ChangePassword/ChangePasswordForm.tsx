@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { twMerge } from 'tailwind-merge';
+import { ErrorType } from '../../../Types/Error.type';
 
 interface ChangePasswordFormProps {
     email: string | undefined;
@@ -35,9 +36,8 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({ email }) => {
                     },
                 }).then(() => {
                     toast.success("Password updated successfully");
-                }).catch((error) => {
+                }).catch((error: ErrorType) => {
                     console.error(error.response.data.message);
-                    toast.error(error.response.data.message);
                 });
             },
         });

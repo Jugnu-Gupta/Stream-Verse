@@ -17,6 +17,8 @@ import ChannelTweetList2 from "../Channel/Tweets/ChannelTweetList2";
 import NoResultsFound from "../Search/NoResultsFound";
 import { usePagination } from "../../hooks/usePagination";
 import loadingGIF from "../../assets/loading.gif";
+import { ErrorType } from "../../Types/Error.type";
+import { ResponseType } from "../../Types/Response.type";
 
 
 const TweetDetails: React.FC = () => {
@@ -53,28 +55,23 @@ const TweetDetails: React.FC = () => {
 	}, [noOfcomments, dispatch]);
 
 	const getComments = (page: number, loading: boolean, hasMore: boolean, tweetId: string) => {
-		console.log("before page:", page, tweetId, userId, loading, hasMore);
 		if (loading || !hasMore) return;
-		console.log("after page:", page, tweetId, userId, loading, hasMore);
 
 		setLoading(true);
 		makeApiRequest({
 			method: "get",
 			url: `/api/v1/comments/tweet/${tweetId}`,
-			params: {
-				userId,
-				page,
-				limit: 10
-			}
-		}).then((commentsRes: any) => { // eslint-disable-line
-			const commentsData = commentsRes.data?.comments || [];
+			params: { userId, page, limit: 10 }
+		}).then((commentsRes) => {
+			const commentsData = (commentsRes as ResponseType).data?.comments;
 
 			setPage((prevPage) => prevPage + 1);
 			setHasMore(commentsData.length > 0);
 			if (commentsData.length === 0) return;
 			dispatch(addComments({ childPathIds: [], childs: commentsData }));
-		}).catch((error) => {
-			console.error("Error fetching data:", error);
+		}).catch((error: ErrorType) => {
+			setHasMore(false);
+			console.error(error.response.data.message);
 			navigate("/");
 		}).finally(() => {
 			setLoading(false);
@@ -89,10 +86,11 @@ const TweetDetails: React.FC = () => {
 		makeApiRequest({
 			method: "get",
 			url: `/api/v1/tweets/${tweetId}${userId ? `/${userId}` : ""}`,
-		}).then((tweetRes: any) => { // eslint-disable-line
-			setTweet(tweetRes.data?.tweets?.[0]);
-		}).catch((error) => {
-			console.error("Error fetching data:", error);
+		}).then((tweetRes) => {
+			const tweetData = (tweetRes as ResponseType).data?.tweets?.[0];
+			setTweet(tweetData);
+		}).catch((error: ErrorType) => {
+			console.error(error.response.data.message);
 			navigate("/");
 		});
 	}, [tweetId, userId, navigate]);
@@ -116,7 +114,7 @@ const TweetDetails: React.FC = () => {
 			{comments?.length === 0 ?
 				(!hasMore ? <NoResultsFound style="mt-0" entityName="comment"
 					heading="No comments" message="This video has no comments, drop your below!" />
-					: (<div className='mx-auto my-auto'>
+					: (<div className='w-full h-full flex justify-center items-center'>
 						<img src={loadingGIF} alt="loading" loading='lazy' className='w-24' />
 					</div>)
 				) : comments?.map((comment: CommentType) => (

@@ -6,6 +6,8 @@ import { CHANNELNAVITEMS2 } from '../../../Constants/ChannelNavbar';
 import { useNavigate, useParams } from 'react-router-dom';
 import makeApiRequest from '../../../utils/MakeApiRequest';
 import { ChannelInfoType } from '../../../Types/Channel.type';
+import { ErrorType } from '../../../Types/Error.type';
+import { ResponseType } from '../../../Types/Response.type';
 
 const ChangePassword: React.FC = () => {
     const { adminName } = useParams<{ adminName: string }>();
@@ -17,10 +19,11 @@ const ChangePassword: React.FC = () => {
         makeApiRequest({
             method: "get",
             url: `/api/v1/users/channel/${adminName?.substring(1)}`,
-        }).then((response: any) => { // eslint-disable-line
-            setChannelInfo(response.data);
-        }).catch((error) => {
-            console.error("Error fetching data:", error);
+        }).then((response) => {
+            const data = (response as ResponseType).data;
+            setChannelInfo(data);
+        }).catch((error: ErrorType) => {
+            console.error(error.response.data.message);
             navigate("/");
         });
     }, [navigate, adminName]);

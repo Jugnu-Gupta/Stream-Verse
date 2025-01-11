@@ -10,6 +10,7 @@ import makeApiRequest from "../../utils/MakeApiRequest";
 import { AppDispatch, RootState } from "../../context/store";
 import { useAuth } from "../../hooks/useAuth";
 import Cookies from "js-cookie";
+import { ErrorType } from "../../Types/Error.type";
 
 const Header: React.FC = () => {
 	const [searchParams] = useSearchParams();
@@ -34,8 +35,7 @@ const Header: React.FC = () => {
 		makeApiRequest({
 			method: "post",
 			url: "/api/v1/auths/logout",
-		}).then((res: any) => { // eslint-disable-line
-			console.log(res);
+		}).then(() => {
 			console.log("Logged out successfully");
 			setUserImage("");
 			setLoggedIn(false);
@@ -50,8 +50,8 @@ const Header: React.FC = () => {
 			localStorage.removeItem("avatar");
 			localStorage.removeItem("cover");
 			navigate('/');
-		}).catch((error: any) => { // eslint-disable-line
-			console.error(error.response.data.message);
+		}).catch((error: ErrorType) => {
+			console.error("Error logging out:", error.response.data.message);
 			setLoggedIn(true);
 		});
 	}
@@ -77,7 +77,7 @@ const Header: React.FC = () => {
 			</div>
 			<div className="flex items-center pr-4 text-nowrap">
 				{loggedIn ? (<>
-					<img onClick={() => navigate(`/${curUser}/personal-information`)} src={userImage} alt="userImage" loading='lazy' className="text-sm w-7 h-7 cursor-pointer" />
+					<img onClick={() => navigate(`/user/${curUser}/personal-information`)} src={userImage} alt="userImage" loading='lazy' className="text-sm w-7 h-7 cursor-pointer" />
 					<button onClick={logOutHandler}
 						className="bg-primary outline-none text-primary-text font-semibold px-2.5 py-1 xs:px-2 text-sm xs:text-xs xs:py-1.5 rounded-md ml-2">Log Out
 					</button>

@@ -15,6 +15,8 @@ import { PlaylistVideosType } from "../../Types/Platlist.type";
 import { usePagination } from "../../hooks/usePagination";
 import loadingGIF from '../../assets/loading.gif';
 import NoResultsFound from "../Search/NoResultsFound";
+import { ErrorType } from "../../Types/Error.type";
+import { ResponseType } from "../../Types/Response.type";
 
 const VideoDetail: React.FC = () => {
 	const navigate = useNavigate();
@@ -41,10 +43,10 @@ const VideoDetail: React.FC = () => {
 		makeApiRequest({
 			method: "get",
 			url: `/api/v1/playlists/${"67502bffd0104e89cbb9be5e"}`,
-		}).then((playlistRes: any) => { // eslint-disable-line
-			const data = playlistRes.data?.playlist;
-			if (data?.videos.some((video: VideoType) => video._id === "67502bffd0104e89cbb9be5e")) {
-				setPlaylist(data);
+		}).then((playlistRes) => {
+			const playlistData = (playlistRes as ResponseType).data?.playlist;
+			if (playlistData?.videos.some((video: VideoType) => video._id === "67502bffd0104e89cbb9be5e")) {
+				setPlaylist(playlistData);
 			} else {
 				navigate(`/video/${videoId}`);
 			}
@@ -55,16 +57,16 @@ const VideoDetail: React.FC = () => {
 				url: `/api/v1/videos/${"67502949d0104e89cbb9be5d"}`,
 				params: { userId }
 			});
-		}).then((videoInfoRes: any) => { // eslint-disable-line
-			const data = videoInfoRes.data?.video;
-			setVideo(data);
+		}).then((videoInfoRes) => {
+			const videoData = (videoInfoRes as ResponseType).data?.video;
+			setVideo(videoData);
 
 			makeApiRequest({
 				method: "post",
-				url: `/api/v1/videos/${data?._id}/views`,
+				url: `/api/v1/videos/${videoData?._id}/views`,
 			});
-		}).catch((error) => {
-			console.error("Error fetching data:", error);
+		}).catch((error: ErrorType) => {
+			console.error(error.response.data.message);
 			navigate(listId ? `/video/${videoId}` : `/`);
 		})
 	}, [listId, videoId, userId, navigate]);
@@ -84,14 +86,15 @@ const VideoDetail: React.FC = () => {
 				limit: 10,
 				query: encodeURIComponent(searchText),
 			}
-		}).then((SimilarVideosRes: any) => { // eslint-disable-line
-			const data = SimilarVideosRes?.data?.data || [];
-			// console.log("data:", data);
+		}).then((SimilarVideosRes) => {
+			const simVideosData = (SimilarVideosRes as ResponseType).data?.data;
+
 			setPage((prevPage) => prevPage + 1);
-			setHasMore(SimilarVideosRes?.data?.data?.length > 0);
-			setSimilarVideos((prev) => [...prev, ...data]);
-		}).catch((error) => {
-			console.error("Error fetching data:", error);
+			setHasMore(simVideosData?.length > 0);
+			setSimilarVideos((prev) => [...prev, ...simVideosData]);
+		}).catch((error: ErrorType) => {
+			setHasMore(false);
+			console.error(error.response.data.message);
 		}).finally(() => {
 			setLoading(false);
 		});
@@ -168,7 +171,7 @@ const VideoDetail: React.FC = () => {
 						: ((!video?._id && !hasMore) ?
 							<NoResultsFound style="mt-40" entityName="video" heading="No videos found"
 								message="We couldn't find any similar videos at the moment. Please try again later." />
-							: (<div className='mx-auto my-auto'>
+							: (<div className='w-full h-full flex justify-center items-center'>
 								<img src={loadingGIF} alt="loading" loading='lazy' className='w-24' />
 							</div>))
 					}

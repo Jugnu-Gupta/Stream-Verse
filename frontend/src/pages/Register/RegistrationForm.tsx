@@ -7,6 +7,8 @@ import { FaRegEyeSlash } from "react-icons/fa";
 import makeApiRequest from "../../utils/MakeApiRequest";
 import { RegistrationValidationSchema } from "./RegistrationValidationSchema";
 import toast from "react-hot-toast";
+import { ErrorType } from "../../Types/Error.type";
+import { ResponseType } from "../../Types/Response.type";
 
 const RegistrationForm: React.FC = () => {
 	const [showPassword, setShowPassword] = React.useState(false);
@@ -28,13 +30,13 @@ const RegistrationForm: React.FC = () => {
 						email: values.email,
 						password: values.password,
 					},
-				}).then((response: any) => { // eslint-disable-line
-					const responseData = response.data;
-					console.log("Registration Info:", responseData);
+				}).then((response) => {
+					const data = (response as ResponseType).data;
+					console.log("Registration Info:", data);
 					console.log(values);
 					setShowVerifyEmail(true);
-				}).catch((error) => {
-					console.error("Error registering");
+				}).catch((error: ErrorType) => {
+					console.error("Error Registering", error.response.data.message);
 					setShowVerifyEmail(false);
 					toast.error(error.response.data.message);
 				});

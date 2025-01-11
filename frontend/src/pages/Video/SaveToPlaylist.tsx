@@ -2,6 +2,8 @@ import React, { useEffect, Dispatch, SetStateAction } from 'react';
 import makeApiRequest from '../../utils/MakeApiRequest';
 import { PlaylistType } from '../../Types/Platlist.type';
 import toast from 'react-hot-toast';
+import { ErrorType } from '../../Types/Error.type';
+import { ResponseType } from '../../Types/Response.type';
 
 interface UserPlatlistsType {
     id: string;
@@ -23,12 +25,12 @@ const SaveToPlaylist: React.FC<SaveToPlaylistProps> = ({ videoId, setShowSaveToP
             method: "get",
             url: `/api/v1/playlists`,
             params: { userName, videoId },
-        }).then((playlistsRes: any) => { // eslint-disable-line
-            const playlistsData = playlistsRes.data?.playlists || [];
-            setPlaylists(playlistsData.map((playlist: PlaylistType) =>
+        }).then((playlistsRes) => {
+            const playlistData = (playlistsRes as ResponseType).data?.playlists;
+            setPlaylists(playlistData.map((playlist: PlaylistType) =>
                 ({ name: playlist.name, id: playlist._id, videoStatus: playlist.videoStatus })));
-        }).catch((error) => {
-            console.error("Error fetching data:", error);
+        }).catch((error: ErrorType) => {
+            console.error(error.response.data.message);
         });
     }, [userName, videoId]);
 
@@ -49,8 +51,8 @@ const SaveToPlaylist: React.FC<SaveToPlaylistProps> = ({ videoId, setShowSaveToP
         makeApiRequest({
             method: "post",
             url: `/api/v1/playlists/${playlistId}/${videoId}`,
-        }).catch((error) => {
-            console.error("Error fetching data:", error);
+        }).catch((error: ErrorType) => {
+            console.error(error.response.data.message);
         });
     }
 
@@ -58,8 +60,8 @@ const SaveToPlaylist: React.FC<SaveToPlaylistProps> = ({ videoId, setShowSaveToP
         makeApiRequest({
             method: "delete",
             url: `/api/v1/playlists/${playlistId}/${videoId}`,
-        }).catch((error) => {
-            console.error("Error fetching data:", error);
+        }).catch((error: ErrorType) => {
+            console.error(error.response.data.message);
         });
     }
 
@@ -68,14 +70,15 @@ const SaveToPlaylist: React.FC<SaveToPlaylistProps> = ({ videoId, setShowSaveToP
             method: "post",
             url: `/api/v1/playlists`,
             data: { name: playlistName, videoId },
-        }).then((playlistsRes: any) => { // eslint-disable-line
-            setPlaylists((prevPlaylists) => [...prevPlaylists, { name: playlistName, id: playlistsRes.data?.playlist?._id, videoStatus: true }]);
+        }).then((playlistsRes) => {
+            const playlistData = (playlistsRes as ResponseType).data?.playlist;
 
+            setPlaylists((prevPlaylists) => [...prevPlaylists, { name: playlistName, id: playlistData?._id, videoStatus: true }]);
             toast.success(`Saved to ${playlistName} successfully`);
             setShowSaveToPlaylist(false);
             setPlaylistName("");
-        }).catch((error) => {
-            console.error("Error fetching data:", error);
+        }).catch((error: ErrorType) => {
+            console.error(error.response.data.message);
         });
     }
 

@@ -9,6 +9,8 @@ import makeApiRequest from '../../utils/MakeApiRequest';
 import { DashboardStatsType } from '../../Types/Dashboard.type';
 import UploadVideoModal from "../../components/Popup/UploadVideoModal";
 import UploadingVideoModal from '../../components/Popup/UploadingVideoModal';
+import { ErrorType } from '../../Types/Error.type';
+import { ResponseType } from '../../Types/Response.type';
 
 
 const DashboardStats: React.FC = () => {
@@ -28,10 +30,11 @@ const DashboardStats: React.FC = () => {
         makeApiRequest({
             method: "get",
             url: "/api/v1/dashboard/channel-stats",
-        }).then((response: any) => { // eslint-disable-line
-            setStats(response.data?.stats);
-        }).catch((error) => {
-            console.error("Error fetching data:", error);
+        }).then((response) => {
+            const statsData = (response as ResponseType).data?.stats;
+            setStats(statsData);
+        }).catch((error: ErrorType) => {
+            console.error(error.response.data.message);
             navigate("/");
         });
     }, [navigate]);

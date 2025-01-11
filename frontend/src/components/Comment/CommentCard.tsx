@@ -23,6 +23,8 @@ import EditDeleteComment from "./EditDeleteComment";
 import { EditDeleteWrapper } from "../../Types/EditDelete.type";
 import toast from "react-hot-toast";
 import { usePagination } from "../../hooks/usePagination";
+import { ErrorType } from "../../Types/Error.type";
+import { ResponseType } from "../../Types/Response.type";
 
 interface CommentProps extends EditDeleteWrapper {
 	currPath: string[];
@@ -56,20 +58,17 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 		makeApiRequest({
 			method: "get",
 			url: `/api/v1/comments/${entityType}/${entityId}/${commentId}`,
-			params: {
-				userId,
-				page,
-				limit: 10
-			}
-		}).then((RepliesResponse: any) => { // eslint-disable-line
-			const RepliesData = RepliesResponse.data?.comments || [];
+			params: { userId, page, limit: 10 }
+		}).then((RepliesResponse) => {
+			const RepliesData = (RepliesResponse as ResponseType).data?.comments;
 			console.log("RepliesData2:", RepliesData);
 
 			setPage((prevPage) => prevPage + 1);
 			setHasMore(RepliesData.length > 0);
 			dispatch(addComments({ childPathIds: currPath, childs: RepliesData }));
-		}).catch((error) => {
-			console.error("Error fetching data:", error);
+		}).catch((error: ErrorType) => {
+			setHasMore(false);
+			console.error(error.response.data.message);
 		}).finally(() => {
 			setLoading(false);
 		});
@@ -103,8 +102,8 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 			setEditDeleteOption({ ...editDeleteOption, showEditModal: false });
 			dispatch(updateComment({ childPathIds: currPath, content: commentText.trim() }));
 			setCommentText(commentText.trim());
-		}).catch((error) => {
-			console.error("Error fetching data:", error);
+		}).catch((error: ErrorType) => {
+			console.error(error.response.data.message);
 		});
 	}
 

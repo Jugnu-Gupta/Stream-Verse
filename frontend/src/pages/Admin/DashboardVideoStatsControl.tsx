@@ -9,6 +9,7 @@ import { format } from "date-fns";
 import { formatNumber } from "../../utils/FormatNumber";
 import { DashboardVideoType } from "../../Types/Dashboard.type";
 import makeApiRequest from "../../utils/MakeApiRequest";
+import { ErrorType } from "../../Types/Error.type";
 
 interface DashboardVideoStatsControlProps {
 	videoInfo: DashboardVideoType;
@@ -28,11 +29,11 @@ const DashboardVideoStatsControl: React.FC<DashboardVideoStatsControlProps> = ({
 			method: "patch",
 			url: `/api/v1/videos/${videoInfo._id}/publish`,
 			data: { isPublished: !status }
-		}).then((response: any) => { // eslint-disable-line
+		}).then((response) => {
 			console.log("response:", response);
 			setStatus(!status);
-		}).catch((error) => {
-			console.error("Error updating video status:", error);
+		}).catch((error: ErrorType) => {
+			console.error(error.response.data.message);
 		});
 	}
 

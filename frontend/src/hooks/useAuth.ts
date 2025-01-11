@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import makeApiRequest from "../utils/MakeApiRequest";
+import { ErrorType } from "../Types/Error.type";
 
 export const useAuth = () => {
 	const navigate = useNavigate();
@@ -15,9 +16,8 @@ export const useAuth = () => {
 			.then(() => {
 				setLoggedIn(true);
 			})
-			// eslint-disable-next-line
-			.catch((error: any) => {
-				console.error(error);
+			.catch((error: ErrorType) => {
+				console.error(error.response.data.message);
 				setLoggedIn(false);
 			})
 			.finally(() => {

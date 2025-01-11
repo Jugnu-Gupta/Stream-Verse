@@ -66,6 +66,13 @@ axiosInstance.interceptors.response.use(
 				}
 			}
 
+			// If the error is not due to token expiration
+			if (error.response?.data?.message !== "jwt expired") {
+				Cookies.remove("accessToken");
+				Cookies.remove("refreshToken");
+				return Promise.reject(error);
+			}
+
 			originalRequest._retry = true;
 			isRefreshing = true;
 
@@ -77,9 +84,10 @@ axiosInstance.interceptors.response.use(
 					url: "/api/v1/auths/refresh-token",
 					data: { refreshToken },
 				});
+
 				const newAccessToken = data.accessToken; // Replace with the actual field from the response
-				localStorage.setItem("accessToken", newAccessToken);
-				localStorage.setItem("refreshToken", data.refreshToken);
+				Cookies.set("accessToken", newAccessToken);
+				Cookies.set("refreshToken", data.refreshToken);
 
 				processQueue(null, newAccessToken); // Resolve all pending requests with the new token
 				originalRequest.headers = originalRequest.headers || {};
@@ -87,7 +95,7 @@ axiosInstance.interceptors.response.use(
 				return axiosInstance(originalRequest);
 			} catch (refreshError) {
 				processQueue(refreshError, null); // Reject all pending requests
-				throw new Error("Failed to refresh token");
+				throw new Error("Error refreshing token");
 			} finally {
 				isRefreshing = false; // Reset the flag
 			}

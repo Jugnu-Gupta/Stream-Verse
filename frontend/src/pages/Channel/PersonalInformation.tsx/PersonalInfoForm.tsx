@@ -5,6 +5,8 @@ import makeApiRequest, { makeApiMediaRequest } from '../../../utils/MakeApiReque
 import { PersonalInfoValidationSchema } from './PersonalInfoValidationSchema';
 import { ChannelInfoType } from '../../../Types/Channel.type';
 import { twMerge } from 'tailwind-merge';
+import { ErrorType } from '../../../Types/Error.type';
+import { ResponseType } from '../../../Types/Response.type';
 
 interface PersonalInfoFormProps {
     channelInfo: ChannelInfoType | undefined;
@@ -37,17 +39,17 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> =
                             fullName: values.fullName,
                             userName: values.userName,
                         },
-                    }).then((response: any) => { // eslint-disable-line
-                        const responseData = response.data;
+                    }).then((response) => {
+                        const data = (response as ResponseType).data;
+
                         toast.success("Changes updated successfully");
-                        localStorage.setItem("userName", responseData.user.userName);
-                        localStorage.setItem("fullName", responseData.user.fullName);
-                    }).catch((error) => {
+                        localStorage.setItem("userName", data.user.userName);
+                        localStorage.setItem("fullName", data.user.fullName);
+                    }).catch((error: ErrorType) => {
                         console.error(error.response.data.message);
-                        console.error(error);
                         if (error.response.data.statusCode === 409) {
                             toast.error("User name already exists");
-                            setAvailableUserName(error.response.data.data.availableUserName);
+                            setAvailableUserName(error.response.data.data?.availableUserName);
                         } else {
                             toast.error(error.response.data.message);
                         }
@@ -66,8 +68,8 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> =
             }).then(() => {
                 toast.success(`${fileName} updated successfully`);
                 window.location.reload();
-            }).catch((error) => {
-                console.error("Error fetching data:", error);
+            }).catch((error: ErrorType) => {
+                console.error(error.response.data.message);
             });
         }
 

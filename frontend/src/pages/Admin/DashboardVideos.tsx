@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import makeApiRequest from '../../utils/MakeApiRequest';
 import DashboardVideoStatsControl from "./DashboardVideoStatsControl";
 import { DashboardVideoType } from '../../Types/Dashboard.type';
+import { ErrorType } from '../../Types/Error.type';
+import { ResponseType } from '../../Types/Response.type';
 
 const DashboardVideos: React.FC = () => {
     const navigate = useNavigate();
@@ -12,11 +14,12 @@ const DashboardVideos: React.FC = () => {
         makeApiRequest({
             method: "get",
             url: "/api/v1/dashboard/channel-videos",
-        }).then((response: any) => { // eslint-disable-line
-            console.log("videos:", response.data);
-            setVideos(response.data?.videos);
-        }).catch((error) => {
-            console.error("Error fetching data:", error);
+        }).then((response) => {
+            const data = (response as ResponseType).data;
+            console.log("videos:", data);
+            setVideos(data?.videos);
+        }).catch((error: ErrorType) => {
+            console.error(error.response.data.message);
             navigate("/");
         });
     }, [navigate]);

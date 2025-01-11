@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import makeApiRequest from "../utils/MakeApiRequest";
+import { ErrorType } from "../Types/Error.type";
 
 const handleDBLike = (entityId: string, entityType: string) => {
 	if (!entityId || !entityType) return;
@@ -8,12 +9,11 @@ const handleDBLike = (entityId: string, entityType: string) => {
 		method: "post",
 		url: `/api/v1/likes/${entityType}/${entityId}/like`,
 	})
-		// eslint-disable-next-line
-		.then((response: any) => {
-			console.log("likes:", response.data);
+		.then((response) => {
+			console.log("likes:", response);
 		})
-		.catch((error) => {
-			console.error("Error fetching data:", error);
+		.catch((error: ErrorType) => {
+			console.error(error.response.data.message);
 		});
 };
 
@@ -24,12 +24,11 @@ const handleDBDislike = (entityId: string, entityType: string) => {
 		method: "post",
 		url: `/api/v1/likes/${entityType}/${entityId}/dislike`,
 	})
-		// eslint-disable-next-line
-		.then((response: any) => {
-			console.log("likes:", response.data);
+		.then((response) => {
+			console.log("likes:", response);
 		})
-		.catch((error) => {
-			console.error("Error fetching data:", error);
+		.catch((error: ErrorType) => {
+			console.error(error.response.data.message);
 		});
 };
 

@@ -7,6 +7,8 @@ import { useDispatch } from 'react-redux';
 import { increaseCount } from '../../context/slices/Counter.slice';
 import { AppDispatch } from '../../context/store';
 import { CommentType } from '../../Types/Comment.type';
+import { ErrorType } from '../../Types/Error.type';
+import { ResponseType } from '../../Types/Response.type';
 
 interface AddCommentProps {
     setGiveReply?: Dispatch<SetStateAction<boolean>>;
@@ -42,8 +44,8 @@ const AddComment: React.FC<AddCommentProps> = ({ setGiveReply, avatarStyle, enti
             data: {
                 content: addCommentText.trim(),
             },
-        }).then((response: any) => { // eslint-disable-line
-            const data = response.data;
+        }).then((response) => {
+            const data = (response as ResponseType).data;
             const child: CommentType = {
                 owner: {
                     _id: userId,
@@ -64,8 +66,8 @@ const AddComment: React.FC<AddCommentProps> = ({ setGiveReply, avatarStyle, enti
             dispatch(increaseCount());
             setAddCommentText("");
             if (setGiveReply) setGiveReply(false);
-        }).catch((error) => {
-            console.error("Error fetching data:", error);
+        }).catch((error: ErrorType) => {
+            console.error(error.response.data.message);
         });
     }
 

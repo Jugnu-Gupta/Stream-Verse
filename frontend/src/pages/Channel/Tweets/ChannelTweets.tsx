@@ -13,11 +13,14 @@ import DeleteModal from "../../../components/Popup/DeleteModal";
 import toast from "react-hot-toast";
 import NoResultsFound from "../../Search/NoResultsFound";
 import ChannelTweetList2 from "./ChannelTweetList2";
-
+import loadingGIF from "../../../assets/loading.gif";
+import { ErrorType } from "../../../Types/Error.type";
+import { ResponseType } from "../../../Types/Response.type";
 interface ChannelInfoWrapper {
 	channelInfo: ChannelInfoType;
 }
 const ChannelTweets: React.FC = () => {
+	const [loading, setLoading] = React.useState<boolean>(true);
 	const { channelInfo }: ChannelInfoWrapper = useOutletContext();
 	const [editDeleteOption, setEditDeleteOption] = React.useState<EditDeleteType>(
 		{ currentId: "", showEditModal: false, showDeleteModal: false, showEditDeletePopup: false });
@@ -54,8 +57,8 @@ const ChannelTweets: React.FC = () => {
 			method: "post",
 			url: `/api/v1/tweets`,
 			data
-		}).then((response: any) => { // eslint-disable-line
-			const data = response.data;
+		}).then((response) => {
+			const data = (response as ResponseType).data;
 			const newTweet: TweetType = {
 				_id: data._id,
 				content: data.content,
@@ -76,22 +79,25 @@ const ChannelTweets: React.FC = () => {
 			setTweets([newTweet, ...tweets]);
 			toast.success("Tweet created successfully");
 			discardMediaChange(setAddTweetText);
-		}).catch((error) => {
-			console.error("Error fetching data:", error);
+		}).catch((error: ErrorType) => {
+			console.error(error.response.data.message);
 		});
 	}
 
 	useEffect(() => {
 		if (!channelId) return;
 
+		setLoading(true);
 		makeApiRequest({
 			method: "get",
 			url: `/api/v1/tweets/user/${channelId}${userId ? `/${userId}` : ""}`,
-		}).then((response: any) => { // eslint-disable-line
-			setTweets(response.data?.tweets.reverse());
-		}).catch((error) => {
-			console.error("Error fetching data:", error);
-			// navigate("/");
+		}).then((response) => {
+			const data = (response as ResponseType).data;
+			setTweets(data?.tweets.reverse());
+		}).catch((error: ErrorType) => {
+			console.error(error.response.data.message);
+		}).finally(() => {
+			setLoading(false);
 		});
 	}, [navigate, channelId, userId]);
 
@@ -175,8 +181,12 @@ const ChannelTweets: React.FC = () => {
 
 			{/* Tweets */}
 			<div>
-				{tweets.length === 0 ? <NoResultsFound entityName="tweet" style="mt-16"
-					heading="No tweets" message="This channel has yet to make a Tweet." />
+				{tweets.length === 0 ?
+					(!loading ? <NoResultsFound entityName="tweet" style="mt-16"
+						heading="No tweets" message="This channel has yet to make a Tweet." />
+						: (<div className='w-full h-full flex justify-center items-center'>
+							<img src={loadingGIF} alt="loading" loading='lazy' className='w-24' />
+						</div>))
 					: tweets?.map((tweet: TweetType) => (
 						adminName !== curUserName ?
 							<ChannelTweetList key={tweet._id}

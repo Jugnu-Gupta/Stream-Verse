@@ -30,9 +30,9 @@ const makeApiRequest = async ({
 			data,
 			params,
 		});
-		return res.data;
+		return res.data as unknown;
 	} catch (error) {
-		console.error(error);
+		console.error("Error fetching data:", error);
 		throw error;
 	}
 };
@@ -52,7 +52,7 @@ const makeApiMediaRequest = async ({
 			params,
 			onUploadProgress,
 		});
-		return res.data;
+		return res.data as unknown;
 	} catch (error) {
 		console.error(error);
 		throw error;

@@ -19,6 +19,7 @@ import { IoImageOutline } from "react-icons/io5";
 import { useMedia } from "../../../hooks/useMedia";
 import { twMerge } from "tailwind-merge";
 import toast from "react-hot-toast";
+import { ErrorType } from "../../../Types/Error.type";
 
 interface ChannelTweetListProps extends EditDeleteWrapper {
 	tweetInfo: TweetType | undefined;
@@ -58,8 +59,8 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo, editDele
 			toast.success("Tweet updated successfully");
 			setEditDeleteOption({ ...editDeleteOption, showEditModal: false });
 			setDescription(tweetText);
-		}).catch((error) => {
-			console.error("Error fetching data:", error);
+		}).catch((error: ErrorType) => {
+			console.error(error.response.data.message);
 		});
 	};
 
@@ -104,7 +105,7 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo, editDele
 				)}
 			</div>
 
-			<Link to={`/tweets/${tweetId}`} className="w-full mb-3">
+			<Link to={`/tweet/${tweetId}`} className="w-full mb-3">
 				{(mediaPreview || tweetImage) &&
 					<img src={mediaPreview ? mediaPreview : tweetImage}
 						alt="selected" loading='lazy'
@@ -152,7 +153,7 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo, editDele
 						{isDisliked ? <BiSolidDislike /> : <BiDislike />}
 						<span className="text-xs">{dislikes}</span>
 					</button>
-					<Link to={`/tweets/${tweetId}`}>
+					<Link to={`/tweet/${tweetId}`}>
 						<button className="flex items-center gap-1 text-xl hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
 							<BiCommentDetail className="-scale-x-100" />
 							<span className="text-xs">{comments}</span>

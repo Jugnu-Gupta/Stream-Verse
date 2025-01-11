@@ -13,6 +13,8 @@ import makeApiRequest from "../../utils/MakeApiRequest";
 import { SearchType } from "../../Types/Search.type";
 import { usePagination } from "../../hooks/usePagination";
 import loadingGIF from "../../assets/loading.gif";
+import { ErrorType } from "../../Types/Error.type";
+import { ResponseType } from "../../Types/Response.type";
 
 
 const Search: React.FC = () => {
@@ -41,9 +43,7 @@ const Search: React.FC = () => {
 	};
 
 	const handleSearch = useCallback((page: number, loading: boolean, hasMore: boolean, searchText: string) => {
-		// console.log("before searching...", searchText, loading, hasMore, page);
 		if (searchText?.trim() === "" || loading || !hasMore) return;
-		// console.log("after searching...", searchText, loading, hasMore, page);
 
 		setLoading(true);
 		makeApiRequest({
@@ -58,19 +58,20 @@ const Search: React.FC = () => {
 				sortBy: searchValues.sortBy,
 				uploadDate: searchValues.uploadDate,
 			}
-		}).then((response: any) => { // eslint-disable-line
-			const data = response.data.data;
-			console.log("video:", data);
+		}).then((response) => {
+			const videosData = (response as ResponseType).data.data;
+			console.log("video:", videosData);
 			if (searchValues.type === "video") {
-				setSearchValues({ ...searchValues, videos: (page !== 1 ? searchValues.videos : []).concat(data), playlists: [], channels: [], curSearch: "video" });
+				setSearchValues({ ...searchValues, videos: (page !== 1 ? searchValues.videos : []).concat(videosData), playlists: [], channels: [], curSearch: "video" });
 			} else if (searchValues.type === "playlist") {
-				setSearchValues({ ...searchValues, playlists: (page !== 1 ? searchValues.playlists : []).concat(data), videos: [], channels: [], curSearch: "playlist" });
+				setSearchValues({ ...searchValues, playlists: (page !== 1 ? searchValues.playlists : []).concat(videosData), videos: [], channels: [], curSearch: "playlist" });
 			} else if (searchValues.type === "channel") {
-				setSearchValues({ ...searchValues, channels: (page !== 1 ? searchValues.channels : []).concat(data), videos: [], playlists: [], curSearch: "channel" });
+				setSearchValues({ ...searchValues, channels: (page !== 1 ? searchValues.channels : []).concat(videosData), videos: [], playlists: [], curSearch: "channel" });
 			}
 			setPage((prev) => prev + 1);
-			setHasMore(data.length > 0);
-		}).catch((error: any) => { // eslint-disable-line
+			setHasMore(videosData.length > 0);
+		}).catch((error: ErrorType) => {
+			setHasMore(false);
 			console.error(error.response.data.message);
 		}).finally(() => {
 			setLoading(false);
@@ -131,7 +132,7 @@ const Search: React.FC = () => {
 					(searchValues.videos.length === 0 ?
 						(!hasMore ? <NoResultsFound style="mt-40" entityName="video" heading="No videos found"
 							message="Please try to search something else or remove filters." />
-							: (<div className='mx-auto my-auto'>
+							: (<div className='w-full h-full flex justify-center items-center'>
 								<img src={loadingGIF} alt="loading" loading='lazy' className='w-24' />
 							</div>)
 						) : <div className="w-full">
@@ -152,7 +153,7 @@ const Search: React.FC = () => {
 					(searchValues.playlists.length === 0 ?
 						(!hasMore ? <NoResultsFound style="mt-40" entityName="playlist" heading="No playlists found"
 							message="Please try to search something else or remove filters." />
-							: (<div className='mx-auto my-auto'>
+							: (<div className='w-full h-full flex justify-center items-center'>
 								<img src={loadingGIF} alt="loading" loading='lazy' className='w-24' />
 							</div>)
 						) : <div className="w-full">
@@ -173,7 +174,7 @@ const Search: React.FC = () => {
 					(searchValues.channels.length === 0 ?
 						(!hasMore ? <NoResultsFound style="mt-40" entityName="channel"
 							heading="No channels found" message="Please try to search something else or remove filters." />
-							: (<div className='mx-auto my-auto'>
+							: (<div className='w-full h-full flex justify-center items-center'>
 								<img src={loadingGIF} alt="loading" loading='lazy' className='w-24' />
 							</div>)
 						) : <div className="w-full">

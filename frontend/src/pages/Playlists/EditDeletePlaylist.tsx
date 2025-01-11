@@ -5,6 +5,7 @@ import { MdDriveFileRenameOutline } from "react-icons/md";
 import { RiDeleteBinLine } from "react-icons/ri";
 import toast from 'react-hot-toast';
 import { EditDeleteWrapper } from "../../Types/EditDelete.type";
+import { ErrorType } from '../../Types/Error.type';
 
 interface EditPlaylistProps extends EditDeleteWrapper {
     playlistId: string;
@@ -27,8 +28,8 @@ const EditDeletePlaylist: React.FC<EditPlaylistProps> = ({ playlistId, playlist_
             toast.success("Playlist updated successfully");
             updatePlaylistName(playlistName);
             setEditDeleteOption({ ...editDeleteOption, showEditModal: true });
-        }).catch((error) => {
-            console.error("Error fetching data:", error);
+        }).catch((error: ErrorType) => {
+            console.error(error.response.data.message);
         });
     }
 
