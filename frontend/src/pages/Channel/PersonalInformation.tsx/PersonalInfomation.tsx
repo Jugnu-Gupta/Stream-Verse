@@ -78,14 +78,14 @@ const PersonalInformation: React.FC = () => {
                     </div>
 
                     <div className="flex flex-wrap justify-end w-fit">
-                        <button onClick={() => navigate(`/${adminName}/dashboard`)}
+                        <button onClick={() => navigate(`/user/${adminName}/dashboard`)}
                             className="bg-primary text-primary-text font-semibold px-4 py-1 mt-4 xs:px-3 xs:text-sm rounded-md hover:scale-105 duration-300">
                             Dashboard
                         </button>
                     </div>
                 </div>
 
-                <ChannelNavbar channelNavItems={CHANNELNAVITEMS2} />
+                <ChannelNavbar entityType="user" channelNavItems={CHANNELNAVITEMS2} />
             </div>
 
             <div className="flex flex-wrap sm:flex-nowrap sm:px-6 px-2 w-full max-w-6xl mx-auto mt-4" >

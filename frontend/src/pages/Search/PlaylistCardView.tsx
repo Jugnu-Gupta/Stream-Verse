@@ -44,7 +44,7 @@ const PlaylistCardView: React.FC<PlaylistCardViewProps> = ({ playlistInfo }) => 
                             Created {uploadedAt}
                         </p>
                     </Link>
-                    <Link to={`/${ownerName}/videos`}>
+                    <Link to={`/channel/@${ownerName}/videos`}>
                         <p className="text-sm text-primary-text2 hover:text-primary-text">
                             {ownerName}
                         </p>

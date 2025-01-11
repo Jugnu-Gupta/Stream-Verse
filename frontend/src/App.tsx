@@ -1,4 +1,4 @@
-import { Route, Routes, BrowserRouter, Navigate } from "react-router-dom";
+import { Route, Routes, BrowserRouter } from "react-router-dom";
 import EmailVerification from "./pages/EmailVerification/EmailVerification.tsx";
 import ChannelSubscribed from "./pages/Channel/Subscribed/ChannelSubscribed.tsx";
 import TermsAndConditions from "./pages/TermsAndConditions/TermsAndConditions.tsx";
@@ -21,6 +21,7 @@ import Register from "./pages/Register/Register.js";
 import Dashboard from "./pages/Admin/Dashboard.tsx";
 import MainLayout from "./Layouts/MainLayout.tsx";
 import Search from "./pages/Search/Search.tsx";
+import Error from "./pages/Error/Error.tsx";
 import Login from "./pages/Login/Login.js";
 import Home from "./pages/Home/Home.tsx";
 import Help from "./pages/Help/Help.tsx";
@@ -31,18 +32,10 @@ import Help from "./pages/Help/Help.tsx";
 
 // give fallback values to controller while accesing array elements i.e. $ArrayElemAt: [ "$array", 0 ]
 
-//  add publish or not video feature
 // basic check for no subscribers in videoDetails
-// add video view feature
-// add video search feature
-// add video sort feature
 // add video pagination feature
-// add video filter feature
-// add video watch later, subscription, liked-videos, playlist feature
 
-// remove empty search query from search bar
-
-// fix if incorrect video id or tweet id is given in url.
+// add loading screen for all pages like, subscription, playlist, like, channel video, channel playlist etc.
 
 function App() {
 	return (
@@ -61,31 +54,37 @@ function App() {
 					<Route path="help" element={<Help />} />
 
 					{/* for current user and channel of other users */}
-					<Route path=":adminName" element={<ChannelLayout />}>
-						{/* // No params after adminName, then send to No page found */}
-						<Route index element={<Navigate to="/register" />} />
-						<Route path="videos" element={<ChannelVideos />} />
-						<Route path="playlists" element={<ChannelPlaylists />} />
-						<Route path="tweets" element={<ChannelTweets />} />
-						<Route path="subscribed" element={<ChannelSubscribed />} />
+					<Route path="channel/:adminName">
+						<Route index element={<Error />} />
+
+						<Route element={<ChannelLayout />}>
+							<Route path="videos" element={<ChannelVideos />} />
+							<Route path="playlists" element={<ChannelPlaylists />} />
+							<Route path="tweets" element={<ChannelTweets />} />
+							<Route path="subscribed" element={<ChannelSubscribed />} />
+						</Route>
+
+						<Route path="*" element={<Error />} />
 					</Route >
 
 					<Route element={<ProtectedLayout />}>
 						<Route path="terms-and-conditions" element={<TermsAndConditions />} />
-						<Route path="tweets/:tweetId" element={<TweetDetails />} />
+						<Route path="tweet/:tweetId" element={<TweetDetails />} />
 						<Route path="history" element={<WatchHistory />} />
 						<Route path="liked-videos" element={<LikedVideos />} />
 						<Route path="playlists" element={<Playlists />} />
 						<Route path="subscriptions" element={<Subscriptions />} />
 
-						<Route path=":adminName" element={<ProtectedAdminLayout />} >
-							{/* // No params after adminName, then send to No page found */}
-							<Route index element={<Navigate to="/register" />} />
+						<Route path="user/:adminName" >
+							<Route index element={<Error />} />
 
-							<Route path="dashboard" element={<Dashboard />} />
-							{/* for current user: use adminName. */}
-							<Route path="change-password" element={<ChangePassword />} />
-							<Route path="personal-information" element={<PersonalInformation />} />
+							<Route element={<ProtectedAdminLayout />}>
+								<Route path="dashboard" element={<Dashboard />} />
+								<Route path="change-password" element={<ChangePassword />} />
+								<Route path="personal-information" element={<PersonalInformation />} />
+							</Route>
+
+							<Route path="*" element={<Error />} />
 						</Route>
 					</Route>
 				</Route>
@@ -96,7 +95,7 @@ function App() {
 				<Route path="email-verification" element={<EmailVerification />} />
 
 				{/* Catch-all for undefined routes */}
-				{/* <Route path="*" element={<Register />} /> */}
+				<Route path="*" element={<Error />} />
 			</Routes>
 		</BrowserRouter >
 	);

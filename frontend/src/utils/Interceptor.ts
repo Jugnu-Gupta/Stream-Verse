@@ -51,20 +51,25 @@ axiosInstance.interceptors.response.use(
 		if (error.response?.status === 401 && !originalRequest._retry) {
 			if (isRefreshing) {
 				// If a refresh request is already in progress, queue the failed request
-				return new Promise((resolve, reject) => {
-					failedQueue.push({ resolve, reject });
-				}).then((token) => {
-					originalRequest.headers = originalRequest.headers || {};
-					originalRequest.headers.Authorization = `Bearer ${token}`;
-					return axiosInstance(originalRequest);
-				});
+				if (originalRequest.url === "/api/v1/auths/refresh-token") {
+					Cookies.remove("accessToken");
+					Cookies.remove("refreshToken");
+					return Promise.reject(error);
+				} else {
+					return new Promise((resolve, reject) => {
+						failedQueue.push({ resolve, reject });
+					}).then((token) => {
+						originalRequest.headers = originalRequest.headers || {};
+						originalRequest.headers.Authorization = `Bearer ${token}`;
+						return axiosInstance(originalRequest);
+					});
+				}
 			}
 
 			originalRequest._retry = true;
 			isRefreshing = true;
 
 			try {
-				// Perform the refresh token request
 				const refreshToken = Cookies.get("refreshToken");
 				// eslint-disable-next-line
 				const { data }: any = await makeApiRequest({
@@ -72,7 +77,6 @@ axiosInstance.interceptors.response.use(
 					url: "/api/v1/auths/refresh-token",
 					data: { refreshToken },
 				});
-
 				const newAccessToken = data.accessToken; // Replace with the actual field from the response
 				localStorage.setItem("accessToken", newAccessToken);
 				localStorage.setItem("refreshToken", data.refreshToken);
@@ -83,7 +87,7 @@ axiosInstance.interceptors.response.use(
 				return axiosInstance(originalRequest);
 			} catch (refreshError) {
 				processQueue(refreshError, null); // Reject all pending requests
-				throw refreshError;
+				throw new Error("Failed to refresh token");
 			} finally {
 				isRefreshing = false; // Reset the flag
 			}

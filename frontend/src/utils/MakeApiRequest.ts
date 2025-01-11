@@ -32,7 +32,7 @@ const makeApiRequest = async ({
 		});
 		return res.data;
 	} catch (error) {
-		console.error("Failed to fetch data:", error);
+		console.error(error);
 		throw error;
 	}
 };
@@ -54,7 +54,7 @@ const makeApiMediaRequest = async ({
 		});
 		return res.data;
 	} catch (error) {
-		console.error("Failed to fetch data:", error);
+		console.error(error);
 		throw error;
 	}
 };

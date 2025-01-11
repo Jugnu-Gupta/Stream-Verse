@@ -33,13 +33,13 @@ router
     .route("/cover-image")
     .patch(verifyJWT, upload.single("image"), updateUserCoverImage);
 
+// Get watch history (secured route)
+router.route("/watch-history").get(verifyJWT, getWatchHistory);
+
 // Get channel page by username (secured route)
 router.route("/channel/:userName").get(verifyJWT, getUserChannelPage);
 
 // Get channel page videos by username (public route)
 router.route("/video/:userName").get(verifyJWT, getUserChannelVideos);
-
-// Get watch history (secured route)
-router.route("/watch-history").get(verifyJWT, getWatchHistory);
 
 export default router;

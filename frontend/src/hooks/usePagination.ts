@@ -17,8 +17,6 @@ const usePagination = (
 
 	const handleObserver = useCallback(
 		(entries: IntersectionObserverEntry[]) => {
-			console.log("entries:", entries[0].intersectionRatio * 100);
-			console.log("entries:", entries[0].isIntersecting);
 			if (entries[0].isIntersecting) {
 				getData(page, loading, hasMore, entityId || "");
 			}

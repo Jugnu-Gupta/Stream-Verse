@@ -39,7 +39,7 @@ const VideoListView: React.FC<VideoListViewProps> = ({ videoInfo }) => {
 						{views} views · {uploadedAt}
 					</p>
 				</div>
-				<div className="flex items-center gap-3 text-nowrap mb-2" onClick={() => navigate(`/${ownerName}/videos`)}>
+				<div className="flex items-center gap-3 text-nowrap mb-2" onClick={() => navigate(`/channel/@${ownerName}/videos`)}>
 					<img src={avatar} alt="Elon Musk" loading='lazy' className="w-8 rounded-full aspect-square" />
 					<p className="text-sm text-primary-text2 hover:text-primary-text">
 						{ownerName}

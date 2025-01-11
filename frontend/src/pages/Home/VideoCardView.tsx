@@ -30,7 +30,7 @@ const VideoCardView: React.FC<VideoCardViewProps> = ({ videoInfo }) => {
 					{duration}
 				</p>
 			</div>
-			<div className="flex gap-3" onClick={() => navigate(`/${ownerName}/videos`)}>
+			<div className="flex gap-3" onClick={() => navigate(`/channel/@${ownerName}/videos`)}>
 				<div className="overflow-hidden rounded-full">
 					<img src={avatar} alt="Elon Musk" loading='lazy' className="w-8 aspect-square rounded-full" />
 				</div>
@@ -41,7 +41,7 @@ const VideoCardView: React.FC<VideoCardViewProps> = ({ videoInfo }) => {
 							{views} views · {uploadedAt}
 						</p>
 					</div>
-					<div onClick={() => navigate(`/${ownerName}/videos`)}>
+					<div onClick={() => navigate(`/channel/@${ownerName}/videos`)}>
 						<p className="text-sm text-primary-text2 hover:text-primary-text">
 							{ownerName}
 						</p>

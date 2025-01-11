@@ -28,7 +28,7 @@ const ChangePassword: React.FC = () => {
     return (
         <div className="flex flex-col px-6 xs:px-2 w-full mt-4 max-w-6xl mx-auto">
             <ChannelInfo channelInfo={channelInfo} />
-            <ChannelNavbar channelNavItems={CHANNELNAVITEMS2} />
+            <ChannelNavbar entityType="user" channelNavItems={CHANNELNAVITEMS2} />
 
             <div className="flex flex-wrap sm:flex-nowrap gap-2 w-full max-w-6xl mx-auto mt-4" >
                 <div className='md:w-full sm:w-3/4 w-full'>

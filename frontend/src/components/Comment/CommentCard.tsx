@@ -116,7 +116,7 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 	return (
 		<div className="pt-2 overflow-hidden w-full">
 			<div className="flex items-start gap-2 w-full">
-				<div onClick={() => navigate(`/${channelName.substring(1)}/videos`)}
+				<div onClick={() => navigate(`/channel/${channelName}/videos`)}
 					className="overflow-hidden rounded-full w-10">
 					<img src={thumbnail} alt="thumbnail" loading='lazy'
 						className="rounded-full w-10 aspect-square"

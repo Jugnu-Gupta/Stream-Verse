@@ -14,14 +14,14 @@ export const useAuth = () => {
 		})
 			.then(() => {
 				setLoggedIn(true);
-				setLoading(false);
 			})
-			.catch((error) => {
-				console.error("Error fetching data:", error);
-				console.log(error.response.data.message);
-				setLoading(false);
+			// eslint-disable-next-line
+			.catch((error: any) => {
+				console.error(error);
 				setLoggedIn(false);
-				// navigate("/login");
+			})
+			.finally(() => {
+				setLoading(false);
 			});
 	}, [navigate]);
 

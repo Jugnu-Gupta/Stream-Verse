@@ -34,9 +34,9 @@ router
 
 router.route("/:videoId/views").post(verifyJWT, addView);
 
-router.route("/:videoId/:userId?").get(getVideoById);
-
 // Toggle publish status of video (secured route)
 router.route("/:videoId/publish").patch(verifyJWT, ToggleVideoPublishStatus);
+
+router.route("/:videoId/:userId?").get(getVideoById);
 
 export default router;

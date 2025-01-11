@@ -37,7 +37,7 @@ const NAVITEMS: NavItem[] = [
 	},
 	{
 		id: 3,
-		path: "/:adminName/videos",
+		path: "/channel/:adminName/videos",
 		title: "Your Channel",
 		isTop: true,
 		iconFilled: Icons.BiSolidUserRectangle,
@@ -97,7 +97,7 @@ const NAVITEMS: NavItem[] = [
 	// },
 	{
 		id: 9,
-		path: "/:adminName/dashboard",
+		path: "/user/:adminName/dashboard",
 		title: "Settings",
 		isTop: false,
 		iconFilled: Icons.CiSettings,

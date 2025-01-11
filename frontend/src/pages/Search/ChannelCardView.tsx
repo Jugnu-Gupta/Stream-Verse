@@ -14,7 +14,7 @@ const ChannelCardView: React.FC<ChannelCardViewProps> = ({ channelInfo }) => {
     const navigate = useNavigate();
 
     return (
-        <div className="flex flex-col gap-2 p-2 group max-w-[400px]" onClick={() => navigate(`/${channelUserName}/videos`)}>
+        <div className="flex flex-col gap-2 p-2 group max-w-[400px]" onClick={() => navigate(`/channel/@${channelUserName}/videos`)}>
             <div className="rounded-xl overflow-hidden">
                 <img src={thumbnail} alt="thumbnail" loading='lazy'
                     className="rounded-xl border-2 border-primary-border aspect-video group-hover:scale-110 duration-300"

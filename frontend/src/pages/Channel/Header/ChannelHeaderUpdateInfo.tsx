@@ -43,15 +43,13 @@ const ChannelHeaderUpdateInfo: React.FC = () => {
                             {title}
                         </h1>
                         <p className="pb-1">{adminName}</p>
-                        <p>
-                            {subscribers} subscribers · {videos} videos
-                        </p>
+                        <p>{subscribers} subscribers · {videos} videos</p>
                     </div>
                 </div>
 
                 <div className="flex flex-wrap justify-end w-fit">
                     <button
-                        onClick={() => navigate(`/${adminName}/dashboard`)}
+                        onClick={() => navigate(`/user/${adminName}/dashboard`)}
                         className={twMerge("bg-primary text-white font-semibold px-4 py-1 mt-4 xs:px-3 xs:text-sm rounded-md hover:bg-white hover:text-primary duration-300", adminName != channelAdmin && "hidden")}>
                         Dashboard
                     </button>

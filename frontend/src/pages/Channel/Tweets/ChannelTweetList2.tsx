@@ -32,7 +32,7 @@ const ChannelTweetList2: React.FC<ChannelTweetListProps> = ({ tweetInfo }) => {
     const tweetId = tweetInfo?._id || "";
 
     return (<div className="flex items-start gap-2 p-2 w-full">
-        <Link to={`/@${channelUserName}/videos`}>
+        <Link to={`/channel/@${channelUserName}/videos`}>
             <div className="overflow-hidden rounded-full w-10">
                 <img src={thumbnail} alt="thumbnail" loading='lazy'
                     className="rounded-full w-10 aspect-square" />
@@ -55,7 +55,7 @@ const ChannelTweetList2: React.FC<ChannelTweetListProps> = ({ tweetInfo }) => {
 
             </div>
             {thumbnail && (
-                <Link to={`/tweets/${tweetId}`}>
+                <Link to={`/tweet/${tweetId}`}>
                     <div className="overflow-hidden rounded-lg m-2 w-fit">
                         <img src={thumbnail} alt="thumbnail" loading='lazy'
                             className="rounded-lg w-full aspect-auto" />
@@ -74,7 +74,7 @@ const ChannelTweetList2: React.FC<ChannelTweetListProps> = ({ tweetInfo }) => {
                     {isDisliked ? <BiSolidDislike /> : <BiDislike />}
                     <span className="text-xs">{dislikes}</span>
                 </button>
-                <Link to={`/tweets/${tweetId}`}>
+                <Link to={`/tweet/${tweetId}`}>
                     <button className="flex items-center gap-1 text-xl hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
                         <BiCommentDetail className="-scale-x-100" />
                         <span className="text-xs">{comments}</span>

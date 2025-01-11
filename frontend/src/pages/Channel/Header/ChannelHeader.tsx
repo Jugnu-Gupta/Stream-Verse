@@ -11,7 +11,7 @@ const ChannelHeader: React.FC<ChannelHeaderProps> = ({ channelInfo }) => {
 	return (
 		<div className="flex flex-col px-6 xs:px-2 w-full mt-4 max-w-6xl mx-auto">
 			<ChannelInfo channelInfo={channelInfo} />
-			<ChannelNavbar channelNavItems={CHANNELNAVITEMS} />
+			<ChannelNavbar entityType="channel" channelNavItems={CHANNELNAVITEMS} />
 		</div>
 	);
 };

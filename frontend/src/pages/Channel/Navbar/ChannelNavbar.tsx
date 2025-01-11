@@ -4,10 +4,11 @@ import { Link, useParams } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 
 interface ChannelNavbarProps {
+    entityType: string;
     channelNavItems: ChannelNavItemsProps[];
 }
 
-const ChannelNavbar: React.FC<ChannelNavbarProps> = ({ channelNavItems }) => {
+const ChannelNavbar: React.FC<ChannelNavbarProps> = ({ entityType, channelNavItems }) => {
     const [page, setPage] = React.useState<string>("videos");
     const { adminName } = useParams<{ adminName: string }>();
     const url: string = window.location.href;
@@ -26,7 +27,7 @@ const ChannelNavbar: React.FC<ChannelNavbarProps> = ({ channelNavItems }) => {
             {
                 channelNavItems.map((navItem: ChannelNavItemsProps) => (
                     <Link key={navItem.id}
-                        to={`/${adminName}/${navItem.link}`}
+                        to={`/${entityType}/${adminName}/${navItem.link}`}
                         className="w-full "
                         onClick={() => setPage(navItem.link)}>
                         <h3

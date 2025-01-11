@@ -41,7 +41,7 @@ const RelatedVideo: React.FC<VideoListViewProps> = ({ heighlightVideo, videoInfo
 						{views} Views · {uploadedAt}
 					</p>
 				</Link>
-				<Link to={`/${ownerName}/videos`}>
+				<Link to={`/channel/@${ownerName}/videos`}>
 					<p className="text-primary-text2 hover:text-primary-text text-nowrap truncate 2lg:text-[13px] xs:text-sm sm:text-[15px]">
 						{channelName}
 					</p>

@@ -41,7 +41,7 @@ const ChannelInfo: React.FC<ChannelInfoProps> = ({ channelInfo }) => {
                 </div>
 
                 <div className="flex flex-wrap justify-end w-fit">
-                    <button onClick={() => navigate(`/${adminName}/dashboard`)}
+                    <button onClick={() => navigate(`/user/${adminName}/dashboard`)}
                         className={twMerge("bg-primary text-primary-text font-semibold px-4 py-1 mt-4 xs:px-3 xs:text-sm rounded-md hover:scale-105 duration-300",
                             adminName !== curUserName && "hidden")}>
                         Dashboard
