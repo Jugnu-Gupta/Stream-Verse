@@ -5,12 +5,16 @@ import DashboardVideoStatsControl from "./DashboardVideoStatsControl";
 import { DashboardVideoType } from '../../Types/Dashboard.type';
 import { ErrorType } from '../../Types/Error.type';
 import { ResponseType } from '../../Types/Response.type';
+import NoResultsFound from '../Search/NoResultsFound';
+import loadingGIF from '../../assets/loading.gif';
 
 const DashboardVideos: React.FC = () => {
     const navigate = useNavigate();
     const [videos, setVideos] = React.useState<DashboardVideoType[]>([]);
+    const [loading, setLoading] = React.useState<boolean>(false);
 
     React.useEffect(() => {
+        setLoading(true);
         makeApiRequest({
             method: "get",
             url: "/api/v1/dashboard/channel-videos",
@@ -21,6 +25,8 @@ const DashboardVideos: React.FC = () => {
         }).catch((error: ErrorType) => {
             console.error(error.response.data.message);
             navigate("/");
+        }).finally(() => {
+            setLoading(false);
         });
     }, [navigate]);
 
@@ -43,6 +49,13 @@ const DashboardVideos: React.FC = () => {
                     ))}
                 </tbody>
             </table>
+            {videos?.length === 0 && (!loading ?
+                (<NoResultsFound entityName="video" style="mt-16"
+                    heading="No videos uploaded" message="This page has yet to upload a video." />)
+                : (<div className='w-full h-full flex justify-center items-center'>
+                    <img src={loadingGIF} alt="loading" loading='lazy' className='w-24' />
+                </div>)
+            )}
         </div>
     )
 }

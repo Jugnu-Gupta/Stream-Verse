@@ -25,17 +25,12 @@ import Error from "./pages/Error/Error.tsx";
 import Login from "./pages/Login/Login.js";
 import Home from "./pages/Home/Home.tsx";
 import Help from "./pages/Help/Help.tsx";
-// import EditVideoModal from "./components/Popup/EditVideoModal.tsx";
-// import DeleteModal from "./components/Popup/DeleteModal.tsx";
-// import UploadVideoModal from "./components/Popup/UploadVideoModal.tsx";
-// import UploadingVideoModal from "./components/Popup/UploadingVideoModal.tsx";
 
 // give fallback values to controller while accesing array elements i.e. $ArrayElemAt: [ "$array", 0 ]
 
 // basic check for no subscribers in videoDetails
 // add video pagination feature
 
-// add loading screen for all pages like, subscription, playlist, like, channel video, channel playlist etc.
 
 function App() {
 	return (
@@ -47,10 +42,6 @@ function App() {
 					<Route index element={<Home />} />
 					<Route path="search" element={<Search />} />
 					<Route path="video/:videoId" element={<VideoDetail />} />
-					{/* <Route path="search2" element={<EditVideoModal videoInfo={} setShowEditVideo={() => { console.log("hello") }} />} /> */}
-					{/* <Route path="search3" element={<DeleteModal Name="SampleName" Url="SampleUrl" setShowDeleteModal={() => { console.log("hello") }} />} />
-					<Route path="search4" element={<UploadVideoModal setShowUploadVideo={() => { console.log("hello") }} />} />
-					<Route path="search5" element={<UploadingVideoModal setShowUploadingVideo={() => { console.log("hello") }} />} /> */}
 					<Route path="help" element={<Help />} />
 
 					{/* for current user and channel of other users */}

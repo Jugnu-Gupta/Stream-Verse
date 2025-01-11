@@ -108,7 +108,7 @@ const LoginForm: React.FC = () => {
 				type="submit"
 				className="px-3 py-1 mb-1 tracking-wide font-semibold 
 				text-sm text-white rounded-md bg-primary-login">
-				Sign Up
+				Log In
 			</button>
 		</form>
 	);

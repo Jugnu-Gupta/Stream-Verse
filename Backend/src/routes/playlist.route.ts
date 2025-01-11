@@ -12,11 +12,11 @@ import {
 
 const router = Router();
 
-// Create a new playlist
-router.route("/").post(verifyJWT, createPlaylist);
-
-// get all playlists of a user
-router.route("/").get(verifyJWT, getUserPlaylists);
+// Create a new playlist, get all playlists of a user
+router
+    .route("/")
+    .get(verifyJWT, getUserPlaylists)
+    .post(verifyJWT, createPlaylist);
 
 // Get playlist by id, and Update, delete playlist by id (secured route)
 router

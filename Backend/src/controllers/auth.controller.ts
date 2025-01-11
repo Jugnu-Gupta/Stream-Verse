@@ -13,7 +13,6 @@ import jwt from "jsonwebtoken";
 interface RequestWithUser extends Request {
     user: UserType;
 }
-interface UserTypeDoc extends mongoose.Document, UserType {}
 
 interface Option {
     httpOnly: boolean;
@@ -29,7 +28,7 @@ const generateAccessAndRefreshToken = async (
     userId: string
 ): Promise<accessTokenAndRefreshToken> => {
     try {
-        const user: UserTypeDoc = await User.findById(userId);
+        const user = await User.findById(userId);
         const accessToken: string = user.generateAccessToken();
         const refreshToken: string = user.generateRefreshToken();
 
@@ -72,7 +71,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     }
 
     // check if the user exists: email, username.
-    let existedUser: UserTypeDoc | null = await User.findOne({ email });
+    let existedUser = await User.findOne({ email });
     if (existedUser) {
         throw new ApiError(409, "This email isn't available.");
     }
@@ -91,7 +90,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     // console.log("avatar", avatar);
 
     // timestamps values will be generated automatically.
-    const user: UserTypeDoc = await User.create({
+    const user = await User.create({
         fullName,
         userName: userName.toLowerCase(),
         email,
@@ -107,9 +106,9 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     });
 
     // check for user creation
-    const createdUser: UserTypeDoc | null = await User.findById(
-        user._id
-    )?.select("userName fullName email avatar coverImage isVerified");
+    const createdUser = await User.findById(user._id)?.select(
+        "userName fullName email avatar coverImage isVerified"
+    );
     if (!createdUser) {
         throw new ApiError(
             500,
@@ -118,11 +117,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     }
 
     // email verification
-    const mail = await sendMail(
-        "jugnubhai47@gmail.com",
-        "VERIFY",
-        createdUser._id
-    );
+    const mail = await sendMail(createdUser.email, "VERIFY", createdUser._id);
 
     return res
         .status(201)
@@ -146,7 +141,7 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
         throw new ApiError(400, "Email is required");
     }
 
-    const user: UserTypeDoc | null = await User.findOne({ email });
+    const user = await User.findOne({ email });
     if (!user) {
         throw new ApiError(404, "User not found");
     }
@@ -158,11 +153,7 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
 
     // check if the user is verified.
     if (!user?.isVerified) {
-        const mail = await sendMail(
-            "jugnubhai47@gmail.com",
-            "VERIFY",
-            user._id
-        );
+        const mail = await sendMail(user.email, "VERIFY", user._id);
 
         throw new ApiError(
             403,
@@ -173,9 +164,9 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
     const { accessToken, refreshToken }: accessTokenAndRefreshToken =
         await generateAccessAndRefreshToken(user._id);
 
-    const loggedInUser: UserTypeDoc | null = await User.findById(
-        user._id
-    )?.select("userName fullName email avatar coverImage isVerified");
+    const loggedInUser = await User.findById(user._id)?.select(
+        "userName fullName email avatar coverImage isVerified"
+    );
     if (!loggedInUser) {
         throw new ApiError(
             500,
@@ -210,7 +201,7 @@ const validateUserEmail = asyncHandler(async (req: Request, res: Response) => {
         throw new ApiError(400, "Invalid token");
     }
 
-    const user: UserTypeDoc | null = await User.findOne({
+    const user = await User.findOne({
         verifyToken: token,
         verifyTokenExpiry: { $gt: Date.now() },
     });
@@ -235,7 +226,7 @@ const validatePasswordResetToken = asyncHandler(
             throw new ApiError(400, "Invalid token");
         }
 
-        const user: UserTypeDoc | null = await User.findOne({
+        const user = await User.findOne({
             resetPasswordToken: token,
             resetPasswordTokenExpiry: { $gt: Date.now() },
         });
