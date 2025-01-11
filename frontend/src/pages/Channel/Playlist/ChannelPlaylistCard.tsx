@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { CgPlayList } from "react-icons/cg";
 import { FaPlay } from "react-icons/fa";
 import { formatNumber } from "../../../utils/FormatNumber";
-import { formatDateDistanceToNow } from "../../../utils/FormatDateDistanceToNow";
+import { formatDateToNow } from "../../../utils/FormatDateToNow";
 import { PlaylistType } from "../../../Types/Platlist.type";
 
 interface ChannelVideosCardProps {
@@ -13,7 +13,7 @@ interface ChannelVideosCardProps {
 
 const ChannelVideosCard: React.FC<ChannelVideosCardProps> = ({ playlist }) => {
 	const noOfvideos = formatNumber(playlist?.noOfVideos);
-	const updatedAt = formatDateDistanceToNow(playlist?.updatedAt);
+	const updatedAt = formatDateToNow(playlist?.updatedAt);
 	const title = playlist?.name || "Playlist Title";
 	const playlistId = playlist?._id || "";
 	const videoId = playlist?.videoId || "";

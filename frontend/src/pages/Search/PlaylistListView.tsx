@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import thumbnail from "../../assets/thumbnail.png";
-import { formatDateDistanceToNow } from "../../utils/FormatDateDistanceToNow";
+import { formatDateToNow } from "../../utils/FormatDateToNow";
 import { PlaylistType } from "../../Types/Platlist.type";
 import { formatNumber } from "../../utils/FormatNumber";
 import { CgPlayList } from "react-icons/cg";
@@ -12,7 +12,7 @@ interface VideoListViewProps {
 }
 const PlaylistListView: React.FC<VideoListViewProps> = ({ playlistInfo }) => {
     const noOfVideos = formatNumber(playlistInfo?.noOfVideos);
-    const uploadedAt = formatDateDistanceToNow(playlistInfo?.createdAt || new Date());
+    const uploadedAt = formatDateToNow(playlistInfo?.createdAt || new Date());
     const description = playlistInfo?.description || "This is a playlist description";
     const ownerName = playlistInfo?.owner?.userName || "Channel Name";
     const title = playlistInfo?.name || "Video Title";

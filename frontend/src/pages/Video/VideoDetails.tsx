@@ -8,7 +8,7 @@ import VideoPlaylist from "./VideoPlaylist";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import makeApiRequest from "../../utils/MakeApiRequest";
 import { formatNumber } from "../../utils/FormatNumber";
-import { formatDateDistanceToNow } from "../../utils/FormatDateDistanceToNow";
+import { formatDateToNow } from "../../utils/FormatDateToNow";
 import ShowHideText from "../../components/Text/ShowHideText";
 import { VideoDetailsType, VideoType } from "../../Types/Video.type";
 import { PlaylistVideosType } from "../../Types/Platlist.type";
@@ -27,7 +27,7 @@ const VideoDetail: React.FC = () => {
 	const [video, setVideo] = React.useState<VideoDetailsType>();
 	const [similarVideos, setSimilarVideos] = React.useState<VideoType[]>([]);
 	const views = formatNumber(video?.views);
-	const createdAt = formatDateDistanceToNow(video?.createdAt);
+	const createdAt = formatDateToNow(video?.createdAt);
 	const Subscribers = formatNumber(video?.subscribers);
 	const channelName = video?.owner?.fullName || "Channel Name";
 	const description = video?.description || "Video Description";

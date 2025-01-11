@@ -6,7 +6,7 @@ import { BiSolidLike } from "react-icons/bi";
 import { BiDislike } from "react-icons/bi";
 import { BiSolidDislike } from "react-icons/bi";
 import { BiCommentDetail } from "react-icons/bi";
-import { formatDateDistanceToNow } from "../../../utils/FormatDateDistanceToNow";
+import { formatDateToNow } from "../../../utils/FormatDateToNow";
 import { formatNumber } from "../../../utils/FormatNumber";
 import { TweetType } from "../../../Types/Tweet.type";
 import useLikeDislike from "../../../hooks/useLikeDislike";
@@ -29,7 +29,7 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo, editDele
 		{ entityId: tweetInfo?._id || "", entityType: "tweet", likeStatus: tweetInfo?.likeStatus });
 	const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
 	const [readMore, setReadMore] = React.useState<boolean>(false);
-	const UploadedAt = formatDateDistanceToNow(tweetInfo?.createdAt);
+	const UploadedAt = formatDateToNow(tweetInfo?.createdAt);
 	const channelName = tweetInfo?.owner?.fullName || "channel Name";
 	const dislikes = computeDislikeCount(tweetInfo?.dislikes, tweetInfo?.likeStatus, isDisliked);
 	const likes = computeLikeCount(tweetInfo?.likes, tweetInfo?.likeStatus, isLiked);

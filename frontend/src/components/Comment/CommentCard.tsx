@@ -9,7 +9,7 @@ import { FaChevronDown } from "react-icons/fa";
 import { FaChevronUp } from "react-icons/fa";
 import { twMerge } from "tailwind-merge";
 import makeApiRequest from "../../utils/MakeApiRequest";
-import { formatDateDistanceToNow } from "../../utils/FormatDateDistanceToNow";
+import { formatDateToNow } from "../../utils/FormatDateToNow";
 import { addComments, updateComment } from "../../context/slices/Comment.slice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../context/store";
@@ -43,7 +43,7 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 	const likes = computeLikeCount(comment?.likes, comment?.likeStatus, isLiked);
 	const [giveReply, setGiveReply] = React.useState(false);
 
-	const UploadedAt = formatDateDistanceToNow(new Date(comment.createdAt));
+	const UploadedAt = formatDateToNow(new Date(comment.createdAt));
 	const channelName = "@" + (comment?.owner?.userName || "Channel Name");
 	const curUserName = localStorage.getItem("userName");
 	const dispatch = useDispatch<AppDispatch>();

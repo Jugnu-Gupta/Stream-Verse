@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import thumbnail from "../../assets/thumbnail.png";
-import { formatDateDistanceToNow } from "../../utils/FormatDateDistanceToNow";
+import { formatDateToNow } from "../../utils/FormatDateToNow";
 import { formatDuration } from "../../utils/FormatDuration";
 import { formatNumber } from "../../utils/FormatNumber";
 import { VideoType } from "../../Types/Video.type";
@@ -13,7 +13,7 @@ interface VideoCardViewProps {
 const VideoCardView: React.FC<VideoCardViewProps> = ({ videoInfo }) => {
 	const views = formatNumber(videoInfo?.views);
 	const duration = formatDuration(videoInfo?.duration);
-	const uploadedAt = formatDateDistanceToNow(videoInfo?.updatedAt);
+	const uploadedAt = formatDateToNow(videoInfo?.updatedAt);
 	const ownerName = videoInfo?.owner?.userName || "Channel Name";
 	const ownerFullName = videoInfo?.owner?.fullName || "Channel Name";
 	const title = videoInfo?.title || "Video Title";

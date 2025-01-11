@@ -2,7 +2,7 @@ import React from "react";
 import thumbnail from "../../assets/thumbnail.png";
 import { useNavigate } from "react-router-dom";
 import { formatDuration } from "../../utils/FormatDuration";
-import { formatDateDistanceToNow } from "../../utils/FormatDateDistanceToNow";
+import { formatDateToNow } from "../../utils/FormatDateToNow";
 import { formatNumber } from "../../utils/FormatNumber";
 import { VideoType } from "../../Types/Video.type";
 import { generateAvatar } from "../../utils/GenerateAvatar";
@@ -13,7 +13,7 @@ interface VideoListViewProps {
 const VideoListView: React.FC<VideoListViewProps> = ({ videoInfo }) => {
 	const duration = formatDuration(videoInfo?.duration);
 	const views = formatNumber(videoInfo?.views);
-	const uploadedAt = formatDateDistanceToNow(videoInfo?.createdAt || new Date());
+	const uploadedAt = formatDateToNow(videoInfo?.createdAt || new Date());
 	const description = videoInfo?.description || "This is a video description";
 	const ownerName = videoInfo?.owner?.userName || "Channel Name";
 	const ownerFullName = videoInfo?.owner?.fullName || "Channel Name";
