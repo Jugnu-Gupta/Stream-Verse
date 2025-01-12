@@ -79,6 +79,8 @@ function App() {
 							<Route path="*" element={<Error />} />
 						</Route>
 					</Route>
+
+					<Route path="*" element={<Error />} />
 				</Route>
 
 				<Route path="login" element={<Login />} />
