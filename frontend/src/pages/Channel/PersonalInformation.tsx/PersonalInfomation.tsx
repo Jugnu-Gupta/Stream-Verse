@@ -10,13 +10,15 @@ import { ChannelInfoType } from "../../../Types/Channel.type";
 import { useMedia } from "../../../hooks/useMedia";
 import { ErrorType } from "../../../Types/Error.type";
 import { ResponseType } from "../../../Types/Response.type";
+import { twMerge } from "tailwind-merge";
+import { generateAvatar } from "../../../utils/GenerateAvatar";
 
 const PersonalInformation: React.FC = () => {
     const [channelInfo, setChannelInfo] = React.useState<ChannelInfoType>();
     const coverImage = channelInfo?.coverImage.url || "";
-    const avatarImage = channelInfo?.avatar.url || "";
     const adminName: string = "@" + localStorage.getItem("userName");
     const channelName: string = localStorage.getItem("fullName") || "Channel Title";
+    const avatarImage = channelInfo?.avatar?.url || generateAvatar(channelName, "0078e1", "ffffffcc", 150);
     const subscribers = formatNumber(channelInfo?.subscriberCount);
     const { fileInputRef: coverFileRef, mediaPreview: coverImgPreview, newMedia: newCoverImg, handleMediaChange: handleCoverImgChange, discardMediaChange: discardCoverImgChange } =
         useMedia();
@@ -43,14 +45,14 @@ const PersonalInformation: React.FC = () => {
         <div className="w-full">
             {/* <ChannelHeader /> */}
             <div className="flex flex-col px-6 xs:px-2 w-full mt-4 max-w-6xl mx-auto">
-                <div className="w-full relative">
+                <div className={twMerge("w-full relative", (!coverImgPreview && !coverImage) && "hidden")}>
                     <img src={coverImgPreview ? coverImgPreview : coverImage}
                         alt="Background" loading='lazy'
                         className="w-full aspect-[5] rounded-2xl object-cover"
                     />
-                    <label htmlFor="coverImage"
+                    <label htmlFor="coverImage" title="Upload background image"
                         className="p-1 absolute rounded-md bg-background-secondary opacity-40 hover:opacity-50 
-                        duration-300 backdrop-blur-xl cursor-pointer outline-none bottom-2 right-2">
+                            duration-300 backdrop-blur-xl cursor-pointer outline-none bottom-2 right-2">
                         <FiUpload className="text-white text-xl blur-xs" />
                     </label>
                     <input type="file" name="coverImage" id="coverImage" className="hidden" accept="image/png,image/jpeg"
@@ -60,10 +62,10 @@ const PersonalInformation: React.FC = () => {
                     <div className="flex mt-4 gap-4 items-center w-fit mr-2">
                         <div className="relative">
                             <img src={avatarPreview ? avatarPreview : avatarImage}
-                                alt="Background" loading='lazy'
+                                alt="avatar image" loading='lazy'
                                 className="w-28 xs:w-24 aspect-square rounded-full"
                             />
-                            <label htmlFor="avatarImage"
+                            <label htmlFor="avatarImage" title="Upload avatar image"
                                 className="p-1 absolute rounded-md bg-background-secondary opacity-40 hover:opacity-50 
                                 duration-300 backdrop-blur-xl cursor-pointer outline-none bottom-2 left-1/2 -translate-x-1/2">
                                 <FiUpload className="text-white text-xl blur-xs" />
@@ -76,6 +78,10 @@ const PersonalInformation: React.FC = () => {
                             <h1 className="text-primary-text font-bold text-3xl pb-1 xs:text-xl">{channelName}</h1>
                             <p className="pb-1 text-primary-text2">{adminName}</p>
                             <p className="text-primary-text2">{subscribers} subscribers · {videos} videos</p>
+                            <label htmlFor="coverImage" className={twMerge(["flex items-center justify-between bg-primary rounded-lg",
+                                "px-2 py-0.5 mt-1 text-sm text-primary-text cursor-pointer", (coverImgPreview || coverImage) ? "hidden" : "truncate-lines-1"])}>
+                                Upload background image
+                            </label>
                         </div>
                     </div>
 

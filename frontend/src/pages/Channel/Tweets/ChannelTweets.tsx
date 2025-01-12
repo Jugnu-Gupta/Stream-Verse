@@ -15,6 +15,7 @@ import ChannelTweetList2 from "./ChannelTweetList2";
 import loadingGIF from "../../../assets/loading.gif";
 import { ErrorType } from "../../../Types/Error.type";
 import { ResponseType } from "../../../Types/Response.type";
+import { generateAvatar } from "../../../utils/GenerateAvatar";
 interface ChannelInfoWrapper {
 	channelInfo: ChannelInfoType;
 }
@@ -34,6 +35,8 @@ const ChannelTweets: React.FC = () => {
 	const [tweets, setTweets] = React.useState<TweetType[]>([]);
 	const userId = localStorage.getItem("userId") || "";
 	const avatarInfo = localStorage.getItem("avatar");
+	const avatar = avatarInfo ? JSON.parse(avatarInfo) : null;
+	const avatarUrl = avatar?.url || generateAvatar(channelName, "0078e1", "ffffffcc", 50);
 	const navigate = useNavigate();
 
 	const setShowDeleteModal = (value: boolean) => {
@@ -116,7 +119,7 @@ const ChannelTweets: React.FC = () => {
 
 				<div className="flex items-center gap-2 w-full pt-1 pb-2 xs:pt-0.5">
 					<div className="overflow-hidden rounded-full w-9">
-						<img src={channelInfo.avatar.url} alt="thumbnail" loading='lazy'
+						<img src={avatarUrl} alt="avatar" loading='lazy'
 							className="rounded-full w-10 aspect-square"
 						/>
 					</div>

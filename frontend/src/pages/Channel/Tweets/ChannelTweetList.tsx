@@ -36,7 +36,7 @@ const ChannelTweetList: React.FC<ChannelTweetListProps> = ({ tweetInfo, editDele
 		useMedia();
 	const comments = formatNumber(tweetInfo?.comments);
 	const tweetImage = tweetInfo?.image?.url;
-	const ownerAvatar = tweetInfo?.owner.avatar.url;
+	const ownerAvatar = tweetInfo?.owner.avatar?.url;
 
 	const tweetId = tweetInfo?._id;
 	const [description, setDescription] = React.useState<string>(tweetInfo?.content || "description");

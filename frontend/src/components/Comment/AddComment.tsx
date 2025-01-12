@@ -8,6 +8,8 @@ import { AppDispatch } from '../../context/store';
 import { CommentType } from '../../Types/Comment.type';
 import { ErrorType } from '../../Types/Error.type';
 import { ResponseType } from '../../Types/Response.type';
+import { generateAvatar } from '../../utils/GenerateAvatar';
+import toast from 'react-hot-toast';
 
 interface AddCommentProps {
     setGiveReply?: Dispatch<SetStateAction<boolean>>;
@@ -20,11 +22,12 @@ interface AddCommentProps {
 const AddComment: React.FC<AddCommentProps> = ({ setGiveReply, avatarStyle, entityType, entityId, parentId, currPath }) => {
     const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
     const [addCommentText, setAddCommentText] = React.useState<string>("");
-    const userId = localStorage.getItem("userId") || "";
-    const userName = localStorage.getItem("userName") || "";
-    const fullName = localStorage.getItem("fullName") || "";
+    const userId = localStorage.getItem("userId") || "userId";
+    const userName = localStorage.getItem("userName") || "UserName";
+    const fullName = localStorage.getItem("fullName") || "fullName";
     const avatarInfo = localStorage.getItem("avatar");
     const avatar = avatarInfo ? JSON.parse(avatarInfo) : null;
+    const avatarUrl = avatar?.url || generateAvatar(fullName, "0078e1", "ffffffcc", 50);
     const dispatch = useDispatch<AppDispatch>();
 
     useEffect(() => {
@@ -67,6 +70,9 @@ const AddComment: React.FC<AddCommentProps> = ({ setGiveReply, avatarStyle, enti
             setAddCommentText("");
             if (setGiveReply) setGiveReply(false);
         }).catch((error: ErrorType) => {
+            if (error.response.data.statusCode === 401) {
+                toast.error("Please login to comment");
+            }
             console.error(error.response.data.message);
         });
     }
@@ -74,8 +80,7 @@ const AddComment: React.FC<AddCommentProps> = ({ setGiveReply, avatarStyle, enti
     return (
         <div className="flex items-start w-full gap-2">
             <div className={twMerge("overflow-hidden rounded-full min-w-7", avatarStyle)}>
-                {/* // current user image */}
-                <img src={avatar.url} alt="avatar" loading='lazy'
+                <img src={avatarUrl} alt="avatar" loading='lazy'
                     className="rounded-full w-full aspect-square"
                 />
             </div>

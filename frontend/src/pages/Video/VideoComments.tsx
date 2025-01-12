@@ -34,10 +34,10 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ videoId, noOfComments }) 
 	const commentCnt = formatNumber(commentCount);
 	const dispatch = useDispatch<AppDispatch>();
 
-	const setShowDeleteModal = (value: boolean) => {
+	const setShowDeleteModal = (value: boolean, currPath: string[]) => {
 		if (value) { // delete Comment
 			dispatch(deleteComment({ childPathIds: currPath }));
-			setEditDeleteOption({ ...editDeleteOption, currentId: "", showDeleteModal: false });
+			setEditDeleteOption({ ...editDeleteOption, currentId: "", pathToCurId: [], showDeleteModal: false });
 		} else {
 			setEditDeleteOption({ ...editDeleteOption, showDeleteModal: value });
 		}
@@ -51,11 +51,7 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ videoId, noOfComments }) 
 		makeApiRequest({
 			method: "get",
 			url: `/api/v1/comments/video/${videoId}`,
-			params: {
-				page,
-				limit: 10,
-				userId
-			}
+			params: { page, limit: 10, userId }
 		}).then((commentsResponse) => {
 			const commentsData = (commentsResponse as ResponseType).data?.comments;
 
@@ -90,6 +86,7 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ videoId, noOfComments }) 
 		{editDeleteOption.showDeleteModal &&
 			(<DeleteModal Name="Comment"
 				Url={`/api/v1/comments/${editDeleteOption.currentId}`}
+				currPath={editDeleteOption.pathToCurId || []}
 				setShowDeleteModal={setShowDeleteModal}>
 			</DeleteModal>)
 		}

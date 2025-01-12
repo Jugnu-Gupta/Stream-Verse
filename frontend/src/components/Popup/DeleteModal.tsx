@@ -4,24 +4,33 @@ import { RxCross2 } from "react-icons/rx";
 import makeApiRequest from '../../utils/MakeApiRequest';
 import toast from 'react-hot-toast';
 import { ErrorType } from '../../Types/Error.type';
+import { AppDispatch, RootState } from '../../context/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCounter } from '../../context/slices/Counter.slice';
+import { ResponseType } from '../../Types/Response.type';
 
 interface DeleteModalProps {
     Name: string;
     Url: string;
-    setShowDeleteModal: Dispatch<SetStateAction<boolean>> | ((show: boolean) => void);
+    currPath: string[];
+    setShowDeleteModal: Dispatch<SetStateAction<boolean>> | ((show: boolean, currPath: string[]) => void);
 }
 
-const DeleteModal: React.FC<DeleteModalProps> = ({ Name, Url, setShowDeleteModal }) => {
+const DeleteModal: React.FC<DeleteModalProps> = ({ Name, Url, currPath, setShowDeleteModal }) => {
+    const dispatch = useDispatch<AppDispatch>();
     const heading = `Delete ${Name}`;
-    const description = `Are you sure you want to delete this ${Name}? Once its deleted, you will not be able to recover it.`;
+    const description = `Are you sure you want to delete this ${Name.toLowerCase()}? Once its deleted, you will not be able to recover it.`;
+    const counter = useSelector((state: RootState) => state.counter.value);
 
     const handleDelete = () => {
         makeApiRequest({
             method: "delete",
             url: Url,
-        }).then(() => {
+        }).then((response) => {
+            const data = (response as ResponseType).data;
             toast.success(`${Name} deleted successfully`);
-            setShowDeleteModal(true);
+            dispatch(setCounter({ value: counter - data.deletedCount }));
+            setShowDeleteModal(true, currPath);
         }).catch((error: ErrorType) => {
             console.error(error.response.data.message);
         });
@@ -39,13 +48,13 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ Name, Url, setShowDeleteModal
                         <h1 className='text-xl font-semibold'>{heading}</h1>
                         <p className='text-xs w-fit text-primary-text2'>{description}</p>
                     </div>
-                    <button onClick={() => setShowDeleteModal(false)}>
+                    <button onClick={() => setShowDeleteModal(false, currPath)}>
                         <RxCross2 size={24} className='text-primary-text' />
                     </button>
                 </div>
                 <div className='flex justify-center gap-4 mt-4'>
                     <button className='border-2 border-primary-border bg-transparent text-primary-text px-4 py-2 w-full rounded-lg'
-                        onClick={() => setShowDeleteModal(false)}>Cancel</button>
+                        onClick={() => setShowDeleteModal(false, currPath)}>Cancel</button>
                     <button className='bg-red-500 text-primary-text font-semibold px-4 py-2 w-full rounded-lg'
                         onClick={handleDelete}>Delete</button>
                 </div>

@@ -299,7 +299,7 @@ const getUserChannelPage = asyncHandler(
             },
         ]);
 
-        if (!channel) {
+        if (!channel.length) {
             throw new ApiError(404, "Channel does not exists");
         }
 

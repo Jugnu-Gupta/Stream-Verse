@@ -16,6 +16,7 @@ import loadingGIF from '../../assets/loading.gif';
 import NoResultsFound from "../Search/NoResultsFound";
 import { ErrorType } from "../../Types/Error.type";
 import { ResponseType } from "../../Types/Response.type";
+import { generateAvatar } from "../../utils/GenerateAvatar";
 
 const VideoDetail: React.FC = () => {
 	const navigate = useNavigate();
@@ -29,9 +30,11 @@ const VideoDetail: React.FC = () => {
 	const createdAt = formatDateDistanceToNow(video?.createdAt);
 	const Subscribers = formatNumber(video?.subscribers);
 	const channelName = video?.owner?.fullName || "Channel Name";
+	const channelUserName = video?.owner?.userName || "Channel User Name";
 	const description = video?.description || "Video Description";
 	const userId = localStorage.getItem("userId");
 	const noOfComments: number = video?.noOfComments || 10;
+	const avatarUrl = video?.owner?.avatar?.url || generateAvatar(channelName, "0078e1", "ffffffcc", 50);
 	const videoNo = video?._id || "";
 	const title = video?.title || "Video Title";
 	// console.log("videoId:", videoId);
@@ -128,8 +131,9 @@ const VideoDetail: React.FC = () => {
 						</div>
 					</div>
 					<div className="flex justify-between items-start gap-2">
-						<div className="flex items-center gap-2 w-fit min-w-[150px]">
-							<img src={video?.owner?.avatar?.url} alt="thumbnail" loading='lazy'
+						<div className="flex items-center gap-2 w-fit min-w-[150px] cursor-pointer"
+							onClick={() => navigate(`/channel/@${channelUserName}/videos`)}>
+							<img src={avatarUrl} alt="avatar" loading='lazy'
 								className="rounded-full w-10 h-10 aspect-square" />
 							<div className="text-primary-text text-nowrap w-full">
 								<h1 className="font-semibold sm:text-sm">

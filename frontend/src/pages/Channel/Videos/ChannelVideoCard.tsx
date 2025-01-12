@@ -16,7 +16,7 @@ const ChannelVideosCard: React.FC<ChannelVideosCardProps> = ({ videoInfo }) => {
 	const videoId = videoInfo._id;
 
 	return (
-		<div className="flex flex-col gap-2 p-2 group max-w-[400px]">
+		<div className="flex flex-col gap-2 p-2 group max-w-[400px] w-full">
 			<Link to={`/video/${videoId}`}>
 				<div className="overflow-hidden rounded-xl relative">
 					<img src={videoInfo.thumbnail.url} alt="thumbnail" loading='lazy'

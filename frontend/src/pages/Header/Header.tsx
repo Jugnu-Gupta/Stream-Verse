@@ -20,15 +20,17 @@ const Header: React.FC = () => {
 	const [userImage, setUserImage] = React.useState("");
 	const [searchText, setSearchText] = React.useState(searchParams.get("searchText") || "");
 	const curUser: string = "@" + localStorage.getItem("userName");
+	const fullName: string = localStorage.getItem("fullName") || "User Name";
 	const showNavbar: boolean = useSelector((state: RootState) => state.navbar.showNavbar);
 
 	useEffect(() => {
-		setUserImage(generateAvatar(curUser.substring(1), "0078e1", "ffffffcc"));
-	}, [curUser]);
+		setUserImage(generateAvatar(fullName, "0078e1", "ffffffcc"));
+	}, [fullName]);
 
 	const handleSearch = () => {
 		if (searchText.trim() === "") return;
-		navigate(`/search?searchText=${searchText}`);
+		const timestamp = new Date().getTime();
+		navigate(`/search?searchText=${searchText}&ts=${timestamp}`);
 	}
 
 	const logOutHandler = async () => {

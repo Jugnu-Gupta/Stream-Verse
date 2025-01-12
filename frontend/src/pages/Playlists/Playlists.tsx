@@ -52,7 +52,7 @@ const Playlists: React.FC = () => {
 				<img src={loadingGIF} alt="loading" loading='lazy' className='w-24' />
 			</div>))
 		: < div className="grid px-4 w-full h-fit max-w-7xl justify-items-center mx-auto z-0 2xl:grid-cols-4 2lg:grid-cols-3 2sm:grid-cols-2 grid-cols-1 mt-2" >
-			{editDeleteOption.showDeleteModal && <DeleteModal Name="Playlist" Url={`/api/v1/playlists/${editDeleteOption.currentId}`} setShowDeleteModal={setShowDeleteModal} />}
+			{editDeleteOption.showDeleteModal && <DeleteModal Name="Playlist" currPath={[]} Url={`/api/v1/playlists/${editDeleteOption.currentId}`} setShowDeleteModal={setShowDeleteModal} />}
 
 			{playlists?.map((playlist: PlaylistType) => (
 				<PlaylistCard key={playlist._id} playlist={playlist} editDeleteOption={editDeleteOption} setEditDeleteOption={setEditDeleteOption} />

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 import { formatNumber } from "../../../utils/FormatNumber";
 import { SubscribedChannelType } from "../../../Types/Channel.type";
+import { generateAvatar } from "../../../utils/GenerateAvatar";
 
 
 interface ChannelSubscribedCardsProps {
@@ -13,13 +14,13 @@ const ChannelSubscribedCards: React.FC<ChannelSubscribedCardsProps> = ({ Subscri
 	const channelName = SubscribedChannel.fullName;
 	const subscribers = formatNumber(SubscribedChannel.totalSubscribers);
 	const channelUserName = SubscribedChannel.userName;
-	const avatar = SubscribedChannel.avatar.url;
+	const avatar = SubscribedChannel.avatar?.url || generateAvatar(channelName, "0078e1", "ffffffcc", 50);
 
 	return (
 		<div className="flex items-center gap-2 p-2 w-full">
 			<Link to={`/channel/@${channelUserName}/videos`}>
 				<div className="overflow-hidden rounded-full w-10">
-					<img src={avatar} alt="thumbnail" loading='lazy'
+					<img src={avatar} alt="avatar" loading='lazy'
 						className="rounded-full w-10 aspect-square"
 					/>
 				</div>

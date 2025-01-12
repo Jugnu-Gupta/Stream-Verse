@@ -85,14 +85,14 @@ const Search: React.FC = () => {
 		setHasMore(true);
 		setPage(1);
 		handleSearch(1, loading, true, searchText || "");
-	}, [searchText, setHasMore, setPage]);
+	}, [searchParams, setHasMore, setPage]);
 
 	return (
 		<div className="sm:flex w-11/12 mx-auto max-w-7xl mt-2 md:px-2 px-1">
 			<div className="w-full h-full">
 				<form className="w-full flex justify-start md:gap-4 sm:gap-2 gap-4 xs:gap-y-2 xs:flex-wrap text-primary-text px-2 my-2">
 					<div className="font-semibold">
-						<select value={searchValues.uploadDate} name="uploadDate" onChange={handleChange}
+						<select value={searchValues.uploadDate} name="uploadDate" onChange={handleChange} title="Upload date"
 							className="text-xs w-24 md:w-fit truncate bg-background-tertiary border-2 border-primary-border rounded-md p-1 outline-none">
 							<option value="anytime">Anytime</option>
 							<option value="today">Today</option>
@@ -102,7 +102,7 @@ const Search: React.FC = () => {
 						</select>
 					</div>
 					<div className="font-semibold">
-						<select value={searchValues.type} name="type" onChange={handleChange}
+						<select value={searchValues.type} name="type" onChange={handleChange} title="Type"
 							className="text-xs w-24 md:w-fit truncate bg-background-tertiary border-2 border-primary-border rounded-md p-1 pr-0 outline-none">
 							<option value="video">Video</option>
 							<option value="playlist">Playlist</option>
@@ -110,16 +110,16 @@ const Search: React.FC = () => {
 						</select>
 					</div>
 					<div className="font-semibold">
-						<select value={searchValues.duration} name="duration" onChange={handleChange}
+						<select value={searchValues.duration} name="duration" onChange={handleChange} title="Duration"
 							className="text-xs w-24 md:w-fit truncate bg-background-tertiary border-2 border-primary-border rounded-md p-1 pr-0 outline-none">
-							<option value="any">No fixed duration</option>
+							<option value="any">Any</option>
 							<option value="short">Under 4 minutes</option>
 							<option value="medium">5-15 minutes</option>
 							<option value="long">Over 15 minutes</option>
 						</select>
 					</div>
 					<div className="flex items-center truncate gap-1 font-semibold justify-center">
-						<select value={searchValues.sortBy} name="sortBy" onChange={handleChange}
+						<select value={searchValues.sortBy} name="sortBy" onChange={handleChange} title="Sort by"
 							className="text-xs w-24 md:w-fit bg-background-tertiary border-2 border-primary-border rounded-md p-1 pr-0 outline-none">
 							<option value="relevance">Relevance</option>
 							<option value="uploadDate">upload date</option>

@@ -37,9 +37,9 @@ router
 router.route("/watch-history").get(verifyJWT, getWatchHistory);
 
 // Get channel page by username (secured route)
-router.route("/channel/:userName").get(verifyJWT, getUserChannelPage);
+router.route("/channel/:userName").get(getUserChannelPage);
 
 // Get channel page videos by username (public route)
-router.route("/video/:userName").get(verifyJWT, getUserChannelVideos);
+router.route("/video/:userName").get(getUserChannelVideos);
 
 export default router;

@@ -25,9 +25,9 @@ const VideoListView: React.FC<VideoListViewProps> = ({ videoInfo }) => {
 		<div className="flex gap-4 p-2 group w-full justify-start">
 			<div className="overflow-hidden rounded-xl max-w-md w-fit relative" onClick={() => navigate(`/video/${videoId}`)}>
 				<img src={videoInfo.thumbnail.url} alt="thumbnail" loading='lazy'
-					className="rounded-xl aspect-video group-hover:scale-110 duration-300 relative z-0"
+					className="rounded-xl aspect-video group-hover:scale-110 duration-300 relative z-0 w-full"
 				/>
-				<p className="px-1 py-[1px] z-10 absolute bottom-2 right-2 text-xs text-white rounded-md bg-black bg-opacity-70">
+				<p className="px-1 py-[1px] z-[1] absolute bottom-2 right-2 text-xs text-white rounded-md bg-black bg-opacity-70">
 					{duration}
 				</p>
 			</div>
@@ -39,7 +39,7 @@ const VideoListView: React.FC<VideoListViewProps> = ({ videoInfo }) => {
 					</p>
 				</div>
 				<div className="flex items-center gap-3 text-nowrap mb-2" onClick={() => navigate(`/channel/@${ownerName}/videos`)}>
-					<img src={avatar} alt="Elon Musk" loading='lazy' className="w-8 rounded-full aspect-square" />
+					<img src={avatar} alt={ownerFullName} loading='lazy' className="w-8 rounded-full aspect-square" />
 					<p className="text-sm text-primary-text2 hover:text-primary-text">
 						{ownerName}
 					</p>

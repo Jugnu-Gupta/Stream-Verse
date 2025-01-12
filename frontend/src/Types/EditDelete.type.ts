@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 
 interface EditDeleteType {
 	currentId: string;
+	pathToCurId?: string[];
 	showEditModal: boolean;
 	showDeleteModal: boolean;
 	showEditDeletePopup: boolean;

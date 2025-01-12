@@ -37,7 +37,7 @@ const TweetDetails: React.FC = () => {
 	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
 
-	const setShowDeleteModal = (value: boolean) => {
+	const setShowDeleteModal = (value: boolean, currPath: string[]) => {
 		if (value) { // delete Comment
 			dispatch(deleteComment({ childPathIds: currPath }));
 			setEditDeleteOption({ ...editDeleteOption, currentId: "", showDeleteModal: false });
@@ -106,6 +106,7 @@ const TweetDetails: React.FC = () => {
 
 			{editDeleteOption.showDeleteModal &&
 				(<DeleteModal Name="Comment"
+					currPath={editDeleteOption.pathToCurId || []}
 					Url={`/api/v1/comments/${editDeleteOption.currentId}`}
 					setShowDeleteModal={setShowDeleteModal}>
 				</DeleteModal>)

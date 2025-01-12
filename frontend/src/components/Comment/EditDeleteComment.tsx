@@ -5,16 +5,18 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import { EditDeleteWrapper } from '../../Types/EditDelete.type';
 
 interface EditDeleteCommentProps extends EditDeleteWrapper {
+	currPath: string[];
 	commentId: string;
 	commentText: string;
 	setCommentText: Dispatch<SetStateAction<string>>;
 }
 const EditDeleteComment: React.FC<EditDeleteCommentProps> =
-	({ commentId, commentText, setCommentText, editDeleteOption, setEditDeleteOption }) => {
+	({ currPath, commentId, commentText, setCommentText, editDeleteOption, setEditDeleteOption }) => {
 		const handleOptions = (commentId: string) => {
 			if (editDeleteOption.currentId === commentId) {
 				setEditDeleteOption({
 					currentId: "",
+					pathToCurId: [],
 					showEditModal: false,
 					showDeleteModal: false,
 					showEditDeletePopup: false
@@ -23,6 +25,7 @@ const EditDeleteComment: React.FC<EditDeleteCommentProps> =
 			} else {
 				setEditDeleteOption({
 					currentId: commentId,
+					pathToCurId: currPath,
 					showEditModal: false,
 					showDeleteModal: false,
 					showEditDeletePopup: true

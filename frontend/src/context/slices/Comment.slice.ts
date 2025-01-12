@@ -124,6 +124,7 @@ const CommentSlice = createSlice({
 			action: PayloadAction<DeleteCommentPayloadType>
 		) => {
 			const { childPathIds } = action.payload;
+			let prev = state;
 			let root = state;
 			let isNodeFound: boolean = true;
 
@@ -135,11 +136,15 @@ const CommentSlice = createSlice({
 					isNodeFound = false;
 					break;
 				}
+				prev = root;
 				root = nextNode;
 			}
 			if (!isNodeFound) {
 				console.log("Node not found");
 			} else {
+				prev.children = prev.children.filter(
+					(child) => child.val._id !== root.val._id
+				);
 				clearAllData(root);
 			}
 		},

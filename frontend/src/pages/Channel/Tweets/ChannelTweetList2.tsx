@@ -11,6 +11,7 @@ import { TweetType } from "../../../Types/Tweet.type";
 import useLikeDislike from "../../../hooks/useLikeDislike";
 import { computeDislikeCount, computeLikeCount }
     from "../../../utils/ComputeLikeDislikeCount";
+import { generateAvatar } from "../../../utils/GenerateAvatar";
 
 
 interface ChannelTweetListProps {
@@ -29,13 +30,13 @@ const ChannelTweetList2: React.FC<ChannelTweetListProps> = ({ tweetInfo }) => {
     const content = tweetInfo?.content || "description";
     const tweetText = (readMore || content.length <= 100) ? content : `${content.slice(0, 100)}...`;
     const tweetId = tweetInfo?._id || "";
-    const ownerAvatar = tweetInfo?.owner.avatar.url;
+    const ownerAvatar = tweetInfo?.owner?.avatar?.url || generateAvatar(channelFullName, "0078e1", "ffffffcc", 50);
     const tweetImage = tweetInfo?.image?.url;
 
     return (<div className="flex items-start gap-2 p-2 w-full">
         <Link to={`/channel/@${channelUserName}/videos`}>
             <div className="overflow-hidden rounded-full w-10">
-                <img src={ownerAvatar} alt="thumbnail" loading='lazy'
+                <img src={ownerAvatar} alt="avatar" loading='lazy'
                     className="rounded-full w-10 aspect-square" />
             </div>
         </Link>
@@ -58,7 +59,7 @@ const ChannelTweetList2: React.FC<ChannelTweetListProps> = ({ tweetInfo }) => {
             {tweetImage && (
                 <Link to={`/tweet/${tweetId}`}>
                     <div className="overflow-hidden rounded-lg m-2 w-fit">
-                        <img src={tweetImage} alt="thumbnail" loading='lazy'
+                        <img src={tweetImage} alt="avatar" loading='lazy'
                             className="rounded-lg w-full aspect-auto" />
                     </div>
                 </Link>

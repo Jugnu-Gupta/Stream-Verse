@@ -14,14 +14,14 @@ const router = Router();
 // Create a new tweet (secured route)
 router.route("/").post(verifyJWT, upload.single("image"), createTweet);
 
+// Get all tweets by user
+router.route("/user/:userId/:curUserId?").get(getUserTweet);
+
 // Update, delete tweet by id (secured route)
 router
     .route("/:tweetId")
     .patch(verifyJWT, upload.single("image"), updateTweet)
     .delete(verifyJWT, deleteTweet);
-
-// Get all tweets by user
-router.route("/user/:userId/:curUserId?").get(getUserTweet);
 
 // Get tweet details by id
 router.route("/:tweetId/:userId?").get(getTweetById);

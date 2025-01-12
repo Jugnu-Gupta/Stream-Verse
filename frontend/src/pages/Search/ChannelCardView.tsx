@@ -2,6 +2,7 @@ import React from "react";
 import { formatNumber } from "../../utils/FormatNumber";
 import { ChannelType } from "../../Types/Channel.type";
 import { useNavigate } from "react-router-dom";
+import { generateAvatar } from "../../utils/GenerateAvatar";
 
 interface ChannelCardViewProps {
     channelInfo: ChannelType;
@@ -10,12 +11,13 @@ const ChannelCardView: React.FC<ChannelCardViewProps> = ({ channelInfo }) => {
     const subscribers = formatNumber(channelInfo?.subsribers);
     const channelUserName = channelInfo.userName;
     const channelFullName = channelInfo.fullName;
+    const avatarUrl = channelInfo.avatar?.url || generateAvatar(channelFullName, "0078e1", "ffffffcc", 150);
     const navigate = useNavigate();
 
     return (
-        <div className="flex flex-col gap-2 p-2 group max-w-[400px]" onClick={() => navigate(`/channel/@${channelUserName}/videos`)}>
+        <div className="flex flex-col gap-2 p-2 group max-w-[400px] w-full" onClick={() => navigate(`/channel/@${channelUserName}/videos`)}>
             <div className="rounded-xl overflow-hidden">
-                <img src={channelInfo.avatar.url} alt="thumbnail" loading='lazy'
+                <img src={avatarUrl} alt="avatar" loading='lazy'
                     className="rounded-xl border-2 border-primary-border aspect-video group-hover:scale-110 duration-300"
                 />
             </div>

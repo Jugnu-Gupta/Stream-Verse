@@ -1,7 +1,6 @@
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import EmailVerification from "./pages/EmailVerification/EmailVerification.tsx";
 import ChannelSubscribed from "./pages/Channel/Subscribed/ChannelSubscribed.tsx";
-import TermsAndConditions from "./pages/TermsAndConditions/TermsAndConditions.tsx";
 import PersonalInformation from "./pages/Channel/PersonalInformation.tsx/PersonalInfomation.tsx";
 import ChangePassword from "./pages/Channel/ChangePassword/ChangePassword.tsx";
 import ChannelPlaylists from "./pages/Channel/Playlist/ChannelPlaylists.tsx";
@@ -28,10 +27,7 @@ import Help from "./pages/Help/Help.tsx";
 
 // give fallback values to controller while accesing array elements i.e. $ArrayElemAt: [ "$array", 0 ]
 
-// basic check for no subscribers in videoDetails
-// add video pagination feature
-
-// update video details for actual video
+// update video details for actual videoId
 
 function App() {
 	return (
@@ -60,7 +56,6 @@ function App() {
 					</Route >
 
 					<Route element={<ProtectedLayout />}>
-						<Route path="terms-and-conditions" element={<TermsAndConditions />} />
 						<Route path="tweet/:tweetId" element={<TweetDetails />} />
 						<Route path="history" element={<WatchHistory />} />
 						<Route path="liked-videos" element={<LikedVideos />} />

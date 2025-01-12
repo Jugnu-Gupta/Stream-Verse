@@ -26,7 +26,7 @@ interface ChannelType {
 	avatar: {
 		url: string;
 		publicId: string;
-	};
+	} | null;
 	createdAt: Date;
 	updatedAt: Date;
 }

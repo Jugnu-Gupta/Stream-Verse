@@ -24,6 +24,7 @@ import toast from "react-hot-toast";
 import { usePagination } from "../../hooks/usePagination";
 import { ErrorType } from "../../Types/Error.type";
 import { ResponseType } from "../../Types/Response.type";
+import { generateAvatar } from "../../utils/GenerateAvatar";
 
 interface CommentProps extends EditDeleteWrapper {
 	currPath: string[];
@@ -43,9 +44,10 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 	const [giveReply, setGiveReply] = React.useState(false);
 
 	const UploadedAt = formatDateDistanceToNow(new Date(comment.createdAt));
-	const channelName = "@" + (comment?.owner?.userName || "Channel Name");
+	const channelUserName = "@" + (comment?.owner?.userName || "Channel User Name");
+	const channelFullName = comment?.owner?.fullName || "Channel Full Name";
 	const curUserName = localStorage.getItem("userName");
-	const avatar = comment?.owner?.avatar?.url;
+	const avatarUrl = comment?.owner?.avatar?.url || generateAvatar(channelFullName, "0078e1", "ffffffcc", 50);
 	const dispatch = useDispatch<AppDispatch>();
 	const commentId = comment?._id;
 	const navigate = useNavigate();
@@ -61,7 +63,6 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 			params: { userId, page, limit: 10 }
 		}).then((RepliesResponse) => {
 			const RepliesData = (RepliesResponse as ResponseType).data?.comments;
-			console.log("RepliesData2:", RepliesData);
 
 			setPage((prevPage) => prevPage + 1);
 			setHasMore(RepliesData.length > 0);
@@ -112,118 +113,117 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 		setCommentText(comment?.content || "comment");
 	}
 
-	return (
-		<div className="pt-2 overflow-hidden w-full">
-			<div className="flex items-start gap-2 w-full">
-				<div onClick={() => navigate(`/channel/${channelName}/videos`)}
-					className="overflow-hidden rounded-full w-10">
-					<img src={avatar} alt="avatar" loading='lazy'
-						className="rounded-full w-10 aspect-square"
+	return (<div className="pt-2 overflow-hidden w-full">
+		<div className="flex items-start gap-2 w-full">
+			<div onClick={() => navigate(`/channel/${channelUserName}/videos`)}
+				className="overflow-hidden rounded-full w-10">
+				<img src={avatarUrl} alt="avatar" loading='lazy'
+					className="rounded-full w-10 aspect-square"
+				/>
+			</div>
+			<div className="flex flex-col text-primary-text overflow-hidden w-full">
+				<div className="flex gap-2 items-center">
+					<p className="text-sm font-semibold">{channelUserName}</p>
+					<p className="text-primary-text2 text-xs">{UploadedAt} </p>
+				</div>
+
+				<div className="flex flex-col items-start my-2 text-sm">
+					<textarea ref={textAreaRef}
+						placeholder="Comment"
+						className={twMerge("w-full bg-transparent resize-none outline-none border-primary-border overflow-hidden",
+							(editDeleteOption.currentId === commentId && editDeleteOption.showEditModal) && "border-b-2"
+						)}
+						value={commentText}
+						onChange={(e) => setCommentText(e.target.value)}
+						readOnly={!(editDeleteOption.currentId === commentId && editDeleteOption.showEditModal)}
 					/>
 				</div>
-				<div className="flex flex-col text-primary-text overflow-hidden w-full">
-					<div className="flex gap-2 items-center">
-						<p className="text-sm font-semibold">{channelName}</p>
-						<p className="text-primary-text2 text-xs">{UploadedAt} </p>
-					</div>
 
-					<div className="flex flex-col items-start my-2 text-sm">
-						<textarea ref={textAreaRef}
-							placeholder="Comment"
-							className={twMerge("w-full bg-transparent resize-none outline-none border-primary-border overflow-hidden",
-								(editDeleteOption.currentId === commentId && editDeleteOption.showEditModal) && "border-b-2"
-							)}
-							value={commentText}
-							onChange={(e) => setCommentText(e.target.value)}
-							readOnly={!(editDeleteOption.currentId === commentId && editDeleteOption.showEditModal)}
-						/>
-					</div>
-
-					{!(editDeleteOption.currentId === commentId && editDeleteOption.showEditModal) ?
-						(<div className="flex justify-start gap-3 font-semibold tracking-wide mb-2">
-							<button onClick={handleLike}
-								className="flex items-center gap-1 text-xl outline-none hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
-								{isLiked ? <BiSolidLike /> : <BiLike />}
-								<span className="text-xs">{likes}</span>
-							</button>
-							<button onClick={handleDislike}
-								className="flex items-center gap-1 text-xl outline-none hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
-								{isDisliked ? <BiSolidDislike /> : <BiDislike />}
-								<span className="text-xs">{dislikes}</span>
-							</button>
-							<button onClick={() => setGiveReply(true)}
-								className="flex items-center gap-1 text-xl outline-none hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
-								<span className="text-xs">Reply</span>
-							</button>
-						</div>) :
-						(<div className="flex justify-end gap-1 font-semibold tracking-wide mb-0.5">
-							<button onClick={discardChanges}
-								className="text-sm outline-none hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
-								Cancel
-							</button>
-							<button onClick={handleEditComment}
-								className={twMerge("text-sm outline-none bg-background-secondary px-2 py-1 rounded-xl duration-300",
-									commentText.trim() === comment?.content && "opacity-50")}>
-								Save
-							</button>
-						</div>)
-					}
-
-					{giveReply &&
-						(<AddComment
-							setGiveReply={setGiveReply}
-							avatarStyle="w-7"
-							entityType={entityType}
-							entityId={entityId}
-							parentId={commentId}
-							currPath={currPath}>
-						</AddComment>)
-					}
-
-					{replies?.length > 0 && (
-						<button
-							className="flex items-center gap-2 outline-none text-primary-text w-fit hover:bg-background-secondary px-2 mb-2 py-1 rounded-xl duration-300"
-							onClick={() => setShowReplies(!showReplies)}>
-							{showReplies ? <FaChevronUp /> : <FaChevronDown />}
-							<span className="text-sm font-semibold tracking-wide">
-								{replies?.length} {replies?.length === 1 ? "reply" : "replies"}
-							</span>
+				{!(editDeleteOption.currentId === commentId && editDeleteOption.showEditModal) ?
+					(<div className="flex justify-start gap-3 font-semibold tracking-wide mb-2">
+						<button onClick={handleLike}
+							className="flex items-center gap-1 text-xl outline-none hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
+							{isLiked ? <BiSolidLike /> : <BiLike />}
+							<span className="text-xs">{likes}</span>
 						</button>
-					)}
-				</div>
-
-				{channelName === `@${curUserName}` &&
-					(<EditDeleteComment
-						commentId={commentId}
-						commentText={comment?.content}
-						setCommentText={setCommentText}
-						editDeleteOption={editDeleteOption}
-						setEditDeleteOption={setEditDeleteOption}>
-					</EditDeleteComment>)
+						<button onClick={handleDislike}
+							className="flex items-center gap-1 text-xl outline-none hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
+							{isDisliked ? <BiSolidDislike /> : <BiDislike />}
+							<span className="text-xs">{dislikes}</span>
+						</button>
+						<button onClick={() => setGiveReply(true)}
+							className="flex items-center gap-1 text-xl outline-none hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
+							<span className="text-xs">Reply</span>
+						</button>
+					</div>) :
+					(<div className="flex justify-end gap-1 font-semibold tracking-wide mb-0.5">
+						<button onClick={discardChanges}
+							className="text-sm outline-none hover:bg-background-secondary px-2 py-1 rounded-xl duration-300">
+							Cancel
+						</button>
+						<button onClick={handleEditComment}
+							className={twMerge("text-sm outline-none bg-background-secondary px-2 py-1 rounded-xl duration-300",
+								commentText.trim() === comment?.content && "opacity-50")}>
+							Save
+						</button>
+					</div>)
 				}
-				<div ref={lastItemRef}></div>
+
+				{giveReply &&
+					(<AddComment
+						setGiveReply={setGiveReply}
+						avatarStyle="w-7"
+						entityType={entityType}
+						entityId={entityId}
+						parentId={commentId}
+						currPath={currPath}>
+					</AddComment>)
+				}
+
+				{replies?.length > 0 && (
+					<button
+						className="flex items-center gap-2 outline-none text-primary-text w-fit hover:bg-background-secondary px-2 mb-2 py-1 rounded-xl duration-300"
+						onClick={() => setShowReplies(!showReplies)}>
+						{showReplies ? <FaChevronUp /> : <FaChevronDown />}
+						<span className="text-sm font-semibold tracking-wide">
+							{replies?.length} {replies?.length === 1 ? "reply" : "replies"}
+						</span>
+					</button>
+				)}
 			</div>
 
-			{showReplies && (
-				<div className={twMerge(
-					"w-full h-full",
-					currPath.length < 5 ? "pl-4" : "pl-0"
-				)}>
-					{replies?.map((reply: CommentType) =>
-					(<CommentCard
-						key={reply?._id}
-						currPath={currPath.concat([reply?._id])}
-						comment={reply}
-						entityId={entityId}
-						entityType={entityType}
-						editDeleteOption={editDeleteOption}
-						setEditDeleteOption={setEditDeleteOption}>
-					</CommentCard >))
-					}
-				</div>
-			)}
+			{channelUserName === `@${curUserName}` &&
+				(<EditDeleteComment
+					currPath={currPath}
+					commentId={commentId}
+					commentText={comment?.content}
+					setCommentText={setCommentText}
+					editDeleteOption={editDeleteOption}
+					setEditDeleteOption={setEditDeleteOption}>
+				</EditDeleteComment>)
+			}
+			<div ref={lastItemRef}></div>
 		</div>
-	);
+
+		{showReplies && (
+			<div className={twMerge(
+				"w-full h-full",
+				currPath.length < 5 ? "pl-4" : "pl-0"
+			)}>
+				{replies?.map((reply: CommentType) =>
+				(<CommentCard
+					key={reply?._id}
+					currPath={currPath.concat([reply?._id])}
+					comment={reply}
+					entityId={entityId}
+					entityType={entityType}
+					editDeleteOption={editDeleteOption}
+					setEditDeleteOption={setEditDeleteOption}>
+				</CommentCard >))
+				}
+			</div>
+		)}
+	</div>);
 };
 
 export default CommentCard;

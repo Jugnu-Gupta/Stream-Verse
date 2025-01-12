@@ -19,6 +19,6 @@ router.route("/toggle/:channelId").post(verifyJWT, toggleSubscription);
 router.route("/user/:channelId").get(verifyJWT, getUserChannelSubscribers);
 
 // Fetch all channels subscribed to by a user and mark channel subscribed by curUser in that channel list (secured route)
-router.route("/channel/:subscriberId").get(verifyJWT, getSubscribedChannels);
+router.route("/channel/:subscriberId").get(getSubscribedChannels);
 
 export default router;

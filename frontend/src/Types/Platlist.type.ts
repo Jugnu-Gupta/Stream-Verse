@@ -5,12 +5,12 @@ interface PlaylistType {
 	name: string;
 	description?: string;
 	noOfVideos: number;
-	videoId: string;
+	videoId: string | null;
 	videoStatus?: boolean;
 	thumbnail: {
 		url: string;
 		publicId: string;
-	};
+	} | null;
 	owner?: {
 		_id: string;
 		userName: string;
