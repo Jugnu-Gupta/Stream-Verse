@@ -176,6 +176,7 @@ const ChannelTweets: React.FC = () => {
 
 			{editDeleteOption.showDeleteModal &&
 				(<DeleteModal Name="Tweet"
+					currPath={[]}
 					Url={`/api/v1/tweets/${editDeleteOption.currentId}`}
 					setShowDeleteModal={setShowDeleteModal}>
 				</DeleteModal>)
