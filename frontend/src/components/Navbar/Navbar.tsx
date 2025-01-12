@@ -12,8 +12,6 @@ const Navbar: React.FC = () => {
 	const isVideoDetailPage = window.location.pathname.includes("/video/");
 	const page = window.location.pathname;
 	const { adminName } = useParams<{ adminName: string }>();
-	// console.log(page);
-	// console.log("pathname:", addAdminName(window.location.pathname));
 
 	return (
 		<nav className="h-[calc(100vh-51px)] sticky z-10 top-[51px] left-0">

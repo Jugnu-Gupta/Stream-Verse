@@ -232,14 +232,15 @@ const updateUserCoverImage = asyncHandler(
         //     { new: true }
         // )?.select("userName fullName email avatar coverImage isVerified");
 
-        return res.status(200).json(
-            new ApiResponse(
-                200,
-                // { user },
-                null,
-                "Cover image updated successfully"
-            )
-        );
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    { user },
+                    "Cover image updated successfully"
+                )
+            );
     }
 );
 

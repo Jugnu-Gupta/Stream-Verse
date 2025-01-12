@@ -11,6 +11,7 @@ import { AppDispatch, RootState } from "../../context/store";
 import { useAuth } from "../../hooks/useAuth";
 import Cookies from "js-cookie";
 import { ErrorType } from "../../Types/Error.type";
+import toast from "react-hot-toast";
 
 const Header: React.FC = () => {
 	const [searchParams] = useSearchParams();
@@ -38,7 +39,7 @@ const Header: React.FC = () => {
 			method: "post",
 			url: "/api/v1/auths/logout",
 		}).then(() => {
-			console.log("Logged out successfully");
+			toast.success("Logged out successfully");
 			setUserImage("");
 			setLoggedIn(false);
 

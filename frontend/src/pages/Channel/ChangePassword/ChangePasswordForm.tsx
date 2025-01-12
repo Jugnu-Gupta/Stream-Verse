@@ -24,7 +24,6 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({ email }) => {
             },
             validationSchema: ChangePasswordValidationSchema,
             onSubmit: async (values) => {
-                console.log("Form data:", values);
                 makeApiRequest({
                     method: "patch",
                     url: "/api/v1/users/password",

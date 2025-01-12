@@ -21,7 +21,6 @@ const EmailVerification: React.FC = () => {
 				} else {
 					console.log("Resend email verification link or try again or Invalid token");
 				}
-				console.log(response);
 			});
 		}
 	}, [token, navigate]);

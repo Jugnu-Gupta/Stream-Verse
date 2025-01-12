@@ -37,8 +37,6 @@ const VideoDetail: React.FC = () => {
 	const avatarUrl = video?.owner?.avatar?.url || generateAvatar(channelName, "0078e1", "ffffffcc", 50);
 	const videoNo = video?._id || "";
 	const title = video?.title || "Video Title";
-	// console.log("videoId:", videoId);
-	// console.log("listId:", listId);
 	//--------------------- videoId and videoNo are same ------------------
 
 	useEffect(() => {

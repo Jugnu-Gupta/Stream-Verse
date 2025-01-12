@@ -28,8 +28,7 @@ const DashboardVideoStatsControl: React.FC<DashboardVideoStatsControlProps> = ({
 			method: "patch",
 			url: `/api/v1/videos/${videoInfo._id}/publish`,
 			data: { isPublished: !status }
-		}).then((response) => {
-			console.log("response:", response);
+		}).then(() => {
 			setStatus(!status);
 		}).catch((error: ErrorType) => {
 			console.error(error.response.data.message);

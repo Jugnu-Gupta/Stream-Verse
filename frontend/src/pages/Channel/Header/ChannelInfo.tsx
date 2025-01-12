@@ -36,8 +36,7 @@ const ChannelInfo: React.FC<ChannelInfoProps> = ({ channelInfo }) => {
         makeApiRequest({
             method: "post",
             url: `/api/v1/subscriptions/toggle/${channelInfo?._id}`,
-        }).then((response) => {
-            console.log(response);
+        }).then(() => {
             setIsSubscribed(!isSubscribed);
             if (isSubscribed) {
                 dispatch(decreaseCount());

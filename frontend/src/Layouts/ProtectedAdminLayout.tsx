@@ -6,8 +6,6 @@ const ProtectedAdminLayout: React.FC = () => {
     const { adminName } = useParams<{ adminName: string }>();
     const channelAdmin = "@" + (localStorage.getItem("userName") || "");
 
-    console.log("AdminName:", adminName);
-    console.log("channelAdmin:", channelAdmin);
     useEffect(() => {
         if (adminName !== channelAdmin) {
             navigate("/");

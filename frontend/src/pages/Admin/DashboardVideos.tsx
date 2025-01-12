@@ -20,7 +20,6 @@ const DashboardVideos: React.FC = () => {
             url: "/api/v1/dashboard/channel-videos",
         }).then((response) => {
             const data = (response as ResponseType).data;
-            console.log("videos:", data);
             setVideos(data?.videos);
         }).catch((error: ErrorType) => {
             console.error(error.response.data.message);

@@ -60,7 +60,6 @@ const Search: React.FC = () => {
 			}
 		}).then((response) => {
 			const videosData = (response as ResponseType).data.data;
-			console.log("video:", videosData);
 			if (searchValues.type === "video") {
 				setSearchValues({ ...searchValues, videos: (page !== 1 ? searchValues.videos : []).concat(videosData), playlists: [], channels: [], curSearch: "video" });
 			} else if (searchValues.type === "playlist") {

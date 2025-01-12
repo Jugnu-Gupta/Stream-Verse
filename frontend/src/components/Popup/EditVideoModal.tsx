@@ -37,8 +37,7 @@ const EditVideoModal: React.FC<EditVideoModalProps> = ({ videoInfo, setShowEditV
             method: "patch",
             url: `/api/v1/videos/${videoId}`,
             data
-        }).then((response) => {
-            console.log("response:", response);
+        }).then(() => {
             toast.success("Video uploaded successfully");
             setShowEditVideo(false);
             // window.location.reload();
