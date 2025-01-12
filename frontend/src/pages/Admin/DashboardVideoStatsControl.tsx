@@ -86,7 +86,7 @@ const DashboardVideoStatsControl: React.FC<DashboardVideoStatsControlProps> = ({
 			<td className="text-center px-4 py-2 text-nowrap text-primary-icon">
 				<div className="text-start">
 					{showEditVideo && <EditVideoModal videoInfo={videoInfo} setShowEditVideo={setShowEditVideo} />}
-					{showDeleteVideo && <DeleteModal Name="Video" Url={`/api/v1/videos/${videoInfo._id}`} setShowDeleteModal={setShowDeleteVideo} />}
+					{showDeleteVideo && <DeleteModal Name="Video" currPath={[]} Url={`/api/v1/videos/${videoInfo._id}`} setShowDeleteModal={setShowDeleteVideo} />}
 				</div>
 
 				<button className="pr-2" onClick={() => setShowDeleteVideo(true)}><RiDeleteBin6Line /></button>
