@@ -70,7 +70,7 @@ const LoginForm: React.FC = () => {
 					placeholder="Email"
 					onChange={handleChange}
 					onBlur={handleBlur}
-					className="pl-2 pr-10 py-1.5 w-72 rounded-md bg-background-primary 
+					className="pl-2 pr-10 py-1.5 md:w-72 w-60 rounded-md bg-background-primary 
                 	outline-none transition delay-[50000s] placeholder:text-primary-text text-sm"
 				/>
 				<label htmlFor="email">
@@ -87,7 +87,7 @@ const LoginForm: React.FC = () => {
 					placeholder="Password"
 					onChange={handleChange}
 					onBlur={handleBlur}
-					className="pl-2 pr-10 py-1.5 w-72 rounded-md bg-background-primary
+					className="pl-2 pr-10 py-1.5 md:w-72 w-60 rounded-md bg-background-primary
 				outline-none transition delay-[50000s] placeholder:text-primary-text text-sm"
 				/>
 				<label htmlFor="password" className="cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
@@ -100,7 +100,7 @@ const LoginForm: React.FC = () => {
 			</div>
 			{
 				showVerifyEmail &&
-				<div className="bg-primary w-72 px-1 py-0.5 mb-1 rounded-md text-sm text-justify text-primary-text">
+				<div className="bg-primary md:w-72 w-60 px-1 py-0.5 mb-1 rounded-md text-sm text-justify text-primary-text">
 					An email has been sent to your email address. Please verify your email address.
 				</div>
 			}
