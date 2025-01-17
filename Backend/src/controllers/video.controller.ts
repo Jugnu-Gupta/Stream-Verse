@@ -7,7 +7,11 @@ import { asyncHandler } from "../utils/asyncHandler";
 import { ApiError } from "../utils/apiError";
 import { ApiResponse } from "../utils/apiResponse";
 import { UserType } from "types/user.type";
-import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary";
+import {
+    deleteFromCloudinary,
+    streamFromCloudinary,
+    uploadOnCloudinary,
+} from "../utils/cloudinary";
 import { getVideoQuality } from "../utils/getVideoQuality";
 import { User } from "../models/user.model";
 import { Playlist } from "../models/playlist.model";
@@ -278,6 +282,19 @@ const getAllVideo = asyncHandler(
             );
     }
 );
+
+const streamVideo = asyncHandler(async (req: Request, res: Response) => {
+    const { publicId } = req.query as { publicId: string };
+
+    const videoPath = await streamFromCloudinary(publicId);
+    if (!videoPath) {
+        throw new ApiError(500, "Failed to stream video");
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, { video: videoPath.data.pipe(res) }));
+});
 
 const addView = asyncHandler(async (req: RequestWithUser, res: Response) => {
     const { videoId } = req.params as { videoId: string };
@@ -845,5 +862,6 @@ export {
     getVideoById,
     videoUpdate,
     deleteVideo,
+    streamVideo,
     ToggleVideoPublishStatus,
 };

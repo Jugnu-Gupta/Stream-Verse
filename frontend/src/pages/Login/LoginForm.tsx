@@ -60,7 +60,7 @@ const LoginForm: React.FC = () => {
 	return (
 		<form
 			onSubmit={handleSubmit}
-			className="flex flex-col gap-3 items-center text-white">
+			className="flex flex-col gap-3 items-center text-primary-text">
 			<div className="relative">
 				<input
 					type="email"
@@ -70,7 +70,7 @@ const LoginForm: React.FC = () => {
 					placeholder="Email"
 					onChange={handleChange}
 					onBlur={handleBlur}
-					className="pl-2 pr-10 py-1.5 md:w-72 w-60 rounded-md bg-background-primary 
+					className="pl-2 pr-10 py-1.5 md:w-72 w-60 rounded-md bg-background-primary
                 	outline-none transition delay-[50000s] placeholder:text-primary-text text-sm"
 				/>
 				<label htmlFor="email">
@@ -107,7 +107,7 @@ const LoginForm: React.FC = () => {
 			<button
 				type="submit"
 				className="px-3 py-1 mb-1 tracking-wide font-semibold 
-				text-sm text-white rounded-md bg-primary-login">
+				text-sm text-primary-text rounded-md bg-primary-login">
 				Log In
 			</button>
 		</form>

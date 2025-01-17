@@ -1,6 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
 import dotenv from "dotenv";
+import axios from "axios";
 dotenv.config();
 
 cloudinary.config({
@@ -52,4 +53,22 @@ const deleteFromCloudinary = async (
     }
 };
 
-export { uploadOnCloudinary, deleteFromCloudinary };
+const streamFromCloudinary = async (publicId: string) => {
+    try {
+        if (!publicId) return null;
+
+        // Fetch the video from Cloudinary
+        const videoUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/video/upload/${publicId}.mp4`;
+
+        const response = await axios({
+            method: "get",
+            url: videoUrl,
+            responseType: "stream",
+        });
+        return response;
+    } catch (error) {
+        return null;
+    }
+};
+
+export { uploadOnCloudinary, deleteFromCloudinary, streamFromCloudinary };

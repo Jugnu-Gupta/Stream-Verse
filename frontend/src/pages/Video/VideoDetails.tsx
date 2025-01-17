@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
-import videoplayback from "../../assets/videoplayback.mp4";
+// import videoplayback from "../../assets/videoplayback.mp4";
+import videojs from "video.js";
 import VideoComments from "./VideoComments";
 import RelatedVideo from "./RelatedVideo";
 import LikeSubscribeSave from "./LikeSubscribeSave";
@@ -17,6 +18,7 @@ import NoResultsFound from "../Search/NoResultsFound";
 import { ErrorType } from "../../Types/Error.type";
 import { ResponseType } from "../../Types/Response.type";
 import { generateAvatar } from "../../utils/GenerateAvatar";
+import { BASE_URL } from "../../Constants";
 
 const VideoDetail: React.FC = () => {
 	const navigate = useNavigate();
@@ -38,6 +40,8 @@ const VideoDetail: React.FC = () => {
 	const videoNo = video?._id || "";
 	const title = video?.title || "Video Title";
 	//--------------------- videoId and videoNo are same ------------------
+
+	const videoRef = React.useRef<HTMLVideoElement | null>(null);
 
 	useEffect(() => {
 		makeApiRequest({
@@ -70,6 +74,30 @@ const VideoDetail: React.FC = () => {
 			navigate(listId ? `/video/${videoId}` : `/`);
 		})
 	}, [listId, videoId, userId, navigate]);
+
+	useEffect(() => {
+		// Check if the video element is available
+		if (videoRef.current) {
+			const player = videojs(videoRef.current, {
+				controls: true,
+				autoplay: false,
+				preload: "auto",
+				sources: [
+					{
+						src: `${BASE_URL}/videos/stream?publicId=${videoId}`, // Fetch video from the proxy server
+						type: "video/mp4",
+					},
+				],
+			});
+
+			// Cleanup on component unmount
+			return () => {
+				if (player) {
+					player.dispose();
+				}
+			};
+		}
+	}, [videoId]);
 
 	const getSimilarVideos = (page: number, loading: boolean, hasMore: boolean, searchText: string) => {
 		if (searchText.trim() === "" || loading || !hasMore) return;
@@ -111,7 +139,13 @@ const VideoDetail: React.FC = () => {
 		<div className="flex flex-col 2lg:flex-row justify-start 2lg:items-start 2lg:gap-4 w-full px-2 mt-4 mx-auto max-w-[1400px] overflow-hidden">
 			<div className="flex flex-col 2lg:w-2/3 w-full">
 				{/* video */}
-				<video src={videoplayback} controls></video>
+				{/* <video src={videoplayback} controls></video> */}
+				<video
+					ref={videoRef}
+					className="video-js vjs-default-skin"
+					width="100%"
+					height="auto"
+				/>
 
 				{/* Playlist */}
 				<VideoPlaylist childClass={listId ? "flex 2lg:hidden" : "hidden"} heighlightVideo={videoNo} playlist={playlist} />
