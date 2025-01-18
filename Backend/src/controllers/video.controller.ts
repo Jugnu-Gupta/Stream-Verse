@@ -7,11 +7,7 @@ import { asyncHandler } from "../utils/asyncHandler";
 import { ApiError } from "../utils/apiError";
 import { ApiResponse } from "../utils/apiResponse";
 import { UserType } from "types/user.type";
-import {
-    deleteFromCloudinary,
-    streamFromCloudinary,
-    uploadOnCloudinary,
-} from "../utils/cloudinary";
+import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary";
 import { getVideoQuality } from "../utils/getVideoQuality";
 import { User } from "../models/user.model";
 import { Playlist } from "../models/playlist.model";
@@ -283,36 +279,51 @@ const getAllVideo = asyncHandler(
     }
 );
 
-const streamVideo = asyncHandler(async (req: Request, res: Response) => {
-    const { publicId } = req.query as { publicId: string };
-
-    const videoPath = await streamFromCloudinary(publicId);
-    if (!videoPath) {
-        throw new ApiError(500, "Failed to stream video");
-    }
-
-    return res
-        .status(200)
-        .json(new ApiResponse(200, { video: videoPath.data.pipe(res) }));
-});
-
 const addView = asyncHandler(async (req: RequestWithUser, res: Response) => {
     const { videoId } = req.params as { videoId: string };
     if (!isValidObjectId(videoId)) {
         throw new ApiError(400, "Invalid video id");
     }
 
+    // update views of video
     const video = await Video.findById(videoId);
     if (!video) {
         throw new ApiError(404, "Video not found");
     }
-
     video.views += 1;
     await video.save({ validateBeforeSave: false });
 
+    // update watch history of user
+    const user = await User.findById(req.user?._id).select("watchHistory");
+    if (
+        user.watchHistory.some((video) => video.videoId.toString() === videoId)
+    ) {
+        user.watchHistory = user.watchHistory.map((video) => {
+            if (video.videoId.toString() === videoId) {
+                video.watchedAt = new Date();
+            }
+            return video;
+        });
+        await user.save({ validateBeforeSave: false });
+    } else {
+        await User.findByIdAndUpdate(req.user._id, {
+            $push: {
+                watchHistory: {
+                    videoId: new mongoose.Types.ObjectId(videoId),
+                },
+            },
+        });
+    }
+
     return res
         .status(200)
-        .json(new ApiResponse(200, null, "View added successfully"));
+        .json(
+            new ApiResponse(
+                200,
+                null,
+                "View added and updated history successfully"
+            )
+        );
 });
 
 interface UploadVideoBody {
@@ -862,6 +873,5 @@ export {
     getVideoById,
     videoUpdate,
     deleteVideo,
-    streamVideo,
     ToggleVideoPublishStatus,
 };

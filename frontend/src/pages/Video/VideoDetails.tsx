@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
-// import videoplayback from "../../assets/videoplayback.mp4";
-import videojs from "video.js";
+import { Video, Transformation } from 'cloudinary-react';
 import VideoComments from "./VideoComments";
 import RelatedVideo from "./RelatedVideo";
 import LikeSubscribeSave from "./LikeSubscribeSave";
@@ -18,7 +17,7 @@ import NoResultsFound from "../Search/NoResultsFound";
 import { ErrorType } from "../../Types/Error.type";
 import { ResponseType } from "../../Types/Response.type";
 import { generateAvatar } from "../../utils/GenerateAvatar";
-import { BASE_URL } from "../../Constants";
+import { CLOUD_NAME } from "../../Constants";
 
 const VideoDetail: React.FC = () => {
 	const navigate = useNavigate();
@@ -37,19 +36,20 @@ const VideoDetail: React.FC = () => {
 	const userId = localStorage.getItem("userId");
 	const noOfComments: number = video?.noOfComments || 10;
 	const avatarUrl = video?.owner?.avatar?.url || generateAvatar(channelName, "0078e1", "ffffffcc", 50);
-	const videoNo = video?._id || "";
+	const videoRef = React.useRef<HTMLVideoElement | null>(null);
+	const videoNo = "67502bffd0104e89cbb9be5c";
 	const title = video?.title || "Video Title";
 	//--------------------- videoId and videoNo are same ------------------
-
-	const videoRef = React.useRef<HTMLVideoElement | null>(null);
+	// const videoPublicId = "j57mrruqxjge191kld5g";
+	// const playlistId = "67502bffd0104e89cbb9be5e";
 
 	useEffect(() => {
 		makeApiRequest({
 			method: "get",
-			url: `/api/v1/playlists/${"67502bffd0104e89cbb9be5e"}`,
+			url: `/api/v1/playlists/${listId}`,
 		}).then((playlistRes) => {
 			const playlistData = (playlistRes as ResponseType).data?.playlist;
-			if (playlistData?.videos.some((video: VideoType) => video._id === "67502bffd0104e89cbb9be5e")) {
+			if (playlistData?.videos.some((video: VideoType) => video._id === videoId)) {
 				setPlaylist(playlistData);
 			} else {
 				navigate(`/video/${videoId}`);
@@ -58,7 +58,7 @@ const VideoDetail: React.FC = () => {
 			// find details of current video
 			return makeApiRequest({
 				method: "get",
-				url: `/api/v1/videos/${"67502949d0104e89cbb9be5d"}`,
+				url: `/api/v1/videos/${videoId}`,
 				params: { userId }
 			});
 		}).then((videoInfoRes) => {
@@ -67,37 +67,13 @@ const VideoDetail: React.FC = () => {
 
 			makeApiRequest({
 				method: "post",
-				url: `/api/v1/videos/${videoData?._id}/views`,
+				url: `/api/v1/videos/${videoId}/views`,
 			});
 		}).catch((error: ErrorType) => {
 			console.error(error.response.data.message);
 			navigate(listId ? `/video/${videoId}` : `/`);
 		})
 	}, [listId, videoId, userId, navigate]);
-
-	useEffect(() => {
-		// Check if the video element is available
-		if (videoRef.current) {
-			const player = videojs(videoRef.current, {
-				controls: true,
-				autoplay: false,
-				preload: "auto",
-				sources: [
-					{
-						src: `${BASE_URL}/videos/stream?publicId=${videoId}`, // Fetch video from the proxy server
-						type: "video/mp4",
-					},
-				],
-			});
-
-			// Cleanup on component unmount
-			return () => {
-				if (player) {
-					player.dispose();
-				}
-			};
-		}
-	}, [videoId]);
 
 	const getSimilarVideos = (page: number, loading: boolean, hasMore: boolean, searchText: string) => {
 		if (searchText.trim() === "" || loading || !hasMore) return;
@@ -139,16 +115,24 @@ const VideoDetail: React.FC = () => {
 		<div className="flex flex-col 2lg:flex-row justify-start 2lg:items-start 2lg:gap-4 w-full px-2 mt-4 mx-auto max-w-[1400px] overflow-hidden">
 			<div className="flex flex-col 2lg:w-2/3 w-full">
 				{/* video */}
-				{/* <video src={videoplayback} controls></video> */}
-				<video
+				<Video
+					// duration={30}
+					cloudName={CLOUD_NAME + "cdsc"}
+					publicId={video?.videoFile?.publicId || ""}
+					// publicId={videoPublicId}
 					ref={videoRef}
-					className="video-js vjs-default-skin"
 					width="100%"
 					height="auto"
-				/>
+					controls
+					autoPlay>
+					<Transformation
+						aspectRatio="16:9"
+						quality="auto:eco,c_fill,h_240,w_426"
+					/>
+				</Video>
 
 				{/* Playlist */}
-				<VideoPlaylist childClass={listId ? "flex 2lg:hidden" : "hidden"} heighlightVideo={videoNo} playlist={playlist} />
+				<VideoPlaylist childClass={listId ? "flex 2lg:hidden" : "hidden"} heighlightVideo={videoId || ""} playlist={playlist} />
 
 				{/* Description */}
 				<div className="border-2 border-primary-border rounded-lg p-2 mt-4">
@@ -178,7 +162,7 @@ const VideoDetail: React.FC = () => {
 						</div>
 
 						{/* Like, Subscribe And Save */}
-						{userId && <LikeSubscribeSave likes={video?.likes} dislikes={video?.dislikes} likeStatus={video?.likeStatus} entityType="video" entityId={videoNo} />}
+						{userId && <LikeSubscribeSave likes={video?.likes} dislikes={video?.dislikes} likeStatus={video?.likeStatus} entityType="video" entityId={videoId || ""} />}
 					</div>
 					<div className="w-full border-primary-border border-b-2 my-3"></div>
 
@@ -192,12 +176,12 @@ const VideoDetail: React.FC = () => {
 			<div className="flex flex-col w-full 2lg:w-1/3">
 
 				{/* Playlist */}
-				<VideoPlaylist childClass={listId ? "2lg:flex hidden" : "hidden"} heighlightVideo={videoNo} playlist={playlist} />
+				<VideoPlaylist childClass={listId ? "2lg:flex hidden" : "hidden"} heighlightVideo={videoId || ""} playlist={playlist} />
 
 				{/* Related Videos */}
 				<div className="flex flex-col w-full">
 					{similarVideos.length > 0 ?
-						similarVideos?.map((video: VideoType) => video._id !== videoNo && (
+						similarVideos?.map((video: VideoType) => video._id !== videoId && (
 							<RelatedVideo key={video?._id} videoInfo={video} />
 						))
 						: ((!video?._id && !hasMore) ?

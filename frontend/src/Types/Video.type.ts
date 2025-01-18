@@ -29,7 +29,7 @@ interface VideoDetailsType extends VideoType {
 	likes: number;
 	dislikes: number;
 	noOfComments: number;
-	VideoFile: {
+	videoFile: {
 		url: string;
 		publicId: string;
 	};

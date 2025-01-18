@@ -8,7 +8,6 @@ import {
     getVideoById,
     videoUpdate,
     deleteVideo,
-    streamVideo,
     ToggleVideoPublishStatus,
 } from "../controllers/video.controller";
 
@@ -26,9 +25,6 @@ router
         ]),
         uploadVideo
     );
-
-// Stream video by publicId
-router.route("/stream").get(streamVideo); // give publicId of video as query param
 
 // Get, update, delete video by id (secured routes)
 router
