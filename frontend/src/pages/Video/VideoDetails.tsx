@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Video, Transformation } from 'cloudinary-react';
+import { Video } from 'cloudinary-react';
 import VideoComments from "./VideoComments";
 import RelatedVideo from "./RelatedVideo";
 import LikeSubscribeSave from "./LikeSubscribeSave";
@@ -17,7 +17,7 @@ import NoResultsFound from "../Search/NoResultsFound";
 import { ErrorType } from "../../Types/Error.type";
 import { ResponseType } from "../../Types/Response.type";
 import { generateAvatar } from "../../utils/GenerateAvatar";
-import { CLOUD_NAME } from "../../Constants";
+import { BASE_URL } from "../../Constants";
 
 const VideoDetail: React.FC = () => {
 	const navigate = useNavigate();
@@ -37,10 +37,8 @@ const VideoDetail: React.FC = () => {
 	const noOfComments: number = video?.noOfComments || 10;
 	const avatarUrl = video?.owner?.avatar?.url || generateAvatar(channelName, "0078e1", "ffffffcc", 50);
 	const videoRef = React.useRef<HTMLVideoElement | null>(null);
-	const videoNo = "67502bffd0104e89cbb9be5c";
+	// const videoId = "j57mrruqxjge191kld5g"; //videoPublicId 
 	const title = video?.title || "Video Title";
-	//--------------------- videoId and videoNo are same ------------------
-	// const videoPublicId = "j57mrruqxjge191kld5g";
 	// const playlistId = "67502bffd0104e89cbb9be5e";
 
 	useEffect(() => {
@@ -71,7 +69,7 @@ const VideoDetail: React.FC = () => {
 			});
 		}).catch((error: ErrorType) => {
 			console.error(error.response.data.message);
-			navigate(listId ? `/video/${videoId}` : `/`);
+			// navigate(listId ? `/video/${videoId}` : `/`);
 		})
 	}, [listId, videoId, userId, navigate]);
 
@@ -116,19 +114,14 @@ const VideoDetail: React.FC = () => {
 			<div className="flex flex-col 2lg:w-2/3 w-full">
 				{/* video */}
 				<Video
-					// duration={30}
-					cloudName={CLOUD_NAME + "cdsc"}
-					publicId={video?.videoFile?.publicId || ""}
-					// publicId={videoPublicId}
+					duration={video?.duration || 0}
+					cloudName="CLOUD_NAME"
+					publicId={`${BASE_URL}/api/v1/videos/video/${videoId}.mp4`}
 					ref={videoRef}
 					width="100%"
 					height="auto"
 					controls
 					autoPlay>
-					<Transformation
-						aspectRatio="16:9"
-						quality="auto:eco,c_fill,h_240,w_426"
-					/>
 				</Video>
 
 				{/* Playlist */}
@@ -170,7 +163,7 @@ const VideoDetail: React.FC = () => {
 				</div>
 
 				{/* Comments */}
-				<VideoComments videoId={videoNo} noOfComments={noOfComments} />
+				<VideoComments videoId={videoId || ""} noOfComments={noOfComments} />
 			</div>
 
 			<div className="flex flex-col w-full 2lg:w-1/3">
@@ -185,7 +178,7 @@ const VideoDetail: React.FC = () => {
 							<RelatedVideo key={video?._id} videoInfo={video} />
 						))
 						: ((!video?._id && !hasMore) ?
-							<NoResultsFound style="mt-40" entityName="video" heading="No videos found"
+							<NoResultsFound style="2lg:mt-40 mt-0" entityName="video" heading="No videos found"
 								message="We couldn't find any similar videos at the moment. Please try again later." />
 							: (<div className='w-full h-full flex justify-center items-center'>
 								<img src={loadingGIF} alt="loading" loading='lazy' className='w-24' />

@@ -8,6 +8,7 @@ import {
     getVideoById,
     videoUpdate,
     deleteVideo,
+    streamVideo,
     ToggleVideoPublishStatus,
 } from "../controllers/video.controller";
 
@@ -32,11 +33,16 @@ router
     .patch(verifyJWT, upload.single("image"), videoUpdate)
     .delete(verifyJWT, deleteVideo);
 
+// Add view to video and update watch History (secured route)
 router.route("/:videoId/views").post(verifyJWT, addView);
+
+// Stream video (public route)
+router.route("/video/:fileName").get(streamVideo);
 
 // Toggle publish status of video (secured route)
 router.route("/:videoId/publish").patch(verifyJWT, ToggleVideoPublishStatus);
 
+// Get video by id (public route)
 router.route("/:videoId/:userId?").get(getVideoById);
 
 export default router;

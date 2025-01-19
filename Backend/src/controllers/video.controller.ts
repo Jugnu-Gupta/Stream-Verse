@@ -16,6 +16,7 @@ import {
     sortCritieria,
     uploadDateCriteria,
 } from "../config/constants/controllers.constants";
+import request from "request";
 
 interface RequestWithUser extends Request {
     user: UserType;
@@ -278,6 +279,27 @@ const getAllVideo = asyncHandler(
             );
     }
 );
+
+const streamVideo = asyncHandler(async (req: Request, res: Response) => {
+    const { fileName } = req.params as { fileName: string };
+    const cloudUrl = `http://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/video/upload/ar_16:9,q_auto:eco,c_fill,h_240,w_426/${fileName}`;
+    request(cloudUrl)
+        .on("response", (response) => {
+            if (response.statusCode !== 200) {
+                console.error(`Error fetching video: ${response.statusCode}`);
+                return res
+                    .status(404)
+                    .json(new ApiResponse(404, null, "Video not found"));
+            }
+        })
+        .on("error", (err) => {
+            console.error("Request error:", err.message);
+            return res
+                .status(500)
+                .json(new ApiResponse(500, null, "Failed to fetch video"));
+        })
+        .pipe(res);
+});
 
 const addView = asyncHandler(async (req: RequestWithUser, res: Response) => {
     const { videoId } = req.params as { videoId: string };
@@ -873,5 +895,6 @@ export {
     getVideoById,
     videoUpdate,
     deleteVideo,
+    streamVideo,
     ToggleVideoPublishStatus,
 };

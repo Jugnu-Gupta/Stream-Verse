@@ -15,10 +15,10 @@ const RelatedVideo: React.FC<VideoListViewProps> = ({ heighlightVideo, videoInfo
 	const duration = formatDuration(videoInfo.duration);
 	const views = formatNumber(videoInfo?.views);
 	const uploadedAt = formatDateDistanceToNow(videoInfo.createdAt);
-	const title = videoInfo.title;
 	const channelName = videoInfo.owner?.fullName;
-	const videoId = videoInfo._id;
 	const ownerName = videoInfo.owner?.userName;
+	const title = videoInfo.title;
+	const videoId = videoInfo._id;
 
 	return (
 		<div className={twMerge("flex gap-2 p-2 pl-0 2lg:pl-2 group w-full", heighlightVideo == videoInfo?._id && "bg-background-secondary")}>
