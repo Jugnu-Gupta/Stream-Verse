@@ -8,6 +8,7 @@ import {
     getPasswordResetText,
     getPasswordResetHtml,
 } from "./emailTemplates";
+import { BASE_URL } from "config/constants/db.constants";
 
 const sendMail = async (email: string, emailType: string, userId: string) => {
     try {
@@ -25,11 +26,11 @@ const sendMail = async (email: string, emailType: string, userId: string) => {
             subject = "Reset your password";
             text = getPasswordResetText(
                 "Jugnu Gupta",
-                `${process.env.BASE_URL}/reset/${hashedToken}`
+                `${BASE_URL}/reset/${hashedToken}`
             );
             html = getPasswordResetHtml(
                 "Jugnu Gupta",
-                `${process.env.BASE_URL}/reset/${hashedToken}`
+                `${BASE_URL}/reset/${hashedToken}`
             );
         } else if (emailType === "VERIFY") {
             await User.findByIdAndUpdate(userId, {
@@ -42,11 +43,11 @@ const sendMail = async (email: string, emailType: string, userId: string) => {
             subject = "Verify your email";
             text = getEmailVerificationText(
                 "Jugnu Gupta",
-                `${process.env.BASE_URL}/email-verification?token=${hashedToken}`
+                `${BASE_URL}/email-verification?token=${hashedToken}`
             );
             html = getEmailVerificationHtml(
                 "Jugnu Gupta",
-                `${process.env.BASE_URL}/email-verification?token=${hashedToken}`
+                `${BASE_URL}/email-verification?token=${hashedToken}`
             );
         } else {
             throw new ApiError(500, "Invalid email type");
