@@ -240,14 +240,13 @@ const validatePasswordResetToken = asyncHandler(
     }
 );
 
-interface ResetPasswordQuery extends Token {
+interface ResetPasswordBody extends Token {
     newPassword?: string;
     confirmPassword?: string;
 }
 
 const resetPassword = asyncHandler(async (req: Request, res: Response) => {
-    const { token, newPassword, confirmPassword }: ResetPasswordQuery =
-        req.body;
+    const { token, newPassword, confirmPassword }: ResetPasswordBody = req.body;
     if (!token) {
         throw new ApiError(400, "Invalid token");
     }
