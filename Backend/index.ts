@@ -1,9 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import mongoose from "mongoose";
-import connectDB from "./db/connectDB";
-import { app } from "./app";
+import connectDB from "./src/db/connectDB";
+import { app } from "./src/app";
 
 const port = process.env.PORT || 8000;
 connectDB()
