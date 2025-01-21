@@ -8,7 +8,7 @@ import {
     getPasswordResetText,
     getPasswordResetHtml,
 } from "./emailTemplates";
-import { BASE_URL } from "config/constants/db.constants";
+import { BASE_URL } from "../config/constants/db.constants";
 
 const sendMail = async (email: string, emailType: string, userId: string) => {
     try {
