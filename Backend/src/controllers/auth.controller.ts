@@ -250,8 +250,13 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
     if (!token) {
         throw new ApiError(400, "Invalid token");
     }
+    if (!newPassword || !confirmPassword) {
+        throw new ApiError(
+            400,
+            "New password and confirm password are required"
+        );
+    }
 
-    // check if the new password and confirm password are same.
     if (newPassword !== confirmPassword) {
         throw new ApiError(
             400,
