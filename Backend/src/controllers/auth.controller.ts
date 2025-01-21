@@ -264,23 +264,19 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
         );
     }
 
-    const user = await User.findOneAndUpdate(
-        {
-            resetPasswordToken: token,
-            resetPasswordTokenExpiry: { $gt: Date.now() },
-        },
-        {
-            $set: { password: newPassword },
-            $unset: {
-                resetPasswordToken: "",
-                resetPasswordTokenExpiry: "",
-            },
-        },
-        { new: true }
-    );
-    if (!user) {
+    const updateUser = await User.findOne({
+        resetPasswordToken: token,
+        resetPasswordTokenExpiry: { $gt: Date.now() },
+    })?.select("avatar coverImage isVerified");
+
+    if (!updateUser) {
         throw new ApiError(401, "Invalid token or token expired");
     }
+
+    updateUser.password = newPassword;
+    updateUser.resetPasswordToken = undefined;
+    updateUser.resetPasswordTokenExpiry = undefined;
+    await updateUser.save();
 
     return res
         .status(200)
