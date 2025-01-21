@@ -17,6 +17,7 @@ import {
     uploadDateCriteria,
 } from "../config/constants/controllers.constants";
 import request from "request";
+import fs from "fs";
 
 interface RequestWithUser extends Request {
     user: UserType;
@@ -375,58 +376,82 @@ const uploadVideo = asyncHandler(
 
         const thumbnailLocalPath = (req as FileType).files?.image?.[0]?.path;
         const videoLocalPath = (req as FileType).files?.video?.[0]?.path;
-        if (!videoLocalPath || !thumbnailLocalPath) {
-            const message = !videoLocalPath
-                ? "Video is required"
-                : "Thumbnail is required";
-            throw new ApiError(400, message);
+        try {
+            if (!videoLocalPath || !thumbnailLocalPath) {
+                const message = !videoLocalPath
+                    ? "Video is required"
+                    : "Thumbnail is required";
+                throw new ApiError(400, message);
+            }
+
+            const videoFile = await uploadOnCloudinary(videoLocalPath, "video");
+            const videoQuality = getVideoQuality(
+                videoFile.width,
+                videoFile.height
+            );
+            const thumbnail = await uploadOnCloudinary(
+                thumbnailLocalPath,
+                "image"
+            );
+            if (
+                !videoFile?.secure_url ||
+                !videoFile?.public_id ||
+                !thumbnail?.secure_url ||
+                !thumbnail?.public_id
+            ) {
+                const message = !(videoFile?.secure_url || videoFile?.public_id)
+                    ? "Failed to upload video"
+                    : "Failed to upload thumbnail";
+                throw new ApiError(500, message);
+            }
+
+            const video = await Video.create({
+                videoFile: {
+                    publicId: videoFile?.public_id,
+                    url: videoFile?.secure_url,
+                },
+                thumbnail: {
+                    publicId: thumbnail?.public_id,
+                    url: thumbnail?.secure_url,
+                },
+                quality: videoQuality,
+                title,
+                description,
+                duration: videoFile?.duration,
+                ownerId: req.user?._id,
+            });
+
+            // check if video is created
+            const uploadedVideo = await Video.findById(video?._id);
+            if (!uploadedVideo) {
+                throw new ApiError(500, "Failed to upload video");
+            }
+
+            fs.unlinkSync(thumbnailLocalPath);
+            fs.unlinkSync(videoLocalPath);
+
+            return res
+                .status(201)
+                .json(
+                    new ApiResponse(
+                        201,
+                        uploadedVideo,
+                        "Video uploaded successfully"
+                    )
+                );
+        } catch (error) {
+            try {
+                if (fs.existsSync(thumbnailLocalPath)) {
+                    fs.unlinkSync(thumbnailLocalPath);
+                }
+                if (fs.existsSync(videoLocalPath)) {
+                    fs.unlinkSync(videoLocalPath);
+                }
+            } catch (cleanupError) {
+                console.error("Failed to delete local file:", cleanupError);
+            }
+            throw error;
         }
-
-        // const videoFile = await uploadOnCloudinary(videoLocalPath, "video");
-        // const videoQuality = getVideoQuality(videoFile.width, videoFile.height);
-        // const thumbnail = await uploadOnCloudinary(thumbnailLocalPath, "image");
-        // if (
-        //     !videoFile?.secure_url ||
-        //     !videoFile?.public_id ||
-        //     !thumbnail?.secure_url ||
-        //     !thumbnail?.public_id
-        // ) {
-        //     const message = !videoFile
-        //         ? "Failed to upload video"
-        //         : "Failed to upload thumbnail";
-        //     throw new ApiError(500, message);
-        // }
-
-        // const video = await Video.create({
-        //     videoFile: {
-        //         publicId: videoFile?.public_id,
-        //         url: videoFile?.secure_url,
-        //     },
-        //     thumbnail: {
-        //         publicId: thumbnail?.public_id,
-        //         url: thumbnail?.secure_url,
-        //     },
-        //     quality: videoQuality,
-        //     title,
-        //     description,
-        //     duration: videoFile?.duration,
-        //     ownerId: req.user?._id,
-        // });
-
-        // // check if video is created
-        // const uploadedVideo = await Video.findById(video?._id);
-        // if (!uploadedVideo) {
-        //     throw new ApiError(500, "Failed to upload video");
-        // }
-
-        return res.status(201).json(
-            new ApiResponse(
-                201,
-                null,
-                // uploadedVideo,
-                "Video uploaded successfully"
-            )
-        );
     }
 );
 
@@ -621,59 +646,79 @@ const videoUpdate = asyncHandler(
         const { title, description }: VideoUpdateBody = req.body;
         const thumbnailLocalPath: string | undefined = req.file?.path;
 
-        if (!isValidObjectId(videoId)) {
-            throw new ApiError(400, "Invalid Video Id");
-        }
-        if (!title && !description && !thumbnailLocalPath) {
-            throw new ApiError(
-                400,
-                "Title, description or thumbnail is required"
-            );
-        }
+        try {
+            if (!isValidObjectId(videoId)) {
+                throw new ApiError(400, "Invalid Video Id");
+            }
+            if (!title && !description && !thumbnailLocalPath) {
+                throw new ApiError(
+                    400,
+                    "Title, description or thumbnail is required"
+                );
+            }
 
-        const video = await Video.findById(videoId);
-        if (!video) {
-            throw new ApiError(404, "Video not found");
-        }
+            const video = await Video.findById(videoId);
+            if (!video) {
+                throw new ApiError(404, "Video not found");
+            }
 
-        if (title) video.title = title;
-        if (description) video.description = description;
-        if (thumbnailLocalPath) {
-            // delete existing thumbnail
-            if (video?.thumbnail?.publicId) {
-                const oldThumbnail = await deleteFromCloudinary(
-                    video.thumbnail.publicId,
+            if (title) video.title = title;
+            if (description) video.description = description;
+            if (thumbnailLocalPath) {
+                // delete existing thumbnail
+                if (video?.thumbnail?.publicId) {
+                    const oldThumbnail = await deleteFromCloudinary(
+                        video.thumbnail.publicId,
+                        "image"
+                    );
+
+                    // check if thumbnail is deleted
+                    if (!oldThumbnail) {
+                        throw new ApiError(500, "Failed to delete thumbnail");
+                    }
+                }
+
+                const thumbnail = await uploadOnCloudinary(
+                    thumbnailLocalPath,
                     "image"
                 );
+                if (!thumbnail) {
+                    throw new ApiError(500, "Failed to upload thumbnail");
+                }
+                video.thumbnail = {
+                    publicId: thumbnail?.public_id,
+                    url: thumbnail?.secure_url,
+                };
+            }
 
-                // check if thumbnail is deleted
-                if (!oldThumbnail) {
-                    throw new ApiError(500, "Failed to delete thumbnail");
+            const updatedVideo = await video.save();
+            if (!updatedVideo) {
+                throw new ApiError(500, "Failed to update video");
+            }
+
+            if (fs.existsSync(thumbnailLocalPath)) {
+                fs.unlinkSync(thumbnailLocalPath);
+            }
+
+            return res
+                .status(200)
+                .json(
+                    new ApiResponse(
+                        200,
+                        updatedVideo,
+                        "Video updated successfully"
+                    )
+                );
+        } catch (error) {
+            if (fs.existsSync(thumbnailLocalPath)) {
+                try {
+                    fs.unlinkSync(thumbnailLocalPath);
+                } catch (cleanupError) {
+                    console.error("Failed to delete local file:", cleanupError);
                 }
             }
-
-            const thumbnail = await uploadOnCloudinary(
-                thumbnailLocalPath,
-                "image"
-            );
-            if (!thumbnail) {
-                throw new ApiError(500, "Failed to upload thumbnail");
-            }
-            video.thumbnail = {
-                publicId: thumbnail?.public_id,
-                url: thumbnail?.secure_url,
-            };
+            throw error;
         }
-
-        const updatedVideo = await video.save();
-        if (!updatedVideo) {
-            throw new ApiError(500, "Failed to update video");
-        }
-
-        return res.status(200).json(
-            new ApiResponse(200, null, "Video updated successfully")
-            // new ApiResponse(200, updatedVideo, "Video updated successfully")
-        );
     }
 );
 

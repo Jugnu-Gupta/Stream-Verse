@@ -94,7 +94,7 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ videoId, noOfComments }) 
 		{comments?.length === 0 ?
 			(!hasMore ? <NoResultsFound style="mt-0" entityName="comment"
 				heading="No comments" message="This video has no comments, drop your below!" />
-				: (<div className='w-full h-full flex justify-center items-center'>
+				: (<div className='w-full h-fit flex justify-center items-center'>
 					<img src={loadingGIF} alt="loading" loading='lazy' className='w-24' />
 				</div>)
 			) : comments?.map((comment: CommentType) => (
