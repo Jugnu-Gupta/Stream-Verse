@@ -4,8 +4,8 @@ import makeApiRequest from '../../utils/MakeApiRequest';
 import { MdDriveFileRenameOutline } from "react-icons/md";
 import { RiDeleteBinLine } from "react-icons/ri";
 import toast from 'react-hot-toast';
-import { EditDeleteWrapper } from "../../Types/EditDelete.type";
-import { ErrorType } from '../../Types/Error.type';
+import { EditDeleteWrapper } from "../../type/EditDelete.type";
+import { ErrorType } from '../../type/Error.type';
 
 interface EditPlaylistProps extends EditDeleteWrapper {
     playlistId: string;

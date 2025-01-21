@@ -2,10 +2,10 @@ import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import { RxCross2 } from "react-icons/rx";
 import { useMedia } from '../../hooks/useMedia';
 import { makeApiMediaRequest } from '../../utils/MakeApiRequest';
-import { DashboardVideoType } from '../../Types/Dashboard.type';
+import { DashboardVideoType } from '../../type/Dashboard.type';
 import toast from 'react-hot-toast';
 import { twMerge } from 'tailwind-merge';
-import { ErrorType } from '../../Types/Error.type';
+import { ErrorType } from '../../type/Error.type';
 
 interface EditVideoModalProps {
     videoInfo: DashboardVideoType;

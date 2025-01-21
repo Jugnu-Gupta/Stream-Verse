@@ -6,9 +6,9 @@ import EditVideoModal from "../../components/Popup/EditVideoModal";
 import DeleteModal from "../../components/Popup/DeleteModal";
 import { format } from "date-fns";
 import { formatNumber } from "../../utils/FormatNumber";
-import { DashboardVideoType } from "../../Types/Dashboard.type";
+import { DashboardVideoType } from "../../type/Dashboard.type";
 import makeApiRequest from "../../utils/MakeApiRequest";
-import { ErrorType } from "../../Types/Error.type";
+import { ErrorType } from "../../type/Error.type";
 
 interface DashboardVideoStatsControlProps {
 	videoInfo: DashboardVideoType;

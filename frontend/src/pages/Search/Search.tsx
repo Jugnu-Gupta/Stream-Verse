@@ -1,20 +1,20 @@
 import React, { useCallback, useEffect } from "react";
 import VideoListView from "./VideoListView";
 import VideoCardView from "../Home/VideoCardView";
-import { VideoType } from "../../Types/Video.type";
+import { VideoType } from "../../type/Video.type";
 import PlaylistListView from "./PlaylistListView";
-import { PlaylistType } from "../../Types/Platlist.type";
+import { PlaylistType } from "../../type/Platlist.type";
 import PlaylistCardView from "./PlaylistCardView";
 import ChannelCardView from "./ChannelCardView";
-import { ChannelType } from "../../Types/Channel.type";
+import { ChannelType } from "../../type/Channel.type";
 import NoResultsFound from "./NoResultsFound";
 import { useSearchParams } from "react-router-dom";
 import makeApiRequest from "../../utils/MakeApiRequest";
-import { SearchType } from "../../Types/Search.type";
+import { SearchType } from "../../type/Search.type";
 import { usePagination } from "../../hooks/usePagination";
 import loadingGIF from "../../assets/loading.gif";
-import { ErrorType } from "../../Types/Error.type";
-import { ResponseType } from "../../Types/Response.type";
+import { ErrorType } from "../../type/Error.type";
+import { ResponseType } from "../../type/Response.type";
 
 
 const Search: React.FC = () => {

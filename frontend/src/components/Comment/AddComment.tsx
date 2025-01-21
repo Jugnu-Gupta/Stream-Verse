@@ -5,9 +5,9 @@ import { addComments } from '../../context/slices/Comment.slice';
 import { useDispatch } from 'react-redux';
 import { increaseCount } from '../../context/slices/Counter.slice';
 import { AppDispatch } from '../../context/store';
-import { CommentType } from '../../Types/Comment.type';
-import { ErrorType } from '../../Types/Error.type';
-import { ResponseType } from '../../Types/Response.type';
+import { CommentType } from '../../type/Comment.type';
+import { ErrorType } from '../../type/Error.type';
+import { ResponseType } from '../../type/Response.type';
 import { generateAvatar } from '../../utils/GenerateAvatar';
 import toast from 'react-hot-toast';
 

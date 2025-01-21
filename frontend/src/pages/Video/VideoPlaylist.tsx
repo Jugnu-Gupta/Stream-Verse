@@ -4,8 +4,8 @@ import { RxCross2 } from "react-icons/rx";
 import RelatedVideo from "./RelatedVideo";
 import { IoIosArrowDown } from "react-icons/io";
 import { formatNumber } from '../../utils/FormatNumber';
-import { PlaylistVideosType } from '../../Types/Platlist.type';
-import { VideoType } from '../../Types/Video.type';
+import { PlaylistVideosType } from '../../type/Platlist.type';
+import { VideoType } from '../../type/Video.type';
 
 interface VideoPlaylistProps {
     childClass: string;

@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { twMerge } from 'tailwind-merge';
-import { ErrorType } from '../../../Types/Error.type';
+import { ErrorType } from '../../../type/Error.type';
 
 interface ChangePasswordFormProps {
     email: string | undefined;

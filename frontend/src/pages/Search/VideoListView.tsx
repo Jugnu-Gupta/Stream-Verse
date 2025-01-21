@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { formatDuration } from "../../utils/FormatDuration";
 import { formatDateDistanceToNow } from "../../utils/FormatDateDistanceToNow";
 import { formatNumber } from "../../utils/FormatNumber";
-import { VideoType } from "../../Types/Video.type";
+import { VideoType } from "../../type/Video.type";
 import { generateAvatar } from "../../utils/GenerateAvatar";
 
 interface VideoListViewProps {

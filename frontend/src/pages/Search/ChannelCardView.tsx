@@ -1,6 +1,6 @@
 import React from "react";
 import { formatNumber } from "../../utils/FormatNumber";
-import { ChannelType } from "../../Types/Channel.type";
+import { ChannelType } from "../../type/Channel.type";
 import { useNavigate } from "react-router-dom";
 import { generateAvatar } from "../../utils/GenerateAvatar";
 

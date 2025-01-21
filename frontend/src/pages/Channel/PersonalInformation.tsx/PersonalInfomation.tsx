@@ -6,10 +6,10 @@ import { CHANNELNAVITEMS2 } from "../../../Constants/ChannelNavbar";
 import ChannelNavbar from "../Navbar/ChannelNavbar";
 import makeApiRequest from "../../../utils/MakeApiRequest";
 import { formatNumber } from "../../../utils/FormatNumber";
-import { ChannelInfoType } from "../../../Types/Channel.type";
+import { ChannelInfoType } from "../../../type/Channel.type";
 import { useMedia } from "../../../hooks/useMedia";
-import { ErrorType } from "../../../Types/Error.type";
-import { ResponseType } from "../../../Types/Response.type";
+import { ErrorType } from "../../../type/Error.type";
+import { ResponseType } from "../../../type/Response.type";
 import { twMerge } from "tailwind-merge";
 import { generateAvatar } from "../../../utils/GenerateAvatar";
 

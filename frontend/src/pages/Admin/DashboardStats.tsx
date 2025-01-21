@@ -6,11 +6,11 @@ import { FaRegHeart } from "react-icons/fa";
 import { BiCommentDetail } from "react-icons/bi";
 import { useNavigate } from 'react-router-dom';
 import makeApiRequest from '../../utils/MakeApiRequest';
-import { DashboardStatsType } from '../../Types/Dashboard.type';
+import { DashboardStatsType } from '../../type/Dashboard.type';
 import UploadVideoModal from "../../components/Popup/UploadVideoModal";
 import UploadingVideoModal from '../../components/Popup/UploadingVideoModal';
-import { ErrorType } from '../../Types/Error.type';
-import { ResponseType } from '../../Types/Response.type';
+import { ErrorType } from '../../type/Error.type';
+import { ResponseType } from '../../type/Response.type';
 
 
 const DashboardStats: React.FC = () => {

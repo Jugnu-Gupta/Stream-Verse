@@ -4,21 +4,21 @@ import makeApiRequest from "../../utils/MakeApiRequest";
 import { useNavigate, useParams } from "react-router-dom";
 import { addComments, clearComments, deleteComment } from "../../context/slices/Comment.slice";
 import { useDispatch, useSelector } from "react-redux";
-import { CommentType } from "../../Types/Comment.type";
+import { CommentType } from "../../type/Comment.type";
 import AddComment from "../../components/Comment/AddComment";
 import { formatNumber } from "../../utils/FormatNumber";
-import { TweetType } from "../../Types/Tweet.type";
+import { TweetType } from "../../type/Tweet.type";
 import { selectReplies } from "./SelectReplies";
 import { AppDispatch, RootState } from "../../context/store";
 import { setCounter } from "../../context/slices/Counter.slice";
-import { EditDeleteType } from "../../Types/EditDelete.type";
+import { EditDeleteType } from "../../type/EditDelete.type";
 import DeleteModal from "../../components/Popup/DeleteModal";
 import ChannelTweetList2 from "../Channel/Tweets/ChannelTweetList2";
 import NoResultsFound from "../Search/NoResultsFound";
 import { usePagination } from "../../hooks/usePagination";
 import loadingGIF from "../../assets/loading.gif";
-import { ErrorType } from "../../Types/Error.type";
-import { ResponseType } from "../../Types/Response.type";
+import { ErrorType } from "../../type/Error.type";
+import { ResponseType } from "../../type/Response.type";
 
 
 const TweetDetails: React.FC = () => {

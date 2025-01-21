@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useEffect } from "react";
 import makeApiRequest from "../utils/MakeApiRequest";
-import { ErrorType } from "../Types/Error.type";
+import { ErrorType } from "../type/Error.type";
 import toast from "react-hot-toast";
 
 const handleDBLike = (

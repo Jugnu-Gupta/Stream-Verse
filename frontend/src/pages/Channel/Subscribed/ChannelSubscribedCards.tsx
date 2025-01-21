@@ -2,13 +2,13 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 import { formatNumber } from "../../../utils/FormatNumber";
-import { SubscribedChannelType } from "../../../Types/Channel.type";
+import { SubscribedChannelType } from "../../../type/Channel.type";
 import { generateAvatar } from "../../../utils/GenerateAvatar";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../context/store";
 import { decreaseCount, increaseCount, setCounter } from "../../../context/slices/Counter.slice";
 import makeApiRequest from "../../../utils/MakeApiRequest";
-import { ErrorType } from "../../../Types/Error.type";
+import { ErrorType } from "../../../type/Error.type";
 import toast from "react-hot-toast";
 
 interface ChannelSubscribedCardsProps {

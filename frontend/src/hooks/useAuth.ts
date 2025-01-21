@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import makeApiRequest from "../utils/MakeApiRequest";
-import { ErrorType } from "../Types/Error.type";
+import { ErrorType } from "../type/Error.type";
 
 export const useAuth = () => {
 	const navigate = useNavigate();

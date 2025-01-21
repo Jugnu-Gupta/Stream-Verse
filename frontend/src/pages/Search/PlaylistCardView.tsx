@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { formatDateDistanceToNow } from "../../utils/FormatDateDistanceToNow";
 import { formatNumber } from "../../utils/FormatNumber";
-import { PlaylistType } from "../../Types/Platlist.type";
+import { PlaylistType } from "../../type/Platlist.type";
 import { CgPlayList } from "react-icons/cg";
 import { FaPlay, FaVideoSlash } from "react-icons/fa";
 

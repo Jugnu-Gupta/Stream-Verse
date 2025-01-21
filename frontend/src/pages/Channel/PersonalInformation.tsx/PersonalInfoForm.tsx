@@ -3,10 +3,10 @@ import { useFormik } from 'formik';
 import toast from 'react-hot-toast';
 import makeApiRequest, { makeApiMediaRequest } from '../../../utils/MakeApiRequest';
 import { PersonalInfoValidationSchema } from './PersonalInfoValidationSchema';
-import { ChannelInfoType } from '../../../Types/Channel.type';
+import { ChannelInfoType } from '../../../type/Channel.type';
 import { twMerge } from 'tailwind-merge';
-import { ErrorType } from '../../../Types/Error.type';
-import { ResponseType } from '../../../Types/Response.type';
+import { ErrorType } from '../../../type/Error.type';
+import { ResponseType } from '../../../type/Response.type';
 
 interface PersonalInfoFormProps {
     channelInfo: ChannelInfoType | undefined;

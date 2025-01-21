@@ -4,7 +4,7 @@ import { CgPlayList } from "react-icons/cg";
 import { FaPlay, FaVideoSlash } from "react-icons/fa";
 import { formatNumber } from "../../../utils/FormatNumber";
 import { formatDateDistanceToNow } from "../../../utils/FormatDateDistanceToNow";
-import { PlaylistType } from "../../../Types/Platlist.type";
+import { PlaylistType } from "../../../type/Platlist.type";
 
 interface ChannelVideosCardProps {
 	playlist: PlaylistType;

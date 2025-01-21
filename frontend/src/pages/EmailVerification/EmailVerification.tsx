@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import makeApiRequest from "../../utils/MakeApiRequest";
 import emailVerification from "../../assets/email-verification.gif";
-import { ResponseType } from "../../Types/Response.type";
+import { ResponseType } from "../../type/Response.type";
 
 const EmailVerification: React.FC = () => {
 	const navigate = useNavigate();

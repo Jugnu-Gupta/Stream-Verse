@@ -6,7 +6,7 @@ import validateMediaSize from '../../utils/ValidateMediaSize';
 import { useMedia } from '../../hooks/useMedia';
 import { makeApiMediaRequest } from '../../utils/MakeApiRequest';
 import toast from 'react-hot-toast';
-import { ErrorType } from '../../Types/Error.type';
+import { ErrorType } from '../../type/Error.type';
 
 interface UploadVideoModalProps {
     setVideoName: Dispatch<SetStateAction<string>>;

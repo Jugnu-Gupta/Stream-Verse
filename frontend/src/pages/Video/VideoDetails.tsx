@@ -9,13 +9,13 @@ import makeApiRequest from "../../utils/MakeApiRequest";
 import { formatNumber } from "../../utils/FormatNumber";
 import { formatDateDistanceToNow } from "../../utils/FormatDateDistanceToNow";
 import ShowHideText from "../../components/Text/ShowHideText";
-import { VideoDetailsType, VideoType } from "../../Types/Video.type";
-import { PlaylistVideosType } from "../../Types/Platlist.type";
+import { VideoDetailsType, VideoType } from "../../type/Video.type";
+import { PlaylistVideosType } from "../../type/Platlist.type";
 import { usePagination } from "../../hooks/usePagination";
 import loadingGIF from '../../assets/loading.gif';
 import NoResultsFound from "../Search/NoResultsFound";
-import { ErrorType } from "../../Types/Error.type";
-import { ResponseType } from "../../Types/Response.type";
+import { ErrorType } from "../../type/Error.type";
+import { ResponseType } from "../../type/Response.type";
 import { generateAvatar } from "../../utils/GenerateAvatar";
 import { BASE_URL } from "../../Constants";
 
@@ -69,7 +69,7 @@ const VideoDetail: React.FC = () => {
 			});
 		}).catch((error: ErrorType) => {
 			console.error(error.response.data.message);
-			// navigate(listId ? `/video/${videoId}` : `/`);
+			navigate(listId ? `/video/${videoId}` : `/`);
 		})
 	}, [listId, videoId, userId, navigate]);
 
@@ -116,7 +116,7 @@ const VideoDetail: React.FC = () => {
 				<Video
 					duration={video?.duration || 0}
 					cloudName="CLOUD_NAME"
-					publicId={`${BASE_URL}/api/v1/videos/video/${videoId}.mp4`}
+					publicId={`${BASE_URL}/api/v1/videos/video/${videoId + "dv"}.mp4`} // wrong
 					ref={videoRef}
 					width="100%"
 					height="auto"

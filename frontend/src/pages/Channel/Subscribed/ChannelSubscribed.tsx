@@ -3,11 +3,11 @@ import ChannelSubcribedCards from "./ChannelSubscribedCards";
 import { IoSearchSharp } from "react-icons/io5";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import makeApiRequest from "../../../utils/MakeApiRequest";
-import { ChannelInfoType, SubscribedChannelType } from "../../../Types/Channel.type";
+import { ChannelInfoType, SubscribedChannelType } from "../../../type/Channel.type";
 import NoResultsFound from "../../Search/NoResultsFound";
 import loadingGIF from "../../../assets/loading.gif";
-import { ErrorType } from "../../../Types/Error.type";
-import { ResponseType } from "../../../Types/Response.type";
+import { ErrorType } from "../../../type/Error.type";
+import { ResponseType } from "../../../type/Response.type";
 interface SubscribedChannelWrapper {
 	_id: string;
 	channel: SubscribedChannelType;

@@ -2,7 +2,7 @@ import React from "react";
 import ChannelNavbar from "../Navbar/ChannelNavbar";
 import ChannelInfo from "./ChannelInfo";
 import CHANNELNAVITEMS from "../../../Constants/ChannelNavbar";
-import { ChannelInfoType } from "../../../Types/Channel.type";
+import { ChannelInfoType } from "../../../type/Channel.type";
 
 interface ChannelHeaderProps {
 	channelInfo: ChannelInfoType | undefined;

@@ -2,9 +2,9 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import makeApiRequest from '../../utils/MakeApiRequest';
 import DashboardVideoStatsControl from "./DashboardVideoStatsControl";
-import { DashboardVideoType } from '../../Types/Dashboard.type';
-import { ErrorType } from '../../Types/Error.type';
-import { ResponseType } from '../../Types/Response.type';
+import { DashboardVideoType } from '../../type/Dashboard.type';
+import { ErrorType } from '../../type/Error.type';
+import { ResponseType } from '../../type/Response.type';
 import NoResultsFound from '../Search/NoResultsFound';
 import loadingGIF from '../../assets/loading.gif';
 

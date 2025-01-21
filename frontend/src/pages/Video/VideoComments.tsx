@@ -4,19 +4,19 @@ import makeApiRequest from "../../utils/MakeApiRequest";
 import { addComments, clearComments, deleteComment }
 	from "../../context/slices/Comment.slice";
 import { useDispatch, useSelector } from "react-redux";
-import { CommentType } from "../../Types/Comment.type";
+import { CommentType } from "../../type/Comment.type";
 import AddComment from "../../components/Comment/AddComment";
 import { AppDispatch, RootState } from "../../context/store";
 import { selectReplies } from "../Tweet/SelectReplies";
 import { setCounter } from "../../context/slices/Counter.slice";
 import { formatNumber } from "../../utils/FormatNumber";
-import { EditDeleteType } from "../../Types/EditDelete.type";
+import { EditDeleteType } from "../../type/EditDelete.type";
 import DeleteModal from "../../components/Popup/DeleteModal";
 import NoResultsFound from "../Search/NoResultsFound";
 import { usePagination } from "../../hooks/usePagination";
 import loadingGIF from "../../assets/loading.gif";
-import { ErrorType } from "../../Types/Error.type";
-import { ResponseType } from "../../Types/Response.type";
+import { ErrorType } from "../../type/Error.type";
+import { ResponseType } from "../../type/Response.type";
 
 interface VideoCommentsProps {
 	videoId: string;

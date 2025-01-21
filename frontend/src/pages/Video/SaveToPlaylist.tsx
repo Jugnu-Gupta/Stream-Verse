@@ -1,9 +1,9 @@
 import React, { useEffect, Dispatch, SetStateAction } from 'react';
 import makeApiRequest from '../../utils/MakeApiRequest';
-import { PlaylistType } from '../../Types/Platlist.type';
+import { PlaylistType } from '../../type/Platlist.type';
 import toast from 'react-hot-toast';
-import { ErrorType } from '../../Types/Error.type';
-import { ResponseType } from '../../Types/Response.type';
+import { ErrorType } from '../../type/Error.type';
+import { ResponseType } from '../../type/Response.type';
 
 interface UserPlatlistsType {
     id: string;

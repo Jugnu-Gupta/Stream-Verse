@@ -7,8 +7,8 @@ import { FaRegEyeSlash } from "react-icons/fa";
 import makeApiRequest from "../../utils/MakeApiRequest";
 import { RegistrationValidationSchema } from "./RegistrationValidationSchema";
 import toast from "react-hot-toast";
-import { ErrorType } from "../../Types/Error.type";
-import { ResponseType } from "../../Types/Response.type";
+import { ErrorType } from "../../type/Error.type";
+import { ResponseType } from "../../type/Response.type";
 
 const RegistrationForm: React.FC = () => {
 	const [showPassword, setShowPassword] = React.useState(false);

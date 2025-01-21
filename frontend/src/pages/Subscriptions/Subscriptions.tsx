@@ -3,11 +3,11 @@ import VideoCardView from '../Home/VideoCardView';
 import VideoListView from '../Search/VideoListView';
 import { useNavigate } from 'react-router-dom';
 import makeApiRequest from '../../utils/MakeApiRequest';
-import { VideoType } from '../../Types/Video.type';
+import { VideoType } from '../../type/Video.type';
 import NoResultsFound from '../Search/NoResultsFound';
 import loadingGIF from '../../assets/loading.gif';
-import { ErrorType } from '../../Types/Error.type';
-import { ResponseType } from '../../Types/Response.type';
+import { ErrorType } from '../../type/Error.type';
+import { ResponseType } from '../../type/Response.type';
 
 interface VideoWrapper {
     _id: string;

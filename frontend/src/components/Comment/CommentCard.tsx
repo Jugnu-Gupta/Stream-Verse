@@ -12,18 +12,18 @@ import { formatDateDistanceToNow } from "../../utils/FormatDateDistanceToNow";
 import { addComments, updateComment } from "../../context/slices/Comment.slice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../context/store";
-import { CommentType } from "../../Types/Comment.type";
+import { CommentType } from "../../type/Comment.type";
 import { selectReplies } from "../../pages/Tweet/SelectReplies";
 import AddComment from "./AddComment";
 import useLikeDislike from "../../hooks/useLikeDislike";
 import { computeDislikeCount, computeLikeCount }
 	from "../../utils/ComputeLikeDislikeCount";
 import EditDeleteComment from "./EditDeleteComment";
-import { EditDeleteWrapper } from "../../Types/EditDelete.type";
+import { EditDeleteWrapper } from "../../type/EditDelete.type";
 import toast from "react-hot-toast";
 import { usePagination } from "../../hooks/usePagination";
-import { ErrorType } from "../../Types/Error.type";
-import { ResponseType } from "../../Types/Response.type";
+import { ErrorType } from "../../type/Error.type";
+import { ResponseType } from "../../type/Response.type";
 import { generateAvatar } from "../../utils/GenerateAvatar";
 
 interface CommentProps extends EditDeleteWrapper {

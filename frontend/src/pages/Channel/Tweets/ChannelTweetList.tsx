@@ -7,18 +7,18 @@ import { BiSolidDislike } from "react-icons/bi";
 import { BiCommentDetail } from "react-icons/bi";
 import { formatDateDistanceToNow } from "../../../utils/FormatDateDistanceToNow";
 import { formatNumber } from "../../../utils/FormatNumber";
-import { TweetType } from "../../../Types/Tweet.type";
+import { TweetType } from "../../../type/Tweet.type";
 import useLikeDislike from "../../../hooks/useLikeDislike";
 import { computeDislikeCount, computeLikeCount }
 	from "../../../utils/ComputeLikeDislikeCount";
-import { EditDeleteWrapper } from "../../../Types/EditDelete.type";
+import { EditDeleteWrapper } from "../../../type/EditDelete.type";
 import { makeApiMediaRequest } from "../../../utils/MakeApiRequest";
 import EditDeleteTweet from "./EditDeleteTweet";
 import { IoImageOutline } from "react-icons/io5";
 import { useMedia } from "../../../hooks/useMedia";
 import { twMerge } from "tailwind-merge";
 import toast from "react-hot-toast";
-import { ErrorType } from "../../../Types/Error.type";
+import { ErrorType } from "../../../type/Error.type";
 
 interface ChannelTweetListProps extends EditDeleteWrapper {
 	tweetInfo: TweetType | undefined;

@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge";
 import { formatDuration } from "../../utils/FormatDuration";
 import { formatNumber } from "../../utils/FormatNumber";
 import { formatDateDistanceToNow } from "../../utils/FormatDateDistanceToNow";
-import { VideoType } from "../../Types/Video.type";
+import { VideoType } from "../../type/Video.type";
 
 interface VideoListViewProps {
 	heighlightVideo?: string;

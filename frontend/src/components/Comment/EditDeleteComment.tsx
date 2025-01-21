@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { MdDriveFileRenameOutline } from "react-icons/md";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { EditDeleteWrapper } from '../../Types/EditDelete.type';
+import { EditDeleteWrapper } from '../../type/EditDelete.type';
 
 interface EditDeleteCommentProps extends EditDeleteWrapper {
 	currPath: string[];

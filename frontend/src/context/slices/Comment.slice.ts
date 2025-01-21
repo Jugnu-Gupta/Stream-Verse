@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { CommentType } from "../../Types/Comment.type";
+import { CommentType } from "../../type/Comment.type";
 
 export interface TreeNode {
 	val: CommentType;

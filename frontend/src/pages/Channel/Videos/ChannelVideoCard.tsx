@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { formatNumber } from "../../../utils/FormatNumber";
 import { formatDateDistanceToNow } from "../../../utils/FormatDateDistanceToNow";
 import { formatDuration } from "../../../utils/FormatDuration";
-import { VideoType } from "../../../Types/Video.type";
+import { VideoType } from "../../../type/Video.type";
 
 interface ChannelVideosCardProps {
 	videoInfo: VideoType;

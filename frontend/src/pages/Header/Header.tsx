@@ -10,7 +10,7 @@ import makeApiRequest from "../../utils/MakeApiRequest";
 import { AppDispatch, RootState } from "../../context/store";
 import { useAuth } from "../../hooks/useAuth";
 import Cookies from "js-cookie";
-import { ErrorType } from "../../Types/Error.type";
+import { ErrorType } from "../../type/Error.type";
 import toast from "react-hot-toast";
 
 const Header: React.FC = () => {

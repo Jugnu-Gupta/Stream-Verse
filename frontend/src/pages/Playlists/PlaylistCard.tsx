@@ -4,9 +4,9 @@ import { CgPlayList } from "react-icons/cg";
 import { FaPlay } from "react-icons/fa";
 import { formatNumber } from "../../utils/FormatNumber";
 import { formatDateDistanceToNow } from "../../utils/FormatDateDistanceToNow";
-import { PlaylistType } from "../../Types/Platlist.type";
+import { PlaylistType } from "../../type/Platlist.type";
 import EditDeletePlaylist from "./EditDeletePlaylist";
-import { EditDeleteWrapper } from "../../Types/EditDelete.type";
+import { EditDeleteWrapper } from "../../type/EditDelete.type";
 import { FaVideoSlash } from "react-icons/fa";
 
 interface ChannelVideosCardProps extends EditDeleteWrapper {

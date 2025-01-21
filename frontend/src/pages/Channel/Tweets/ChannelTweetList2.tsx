@@ -7,7 +7,7 @@ import { BiSolidDislike } from "react-icons/bi";
 import { BiCommentDetail } from "react-icons/bi";
 import { formatDateDistanceToNow } from "../../../utils/FormatDateDistanceToNow";
 import { formatNumber } from "../../../utils/FormatNumber";
-import { TweetType } from "../../../Types/Tweet.type";
+import { TweetType } from "../../../type/Tweet.type";
 import useLikeDislike from "../../../hooks/useLikeDislike";
 import { computeDislikeCount, computeLikeCount }
     from "../../../utils/ComputeLikeDislikeCount";

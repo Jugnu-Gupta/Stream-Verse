@@ -2,11 +2,11 @@ import React from "react";
 import ChannelPlaylistCard from "./ChannelPlaylistCard";
 import makeApiRequest from "../../../utils/MakeApiRequest";
 import { useNavigate, useParams } from "react-router-dom";
-import { PlaylistType } from "../../../Types/Platlist.type";
+import { PlaylistType } from "../../../type/Platlist.type";
 import NoResultsFound from "../../Search/NoResultsFound";
 import loadingGIF from "../../../assets/loading.gif";
-import { ErrorType } from "../../../Types/Error.type";
-import { ResponseType } from "../../../Types/Response.type";
+import { ErrorType } from "../../../type/Error.type";
+import { ResponseType } from "../../../type/Response.type";
 
 const ChannelPlaylists: React.FC = () => {
 	const [playlists, setPlaylists] = React.useState<PlaylistType[]>([]);

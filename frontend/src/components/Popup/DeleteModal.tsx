@@ -3,11 +3,11 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { RxCross2 } from "react-icons/rx";
 import makeApiRequest from '../../utils/MakeApiRequest';
 import toast from 'react-hot-toast';
-import { ErrorType } from '../../Types/Error.type';
+import { ErrorType } from '../../type/Error.type';
 import { AppDispatch, RootState } from '../../context/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCounter } from '../../context/slices/Counter.slice';
-import { ResponseType } from '../../Types/Response.type';
+import { ResponseType } from '../../type/Response.type';
 
 interface DeleteModalProps {
     Name: string;
