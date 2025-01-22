@@ -67,7 +67,6 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> =
                 data
             }).then(() => {
                 toast.success(`${fileName} updated successfully`);
-                window.location.reload();
             }).catch((error: ErrorType) => {
                 console.error(error.response.data.message);
             });

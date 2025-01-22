@@ -8,6 +8,7 @@ import { getAvailableUserName } from "../utils/getAvailableUserName";
 import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary";
 import mongoose from "mongoose";
 import fs from "fs";
+import path from "path";
 
 interface RequestWithUser extends Request {
     user: UserType;
@@ -138,7 +139,9 @@ const updateUserDetails = asyncHandler(
 
 const updateUserAvatar = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const avatarLocalPath: string | undefined = req.file?.path;
+        const avatarLocalPath: string | undefined = req.file?.path
+            ? path.resolve(req.file.path)
+            : undefined;
         if (!avatarLocalPath) {
             throw new ApiError(400, "Avatar file is required");
         }
@@ -205,7 +208,9 @@ const updateUserAvatar = asyncHandler(
 
 const updateUserCoverImage = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const coverImageLocalPath: string | undefined = req.file?.path;
+        const coverImageLocalPath: string | undefined = req.file?.path
+            ? path.resolve(req.file.path)
+            : undefined;
 
         if (!coverImageLocalPath) {
             throw new ApiError(400, "Cover Image is required");

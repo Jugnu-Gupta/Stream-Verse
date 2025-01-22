@@ -18,6 +18,7 @@ import {
 } from "../config/constants/controllers.constants";
 import request from "request";
 import fs from "fs";
+import path from "path";
 
 interface RequestWithUser extends Request {
     user: UserType;
@@ -374,8 +375,12 @@ const uploadVideo = asyncHandler(
             throw new ApiError(400, message);
         }
 
-        const thumbnailLocalPath = (req as FileType).files?.image?.[0]?.path;
-        const videoLocalPath = (req as FileType).files?.video?.[0]?.path;
+        const thumbnailLocalPath = (req as FileType).files?.image?.[0]?.path
+            ? path.resolve((req as FileType).files.image[0].path)
+            : undefined;
+        const videoLocalPath = (req as FileType).files?.video?.[0]?.path
+            ? path.resolve((req as FileType).files.video[0].path)
+            : undefined;
         try {
             if (!videoLocalPath || !thumbnailLocalPath) {
                 const message = !videoLocalPath
