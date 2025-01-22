@@ -242,28 +242,27 @@ const updateUserCoverImage = asyncHandler(
                 throw new ApiError(500, "Image upload failed on cloudinary");
             }
 
-            const user = await User.findByIdAndUpdate(
-                req?.user?._id,
-                {
-                    $set: {
-                        coverImage: {
-                            publicId: coverImage.public_id,
-                            url: coverImage.secure_url,
-                        },
-                    },
-                },
-                { new: true }
-            )?.select("userName fullName email avatar coverImage isVerified");
+            // const user = await User.findByIdAndUpdate(
+            //     req?.user?._id,
+            //     {
+            //         $set: {
+            //             coverImage: {
+            //                 publicId: coverImage.public_id,
+            //                 url: coverImage.secure_url,
+            //             },
+            //         },
+            //     },
+            //     { new: true }
+            // )?.select("userName fullName email avatar coverImage isVerified");
 
-            return res
-                .status(200)
-                .json(
-                    new ApiResponse(
-                        200,
-                        { user },
-                        "Cover image updated successfully"
-                    )
-                );
+            return res.status(200).json(
+                new ApiResponse(
+                    200,
+                    // { user },
+                    coverImageLocalPath,
+                    "Cover image updated successfully"
+                )
+            );
         } catch (error) {
             throw new ApiError(500, "Something went wrong!");
         } finally {

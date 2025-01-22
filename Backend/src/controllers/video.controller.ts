@@ -709,7 +709,7 @@ const videoUpdate = asyncHandler(
                     )
                 );
         } catch (error) {
-            throw error;
+            throw new ApiError(500, "Something went wrong!");
         } finally {
             if (fs.existsSync(thumbnailLocalPath)) {
                 try {

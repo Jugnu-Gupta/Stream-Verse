@@ -229,7 +229,7 @@ const getAdminChannelVideos = asyncHandler(
             { $sort: { createdAt: -1 } },
         ]);
 
-        if (!videos?.length) {
+        if (!videos) {
             throw new ApiError(404, "No videos found for this channel");
         }
         return res
