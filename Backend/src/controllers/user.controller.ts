@@ -212,17 +212,25 @@ const updateUserCoverImage = asyncHandler(
             ? path.resolve(req.file.path)
             : undefined;
 
+        if (fs.existsSync(coverImageLocalPath)) {
+            try {
+                fs.unlinkSync(coverImageLocalPath);
+            } catch (cleanupError) {
+                console.error("Failed to delete local file:", cleanupError);
+            }
+        }
+
         // if (!coverImageLocalPath) {
         //     throw new ApiError(400, "Cover Image is required");
         // }
-        const oldCoverImage = await deleteFromCloudinary(
-            "vzqrv1ms7ormyxjpholj",
-            "image"
-        );
+        // const oldCoverImage = await deleteFromCloudinary(
+        //     "vzqrv1ms7ormyxjpholj",
+        //     "image"
+        // );
 
         return res
             .status(200)
-            .json(new ApiResponse(200, { oldCoverImage, coverImageLocalPath }));
+            .json(new ApiResponse(200, { coverImageLocalPath }));
         // try {
         //     // delete the old cover image from cloudinary if exists.
         //     if (req.user?.coverImage?.publicId) {
