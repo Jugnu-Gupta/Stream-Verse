@@ -212,68 +212,76 @@ const updateUserCoverImage = asyncHandler(
             ? path.resolve(req.file.path)
             : undefined;
 
-        if (!coverImageLocalPath) {
-            throw new ApiError(400, "Cover Image is required");
-        }
+        // if (!coverImageLocalPath) {
+        //     throw new ApiError(400, "Cover Image is required");
+        // }
+        const oldCoverImage = await deleteFromCloudinary(
+            "vzqrv1ms7ormyxjpholj",
+            "image"
+        );
 
-        try {
-            // delete the old cover image from cloudinary if exists.
-            if (req.user?.coverImage?.publicId) {
-                const oldCoverImage = await deleteFromCloudinary(
-                    req?.user?.coverImage?.publicId,
-                    "image"
-                );
+        return res
+            .status(200)
+            .json(new ApiResponse(200, { oldCoverImage, coverImageLocalPath }));
+        // try {
+        //     // delete the old cover image from cloudinary if exists.
+        //     if (req.user?.coverImage?.publicId) {
+        //         const oldCoverImage = await deleteFromCloudinary(
+        //             req?.user?.coverImage?.publicId,
+        //             "image"
+        //         );
 
-                // check if the old cover image is deleted successfully.
-                if (!oldCoverImage) {
-                    fs.unlinkSync(coverImageLocalPath);
-                    throw new ApiError(
-                        500,
-                        "Failed to delete old cover image from cloudinary"
-                    );
-                }
-            }
+        //         // check if the old cover image is deleted successfully.
+        //         if (!oldCoverImage) {
+        //             fs.unlinkSync(coverImageLocalPath);
+        //             throw new ApiError(
+        //                 500,
+        //                 "Failed to delete old cover image from cloudinary"
+        //             );
+        //         }
+        //     }
 
-            const coverImage = await uploadOnCloudinary(
-                coverImageLocalPath,
-                "image"
-            );
-            if (!coverImage) {
-                throw new ApiError(500, "Image upload failed on cloudinary");
-            }
+        //     const coverImage = await uploadOnCloudinary(
+        //         coverImageLocalPath,
+        //         "image"
+        //     );
+        //     if (!coverImage) {
+        //         throw new ApiError(500, "Image upload failed on cloudinary");
+        //     }
 
-            // const user = await User.findByIdAndUpdate(
-            //     req?.user?._id,
-            //     {
-            //         $set: {
-            //             coverImage: {
-            //                 publicId: coverImage.public_id,
-            //                 url: coverImage.secure_url,
-            //             },
-            //         },
-            //     },
-            //     { new: true }
-            // )?.select("userName fullName email avatar coverImage isVerified");
+        //     const user = await User.findByIdAndUpdate(
+        //         req?.user?._id,
+        //         {
+        //             $set: {
+        //                 coverImage: {
+        //                     publicId: coverImage.public_id,
+        //                     url: coverImage.secure_url,
+        //                 },
+        //             },
+        //         },
+        //         { new: true }
+        //     )?.select("userName fullName email avatar coverImage isVerified");
 
-            return res.status(200).json(
-                new ApiResponse(
-                    200,
-                    // { user },
-                    coverImageLocalPath,
-                    "Cover image updated successfully"
-                )
-            );
-        } catch (error) {
-            throw new ApiError(500, "Something went wrong!");
-        } finally {
-            if (fs.existsSync(coverImageLocalPath)) {
-                try {
-                    fs.unlinkSync(coverImageLocalPath);
-                } catch (cleanupError) {
-                    console.error("Failed to delete local file:", cleanupError);
-                }
-            }
-        }
+        //     return res
+        //         .status(200)
+        //         .json(
+        //             new ApiResponse(
+        //                 200,
+        //                 { user },
+        //                 "Cover image updated successfully"
+        //             )
+        //         );
+        // } catch (error) {
+        //     throw new ApiError(500, "Something went wrong!");
+        // } finally {
+        //     if (fs.existsSync(coverImageLocalPath)) {
+        //         try {
+        //             fs.unlinkSync(coverImageLocalPath);
+        //         } catch (cleanupError) {
+        //             console.error("Failed to delete local file:", cleanupError);
+        //         }
+        //     }
+        // }
     }
 );
 
