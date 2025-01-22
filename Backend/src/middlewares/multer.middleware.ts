@@ -8,7 +8,7 @@ const storage = multer.diskStorage({
         file: Express.Multer.File,
         cb: (error: Error | null, destination: string | undefined) => void
     ) => {
-        cb(null, "./public/temp");
+        cb(null, path.join(__dirname, "public", "temp"));
     },
     filename: (
         req: Request,
