@@ -217,6 +217,7 @@ const updateUserCoverImage = asyncHandler(
                 fs.unlinkSync(coverImageLocalPath);
             } catch (cleanupError) {
                 console.error("Failed to delete local file:", cleanupError);
+                throw new ApiError(500, "Failed to delete local file");
             }
         }
 
