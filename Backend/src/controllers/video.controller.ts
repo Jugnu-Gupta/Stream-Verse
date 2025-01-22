@@ -427,9 +427,6 @@ const uploadVideo = asyncHandler(
                 throw new ApiError(500, "Failed to upload video");
             }
 
-            fs.unlinkSync(thumbnailLocalPath);
-            fs.unlinkSync(videoLocalPath);
-
             return res
                 .status(201)
                 .json(
@@ -440,6 +437,8 @@ const uploadVideo = asyncHandler(
                     )
                 );
         } catch (error) {
+            throw error;
+        } finally {
             try {
                 if (fs.existsSync(thumbnailLocalPath)) {
                     fs.unlinkSync(thumbnailLocalPath);
@@ -450,7 +449,6 @@ const uploadVideo = asyncHandler(
             } catch (cleanupError) {
                 console.error("Failed to delete local file:", cleanupError);
             }
-            throw error;
         }
     }
 );
@@ -696,10 +694,6 @@ const videoUpdate = asyncHandler(
                 throw new ApiError(500, "Failed to update video");
             }
 
-            if (fs.existsSync(thumbnailLocalPath)) {
-                fs.unlinkSync(thumbnailLocalPath);
-            }
-
             return res
                 .status(200)
                 .json(
@@ -710,6 +704,8 @@ const videoUpdate = asyncHandler(
                     )
                 );
         } catch (error) {
+            throw error;
+        } finally {
             if (fs.existsSync(thumbnailLocalPath)) {
                 try {
                     fs.unlinkSync(thumbnailLocalPath);
@@ -717,7 +713,6 @@ const videoUpdate = asyncHandler(
                     console.error("Failed to delete local file:", cleanupError);
                 }
             }
-            throw error;
         }
     }
 );

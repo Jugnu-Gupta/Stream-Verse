@@ -6,7 +6,7 @@
     "scripts": {
         "build": "npx tsc",
         "start": "ts-node -r dotenv/config index.ts",
-        "dev": "nodemon -r dotenv/config --loader ts-node/esm index.ts"
+        "dev": "nodemon -r dotenv/config index.ts"
     },
     "keywords": [
         "backend",

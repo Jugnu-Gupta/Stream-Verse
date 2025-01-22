@@ -55,8 +55,8 @@ const ChannelInfo: React.FC<ChannelInfoProps> = ({ channelInfo }) => {
         <>
             <div className="w-full">
                 {
-                    channelInfo?.coverImage.url &&
-                    (<img src={channelInfo?.coverImage.url} alt="Background" loading='lazy'
+                    channelInfo?.coverImage?.url &&
+                    (<img src={channelInfo?.coverImage?.url} alt="Background" loading='lazy'
                         className="w-full aspect-[5] rounded-2xl object-cover" />)
                 }
             </div>

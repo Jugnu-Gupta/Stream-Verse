@@ -15,7 +15,7 @@ import { generateAvatar } from "../../../utils/GenerateAvatar";
 
 const PersonalInformation: React.FC = () => {
     const [channelInfo, setChannelInfo] = React.useState<ChannelInfoType>();
-    const coverImage = channelInfo?.coverImage.url || "";
+    const coverImage = channelInfo?.coverImage?.url || "";
     const adminName: string = "@" + localStorage.getItem("userName");
     const channelName: string = localStorage.getItem("fullName") || "Channel Title";
     const avatarImage = channelInfo?.avatar?.url || generateAvatar(channelName, "0078e1", "ffffffcc", 150);

@@ -180,7 +180,6 @@ const updateUserAvatar = asyncHandler(
                 { new: true }
             )?.select("userName fullName email avatar coverImage isVerified");
 
-            fs.unlinkSync(avatarLocalPath);
             return res
                 .status(200)
                 .json(
@@ -191,6 +190,8 @@ const updateUserAvatar = asyncHandler(
                     )
                 );
         } catch (error) {
+            throw error;
+        } finally {
             if (fs.existsSync(avatarLocalPath)) {
                 try {
                     fs.unlinkSync(avatarLocalPath);
@@ -198,7 +199,6 @@ const updateUserAvatar = asyncHandler(
                     console.error("Failed to delete local file:", cleanupError);
                 }
             }
-            throw error;
         }
     }
 );
@@ -250,7 +250,6 @@ const updateUserCoverImage = asyncHandler(
                 { new: true }
             )?.select("userName fullName email avatar coverImage isVerified");
 
-            fs.unlinkSync(coverImageLocalPath);
             return res
                 .status(200)
                 .json(
@@ -261,6 +260,8 @@ const updateUserCoverImage = asyncHandler(
                     )
                 );
         } catch (error) {
+            throw error;
+        } finally {
             if (fs.existsSync(coverImageLocalPath)) {
                 try {
                     fs.unlinkSync(coverImageLocalPath);
@@ -268,7 +269,6 @@ const updateUserCoverImage = asyncHandler(
                     console.error("Failed to delete local file:", cleanupError);
                 }
             }
-            throw error;
         }
     }
 );
