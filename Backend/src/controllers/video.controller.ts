@@ -442,7 +442,7 @@ const uploadVideo = asyncHandler(
                     )
                 );
         } catch (error) {
-            throw error;
+            throw new ApiError(500, "Something went wrong!");
         } finally {
             try {
                 if (fs.existsSync(thumbnailLocalPath)) {

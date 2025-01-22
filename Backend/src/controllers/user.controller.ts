@@ -193,7 +193,7 @@ const updateUserAvatar = asyncHandler(
                     )
                 );
         } catch (error) {
-            throw error;
+            throw new ApiError(500, "Something went wrong!");
         } finally {
             if (fs.existsSync(avatarLocalPath)) {
                 try {
@@ -265,7 +265,7 @@ const updateUserCoverImage = asyncHandler(
                     )
                 );
         } catch (error) {
-            throw error;
+            throw new ApiError(500, "Something went wrong!");
         } finally {
             if (fs.existsSync(coverImageLocalPath)) {
                 try {
