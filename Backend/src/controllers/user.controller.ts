@@ -212,18 +212,9 @@ const updateUserCoverImage = asyncHandler(
             ? path.resolve(req.file.path)
             : undefined;
 
-        if (fs.existsSync(coverImageLocalPath)) {
-            try {
-                fs.unlinkSync(coverImageLocalPath);
-            } catch (cleanupError) {
-                console.error("Failed to delete local file:", cleanupError);
-                throw new ApiError(500, "Failed to delete local file");
-            }
+        if (!coverImageLocalPath) {
+            throw new ApiError(400, "Cover Image is required");
         }
-
-        // if (!coverImageLocalPath) {
-        //     throw new ApiError(400, "Cover Image is required");
-        // }
         // const oldCoverImage = await deleteFromCloudinary(
         //     "vzqrv1ms7ormyxjpholj",
         //     "image"
