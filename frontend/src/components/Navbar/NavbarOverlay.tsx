@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import NAVITEMS from "../../Constants/Navbar";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/circleLogo.png";
 import { twMerge } from "tailwind-merge";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { useDispatch, useSelector } from "react-redux";
