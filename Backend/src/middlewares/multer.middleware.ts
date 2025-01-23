@@ -1,6 +1,7 @@
 import { Request } from "express";
 import multer, { FileFilterCallback, Multer } from "multer";
 import path from "path";
+import fs from "fs";
 
 const storage = multer.diskStorage({
     destination: (
@@ -8,7 +9,11 @@ const storage = multer.diskStorage({
         file: Express.Multer.File,
         cb: (error: Error | null, destination: string | undefined) => void
     ) => {
-        cb(null, "./tmp");
+        const tempPath = "/tmp";
+        if (!fs.existsSync(tempPath)) {
+            fs.mkdirSync(tempPath, { recursive: true }); // Ensure directory exists
+        }
+        cb(null, tempPath);
     },
     filename: (
         req: Request,
