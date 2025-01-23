@@ -21,10 +21,10 @@ const DashboardStats: React.FC = () => {
     const [videoName, setVideoName] = React.useState<string>("");
     const [videoSize, setVideoSize] = React.useState<number>(0);
     const [stats, setStats] = React.useState<DashboardStatsType>();
-    const Views = stats?.totalViews || 100;
-    const Subscribers = stats?.totalSubscribers || 100;
-    const Likes = stats?.totalLikes || 100;
-    const Comments = stats?.totalComments || 100;
+    const Views = stats?.totalViews || 0;
+    const Subscribers = stats?.totalSubscribers || 0;
+    const Likes = stats?.totalLikes || 0;
+    const Comments = stats?.totalComments || 0;
 
     useEffect(() => {
         makeApiRequest({

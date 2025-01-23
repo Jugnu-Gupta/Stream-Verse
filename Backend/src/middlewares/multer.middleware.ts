@@ -1,5 +1,5 @@
 import { Request } from "express";
-import multer, { FileFilterCallback, Multer } from "multer";
+import multer, { FileFilterCallback } from "multer";
 import path from "path";
 import fs from "fs";
 
