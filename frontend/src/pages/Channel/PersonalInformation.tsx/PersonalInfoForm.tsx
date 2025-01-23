@@ -19,6 +19,10 @@ interface PersonalInfoFormProps {
 const PersonalInfoForm: React.FC<PersonalInfoFormProps> =
     ({ channelInfo, newCoverImg, newAvatar, discardCoverImgChange, discardAvatarChange }) => {
         const [availableUserName, setAvailableUserName] = React.useState<string>("");
+        const [lastUpdatedImages, setLastUpdatedImages] = React.useState({
+            coverImg: null as File | null,
+            avatar: null as File | null,
+        });
         const { values, errors, touched, handleChange, handleSubmit, handleBlur, resetForm } =
             useFormik({
                 initialValues: {
@@ -67,16 +71,21 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> =
                 data
             }).then(() => {
                 toast.success(`${fileName} updated successfully`);
+                if (fileName === "Cover Image") {
+                    setLastUpdatedImages((prev) => ({ ...prev, coverImg: image }));
+                } else if (fileName === "Avatar") {
+                    setLastUpdatedImages((prev) => ({ ...prev, avatar: image }));
+                }
             }).catch((error: ErrorType) => {
                 console.error(error.response.data.message);
             });
         }
 
         const handleImgChange = () => {
-            if (newCoverImg) {
+            if (newCoverImg && newCoverImg !== lastUpdatedImages.coverImg) {
                 updateImage("/api/v1/users/cover-image", newCoverImg, "Cover Image");
             }
-            if (newAvatar) {
+            if (newAvatar && newAvatar !== lastUpdatedImages.avatar) {
                 updateImage("/api/v1/users/avatar", newAvatar, "Avatar");
             }
         }
