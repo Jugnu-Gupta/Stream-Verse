@@ -375,12 +375,8 @@ const uploadVideo = asyncHandler(
             throw new ApiError(400, message);
         }
 
-        const thumbnailLocalPath = (req as FileType).files?.image?.[0]?.path
-            ? path.resolve((req as FileType).files.image[0].path)
-            : undefined;
-        const videoLocalPath = (req as FileType).files?.video?.[0]?.path
-            ? path.resolve((req as FileType).files.video[0].path)
-            : undefined;
+        const thumbnailLocalPath = (req as FileType).files?.image?.[0]?.path;
+        const videoLocalPath = (req as FileType).files?.video?.[0]?.path;
         try {
             if (!videoLocalPath || !thumbnailLocalPath) {
                 const message = !videoLocalPath
@@ -389,13 +385,16 @@ const uploadVideo = asyncHandler(
                 throw new ApiError(400, message);
             }
 
-            const videoFile = await uploadOnCloudinary(videoLocalPath, "video");
+            const videoFile = await uploadOnCloudinary(
+                path.resolve(videoLocalPath),
+                "video"
+            );
             const videoQuality = getVideoQuality(
                 videoFile.width,
                 videoFile.height
             );
             const thumbnail = await uploadOnCloudinary(
-                thumbnailLocalPath,
+                path.resolve(thumbnailLocalPath),
                 "image"
             );
             if (

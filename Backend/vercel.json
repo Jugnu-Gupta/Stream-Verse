@@ -11,5 +11,11 @@
             "src": "/(.*)",
             "dest": "/"
         }
-    ]
+    ],
+    "functions": {
+        "api/*": {
+            "memory": 512,
+            "maxBodySize": "50mb"
+        }
+    }
 }
