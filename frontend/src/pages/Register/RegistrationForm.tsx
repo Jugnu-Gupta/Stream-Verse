@@ -8,7 +8,6 @@ import makeApiRequest from "../../utils/MakeApiRequest";
 import { RegistrationValidationSchema } from "./RegistrationValidationSchema";
 import toast from "react-hot-toast";
 import { ErrorType } from "../../type/Error.type";
-import { ResponseType } from "../../type/Response.type";
 
 const RegistrationForm: React.FC = () => {
 	const [showPassword, setShowPassword] = React.useState(false);
@@ -26,14 +25,11 @@ const RegistrationForm: React.FC = () => {
 					method: "post",
 					url: "/api/v1/auths/register",
 					data: {
-						fullName: values.name,
-						email: values.email,
+						fullName: values.name.trim(),
+						email: values.email.trim(),
 						password: values.password,
 					},
-				}).then((response) => {
-					const data = (response as ResponseType).data;
-					console.log("Registration Info:", data);
-					console.log(values);
+				}).then(() => {
 					setShowVerifyEmail(true);
 				}).catch((error: ErrorType) => {
 					console.error("Error Registering", error.response.data.message);

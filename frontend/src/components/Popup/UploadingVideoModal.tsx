@@ -44,7 +44,7 @@ const UploadingVideoModal: React.FC<UploadingVideoModalProps> = ({ uploadProgres
                         <div className='text-primary-text2 text-xs'>
                             <p>{videoName}</p>
                             <p>{fileSize}</p>
-                            <p>{uploadProgress}</p>
+                            <p>{uploadProgress}%</p>
                         </div>
                         <div className='bg-primary h-[5px] w-full rounded-full mt-2'>
                             <div className="bg-primary-text2 h-full rounded-full" style={{ width: `${uploadProgress}%` }} >

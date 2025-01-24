@@ -47,7 +47,6 @@ const EditVideoModal: React.FC<EditVideoModalProps> = ({ videoInfo, setShowEditV
     }
 
     return (
-        // <div className='w-full h-full flex justify-center items-center bg-black bg-opacity-20 absolute z-[1]'>
         <div className='w-full h-full flex justify-center items-center absolute z-[1] top-0 left-0'>
             < div className='rounded-lg border-[1px] border-primary-border bg-background-secondary p-4 max-w-96 w-fit h-fit overflow-y-auto' >
                 <div className='flex gap-2 justify-between items-start'>

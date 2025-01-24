@@ -18,3 +18,27 @@
 	-webkit-line-clamp: 1;
 	line-clamp: 1;
 }
+
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background: #2b384e;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #1f2836;
+	border-radius: 10px;
+	margin: 1px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: #1d2532;
+}
+
+* {
+	scrollbar-width: thin;
+	scrollbar-color: #1f2836 #2b384e;
+}

@@ -70,8 +70,8 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setUploadProgress, 
         const data = new FormData();
         data.append("image", thumbnail);
         data.append("video", newVideo);
-        data.append("title", videoTitle);
-        data.append("description", videoDescription);
+        data.append("title", videoTitle.trim());
+        data.append("description", videoDescription.trim());
 
         setShowUploadVideo(false);
         setShowUploadingVideo(true);
@@ -85,7 +85,7 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setUploadProgress, 
             }
         }).then(() => {
             toast.success("Video uploaded successfully");
-            // window.location.reload();
+            window.location.reload();
         }).catch((error: ErrorType) => {
             console.error(error.response.data.message);
         })
@@ -156,7 +156,7 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setUploadProgress, 
                         Cancel</button>
                     <button onClick={uploadVideo}
                         className={twMerge('text-primary bg-primary-text px-4 py-2 w-full font-semibold rounded-lg',
-                            (!thumbnail || !newVideo || videoTitle === "" || videoDescription === "") && 'opacity-50')}>
+                            (!thumbnail || !newVideo || videoTitle.trim() === "" || videoDescription.trim() === "") && 'opacity-50')}>
                         Upload</button>
                 </div>
             </div>

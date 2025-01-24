@@ -1,7 +1,7 @@
 export const formatDuration = (seconds: number | undefined) => {
 	if (!seconds) return 0;
 
-	const secs = seconds % 60;
+	const secs = (seconds % 60).toFixed(0);
 	const mins = Math.floor(seconds / 60) % 60;
 	const hours = Math.floor(seconds / 3600);
 

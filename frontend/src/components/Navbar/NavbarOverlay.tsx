@@ -35,7 +35,6 @@ const Navbar: React.FC = () => {
 			document.body.style.overflow = "";
 		}
 
-		// Cleanup function to reset the overflow property when the component unmounts
 		return () => {
 			document.body.style.overflow = "";
 		};

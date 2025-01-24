@@ -32,16 +32,16 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> =
                 },
                 validationSchema: PersonalInfoValidationSchema,
                 onSubmit: async (values) => {
-                    if (values.fullName === channelInfo?.fullName &&
-                        values.userName === channelInfo?.userName) return;
+                    if (values.fullName.trim() === channelInfo?.fullName &&
+                        values.userName.trim() === channelInfo?.userName) return;
 
                     makeApiRequest({
                         method: "patch",
                         url: "/api/v1/users/me",
                         data: {
                             _id: channelInfo?._id,
-                            fullName: values.fullName,
-                            userName: values.userName,
+                            fullName: values.fullName.trim(),
+                            userName: values.userName.trim(),
                         },
                     }).then((response) => {
                         const data = (response as ResponseType).data;

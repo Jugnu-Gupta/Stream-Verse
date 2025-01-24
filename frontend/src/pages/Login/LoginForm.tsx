@@ -26,7 +26,7 @@ const LoginForm: React.FC = () => {
 			makeApiRequest({
 				method: "post",
 				url: "/api/v1/auths/login",
-				data: values,
+				data: { email: values.email.trim(), password: values.password },
 			}).then((response) => {
 				const data = (response as ResponseType).data;
 				toast.success("Logged in successfully");
