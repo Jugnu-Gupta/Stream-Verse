@@ -23,7 +23,6 @@ const UploadingVideoModal: React.FC<UploadingVideoModalProps> = ({ uploadProgres
         }
     }
     return (
-        // <div className='w-full h-full flex justify-center items-center bg-black bg-opacity-20 absolute z-[1]'>
         <div className='w-full h-full flex justify-center items-center absolute z-[1] left-0 top-0'>
             <div className='rounded-lg border-2 border-primary-border bg-background-secondary p-3 pt-2 w-96 h-fit'>
                 <div className='flex gap-2 justify-between items-start'>

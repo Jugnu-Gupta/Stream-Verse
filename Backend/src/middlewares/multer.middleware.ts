@@ -1,15 +1,19 @@
 import { Request } from "express";
 import multer, { FileFilterCallback } from "multer";
+import { v4 as uuidv4 } from "uuid";
 import path from "path";
 import fs from "fs";
 
 const storage = multer.diskStorage({
-    destination: (
+    destination: async (
         req: Request,
         file: Express.Multer.File,
         cb: (error: Error | null, destination: string | undefined) => void
     ) => {
-        const tempPath = "/tmp";
+        const uniqueId: string = req.query.uniqueId as string;
+        const tempPath = path.resolve(
+            uniqueId !== "" ? `./tmp/${uniqueId}` : "./tmp"
+        );
         if (!fs.existsSync(tempPath)) {
             fs.mkdirSync(tempPath, { recursive: true }); // Ensure directory exists
         }
@@ -20,10 +24,20 @@ const storage = multer.diskStorage({
         file: Express.Multer.File,
         cb: (error: Error | null, destination: string | undefined) => void
     ) => {
-        cb(
-            null,
-            file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-        );
+        if (file.fieldname === "image") {
+            cb(null, `image-${uuidv4()}${path.extname(file.originalname)}`);
+        } else if (file.fieldname === "video") {
+            const { uniqueId, chunkNumber } = req.query;
+            req.body.fileName = file.originalname;
+            cb(
+                null,
+                `video-${uniqueId}-chunk-${chunkNumber}${path.extname(
+                    file.originalname
+                )}`
+            );
+        } else {
+            cb(new Error("Invalid file type!"), undefined);
+        }
     },
 });
 
@@ -61,6 +75,6 @@ const fileFilter = (
 
 export const upload = multer({
     storage: storage,
-    limits: { fileSize: 50 * 1024 * 1024 },
+    limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter,
 });

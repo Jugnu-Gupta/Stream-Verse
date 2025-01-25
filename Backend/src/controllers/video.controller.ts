@@ -17,7 +17,7 @@ import {
     uploadDateCriteria,
 } from "../config/constants/controllers.constants";
 import request from "request";
-import fs from "fs";
+import fs, { promises as fsPromises } from "fs";
 import path from "path";
 
 interface RequestWithUser extends Request {
@@ -350,10 +350,6 @@ const addView = asyncHandler(async (req: RequestWithUser, res: Response) => {
         );
 });
 
-interface UploadVideoBody {
-    title?: string;
-    description?: string;
-}
 interface UploadedFile {
     path: string;
 }
@@ -365,93 +361,157 @@ interface FileType {
     files?: CustomFiles;
 }
 
+interface UploadVideoBody {
+    title?: string;
+    description?: string;
+    isLastChunk: string;
+    fileName: string;
+}
+interface UploadVideoQuery {
+    uniqueId: string;
+    chunkNumber: string;
+    totalChunks: string;
+}
+
 const uploadVideo = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        const { title, description }: UploadVideoBody = req.body;
-        if (!title || !description) {
-            const message = !title
-                ? "Title is required"
-                : "Description is required";
-            throw new ApiError(400, message);
+        const { title, description, isLastChunk, fileName }: UploadVideoBody =
+            req.body;
+        const { uniqueId, chunkNumber, totalChunks } =
+            req.query as unknown as UploadVideoQuery;
+        const TEMP_DIR = "./tmp";
+
+        if (!uniqueId || !chunkNumber || !totalChunks) {
+            throw new ApiError(
+                400,
+                "Missing required chunking metadata (uniqueId, chunkNumber, totalChunks)"
+            );
         }
 
-        const thumbnailLocalPath = (req as FileType).files?.image?.[0]?.path;
-        const videoLocalPath = (req as FileType).files?.video?.[0]?.path;
         try {
-            if (!videoLocalPath || !thumbnailLocalPath) {
-                const message = !videoLocalPath
-                    ? "Video is required"
-                    : "Thumbnail is required";
-                throw new ApiError(400, message);
-            }
+            if (parseInt(isLastChunk)) {
+                console.log("Merging chunks...");
+                if (!title || !description) {
+                    const missingField = !title ? "Title" : "Description";
+                    throw new ApiError(400, `${missingField} is required`);
+                }
 
-            const videoFile = await uploadOnCloudinary(
-                path.resolve(videoLocalPath),
-                "video"
-            );
-            const videoQuality = getVideoQuality(
-                videoFile.width,
-                videoFile.height
-            );
-            const thumbnail = await uploadOnCloudinary(
-                path.resolve(thumbnailLocalPath),
-                "image"
-            );
-            if (
-                !videoFile?.secure_url ||
-                !videoFile?.public_id ||
-                !thumbnail?.secure_url ||
-                !thumbnail?.public_id
-            ) {
-                const message = !(videoFile?.secure_url || videoFile?.public_id)
-                    ? "Failed to upload video"
-                    : "Failed to upload thumbnail";
-                throw new ApiError(500, message);
-            }
-
-            const video = await Video.create({
-                videoFile: {
-                    publicId: videoFile?.public_id,
-                    url: videoFile?.secure_url,
-                },
-                thumbnail: {
-                    publicId: thumbnail?.public_id,
-                    url: thumbnail?.secure_url,
-                },
-                quality: videoQuality,
-                title,
-                description,
-                duration: videoFile?.duration,
-                ownerId: req.user?._id,
-            });
-
-            // check if video is created
-            const uploadedVideo = await Video.findById(video?._id);
-            if (!uploadedVideo) {
-                throw new ApiError(500, "Failed to upload video");
-            }
-
-            return res
-                .status(201)
-                .json(
-                    new ApiResponse(
-                        201,
-                        uploadedVideo,
-                        "Video uploaded successfully"
-                    )
+                const chunkDir = `${TEMP_DIR}/${uniqueId}`;
+                const finalVideoPath = path.join(
+                    TEMP_DIR,
+                    `${uniqueId}/finalVideo.mp4`
                 );
+                const writeStream = fs.createWriteStream(finalVideoPath);
+
+                // Loop over all chunks and append them to the final video
+                for (let i = 1; i <= parseInt(totalChunks); i++) {
+                    const chunkPath = path.join(
+                        chunkDir,
+                        `video-${uniqueId}-chunk-${i}${path.extname(fileName)}`
+                    );
+
+                    if (!fs.existsSync(chunkPath)) {
+                        throw new Error(`Chunk ${i} is missing`);
+                    }
+
+                    const chunkData = fs.readFileSync(chunkPath);
+                    writeStream.write(chunkData);
+                    fs.unlinkSync(chunkPath); // Delete chunk after appending
+                    console.log(`Appended chunk ${i} to final video`);
+                }
+
+                writeStream.end(); // Finalize the video file
+
+                console.log(
+                    `File ${fileName} merged successfully at ${finalVideoPath}`
+                );
+
+                const videoFile = await uploadOnCloudinary(
+                    finalVideoPath,
+                    "video"
+                );
+                const videoQuality = getVideoQuality(
+                    videoFile.width,
+                    videoFile.height
+                );
+
+                const thumbnailLocalPath = (req as FileType).files?.image?.[0]
+                    ?.path;
+                if (!thumbnailLocalPath) {
+                    throw new ApiError(400, "Thumbnail is required");
+                }
+
+                const thumbnail = await uploadOnCloudinary(
+                    path.resolve(thumbnailLocalPath),
+                    "image"
+                );
+
+                // Validate uploads
+                if (!videoFile?.secure_url || !videoFile?.public_id) {
+                    throw new ApiError(
+                        500,
+                        "Failed to upload video to Cloudinary"
+                    );
+                }
+                if (!thumbnail?.secure_url || !thumbnail?.public_id) {
+                    throw new ApiError(
+                        500,
+                        "Failed to upload thumbnail to Cloudinary"
+                    );
+                }
+
+                // Save the video details to the database
+                const video = await Video.create({
+                    videoFile: {
+                        publicId: videoFile.public_id,
+                        url: videoFile.secure_url,
+                    },
+                    thumbnail: {
+                        publicId: thumbnail.public_id,
+                        url: thumbnail.secure_url,
+                    },
+                    title,
+                    description,
+                    quality: videoQuality,
+                    duration: videoFile.duration,
+                    ownerId: req.user?._id,
+                    isPublished: false,
+                });
+
+                return res
+                    .status(201)
+                    .json(
+                        new ApiResponse(
+                            201,
+                            video,
+                            "Video uploaded and processed successfully"
+                        )
+                    );
+            } else {
+                return res
+                    .status(200)
+                    .json(
+                        new ApiResponse(
+                            200,
+                            (req as FileType).files?.video?.[0]?.path,
+                            "Chunk uploaded successfully"
+                        )
+                    );
+            }
         } catch (error) {
-            throw new ApiError(500, "Something went wrong!");
+            console.error("Error during finalization: ", error);
+            throw new ApiError(400, `Upload failed: ${error.message}`);
         } finally {
-            try {
-                if (fs.existsSync(thumbnailLocalPath)) {
-                    fs.unlinkSync(thumbnailLocalPath);
-                }
-                if (fs.existsSync(videoLocalPath)) {
-                    fs.unlinkSync(videoLocalPath);
-                }
-            } catch (cleanupError) {
-                console.error("Failed to delete local file:", cleanupError);
+            if (
+                (req as FileType).files?.image?.[0]?.path &&
+                fs.existsSync((req as FileType).files.image[0].path)
+            ) {
+                fs.unlinkSync((req as FileType).files.image[0].path);
+            }
+            // Remove the chunk directory after all chunks are processed and merged
+            if (parseInt(isLastChunk)) {
+                const chunkDir = `${TEMP_DIR}/${uniqueId}`;
+                fsPromises.rm(chunkDir, { recursive: true });
             }
         }
     }

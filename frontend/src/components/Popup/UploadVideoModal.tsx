@@ -7,6 +7,7 @@ import { useMedia } from '../../hooks/useMedia';
 import { makeApiMediaRequest } from '../../utils/MakeApiRequest';
 import toast from 'react-hot-toast';
 import { ErrorType } from '../../type/Error.type';
+import { v4 as uuidv4 } from "uuid";
 
 interface UploadVideoModalProps {
     setVideoName: Dispatch<SetStateAction<string>>;
@@ -25,6 +26,11 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setUploadProgress, 
         discardMediaChange: discardVideoChanges } = useMedia();
     const [videoTitle, setVideoTitle] = React.useState<string>("");
     const [videoDescription, setVideoDescription] = React.useState<string>("");
+    const [uploadId] = React.useState<string>(uuidv4());
+
+    const CHUNK_SIZE = 4 * 1024 * 1024;
+    const totalChunks = newVideo ? Math.ceil(newVideo.size / CHUNK_SIZE) : 0;
+
     const updateThumbnail = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files?.[0] && validateMediaSize(e.target.files, 1)) {
             setThumbnail(e.target.files![0]);
@@ -64,32 +70,70 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setUploadProgress, 
         }
     }
 
-    const uploadVideo = () => {
-        if (!thumbnail || !newVideo || videoTitle === "" || videoDescription === "") return;
-
+    const uploadChunk = async (chunk: File, chunkNumber: number, thumbnail: File, title: string, description: string): Promise<void> => {
         const data = new FormData();
-        data.append("image", thumbnail);
-        data.append("video", newVideo);
-        data.append("title", videoTitle.trim());
-        data.append("description", videoDescription.trim());
+        const isLastChunk: number = (chunkNumber === totalChunks ? 1 : 0);
+        data.append("video", chunk);
+        if (isLastChunk === 1) {
+            console.log("Last chunk");
+            data.append("title", title);
+            data.append("description", description);
+            data.append("image", thumbnail);
+        }
+        data.append("isLastChunk", isLastChunk.toString());
+        try {
+            await makeApiMediaRequest({
+                method: "post",
+                url: "/api/v1/videos",
+                data,
+                params: {
+                    uniqueId: uploadId,
+                    chunkNumber: chunkNumber,
+                    totalChunks: totalChunks
+                },
+                onUploadProgress: (progressEvent) => {
+                    const totalProgress = Math.max(100, Math.round(
+                        (((chunkNumber - 1) * CHUNK_SIZE + progressEvent.loaded) /
+                            (newVideo?.size || 1)) * 100
+                    ));
+                    setUploadProgress(totalProgress);
+                },
+            });
+        } catch (error) {
+            console.error((error as ErrorType)?.response?.data?.message);
+        }
+    }
+
+    const uploadVideo = async () => {
+        if (!thumbnail || !newVideo || videoTitle.trim() === "" || videoDescription.trim() === "") return;
 
         setShowUploadVideo(false);
         setShowUploadingVideo(true);
-        makeApiMediaRequest({
-            method: "post",
-            url: "/api/v1/videos",
-            data,
-            onUploadProgress: (progressEvent) => {
-                const progress = progressEvent.total ? Math.round((progressEvent.loaded * 100) / (progressEvent.total)) : 0;
-                setUploadProgress(progress);
+        const fileChunks: File[] = [];
+        let start = 0;
+
+        // Split the file into chunks
+        for (let i = 0; i < totalChunks; i++) {
+            const chunk = newVideo.slice(start, start + CHUNK_SIZE);
+            const chunkFile = new File([chunk], newVideo.name, { type: newVideo.type });
+            fileChunks.push(chunkFile);
+            start += CHUNK_SIZE;
+        }
+
+        try {
+            // Upload the chunks
+            for (let i = 0; i < fileChunks.length; i++) {
+                const chunk = fileChunks[i];
+                await uploadChunk(chunk as File, i + 1, thumbnail, videoTitle.trim(), videoDescription.trim());
             }
-        }).then(() => {
-            toast.success("Video uploaded successfully");
             window.location.reload();
-        }).catch((error: ErrorType) => {
-            console.error(error.response.data.message);
-        })
-    }
+            toast.success("Video uploaded successfully");
+        } catch (error) {
+            setShowUploadingVideo(false);
+            toast.error("Failed to upload video");
+            toast.error((error as ErrorType).response.data.message);
+        }
+    };
 
     return (
         <div className='w-full -ml-6 h-full flex justify-center items-center absolute z-[1]'>
