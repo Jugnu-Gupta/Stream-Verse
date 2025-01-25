@@ -8,7 +8,10 @@ import { ResponseType } from '../../type/Response.type';
 import NoResultsFound from '../Search/NoResultsFound';
 import loadingGIF from '../../assets/loading.gif';
 
-const DashboardVideos: React.FC = () => {
+interface DashboardVideosProps {
+    showUploadingVideo: boolean;
+}
+const DashboardVideos: React.FC<DashboardVideosProps> = ({ showUploadingVideo }) => {
     const navigate = useNavigate();
     const [videos, setVideos] = React.useState<DashboardVideoType[]>([]);
     const [loading, setLoading] = React.useState<boolean>(false);
@@ -27,7 +30,7 @@ const DashboardVideos: React.FC = () => {
         }).finally(() => {
             setLoading(false);
         });
-    }, [navigate]);
+    }, [navigate, showUploadingVideo]);
 
     return (
         <div className="overflow-x-auto mt-4">

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import { FaPlus } from "react-icons/fa6";
 import { FaRegEye } from "react-icons/fa";
 import { FaRegUser } from "react-icons/fa";
@@ -12,11 +12,13 @@ import UploadingVideoModal from '../../components/Popup/UploadingVideoModal';
 import { ErrorType } from '../../type/Error.type';
 import { ResponseType } from '../../type/Response.type';
 
-
-const DashboardStats: React.FC = () => {
+interface DashboardStatsProps {
+    showUploadingVideo: boolean;
+    setShowUploadingVideo: Dispatch<SetStateAction<boolean>>;
+}
+const DashboardStats: React.FC<DashboardStatsProps> = ({ showUploadingVideo, setShowUploadingVideo }) => {
     const navigate = useNavigate();
     const [showUploadVideo, setShowUploadVideo] = React.useState(false);
-    const [showUploadingVideo, setShowUploadingVideo] = React.useState(false);
     const [uploadProgress, setUploadProgress] = React.useState<number>(0);
     const [videoName, setVideoName] = React.useState<string>("");
     const [videoSize, setVideoSize] = React.useState<number>(0);

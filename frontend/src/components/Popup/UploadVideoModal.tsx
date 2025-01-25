@@ -92,9 +92,9 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setUploadProgress, 
                     totalChunks: totalChunks
                 },
                 onUploadProgress: (progressEvent) => {
-                    const totalProgress = Math.max(100, Math.round(
-                        (((chunkNumber - 1) * CHUNK_SIZE + progressEvent.loaded) /
-                            (newVideo?.size || 1)) * 100
+                    const totalProgress = Math.min(100, Math.round(
+                        ((chunkNumber - 1) * CHUNK_SIZE + progressEvent.loaded) * 100 /
+                        (newVideo?.size || 1)
                     ));
                     setUploadProgress(totalProgress);
                 },
@@ -126,7 +126,6 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setUploadProgress, 
                 const chunk = fileChunks[i];
                 await uploadChunk(chunk as File, i + 1, thumbnail, videoTitle.trim(), videoDescription.trim());
             }
-            window.location.reload();
             toast.success("Video uploaded successfully");
         } catch (error) {
             setShowUploadingVideo(false);
