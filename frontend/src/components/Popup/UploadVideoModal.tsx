@@ -28,7 +28,7 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setUploadProgress, 
     const [videoDescription, setVideoDescription] = React.useState<string>("");
     const [uploadId] = React.useState<string>(uuidv4());
 
-    const CHUNK_SIZE = 4 * 1024 * 1024;
+    const CHUNK_SIZE = 3 * 1024 * 1024;
     const totalChunks = newVideo ? Math.ceil(newVideo.size / CHUNK_SIZE) : 0;
 
     const updateThumbnail = (e: React.ChangeEvent<HTMLInputElement>) => {
