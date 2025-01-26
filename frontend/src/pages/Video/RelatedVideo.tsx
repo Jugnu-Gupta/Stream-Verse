@@ -23,9 +23,9 @@ const RelatedVideo: React.FC<VideoListViewProps> = ({ heighlightVideo, videoInfo
 	return (
 		<div className={twMerge("flex gap-2 p-2 pl-0 2lg:pl-2 group w-full", heighlightVideo == videoInfo?._id && "bg-background-secondary")}>
 			<Link to={`/video/${videoId}`} className="min-w-36 w-1/2 max-w-52">
-				<div className="overflow-hidden rounded-xl max-w-md relative">
+				<div className="overflow-hidden rounded-xl max-w-md h-fit relative">
 					<img src={videoInfo.thumbnail.url} alt="thumbnail" loading='lazy'
-						className="rounded-xl aspect-video group-hover:scale-110 duration-300 w-full" />
+						className="rounded-xl aspect-video object-cover group-hover:scale-110 duration-300 w-full" />
 					<p className="px-1 py-[1px] absolute bottom-2 right-2 text-xs text-primary-text rounded-md bg-black bg-opacity-70">
 						{duration}
 					</p>

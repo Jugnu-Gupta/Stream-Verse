@@ -42,35 +42,44 @@ const VideoDetail: React.FC = () => {
 	// const playlistId = "67502bffd0104e89cbb9be5e";
 
 	useEffect(() => {
-		makeApiRequest({
-			method: "get",
-			url: `/api/v1/playlists/${listId}`,
-		}).then((playlistRes) => {
-			const playlistData = (playlistRes as ResponseType).data?.playlist;
-			if (playlistData?.videos.some((video: VideoType) => video._id === videoId)) {
-				setPlaylist(playlistData);
-			} else {
-				navigate(`/video/${videoId}`);
+		const getPlaylistAndVideo = async () => {
+			try {
+				// Fetch playlist data is listId is present
+				if (listId) {
+					const playlistRes = await makeApiRequest({
+						method: "get",
+						url: `/api/v1/playlists/${listId}`,
+					});
+					const playlistData = (playlistRes as ResponseType).data?.playlist;
+
+					// If the video doesn't exist in the playlist, navigate to /video/${videoId}
+					if (!playlistData?.videos.some((video: VideoType) => video._id === videoId)) {
+						return navigate(`/video/${videoId}`);
+					}
+
+					// Save playlist data to state
+					setPlaylist(playlistData);
+				}
+
+				// Fetch video details
+				const videoInfoRes = await makeApiRequest({
+					method: "get",
+					url: `/api/v1/videos/${videoId}${userId ? `/${userId}` : ""}`,
+				});
+				const videoData = (videoInfoRes as ResponseType).data?.video;
+				setVideo(videoData);
+
+				// Increment video views
+				await makeApiRequest({
+					method: "post",
+					url: `/api/v1/videos/${videoId}/views`,
+				});
+			} catch (error) {
+				console.error((error as ErrorType).response?.data?.message || "An error occurred");
+				navigate(listId ? `/video/${videoId}` : `/`);
 			}
-
-			// find details of current video
-			return makeApiRequest({
-				method: "get",
-				url: `/api/v1/videos/${videoId}`,
-				params: { userId }
-			});
-		}).then((videoInfoRes) => {
-			const videoData = (videoInfoRes as ResponseType).data?.video;
-			setVideo(videoData);
-
-			makeApiRequest({
-				method: "post",
-				url: `/api/v1/videos/${videoId}/views`,
-			});
-		}).catch((error: ErrorType) => {
-			console.error(error.response.data.message);
-			navigate(listId ? `/video/${videoId}` : `/`);
-		})
+		};
+		getPlaylistAndVideo();
 	}, [listId, videoId, userId, navigate]);
 
 	const getSimilarVideos = (page: number, loading: boolean, hasMore: boolean, searchText: string) => {
