@@ -3,16 +3,13 @@ import DashboardStats from "./DashboardStats";
 import DashboardVideos from "./DashboardVideos";
 
 const Dashboard: React.FC = () => {
-	const [showUploadingVideo, setShowUploadingVideo] = React.useState<boolean>(false);
+	const [rerender, setRerender] = React.useState<number>(0);
 
 	return (
 		<div className="w-full mt-4 max-w-6xl mx-auto relative overflow-auto">
-			{/* {showDeleteVideo && <DeleteModal setShowDeleteVideo={setShowDeleteVideo} />} */}
-			{/* {showUploadVideo && <UploadVideoModal setShowUploadVideo={setShowUploadVideo} />} */}
-
 			<section className="text-white px-6">
-				<DashboardStats showUploadingVideo={showUploadingVideo} setShowUploadingVideo={setShowUploadingVideo} />
-				<DashboardVideos showUploadingVideo={showUploadingVideo} />
+				<DashboardStats setRerender={setRerender} />
+				<DashboardVideos rerender={rerender} />
 			</section>
 		</div>
 	);

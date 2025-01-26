@@ -9,9 +9,9 @@ import NoResultsFound from '../Search/NoResultsFound';
 import loadingGIF from '../../assets/loading.gif';
 
 interface DashboardVideosProps {
-    showUploadingVideo: boolean;
+    rerender: number;
 }
-const DashboardVideos: React.FC<DashboardVideosProps> = ({ showUploadingVideo }) => {
+const DashboardVideos: React.FC<DashboardVideosProps> = ({ rerender }) => {
     const navigate = useNavigate();
     const [videos, setVideos] = React.useState<DashboardVideoType[]>([]);
     const [loading, setLoading] = React.useState<boolean>(false);
@@ -31,7 +31,7 @@ const DashboardVideos: React.FC<DashboardVideosProps> = ({ showUploadingVideo })
         }).finally(() => {
             setLoading(false);
         });
-    }, [navigate, showUploadingVideo, renderVideos]);
+    }, [navigate, rerender, renderVideos]);
 
     return (
         <div className="overflow-x-auto mt-4">

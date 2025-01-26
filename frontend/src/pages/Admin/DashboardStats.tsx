@@ -13,13 +13,13 @@ import { ErrorType } from '../../type/Error.type';
 import { ResponseType } from '../../type/Response.type';
 
 interface DashboardStatsProps {
-    showUploadingVideo: boolean;
-    setShowUploadingVideo: Dispatch<SetStateAction<boolean>>;
+    setRerender: Dispatch<SetStateAction<number>>;
 }
-const DashboardStats: React.FC<DashboardStatsProps> = ({ showUploadingVideo, setShowUploadingVideo }) => {
+const DashboardStats: React.FC<DashboardStatsProps> = ({ setRerender }) => {
     const navigate = useNavigate();
     const [showUploadVideo, setShowUploadVideo] = React.useState(false);
     const [uploadProgress, setUploadProgress] = React.useState<number>(0);
+    const [showUploadingVideo, setShowUploadingVideo] = React.useState<boolean>(false);
     const [videoName, setVideoName] = React.useState<string>("");
     const [videoSize, setVideoSize] = React.useState<number>(0);
     const [stats, setStats] = React.useState<DashboardStatsType>();
@@ -45,6 +45,7 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({ showUploadingVideo, set
         <>
             {showUploadVideo &&
                 <UploadVideoModal
+                    setRerender={setRerender}
                     setVideoName={setVideoName}
                     setVideoSize={setVideoSize}
                     setUploadProgress={setUploadProgress}

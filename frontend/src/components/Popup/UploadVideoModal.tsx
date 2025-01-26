@@ -10,6 +10,7 @@ import { ErrorType } from '../../type/Error.type';
 import { v4 as uuidv4 } from "uuid";
 
 interface UploadVideoModalProps {
+    setRerender: Dispatch<SetStateAction<number>>;
     setVideoName: Dispatch<SetStateAction<string>>;
     setVideoSize: Dispatch<SetStateAction<number>>;
     setUploadProgress: Dispatch<SetStateAction<number>>;
@@ -17,7 +18,7 @@ interface UploadVideoModalProps {
     setShowUploadingVideo: Dispatch<SetStateAction<boolean>>;
 }
 
-const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setUploadProgress, setVideoName, setVideoSize, setShowUploadVideo, setShowUploadingVideo }) => {
+const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setRerender, setUploadProgress, setVideoName, setVideoSize, setShowUploadVideo, setShowUploadingVideo }) => {
     const [thumbnail, setThumbnail] = React.useState<File | null>(null);
     const divRef = React.useRef<HTMLDivElement>(null);
     const thumbnailRef = React.useRef<HTMLInputElement>(null);
@@ -80,7 +81,6 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setUploadProgress, 
             data.append("description", description);
             data.append("image", thumbnail);
         }
-        data.append("isLastChunk", isLastChunk.toString());
         try {
             await makeApiMediaRequest({
                 method: "post",
@@ -127,6 +127,7 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setUploadProgress, 
                 await uploadChunk(chunk as File, i + 1, thumbnail, videoTitle.trim(), videoDescription.trim());
             }
             toast.success("Video uploaded successfully");
+            setRerender(prev => prev + 1);
         } catch (error) {
             setShowUploadingVideo(false);
             toast.error("Failed to upload video");

@@ -30,8 +30,8 @@ const ChannelVideosCard: React.FC<ChannelVideosCardProps> = ({ videoInfo }) => {
 			<div className="flex gap-3">
 				<div className="flex flex-col text-primary-text w-full">
 					<Link to={`/video/${videoId}`}>
-						<h2 className="font-bold">{title}</h2>
-						<p className="text-sm text-primary-text2">
+						<h2 className="font-bold truncate-lines-2">{title}</h2>
+						<p className="text-sm text-primary-text2 truncate-lines-1">
 							{views} views · {uploadedAt}
 						</p>
 					</Link>
