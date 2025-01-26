@@ -8,7 +8,8 @@ import { asyncHandler } from "../utils/asyncHandler";
 import { ApiError } from "../utils/apiError";
 import { ApiResponse } from "../utils/apiResponse";
 import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary";
-import { UploadApiResponse } from "cloudinary";
+import { DeleteApiResponse, UploadApiResponse } from "cloudinary";
+import fs from "fs";
 
 interface RequestWithUser extends Request {
     user: UserType;
@@ -396,29 +397,27 @@ const updateTweet = asyncHandler(
             throw new ApiError(404, "No tweet found");
         }
 
-        // if (tweet?.image?.publicId && imageLocalPath) {
-        //     const oldImage = await deleteFromCloudinary(
-        //         tweet.image.publicId,
-        //         "image"
-        //     );
-        //     if (!oldImage) {
-        //         fs.unlinkSync(imageLocalPath);
-        //         throw new ApiError(500, "Failed to delete old image");
-        //     }
-        // }
+        if (tweet?.image?.publicId && imageLocalPath) {
+            const oldImage: DeleteApiResponse | null =
+                await deleteFromCloudinary(tweet.image.publicId, "image");
+            if (!oldImage) {
+                fs.unlinkSync(imageLocalPath);
+                throw new ApiError(500, "Failed to delete old image");
+            }
+        }
 
-        // let uploadImage: UploadApiResponse | null = null;
-        // if (imageLocalPath) {
-        //     uploadImage = await uploadOnCloudinary(imageLocalPath, "image");
-        //     if (!uploadImage) {
-        //         throw new ApiError(500, "Failed to upload image");
-        //     }
-        // }
+        let uploadImage: UploadApiResponse | null = null;
+        if (imageLocalPath) {
+            uploadImage = await uploadOnCloudinary(imageLocalPath, "image");
+            if (!uploadImage) {
+                throw new ApiError(500, "Failed to upload image");
+            }
+        }
 
-        // tweet.image = {
-        //     publicId: uploadImage.public_id,
-        //     url: uploadImage.secure_url,
-        // };
+        tweet.image = {
+            publicId: uploadImage.public_id,
+            url: uploadImage.secure_url,
+        };
         if (content) tweet.content = content;
         await tweet.save();
 

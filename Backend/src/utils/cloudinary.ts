@@ -21,16 +21,14 @@ const uploadOnCloudinary = async (
         const response = await cloudinary.uploader.upload(localFilePath, {
             resource_type: resourceType,
         });
-
-        // remove the locally saved temporary file.
-        fs.unlinkSync(localFilePath);
-
         return response;
     } catch (error) {
-        // remove the locally saved temporary file.
-        fs.unlinkSync(localFilePath);
-
         return null;
+    } finally {
+        // remove the locally saved temporary file.
+        if (fs.existsSync(localFilePath)) {
+            fs.unlinkSync(localFilePath);
+        }
     }
 };
 
@@ -45,7 +43,6 @@ const deleteFromCloudinary = async (
         const response = await cloudinary.uploader.destroy(publicId, {
             resource_type: resourceType,
         });
-
         return response;
     } catch (error) {
         return null;

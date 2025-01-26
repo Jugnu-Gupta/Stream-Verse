@@ -19,6 +19,8 @@ import {
 import request from "request";
 import fs, { promises as fsPromises } from "fs";
 import path from "path";
+import { UploadApiResponse } from "cloudinary";
+import { DeleteApiResponse } from "cloudinary";
 
 interface RequestWithUser extends Request {
     user: UserType;
@@ -426,25 +428,20 @@ const uploadVideo = asyncHandler(
                     `File ${fileName} merged successfully at ${finalVideoPath}`
                 );
 
-                const videoFile = await uploadOnCloudinary(
-                    finalVideoPath,
-                    "video"
-                );
-                const videoQuality = getVideoQuality(
-                    videoFile.width,
-                    videoFile.height
-                );
-
                 const thumbnailLocalPath = (req as FileType).files?.image?.[0]
                     ?.path;
                 if (!thumbnailLocalPath) {
                     throw new ApiError(400, "Thumbnail is required");
                 }
 
-                const thumbnail = await uploadOnCloudinary(
-                    path.resolve(thumbnailLocalPath),
-                    "image"
-                );
+                const thumbnail: UploadApiResponse | null =
+                    await uploadOnCloudinary(
+                        path.resolve(thumbnailLocalPath),
+                        "image"
+                    );
+
+                const videoFile: UploadApiResponse | null =
+                    await uploadOnCloudinary(finalVideoPath, "video");
 
                 // Validate uploads
                 if (!videoFile?.secure_url || !videoFile?.public_id) {
@@ -459,6 +456,11 @@ const uploadVideo = asyncHandler(
                         "Failed to upload thumbnail to Cloudinary"
                     );
                 }
+
+                const videoQuality = getVideoQuality(
+                    videoFile.width,
+                    videoFile.height
+                );
 
                 // Save the video details to the database
                 const video = await Video.create({
@@ -502,12 +504,6 @@ const uploadVideo = asyncHandler(
             console.error("Error during finalization: ", error);
             throw new ApiError(400, `Upload failed: ${error.message}`);
         } finally {
-            if (
-                (req as FileType).files?.image?.[0]?.path &&
-                fs.existsSync((req as FileType).files.image[0].path)
-            ) {
-                fs.unlinkSync((req as FileType).files.image[0].path);
-            }
             // Remove the chunk directory after all chunks are processed and merged
             if (parseInt(isLastChunk)) {
                 const chunkDir = `${TEMP_DIR}/${uniqueId}`;
@@ -729,10 +725,11 @@ const videoUpdate = asyncHandler(
             if (thumbnailLocalPath) {
                 // delete existing thumbnail
                 if (video?.thumbnail?.publicId) {
-                    const oldThumbnail = await deleteFromCloudinary(
-                        video.thumbnail.publicId,
-                        "image"
-                    );
+                    const oldThumbnail: DeleteApiResponse | null =
+                        await deleteFromCloudinary(
+                            video.thumbnail.publicId,
+                            "image"
+                        );
 
                     // check if thumbnail is deleted
                     if (!oldThumbnail) {
@@ -740,10 +737,8 @@ const videoUpdate = asyncHandler(
                     }
                 }
 
-                const thumbnail = await uploadOnCloudinary(
-                    thumbnailLocalPath,
-                    "image"
-                );
+                const thumbnail: UploadApiResponse | null =
+                    await uploadOnCloudinary(thumbnailLocalPath, "image");
                 if (!thumbnail) {
                     throw new ApiError(500, "Failed to upload thumbnail");
                 }
@@ -769,14 +764,6 @@ const videoUpdate = asyncHandler(
                 );
         } catch (error) {
             throw new ApiError(500, "Something went wrong!");
-        } finally {
-            if (fs.existsSync(thumbnailLocalPath)) {
-                try {
-                    fs.unlinkSync(thumbnailLocalPath);
-                } catch (cleanupError) {
-                    console.error("Failed to delete local file:", cleanupError);
-                }
-            }
         }
     }
 );
@@ -801,14 +788,10 @@ const deleteVideo = asyncHandler(
         }
 
         // delete video and thumbnail from cloudinary
-        const deleteVideo = await deleteFromCloudinary(
-            video.videoFile.publicId,
-            "video"
-        );
-        const deleteThumbnail = await deleteFromCloudinary(
-            video.thumbnail.publicId,
-            "image"
-        );
+        const deleteVideo: DeleteApiResponse | null =
+            await deleteFromCloudinary(video.videoFile.publicId, "video");
+        const deleteThumbnail: DeleteApiResponse | null =
+            await deleteFromCloudinary(video.thumbnail.publicId, "image");
         if (!deleteVideo) {
             throw new ApiError(500, "Failed to delete video from cloudinary");
         }

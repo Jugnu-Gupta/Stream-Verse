@@ -9,6 +9,7 @@ import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary";
 import mongoose from "mongoose";
 import fs from "fs";
 import path from "path";
+import { DeleteApiResponse, UploadApiResponse } from "cloudinary";
 
 interface RequestWithUser extends Request {
     user: UserType;
@@ -149,10 +150,11 @@ const updateUserAvatar = asyncHandler(
         try {
             // delete the old cover image from cloudinary if exists.
             if (req.user?.avatar?.publicId) {
-                const oldAvatar = await deleteFromCloudinary(
-                    req.user?.avatar?.publicId,
-                    "image"
-                );
+                const oldAvatar: DeleteApiResponse | null =
+                    await deleteFromCloudinary(
+                        req.user?.avatar?.publicId,
+                        "image"
+                    );
 
                 // check if the old cover image is deleted successfully.
                 if (!oldAvatar) {
@@ -165,7 +167,10 @@ const updateUserAvatar = asyncHandler(
             }
 
             // uploading images to cloudinay and updating the user profile.
-            const avatar = await uploadOnCloudinary(avatarLocalPath, "image");
+            const avatar: UploadApiResponse | null = await uploadOnCloudinary(
+                avatarLocalPath,
+                "image"
+            );
             if (!avatar) {
                 throw new ApiError(500, "Image upload failed on cloudinary");
             }
@@ -194,14 +199,6 @@ const updateUserAvatar = asyncHandler(
                 );
         } catch (error) {
             throw new ApiError(500, "Something went wrong!");
-        } finally {
-            if (fs.existsSync(avatarLocalPath)) {
-                try {
-                    fs.unlinkSync(avatarLocalPath);
-                } catch (cleanupError) {
-                    console.error("Failed to delete local file:", cleanupError);
-                }
-            }
         }
     }
 );
@@ -219,10 +216,11 @@ const updateUserCoverImage = asyncHandler(
         try {
             // delete the old cover image from cloudinary if exists.
             if (req.user?.coverImage?.publicId) {
-                const oldCoverImage = await deleteFromCloudinary(
-                    req?.user?.coverImage?.publicId,
-                    "image"
-                );
+                const oldCoverImage: DeleteApiResponse | null =
+                    await deleteFromCloudinary(
+                        req?.user?.coverImage?.publicId,
+                        "image"
+                    );
 
                 // check if the old cover image is deleted successfully.
                 if (!oldCoverImage) {
@@ -234,10 +232,8 @@ const updateUserCoverImage = asyncHandler(
                 }
             }
 
-            const coverImage = await uploadOnCloudinary(
-                coverImageLocalPath,
-                "image"
-            );
+            const coverImage: UploadApiResponse | null =
+                await uploadOnCloudinary(coverImageLocalPath, "image");
             if (!coverImage) {
                 throw new ApiError(500, "Image upload failed on cloudinary");
             }
@@ -266,14 +262,6 @@ const updateUserCoverImage = asyncHandler(
                 );
         } catch (error) {
             throw new ApiError(500, "Something went wrong!");
-        } finally {
-            if (fs.existsSync(coverImageLocalPath)) {
-                try {
-                    fs.unlinkSync(coverImageLocalPath);
-                } catch (cleanupError) {
-                    console.error("Failed to delete local file:", cleanupError);
-                }
-            }
         }
     }
 );

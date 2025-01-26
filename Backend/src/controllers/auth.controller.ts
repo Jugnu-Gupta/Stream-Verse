@@ -9,6 +9,7 @@ import { getAvailableUserName } from "../utils/getAvailableUserName";
 import { uploadOnCloudinary } from "../utils/cloudinary";
 import { sendMail } from "../utils/sendMail";
 import jwt from "jsonwebtoken";
+import { UploadApiResponse } from "cloudinary";
 
 interface RequestWithUser extends Request {
     user: UserType;
@@ -85,9 +86,14 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
         ?.path;
 
     // uploading images to cloudinay
-    const avatar = await uploadOnCloudinary(avatarLocalPath, "image");
-    const coverImage = await uploadOnCloudinary(coverImageLocalPath, "image");
-    // console.log("avatar", avatar);
+    const avatar: UploadApiResponse | null = await uploadOnCloudinary(
+        avatarLocalPath,
+        "image"
+    );
+    const coverImage: UploadApiResponse | null = await uploadOnCloudinary(
+        coverImageLocalPath,
+        "image"
+    );
 
     // timestamps values will be generated automatically.
     const user = await User.create({
