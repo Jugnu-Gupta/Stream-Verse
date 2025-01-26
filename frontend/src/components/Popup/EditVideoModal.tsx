@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { RxCross2 } from "react-icons/rx";
 import { useMedia } from '../../hooks/useMedia';
 import { makeApiMediaRequest } from '../../utils/MakeApiRequest';
@@ -9,7 +9,7 @@ import { ErrorType } from '../../type/Error.type';
 
 interface EditVideoModalProps {
     videoInfo: DashboardVideoType;
-    setShowEditVideo: Dispatch<SetStateAction<boolean>>;
+    setShowEditVideo: (show: boolean) => void;
 }
 const EditVideoModal: React.FC<EditVideoModalProps> = ({ videoInfo, setShowEditVideo }) => {
     const { fileInputRef, mediaPreview, setMediaPreview, newMedia, handleMediaChange, discardMediaChange } = useMedia();
@@ -24,14 +24,15 @@ const EditVideoModal: React.FC<EditVideoModalProps> = ({ videoInfo, setShowEditV
     }, [videoInfo, setMediaPreview]);
 
     const updateVideo = () => {
-        if (!newMedia && videoTitle === videoInfo.title &&
-            videoDescription === videoInfo.description) return;
+        if (!newMedia && videoTitle.trim() === videoInfo.title &&
+            videoDescription.trim() === videoInfo.description) return;
 
         const data = new FormData();
         if (newMedia) data.append("image", newMedia);
-        if (videoTitle !== videoInfo.title) data.append("title", videoTitle);
+        if (videoTitle !== videoInfo.title)
+            data.append("title", videoTitle.trim());
         if (videoDescription !== videoInfo.description)
-            data.append("description", videoDescription);
+            data.append("description", videoDescription.trim());
 
         makeApiMediaRequest({
             method: "patch",
@@ -39,8 +40,7 @@ const EditVideoModal: React.FC<EditVideoModalProps> = ({ videoInfo, setShowEditV
             data
         }).then(() => {
             toast.success("Video uploaded successfully");
-            setShowEditVideo(false);
-            // window.location.reload();
+            setShowEditVideo(true);
         }).catch((error: ErrorType) => {
             console.error(error.response.data.message);
         })
@@ -63,7 +63,7 @@ const EditVideoModal: React.FC<EditVideoModalProps> = ({ videoInfo, setShowEditV
                         <label htmlFor="thumbnail" className='text-sm mb-1'>
                             <p>Thumbnail<sup>*</sup></p>
                             <div className='border-dashed border-2 border-primary-border rounded-lg p-1 cursor-pointer'>
-                                <img src={mediaPreview} alt="thumbnail" loading='lazy' className='rounded-lg aspect-video object-cover' />
+                                <img src={mediaPreview} alt="thumbnail" loading='lazy' className='rounded-lg aspect-video object-cover w-full' />
                             </div>
                         </label>
                         <input type="file" name="thumbnail" id="thumbnail" accept="image/png,image/jpeg" className='hidden'

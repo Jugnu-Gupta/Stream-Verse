@@ -72,7 +72,7 @@ const Header: React.FC = () => {
 				<h1 className="sm:0 ml-1.5 xs:hidden text-primary-text">StreamVerse</h1>
 			</div>
 			<div className="flex items-center border-2 border-primary-border bg-background-tertiary rounded-full max-w-lg w-1/2">
-				<input type="text" placeholder="Search" value={searchText} onChange={(e) => setSearchText(e.target.value)}
+				<input type="text" placeholder="Search" value={searchText} onChange={(e) => setSearchText(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSearch()}
 					className="outline-none text-primary-text rounded-l-full pl-3 bg-transparent bg-opacity-50 py-1 w-full" />
 				<button className="h-full pr-2 pl-1 rounded-r-full bg-transparent outline-none" onClick={handleSearch}>
 					<IoSearchSharp className="text-primary-icon text-lg h-full" />

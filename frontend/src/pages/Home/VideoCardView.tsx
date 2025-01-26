@@ -24,7 +24,7 @@ const VideoCardView: React.FC<VideoCardViewProps> = ({ videoInfo }) => {
 		<div className="flex flex-col gap-2 p-2 group max-w-[400px] overflow-hidden w-full">
 			<div className="overflow-hidden rounded-xl relative" onClick={() => navigate(`/video/${videoId}`)}>
 				<img src={videoInfo.thumbnail.url} alt="thumbnail" loading='lazy'
-					className="rounded-xl aspect-video group-hover:scale-110 duration-300 relative z-0 w-full" />
+					className="rounded-xl aspect-video object-cover group-hover:scale-110 duration-300 relative z-0 w-full" />
 				<p className="px-1 py-[1px] absolute z-10 bottom-2 right-2 text-xs text-primary-text rounded-md bg-black bg-opacity-70">
 					{duration}
 				</p>
@@ -35,7 +35,7 @@ const VideoCardView: React.FC<VideoCardViewProps> = ({ videoInfo }) => {
 				</div>
 				<div className="flex flex-col text-primary-text w-full">
 					<div onClick={() => navigate(`/video/${videoId}`)}>
-						<h2 className="font-bold w-full truncate-clamp-1">{title}</h2>
+						<h2 className="font-bold w-full truncate-lines-2">{title}</h2>
 						<p className="text-sm text-primary-text truncate-lines-1">
 							{views} views · {uploadedAt}
 						</p>

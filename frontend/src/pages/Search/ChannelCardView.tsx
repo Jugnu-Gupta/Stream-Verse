@@ -18,7 +18,7 @@ const ChannelCardView: React.FC<ChannelCardViewProps> = ({ channelInfo }) => {
         <div className="flex flex-col gap-2 p-2 group max-w-[400px] w-full" onClick={() => navigate(`/channel/@${channelUserName}/videos`)}>
             <div className="rounded-xl overflow-hidden">
                 <img src={avatarUrl} alt="avatar" loading='lazy'
-                    className="rounded-xl border-2 border-primary-border aspect-video group-hover:scale-110 duration-300"
+                    className="rounded-xl border-2 border-primary-border aspect-video object-cover w-full group-hover:scale-110 duration-300"
                 />
             </div>
             <div className="text-primary-text">

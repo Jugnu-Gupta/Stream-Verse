@@ -10,8 +10,8 @@ const storage = multer.diskStorage({
         file: Express.Multer.File,
         cb: (error: Error | null, destination: string | undefined) => void
     ) => {
-        const uniqueId: string = req.query.uniqueId as string;
-        const tempPath = uniqueId !== "" ? `/tmp/${uniqueId}` : "/tmp";
+        const uniqueId = req.query.uniqueId;
+        const tempPath = uniqueId ? `/tmp/${uniqueId}` : "/tmp";
         if (!fs.existsSync(tempPath)) {
             fs.mkdirSync(tempPath, { recursive: true }); // Ensure directory exists
         }

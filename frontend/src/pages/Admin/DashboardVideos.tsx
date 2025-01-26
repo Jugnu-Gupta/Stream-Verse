@@ -15,6 +15,7 @@ const DashboardVideos: React.FC<DashboardVideosProps> = ({ showUploadingVideo })
     const navigate = useNavigate();
     const [videos, setVideos] = React.useState<DashboardVideoType[]>([]);
     const [loading, setLoading] = React.useState<boolean>(false);
+    const [renderVideos, setRenderVideos] = React.useState<number>(0);
 
     React.useEffect(() => {
         setLoading(true);
@@ -30,7 +31,7 @@ const DashboardVideos: React.FC<DashboardVideosProps> = ({ showUploadingVideo })
         }).finally(() => {
             setLoading(false);
         });
-    }, [navigate, showUploadingVideo]);
+    }, [navigate, showUploadingVideo, renderVideos]);
 
     return (
         <div className="overflow-x-auto mt-4">
@@ -47,7 +48,7 @@ const DashboardVideos: React.FC<DashboardVideosProps> = ({ showUploadingVideo })
                 </thead>
                 <tbody className='text-primary-text'>
                     {videos?.map((video: DashboardVideoType) => (
-                        <DashboardVideoStatsControl key={video._id} videoInfo={video} />
+                        <DashboardVideoStatsControl key={video._id} videoInfo={video} setRenderVideos={setRenderVideos} />
                     ))}
                 </tbody>
             </table>

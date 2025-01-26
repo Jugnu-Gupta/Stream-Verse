@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React from 'react';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { RxCross2 } from "react-icons/rx";
 import makeApiRequest from '../../utils/MakeApiRequest';
@@ -13,7 +13,7 @@ interface DeleteModalProps {
     Name: string;
     Url: string;
     currPath: string[];
-    setShowDeleteModal: Dispatch<SetStateAction<boolean>> | ((show: boolean, currPath: string[]) => void);
+    setShowDeleteModal: (show: boolean, currPath: string[]) => void;
 }
 
 const DeleteModal: React.FC<DeleteModalProps> = ({ Name, Url, currPath, setShowDeleteModal }) => {
@@ -29,15 +29,14 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ Name, Url, currPath, setShowD
         }).then((response) => {
             const data = (response as ResponseType).data;
             toast.success(`${Name} deleted successfully`);
-            dispatch(setCounter({ value: counter - data.deletedCount }));
+            if (data?.deletedCount)
+                dispatch(setCounter({ value: counter - data.deletedCount }));
             setShowDeleteModal(true, currPath);
         }).catch((error: ErrorType) => {
             console.error(error.response.data.message);
         });
     }
     return (
-        // <div className='w-full h-full flex justify-center items-center bg-black bg-opacity-20 absolute z-[1]'>
-        // <div className='w-full h-full flex justify-center items-center absolute z-[20] left-0 top-0'>
         <div className='w-full h-full flex justify-center items-center fixed z-[20] top-0 left-0' >
             <div className='rounded-lg border-2 border-primary-border bg-background-secondary p-4 w-96 text-wrap h-fit'>
                 <div className='flex gap-2 justify-between items-start'>

@@ -21,11 +21,11 @@ const PlaylistListView: React.FC<VideoListViewProps> = ({ playlistInfo }) => {
     return (
         <div className="flex gap-4 p-2 group w-full justify-start">
             <Link to={`/video/${videoId}?listId=${playlistId}`} className="w-full">
-                <div className="overflow-hidden rounded-xl max-w-md w-full relative">
+                <div className="overflow-hidden rounded-xl max-w-md w-full h-fit relative">
                     {playlistInfo?.thumbnail?.url ?
                         <img src={playlistInfo.thumbnail.url} alt="thumbnail" loading='lazy'
-                            className="rounded-xl aspect-video duration-300" />
-                        : <div className="rounded-xl aspect-video bg-background-secondary flex justify-center items-center w-full" >
+                            className="rounded-xl aspect-video object-cover w-full duration-300" />
+                        : <div className="rounded-xl aspect-video object-cover bg-background-secondary flex justify-center items-center w-full" >
                             <FaVideoSlash className="text-primary-icon text-4xl" />
                         </div>
                     }

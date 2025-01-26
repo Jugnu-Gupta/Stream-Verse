@@ -26,7 +26,7 @@ const ChannelVideosCard: React.FC<ChannelVideosCardProps> = ({ playlist, editDel
 				<div className="overflow-hidden rounded-xl relative w-full">
 					{playlist.thumbnail?.url ?
 						<img src={playlist.thumbnail.url} alt="thumbnail" loading='lazy'
-							className="rounded-xl aspect-video duration-300 w-full" />
+							className="rounded-xl aspect-video object-cover duration-300 w-full" />
 						: <div className="rounded-xl aspect-video bg-background-secondary flex justify-center items-center w-full" >
 							<FaVideoSlash className="text-primary-icon text-4xl" />
 						</div>

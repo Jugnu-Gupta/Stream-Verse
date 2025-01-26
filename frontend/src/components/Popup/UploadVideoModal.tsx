@@ -152,7 +152,7 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setUploadProgress, 
                         <label htmlFor={videoPreview ? "" : "video"} className='text-sm mb-1'>
                             <div className={twMerge('border-dashed border-2 rounded-lg border-primary-border p-1 aspect-video flex items-center justify-center',
                                 !videoPreview && "cursor-pointer")}>
-                                {videoPreview ? (<video src={videoPreview} controls className='rounded-lg' />) :
+                                {videoPreview ? (<video src={videoPreview} controls className='rounded-lg object-cover w-full' />) :
                                     (<div ref={divRef}
                                         onDragOver={(e) => onDragOver(e)}
                                         onDragLeave={() => onDragLeave()}

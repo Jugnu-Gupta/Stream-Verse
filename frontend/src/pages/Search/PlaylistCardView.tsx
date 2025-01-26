@@ -22,8 +22,8 @@ const PlaylistCardView: React.FC<PlaylistCardViewProps> = ({ playlistInfo }) => 
             <Link to={`/video/${videoId}?listId=${playlistId}`} className="w-full">
                 <div className="overflow-hidden rounded-xl max-w-md w-full relative">
                     {playlistInfo.thumbnail?.url ? <img src={playlistInfo.thumbnail.url} alt="thumbnail" loading='lazy'
-                        className="rounded-xl aspect-video duration-300 w-full" />
-                        : <div className="rounded-xl aspect-video bg-background-secondary flex justify-center items-center w-full" >
+                        className="rounded-xl aspect-video object-cover duration-300 w-full" />
+                        : <div className="rounded-xl aspect-video object-cover bg-background-secondary flex justify-center items-center w-full" >
                             <FaVideoSlash className="text-primary-icon text-4xl" />
                         </div>
                     }
