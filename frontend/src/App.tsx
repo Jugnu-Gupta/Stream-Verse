@@ -24,10 +24,6 @@ import Login from "./pages/Login/Login.js";
 import Home from "./pages/Home/Home.tsx";
 import Help from "./pages/Help/Help.tsx";
 
-// give fallback values to controller while accesing array elements i.e. $ArrayElemAt: [ "$array", 0 ]
-
-// update video details for actual videoId
-
 function App() {
 	return (
 		<BrowserRouter>

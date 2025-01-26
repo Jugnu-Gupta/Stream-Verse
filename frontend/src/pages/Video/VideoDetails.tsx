@@ -34,12 +34,10 @@ const VideoDetail: React.FC = () => {
 	const channelUserName = video?.owner?.userName || "Channel User Name";
 	const description = video?.description || "Video Description";
 	const userId = localStorage.getItem("userId");
-	const noOfComments: number = video?.noOfComments || 10;
+	const noOfComments: number = video?.noOfComments || 0;
 	const avatarUrl = video?.owner?.avatar?.url || generateAvatar(channelName, "0078e1", "ffffffcc", 50);
 	const videoRef = React.useRef<HTMLVideoElement | null>(null);
-	// const videoId = "j57mrruqxjge191kld5g"; //videoPublicId 
 	const title = video?.title || "Video Title";
-	// const playlistId = "67502bffd0104e89cbb9be5e";
 
 	useEffect(() => {
 		const getPlaylistAndVideo = async () => {
@@ -125,7 +123,7 @@ const VideoDetail: React.FC = () => {
 				<Video
 					duration={video?.duration || 0}
 					cloudName="CLOUD_NAME"
-					publicId={`${BASE_URL}/api/v1/videos/video/${videoId + "dv"}.mp4`} // wrong
+					publicId={`${BASE_URL}/api/v1/videos/video/${videoId}.mp4`}
 					ref={videoRef}
 					width="100%"
 					height="auto"

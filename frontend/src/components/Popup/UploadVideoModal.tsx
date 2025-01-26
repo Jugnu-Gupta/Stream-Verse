@@ -75,6 +75,7 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({ setRerender, setUpl
         const data = new FormData();
         const isLastChunk: number = (chunkNumber === totalChunks ? 1 : 0);
         data.append("video", chunk);
+        data.append("isLastChunk", isLastChunk.toString());
         if (isLastChunk === 1) {
             console.log("Last chunk");
             data.append("title", title);
