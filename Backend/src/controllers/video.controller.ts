@@ -513,14 +513,10 @@ const uploadVideo = asyncHandler(
     }
 );
 
-interface GetVideoByIdParams {
-    videoId: string;
-    userId?: string;
-}
-
 const getVideoById = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
-        let { videoId, userId } = req.params as unknown as GetVideoByIdParams;
+        let { videoId } = req.params as { videoId: string };
+        let { userId } = req.query as { userId?: string };
         if (!isValidObjectId(videoId)) {
             throw new ApiError(400, "Invalid video id");
         }

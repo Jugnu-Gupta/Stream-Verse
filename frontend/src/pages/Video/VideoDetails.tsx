@@ -34,10 +34,11 @@ const VideoDetail: React.FC = () => {
 	const channelUserName = video?.owner?.userName || "Channel User Name";
 	const description = video?.description || "Video Description";
 	const userId = localStorage.getItem("userId");
-	const noOfComments: number = video?.noOfComments || 0;
+	const noOfComments: number = video?.noOfComments || 10;
 	const avatarUrl = video?.owner?.avatar?.url || generateAvatar(channelName, "0078e1", "ffffffcc", 50);
 	const videoRef = React.useRef<HTMLVideoElement | null>(null);
 	const title = video?.title || "Video Title";
+	const videoPublicId = video?.videoFile?.publicId || "";
 
 	useEffect(() => {
 		const getPlaylistAndVideo = async () => {
@@ -62,18 +63,23 @@ const VideoDetail: React.FC = () => {
 				// Fetch video details
 				const videoInfoRes = await makeApiRequest({
 					method: "get",
-					url: `/api/v1/videos/${videoId}${userId ? `/${userId}` : ""}`,
+					url: `/api/v1/videos/${videoId}`,
+					params: { userId }
 				});
 				const videoData = (videoInfoRes as ResponseType).data?.video;
 				setVideo(videoData);
 
 				// Increment video views
-				await makeApiRequest({
-					method: "post",
-					url: `/api/v1/videos/${videoId}/views`,
-				});
+				try {
+					await makeApiRequest({
+						method: "post",
+						url: `/api/v1/videos/${videoId}/views`,
+					});
+				} catch (error) {
+					console.error("Failed to increment video views:", (error as ErrorType).response.data.message);
+				}
 			} catch (error) {
-				console.error((error as ErrorType).response?.data?.message || "An error occurred");
+				console.error((error as ErrorType).response.data.message);
 				navigate(listId ? `/video/${videoId}` : `/`);
 			}
 		};
@@ -123,7 +129,7 @@ const VideoDetail: React.FC = () => {
 				<Video
 					duration={video?.duration || 0}
 					cloudName="CLOUD_NAME"
-					publicId={`${BASE_URL}/api/v1/videos/video/${videoId}.mp4`}
+					publicId={`${BASE_URL}/api/v1/videos/video/${videoPublicId}.mp4`}
 					ref={videoRef}
 					width="100%"
 					height="auto"

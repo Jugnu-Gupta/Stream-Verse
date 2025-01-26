@@ -17,7 +17,7 @@ const ShowHideText: React.FC<ShowHideTextProps> = ({ content }) => {
 			text.length < 100 ? null : (
 				<button
 					onClick={() => setReadMore(!readMore)}
-					className="text-primary text-sm">
+					className="text-primary-text font-semibold text-sm">
 					{readMore ? "Read Less" : "Read More"}
 				</button>
 			)
