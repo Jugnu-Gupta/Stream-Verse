@@ -41,7 +41,7 @@ function App() {
 					<Route path="tweet/:tweetId" element={<TweetDetails />} />
 					<Route path="help" element={<Help />} />
 
-					{/* for current user and channel of other users */}
+					{/* for current user channel or channels of other users */}
 					<Route path="channel/:adminName">
 						<Route index element={<Error />} />
 

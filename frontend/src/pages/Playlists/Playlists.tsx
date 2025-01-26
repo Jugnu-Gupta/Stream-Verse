@@ -29,7 +29,10 @@ const Playlists: React.FC = () => {
 
 	useEffect(() => {
 		const userName = localStorage.getItem("userName");
-		if (!userName) navigate("/");
+		if (!userName) {
+			toast.error("Please login to view your playlists.");
+			navigate("/");
+		}
 
 		setLoading(true);
 		makeApiRequest({
@@ -41,9 +44,6 @@ const Playlists: React.FC = () => {
 			setPlaylists(playlistData);
 		}).catch((error: ErrorType) => {
 			console.error(error.response.data.message);
-			if (error.response.data.statusCode == 401) {
-				toast.error("Please login to view your playlists.");
-			}
 			navigate("/");
 		}).finally(() => {
 			setLoading(false);

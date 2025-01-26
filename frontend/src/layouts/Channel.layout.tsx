@@ -5,6 +5,7 @@ import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import { ChannelInfoType } from '../type/Channel.type';
 import { ErrorType } from '../type/Error.type';
 import { ResponseType } from '../type/Response.type';
+import toast from 'react-hot-toast';
 
 const ChannelLayout: React.FC = () => {
     const navigate = useNavigate();
@@ -12,7 +13,10 @@ const ChannelLayout: React.FC = () => {
     const [channelInfo, setChannelInfo] = React.useState<ChannelInfoType>();
 
     React.useEffect(() => {
-        if (!adminName) navigate("/");
+        if (!adminName) {
+            toast.error("Please login to view your channel.");
+            navigate("/");
+        }
         makeApiRequest({
             method: "get",
             url: `/api/v1/users/channel/${adminName?.substring(1)}`,
