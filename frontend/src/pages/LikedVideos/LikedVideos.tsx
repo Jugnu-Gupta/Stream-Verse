@@ -8,6 +8,7 @@ import NoResultsFound from '../Search/NoResultsFound';
 import loadingGIF from '../../assets/loading.gif';
 import { ErrorType } from '../../type/Error.type';
 import { ResponseType } from '../../type/Response.type';
+import toast from 'react-hot-toast';
 
 interface VideoWrapper {
     _id: string;
@@ -28,6 +29,9 @@ const LikedVideos: React.FC = () => {
             setVideos(data);
         }).catch((error: ErrorType) => {
             console.error(error.response.data.message);
+            if (error.response.data.statusCode == 401) {
+                toast.error("Please login to view your liked videos.");
+            }
             navigate("/");
         }).finally(() => {
             setLoading(false);

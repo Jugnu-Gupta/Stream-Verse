@@ -8,6 +8,7 @@ import NoResultsFound from '../Search/NoResultsFound';
 import loadingGIF from '../../assets/loading.gif';
 import { ErrorType } from '../../type/Error.type';
 import { ResponseType } from '../../type/Response.type';
+import toast from 'react-hot-toast';
 
 const WatchHistory: React.FC = () => {
     const navigate = useNavigate();
@@ -24,6 +25,9 @@ const WatchHistory: React.FC = () => {
             setVideos(watchHistoryData);
         }).catch((error: ErrorType) => {
             console.error(error.response.data.message);
+            if (error.response.data.statusCode == 401) {
+                toast.error("Please login to view your watch history.");
+            }
             navigate("/");
         }).finally(() => {
             setLoading(false);

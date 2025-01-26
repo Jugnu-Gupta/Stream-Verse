@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 
 const ProtectedAdminLayout: React.FC = () => {
@@ -8,6 +9,7 @@ const ProtectedAdminLayout: React.FC = () => {
 
     useEffect(() => {
         if (adminName !== channelAdmin) {
+            toast.error("Please login to view your Channel.");
             navigate("/");
         }
     }, [adminName, channelAdmin, navigate]);

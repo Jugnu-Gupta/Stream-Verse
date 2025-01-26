@@ -11,7 +11,6 @@ import ProtectedAdminLayout from "./layouts/ProtectedAdmin.layout.tsx";
 import Subscriptions from "./pages/Subscriptions/Subscriptions.tsx";
 import WatchHistory from "./pages/WatchHistory/WatchHistory.tsx";
 import LikedVideos from "./pages/LikedVideos/LikedVideos.tsx";
-import ProtectedLayout from "./layouts/Protected.layout.tsx";
 import Playlists from "./pages/Playlists/Playlists.tsx";
 import TweetDetails from "./pages/Tweet/TweetDetails.tsx";
 import VideoDetail from "./pages/Video/VideoDetails.tsx";
@@ -39,6 +38,7 @@ function App() {
 					<Route index element={<Home />} />
 					<Route path="search" element={<Search />} />
 					<Route path="video/:videoId" element={<VideoDetail />} />
+					<Route path="tweet/:tweetId" element={<TweetDetails />} />
 					<Route path="help" element={<Help />} />
 
 					{/* for current user and channel of other users */}
@@ -55,28 +55,25 @@ function App() {
 						<Route path="*" element={<Error />} />
 					</Route >
 
-					<Route element={<ProtectedLayout />}>
-						<Route path="tweet/:tweetId" element={<TweetDetails />} />
-						<Route path="history" element={<WatchHistory />} />
-						<Route path="liked-videos" element={<LikedVideos />} />
-						<Route path="playlists" element={<Playlists />} />
-						<Route path="subscriptions" element={<Subscriptions />} />
+					<Route path="history" element={<WatchHistory />} />
+					<Route path="liked-videos" element={<LikedVideos />} />
+					<Route path="playlists" element={<Playlists />} />
+					<Route path="subscriptions" element={<Subscriptions />} />
 
-						<Route path="user/:adminName" >
-							<Route index element={<Error />} />
+					<Route path="user/:adminName" >
+						<Route index element={<Error />} />
 
-							<Route element={<ProtectedAdminLayout />}>
-								<Route path="dashboard" element={<Dashboard />} />
-								<Route path="change-password" element={<ChangePassword />} />
-								<Route path="personal-information" element={<PersonalInformation />} />
-							</Route>
-
-							<Route path="*" element={<Error />} />
+						<Route element={<ProtectedAdminLayout />}>
+							<Route path="dashboard" element={<Dashboard />} />
+							<Route path="change-password" element={<ChangePassword />} />
+							<Route path="personal-information" element={<PersonalInformation />} />
 						</Route>
-					</Route>
 
-					<Route path="*" element={<Error />} />
+						<Route path="*" element={<Error />} />
+					</Route>
 				</Route>
+
+				<Route path="*" element={<Error />} />
 
 				<Route path="login" element={<Login />} />
 				<Route path="register" element={<Register />} />

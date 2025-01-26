@@ -9,6 +9,7 @@ import NoResultsFound from "../Search/NoResultsFound";
 import loadingGIF from "../../assets/loading.gif";
 import { ErrorType } from "../../type/Error.type";
 import { ResponseType } from "../../type/Response.type";
+import toast from "react-hot-toast";
 
 const Playlists: React.FC = () => {
 	const navigate = useNavigate();
@@ -40,6 +41,9 @@ const Playlists: React.FC = () => {
 			setPlaylists(playlistData);
 		}).catch((error: ErrorType) => {
 			console.error(error.response.data.message);
+			if (error.response.data.statusCode == 401) {
+				toast.error("Please login to view your playlists.");
+			}
 			navigate("/");
 		}).finally(() => {
 			setLoading(false);
