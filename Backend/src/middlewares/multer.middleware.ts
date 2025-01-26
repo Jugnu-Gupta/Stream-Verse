@@ -11,9 +11,7 @@ const storage = multer.diskStorage({
         cb: (error: Error | null, destination: string | undefined) => void
     ) => {
         const uniqueId: string = req.query.uniqueId as string;
-        const tempPath = path.resolve(
-            uniqueId !== "" ? `./tmp/${uniqueId}` : "./tmp"
-        );
+        const tempPath = uniqueId !== "" ? `/tmp/${uniqueId}` : "/tmp";
         if (!fs.existsSync(tempPath)) {
             fs.mkdirSync(tempPath, { recursive: true }); // Ensure directory exists
         }

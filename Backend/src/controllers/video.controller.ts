@@ -379,7 +379,7 @@ const uploadVideo = asyncHandler(
             req.body;
         const { uniqueId, chunkNumber, totalChunks } =
             req.query as unknown as UploadVideoQuery;
-        const TEMP_DIR = "./tmp";
+        const TEMP_DIR = "/tmp";
 
         if (!uniqueId || !chunkNumber || !totalChunks) {
             throw new ApiError(
