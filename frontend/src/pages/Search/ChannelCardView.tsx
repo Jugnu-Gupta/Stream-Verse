@@ -11,7 +11,7 @@ const ChannelCardView: React.FC<ChannelCardViewProps> = ({ channelInfo }) => {
     const subscribers = formatNumber(channelInfo?.subsribers);
     const channelUserName = channelInfo.userName;
     const channelFullName = channelInfo.fullName;
-    const avatarUrl = channelInfo.avatar?.url || generateAvatar(channelFullName, "0078e1", "ffffffcc", 150);
+    const avatarUrl = channelInfo.avatar?.url || generateAvatar(channelFullName, "0078e1", "ffffffcc", 150, false);
     const navigate = useNavigate();
 
     return (

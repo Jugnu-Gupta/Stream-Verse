@@ -19,7 +19,7 @@ const ChannelInfo: React.FC<ChannelInfoProps> = ({ channelInfo }) => {
     const dispatch = useDispatch<AppDispatch>();
     const [isSubscribed, setIsSubscribed] = React.useState(false);
     const adminName = "@" + (channelInfo?.userName || "adminName");
-    const channelName = channelInfo?.fullName || "channel Name"; // find out whose channel is this
+    const channelName = channelInfo?.fullName || "channel Name";
     const curUserName: string = "@" + localStorage.getItem("userName");
     const subscribersCount = useSelector((state: RootState) => state.counter.value);
     const subscribers = formatNumber(subscribersCount);

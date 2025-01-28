@@ -168,7 +168,7 @@ const VideoDetail: React.FC = () => {
 						</div>
 
 						{/* Like, Subscribe And Save */}
-						{userId && <LikeSubscribeSave likes={video?.likes} dislikes={video?.dislikes} likeStatus={video?.likeStatus} entityType="video" entityId={videoId || ""} />}
+						{userId && <LikeSubscribeSave channelUserName={channelUserName} likes={video?.likes} dislikes={video?.dislikes} likeStatus={video?.likeStatus} entityType="video" entityId={videoId || ""} />}
 					</div>
 					<div className="w-full border-primary-border border-b-2 my-3"></div>
 

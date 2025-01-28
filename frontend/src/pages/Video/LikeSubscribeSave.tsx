@@ -9,6 +9,7 @@ import SaveToPlaylist from "./SaveToPlaylist";
 import useLikeDislike from '../../hooks/useLikeDislike';
 import { computeDislikeCount, computeLikeCount }
     from '../../utils/ComputeLikeDislikeCount';
+import { useNavigate } from 'react-router-dom';
 
 interface LikeSubscribeSaveProps {
     entityId: string;
@@ -16,17 +17,20 @@ interface LikeSubscribeSaveProps {
     likes: number | undefined;
     dislikes: number | undefined;
     likeStatus: number | undefined;
+    channelUserName: string | undefined;
 }
-const LikeSubscribeSave: React.FC<LikeSubscribeSaveProps> = ({ likes, dislikes, likeStatus, entityId, entityType }) => {
+const LikeSubscribeSave: React.FC<LikeSubscribeSaveProps> = ({ likes, dislikes, likeStatus, entityId, entityType, channelUserName }) => {
     const { isLiked, isDisliked, handleLike, handleDislike } = useLikeDislike({ entityId, entityType, likeStatus });
     const [showSaveToPlaylist, setShowSaveToPlaylist] = React.useState(false);
     const [isSubscribed, setIsSubscribed] = React.useState(false);
     const dislike = computeDislikeCount(dislikes, likeStatus, isDisliked);
     const like = computeLikeCount(likes, likeStatus, isLiked);
+    const curUserName: string = localStorage.getItem("userName") || "";
+    const navigate = useNavigate();
 
     return (
         <div className="flex items-center gap-2 flex-wrap justify-end">
-            <button
+            {channelUserName !== curUserName ? <button
                 onClick={() => setIsSubscribed(!isSubscribed)}
                 className={twMerge(
                     "bg-subscribe h-fit text-primary-text outline-none font-semibold px-3 py-1 sm:text-sm rounded-md hover:scale-105 duration-300",
@@ -34,6 +38,11 @@ const LikeSubscribeSave: React.FC<LikeSubscribeSaveProps> = ({ likes, dislikes, 
                 )}>
                 {isSubscribed ? "Subscribed" : "Subscribe"}
             </button>
+                : <button onClick={() => navigate(`/user/@${curUserName}/dashboard`)}
+                    className="bg-primary h-fit text-primary-text outline-none font-semibold px-3 py-1 sm:text-sm rounded-md hover:scale-105 duration-300">
+                    Dashboard
+                </button>
+            }
             <div className="border-2 border-primary-border rounded-lg w-fit flex items-center px-2">
                 <button
                     onClick={() => handleLike()}

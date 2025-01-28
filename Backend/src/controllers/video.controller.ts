@@ -49,7 +49,6 @@ const getAllVideo = asyncHandler(
             duration = "any",
         } = req.query as unknown as GetAllVideoQuery;
         const skip: number = (parseInt(page) - 1) * parseInt(limit);
-        // console.log("skip:", skip, page, limit);
         const searchQuery: string = decodeURIComponent(query);
         const uploadDateOption: number = uploadDateCriteria.get(uploadDate);
         const durationOption: [number, number] = durationCriteria.get(duration);
