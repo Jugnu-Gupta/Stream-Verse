@@ -21,6 +21,7 @@ const SaveToPlaylist: React.FC<SaveToPlaylistProps> = ({ videoId, setShowSaveToP
 
     useEffect(() => {
         if (!userName) return;
+
         makeApiRequest({
             method: "get",
             url: `/api/v1/playlists`,
@@ -30,6 +31,9 @@ const SaveToPlaylist: React.FC<SaveToPlaylistProps> = ({ videoId, setShowSaveToP
             setPlaylists(playlistData.map((playlist: PlaylistType) =>
                 ({ name: playlist.name, id: playlist._id, videoStatus: playlist.videoStatus })));
         }).catch((error: ErrorType) => {
+            if (error.response.data.statusCode === 401) {
+                toast.error("Please login to view playlists");
+            }
             console.error(error.response.data.message);
         });
     }, [userName, videoId]);
@@ -78,12 +82,14 @@ const SaveToPlaylist: React.FC<SaveToPlaylistProps> = ({ videoId, setShowSaveToP
             setShowSaveToPlaylist(false);
             setPlaylistName("");
         }).catch((error: ErrorType) => {
+            if (error.response.data.statusCode === 401) {
+                toast.error("Please login to create a playlist");
+            }
             console.error(error.response.data.message);
         });
     }
 
     return (
-        // <div className="absolute -z-10 group-focus-within:z-10 p-4 rounded-lg bg-background-primary text-white top-full right-0 shadow-[0_1px_2px_white]">
         <div className="absolute z-10 p-4 rounded-lg bg-background-primary text-primary-text cursor-auto top-10 right-0 border-primary-border border-2">
             <h3 className="text-sm font-semibold text-nowrap text-center">
                 Save to playlist

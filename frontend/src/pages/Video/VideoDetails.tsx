@@ -135,7 +135,7 @@ const VideoDetail: React.FC = () => {
 				<Video
 					duration={video?.duration || 0}
 					cloudName="CLOUD_NAME"
-					publicId={`${BASE_URL}/api/v1/videos/video/${videoPublicId + "scasac"}.mp4`}
+					publicId={`${BASE_URL}/api/v1/videos/video/${videoPublicId}.mp4`}
 					ref={videoRef}
 					width="100%"
 					height="auto"
