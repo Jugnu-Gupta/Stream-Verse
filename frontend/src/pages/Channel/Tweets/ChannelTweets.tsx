@@ -28,7 +28,7 @@ const ChannelTweets: React.FC = () => {
 	const { fileInputRef, mediaPreview, newMedia, handleMediaChange, discardMediaChange } =
 		useMedia();
 	const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
-	const channelName = channelInfo.fullName;
+	const channelName = channelInfo?.fullName;
 	const { adminName } = useParams<{ adminName: string }>();
 	const channelId = channelInfo?._id;
 	const curUserName = "@" + localStorage.getItem("userName");
