@@ -191,7 +191,7 @@ const ChannelTweets: React.FC = () => {
 							<img src={loadingGIF} alt="loading" loading='lazy' className='w-24' />
 						</div>))
 					: tweets?.map((tweet: TweetType) => (
-						adminName !== curUserName ?
+						adminName === curUserName ?
 							<ChannelTweetList key={tweet._id}
 								tweetInfo={tweet}
 								editDeleteOption={editDeleteOption}

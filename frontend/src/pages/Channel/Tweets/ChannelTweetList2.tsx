@@ -29,6 +29,9 @@ const ChannelTweetList2: React.FC<ChannelTweetListProps> = ({ tweetInfo }) => {
     const channelUserName = tweetInfo?.owner?.userName || "channel user Name";
     const content = tweetInfo?.content || "description";
     const tweetText = (readMore || content.length <= 100) ? content : `${content.slice(0, 100)}...`;
+    // const showContent = (editDeleteOption.currentId === tweetId && editDeleteOption.showEditModal)
+    // ? tweetText : (readMore || description.length <= 100 ? description : `${description.slice(0, 100)}...`);
+
     const tweetId = tweetInfo?._id || "";
     const ownerAvatar = tweetInfo?.owner?.avatar?.url || generateAvatar(channelFullName, "0078e1", "ffffffcc", 50);
     const tweetImage = tweetInfo?.image?.url;
@@ -46,11 +49,11 @@ const ChannelTweetList2: React.FC<ChannelTweetListProps> = ({ tweetInfo }) => {
                 <p className="text-primary-text2 text-xs">{UploadedAt}</p>
             </div>
             <div className="flex flex-col items-start">
-                <p className="text-primary-text w-full h-8 pb-1 xs:text-sm ">{tweetText}</p>
+                <p className="text-primary-text w-full xs:text-sm">{tweetText}</p>
                 {tweetText.length > 100 &&
                     (<button
                         onClick={() => setReadMore(!readMore)}
-                        className="text-sm text-primary-text font-semibold mt-3">
+                        className="text-sm text-primary-text font-semibold">
                         {readMore ? "Show less" : "Read more"}
                     </button>)
                 }
