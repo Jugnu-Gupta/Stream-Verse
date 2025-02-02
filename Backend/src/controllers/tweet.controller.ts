@@ -409,15 +409,14 @@ const updateTweet = asyncHandler(
         let uploadImage: UploadApiResponse | null = null;
         if (imageLocalPath) {
             uploadImage = await uploadOnCloudinary(imageLocalPath, "image");
-            if (!uploadImage) {
+            if (!uploadImage?.secure_url || !uploadImage?.public_id) {
                 throw new ApiError(500, "Failed to upload image");
             }
+            tweet.image = {
+                publicId: uploadImage.public_id,
+                url: uploadImage.secure_url,
+            };
         }
-
-        tweet.image = {
-            publicId: uploadImage.public_id,
-            url: uploadImage.secure_url,
-        };
         if (content) tweet.content = content;
         await tweet.save();
 
