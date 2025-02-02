@@ -663,6 +663,12 @@ const getVideoById = asyncHandler(
                     quality: 1,
                     isPublished: 1,
                     subscribers: { $size: "$subscribers" },
+                    isSubscribed: {
+                        $in: [
+                            new mongoose.Types.ObjectId(userId),
+                            "$subscribers.subscriberId",
+                        ],
+                    },
                     views: 1,
                     likes: 1,
                     dislikes: 1,

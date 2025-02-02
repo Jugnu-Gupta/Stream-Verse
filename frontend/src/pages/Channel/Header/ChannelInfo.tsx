@@ -6,31 +6,22 @@ import { ChannelInfoType } from '../../../type/Channel.type';
 import { generateAvatar } from '../../../utils/GenerateAvatar';
 import makeApiRequest from '../../../utils/MakeApiRequest';
 import { ErrorType } from '../../../type/Error.type';
+import { computeSubscriberCount } from '../../../utils/ComputeSubscriberCount';
 import toast from 'react-hot-toast';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../../context/store';
-import { decreaseCount, increaseCount, setCounter } from '../../../context/slices/Counter.slice';
 
 interface ChannelInfoProps {
     channelInfo: ChannelInfoType | undefined;
 }
 const ChannelInfo: React.FC<ChannelInfoProps> = ({ channelInfo }) => {
     const navigate = useNavigate();
-    const dispatch = useDispatch<AppDispatch>();
     const [isSubscribed, setIsSubscribed] = React.useState(false);
     const adminName = "@" + (channelInfo?.userName || "adminName");
     const channelName = channelInfo?.fullName || "channel Name";
     const curUserName: string = "@" + localStorage.getItem("userName");
-    const subscribersCount = useSelector((state: RootState) => state.counter.value);
-    const subscribers = formatNumber(subscribersCount);
+    const subscribers = computeSubscriberCount(channelInfo?.subscriberCount, channelInfo?.isSubscribed, isSubscribed);
     const videos = formatNumber(channelInfo?.videoCount);
     const avatar = channelInfo?.avatar?.url ||
         generateAvatar(channelName, "0078e1", "ffffffcc", 150);
-
-    useEffect(() => {
-        setIsSubscribed(channelInfo?.isSubscribed || false);
-        dispatch(setCounter({ value: channelInfo?.subscriberCount || 0 }));
-    }, [channelInfo, dispatch]);
 
     const handleSubscribe = () => {
         makeApiRequest({
@@ -38,11 +29,6 @@ const ChannelInfo: React.FC<ChannelInfoProps> = ({ channelInfo }) => {
             url: `/api/v1/subscriptions/toggle/${channelInfo?._id}`,
         }).then(() => {
             setIsSubscribed(!isSubscribed);
-            if (isSubscribed) {
-                dispatch(decreaseCount());
-            } else {
-                dispatch(increaseCount());
-            }
         }).catch((error: ErrorType) => {
             if (error.response.data.statusCode === 401) {
                 toast.error("Please login to subscribe");
@@ -50,6 +36,10 @@ const ChannelInfo: React.FC<ChannelInfoProps> = ({ channelInfo }) => {
             console.log(error.response.data.message);
         });
     }
+
+    useEffect(() => {
+        setIsSubscribed(channelInfo?.isSubscribed || false);
+    }, [channelInfo]);
 
     return (
         <>

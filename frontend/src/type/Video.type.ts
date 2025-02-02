@@ -26,6 +26,7 @@ interface VideoDetailsType extends VideoType {
 	likeStatus: number;
 	quality: string;
 	subscribers: number;
+	isSubscribed: boolean;
 	likes: number;
 	dislikes: number;
 	noOfComments: number;

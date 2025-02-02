@@ -8,6 +8,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import makeApiRequest from "../../utils/MakeApiRequest";
 import { formatNumber } from "../../utils/FormatNumber";
 import { formatDateDistanceToNow } from "../../utils/FormatDateDistanceToNow";
+import { computeSubscriberCount } from "../../utils/ComputeSubscriberCount";
 import ShowHideText from "../../components/Text/ShowHideText";
 import { VideoDetailsType, VideoType } from "../../type/Video.type";
 import { PlaylistVideosType } from "../../type/Platlist.type";
@@ -29,7 +30,8 @@ const VideoDetail: React.FC = () => {
 	const [similarVideos, setSimilarVideos] = React.useState<VideoType[]>([]);
 	const views = formatNumber(video?.views);
 	const createdAt = formatDateDistanceToNow(video?.createdAt);
-	const Subscribers = formatNumber(video?.subscribers);
+	const [isSubscribed, setIsSubscribed] = React.useState(false);
+	const subscribers = computeSubscriberCount(video?.subscribers, video?.isSubscribed, isSubscribed);
 	const channelName = video?.owner?.fullName || "Channel Name";
 	const channelUserName = video?.owner?.userName || "Channel User Name";
 	const description = video?.description || "Video Description";
@@ -39,6 +41,10 @@ const VideoDetail: React.FC = () => {
 	const videoRef = React.useRef<HTMLVideoElement | null>(null);
 	const title = video?.title || "Video Title";
 	const videoPublicId = video?.videoFile?.publicId || "";
+
+	useEffect(() => {
+		setIsSubscribed(video?.isSubscribed || false);
+	}, [video]);
 
 	useEffect(() => {
 		const getPlaylistAndVideo = async () => {
@@ -129,7 +135,7 @@ const VideoDetail: React.FC = () => {
 				<Video
 					duration={video?.duration || 0}
 					cloudName="CLOUD_NAME"
-					publicId={`${BASE_URL}/api/v1/videos/video/${videoPublicId}.mp4`}
+					publicId={`${BASE_URL}/api/v1/videos/video/${videoPublicId + "scasac"}.mp4`}
 					ref={videoRef}
 					width="100%"
 					height="auto"
@@ -162,13 +168,14 @@ const VideoDetail: React.FC = () => {
 									{channelName}
 								</h1>
 								<p className="text-sm sm:text-xs">
-									{Subscribers} Subscribers
+									{subscribers} Subscribers
 								</p>
 							</div>
 						</div>
 
 						{/* Like, Subscribe And Save */}
-						{userId && <LikeSubscribeSave channelUserName={channelUserName} likes={video?.likes} dislikes={video?.dislikes} likeStatus={video?.likeStatus} entityType="video" entityId={videoId || ""} />}
+						{/* {userId && <LikeSubscribeSave channelUserName={channelUserName} likes={video?.likes} dislikes={video?.dislikes} likeStatus={video?.likeStatus} entityType="video" entityId={videoId || ""} />} */}
+						<LikeSubscribeSave channelId={video?.owner?._id} isSubscribed={isSubscribed} setIsSubscribed={setIsSubscribed} channelUserName={channelUserName} likes={video?.likes} dislikes={video?.dislikes} likeStatus={video?.likeStatus} entityType="video" entityId={videoId || ""} />
 					</div>
 					<div className="w-full border-primary-border border-b-2 my-3"></div>
 
