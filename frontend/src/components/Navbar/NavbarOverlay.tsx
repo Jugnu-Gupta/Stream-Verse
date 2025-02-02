@@ -49,9 +49,9 @@ const Navbar: React.FC = () => {
 							<RxHamburgerMenu className="text-3xl ml-[17px] hover:bg-background-secondary p-[6px] rounded-full duration-300" />
 						</button>
 						<div className="w-8 flex mr-2 ml-1.5">
-							<img src={logo} alt="StreamVerse" loading='lazy' className="aspect-square w-8 rounded-full" />
+							<img src={logo} alt="Stream Verse" loading='lazy' className="aspect-square w-8 rounded-full" />
 						</div>
-						<h1>StreamVerse</h1>
+						<h1>Stream Verse</h1>
 					</div>
 
 					<div className="p-2 pt-4 h-[calc(100vh-51px)] flex flex-col justify-between">

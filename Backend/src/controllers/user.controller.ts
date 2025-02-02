@@ -466,7 +466,7 @@ const getWatchHistory = asyncHandler(
 
         if (!user) {
             throw new ApiError(404, "Watch history not found");
-        } else {
+        } else if (user[0]?.watchHistory?.length > 1) {
             // sort by watchedAt.
             user[0].watchHistory.sort(
                 (a: any, b: any) =>
@@ -480,7 +480,7 @@ const getWatchHistory = asyncHandler(
             .json(
                 new ApiResponse(
                     200,
-                    { watchHistory: user[0].watchHistory },
+                    { watchHistory: user[0]?.watchHistory || [] },
                     "Watch history fetched successfully"
                 )
             );

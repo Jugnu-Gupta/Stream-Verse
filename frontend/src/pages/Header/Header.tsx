@@ -67,9 +67,9 @@ const Header: React.FC = () => {
 					<RxHamburgerMenu className="text-3xl ml-2 hover:bg-background-secondary p-[6px] rounded-full duration-300" />
 				</button>
 				<button className="w-8 flex sm:ml-4 outline-none" onClick={() => navigate('/')}>
-					<img src={logo} alt="StreamVerse" loading='lazy' className="aspect-square w-8 rounded-full" />
+					<img src={logo} alt="Stream Verse" loading='lazy' className="aspect-square w-8 rounded-full" />
 				</button>
-				<h1 className="sm:0 ml-1.5 xs:hidden text-primary-text">StreamVerse</h1>
+				<h1 className="sm:0 ml-1.5 xs:hidden text-primary-text">Stream Verse</h1>
 			</div>
 			<div className="flex items-center border-2 border-primary-border bg-background-tertiary rounded-full max-w-lg w-1/2">
 				<input type="text" placeholder="Search" value={searchText} onChange={(e) => setSearchText(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSearch()}
