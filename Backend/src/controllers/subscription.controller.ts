@@ -193,7 +193,9 @@ const getSubscribedChannelsVideos = asyncHandler(
                     ],
                 },
             },
-            { $project: { video: { $arrayElemAt: ["$video", 0] } } },
+            { $unwind: "$video" },
+            { $replaceRoot: { newRoot: "$video" } },
+            { $sort: { createdAt: -1 } },
         ]);
         if (!subscriptions) {
             throw new ApiError(404, "No subscriptions found");

@@ -10,13 +10,9 @@ import { ErrorType } from '../../type/Error.type';
 import { ResponseType } from '../../type/Response.type';
 import toast from 'react-hot-toast';
 
-interface VideoWrapper {
-    _id: string;
-    video: VideoType;
-}
 const Subscriptions: React.FC = () => {
     const navigate = useNavigate();
-    const [videos, setVideos] = React.useState<VideoWrapper[]>([]);
+    const [videos, setVideos] = React.useState<VideoType[]>([]);
     const [loading, setLoading] = React.useState<boolean>(false);
 
     React.useEffect(() => {
@@ -46,13 +42,13 @@ const Subscriptions: React.FC = () => {
             </div>))
         : <div className="sm:flex m-2 max-w-full w-11/12 justify-items-center">
             <div className='sm:flex hidden flex-col'>
-                {videos?.map((item: VideoWrapper) => (
-                    <VideoListView key={item._id} videoInfo={item.video} />
+                {videos?.map((video: VideoType) => (
+                    <VideoListView key={video._id} videoInfo={video} />
                 ))}
             </div>
             <div className='sm:hidden flex flex-col'>
-                {videos?.map((item: VideoWrapper) => (
-                    <VideoCardView key={item._id} videoInfo={item.video} />
+                {videos?.map((video: VideoType) => (
+                    <VideoCardView key={video._id} videoInfo={video} />
                 ))}
             </div>
         </div>
