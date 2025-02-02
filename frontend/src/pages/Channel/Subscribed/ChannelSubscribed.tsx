@@ -21,13 +21,17 @@ const ChannelSubscribed: React.FC = () => {
 	const [loading, setLoading] = React.useState<boolean>(true);
 	const [searchValue, setSearchValue] = React.useState<string>("");
 	const { channelInfo }: ChannelInfoWrapper = useOutletContext();
+	const userId = localStorage.getItem("userId");
 	const navigate = useNavigate();
 	const channelId = channelInfo?._id;
 
 	React.useEffect(() => {
+		if (!channelId) return;
+
 		makeApiRequest({
 			method: "get",
 			url: `/api/v1/subscriptions/channel/${channelId}`,
+			params: { userId },
 		}).then((response) => {
 			const data = (response as ResponseType).data;
 			const channels = data?.subscribedChannels.reduce(
@@ -37,6 +41,7 @@ const ChannelSubscribed: React.FC = () => {
 				}, []);
 			setSubscribedChannels(channels);
 			setFilteredChannels(channels);
+			console.log(channels);
 		}).catch((error: ErrorType) => {
 			console.error(error.response.data.message);
 		}).finally(() => {

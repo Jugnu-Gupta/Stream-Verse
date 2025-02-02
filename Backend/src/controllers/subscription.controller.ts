@@ -74,12 +74,19 @@ const getUserChannelSubscribers = asyncHandler(
 interface GetSubscribedChannelsParams {
     subscriberId: string;
 }
+interface GetSubscribedChannelsQuery {
+    userId?: string;
+}
 const getSubscribedChannels = asyncHandler(
     async (req: RequestWithUser, res: Response) => {
         const { subscriberId } =
             req.params as unknown as GetSubscribedChannelsParams;
+        let { userId } = req.query as unknown as GetSubscribedChannelsQuery;
         if (!isValidObjectId(subscriberId)) {
             throw new ApiError(400, "Invalid subscriber Id");
+        }
+        if (!isValidObjectId(userId)) {
+            userId = null;
         }
 
         const subscriptions = await Subscription.aggregate([
@@ -101,9 +108,6 @@ const getSubscribedChannels = asyncHandler(
                                 localField: "_id",
                                 foreignField: "channelId",
                                 as: "subscribers",
-                                pipeline: [
-                                    { $project: { subscriberId: 1, _id: 0 } },
-                                ],
                             },
                         },
                         {
@@ -112,17 +116,11 @@ const getSubscribedChannels = asyncHandler(
                                 avatar: 1,
                                 fullName: 1,
                                 totalSubscribers: { $size: "$subscribers" },
-                                isSubcribed: {
-                                    $cond: {
-                                        if: {
-                                            $in: [
-                                                req?.user?._id,
-                                                "$subscribers.subscriberId",
-                                            ],
-                                        },
-                                        then: true,
-                                        else: false,
-                                    },
+                                isSubscribed: {
+                                    $in: [
+                                        new mongoose.Types.ObjectId(userId),
+                                        "$subscribers.subscriberId",
+                                    ],
                                 },
                             },
                         },
