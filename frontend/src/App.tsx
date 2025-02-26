@@ -28,6 +28,11 @@ function App() {
 	return (
 		<BrowserRouter>
 			<Routes>
+				<Route path="login" element={<Login />} />
+				<Route path="register" element={<Register />} />
+				<Route path="password-reset" element={<PasswordReset />} />
+				<Route path="email-verification" element={<EmailVerification />} />
+
 				<Route path="/" element={<MainLayout />}>
 
 					{/* Public Routes */}
@@ -68,13 +73,6 @@ function App() {
 						<Route path="*" element={<Error />} />
 					</Route>
 				</Route>
-
-				<Route path="*" element={<Error />} />
-
-				<Route path="login" element={<Login />} />
-				<Route path="register" element={<Register />} />
-				<Route path="password-reset" element={<PasswordReset />} />
-				<Route path="email-verification" element={<EmailVerification />} />
 
 				{/* Catch-all for undefined routes */}
 				<Route path="*" element={<Error />} />

@@ -8,6 +8,7 @@ import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import * as Yup from "yup";
 import { ErrorType } from "../../type/Error.type";
 import { ResponseType } from "../../type/Response.type";
 
@@ -57,6 +58,29 @@ const LoginForm: React.FC = () => {
 		},
 	});
 
+	const emailSchema = Yup.string()
+		.email("Invalid email Id")
+		.required("Email is required to send reset password link.");
+	const forgotPasswordMail = async (email: string) => {
+		try {
+			await emailSchema.validate(email);
+
+			makeApiRequest({
+				method: "post",
+				url: "/api/v1/auths/forgot-password-mail",
+				data: { email }
+			}).then(() => {
+				toast.success("A reset password link has been sent to your given email ID. Please reset the password from there.");
+			}).catch((error: ErrorType) => {
+				toast.error(error.response.data.message);
+			});
+		} catch (error) {
+			if (error instanceof Yup.ValidationError) {
+				toast.error(error.message);
+			}
+		}
+	};
+
 	return (
 		<form
 			onSubmit={handleSubmit}
@@ -91,19 +115,25 @@ const LoginForm: React.FC = () => {
 				outline-none transition delay-[50000s] placeholder:text-primary-text text-sm"
 				/>
 				<label htmlFor="password" className="cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
-					{
-						showPassword ? <FaRegEyeSlash className="absolute top-2 right-2 text-sm " /> :
-							<FaRegEye className="absolute top-2 right-2 text-sm" />
+					{showPassword ? <FaRegEyeSlash className="absolute top-2 right-2 text-sm " /> :
+						<FaRegEye className="absolute top-2 right-2 text-sm" />
 					}
 				</label>
 				{touched.password && errors.password ? <p className="text-start text-xs mt-0.5">{errors.password}</p> : null}
 			</div>
-			{
-				showVerifyEmail &&
-				<div className="bg-primary md:w-72 w-60 px-1 py-0.5 mb-1 rounded-md text-sm text-justify text-primary-text">
+			{showVerifyEmail &&
+				<div className="bg-primary-login bg-opacity-85 md:w-72 w-60 px-1 py-0.5 rounded-md text-sm text-justify text-primary-text">
 					An email has been sent to your email address. Please verify your email address.
 				</div>
 			}
+
+			<div className="w-full flex justify-between">
+				<div></div>
+				<button type="button"
+					className="text-end font-semibold text-primary-text text-xs cursor-pointer"
+					onClick={() => forgotPasswordMail(values.email)}>Forgot Password
+				</button>
+			</div>
 			<button
 				type="submit"
 				className="px-3 py-1 mb-1 tracking-wide font-semibold 

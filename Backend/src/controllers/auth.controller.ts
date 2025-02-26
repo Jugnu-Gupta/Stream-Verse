@@ -4,7 +4,6 @@ import { User } from "../models/user.model";
 import { UserType } from "../types/user.type";
 import { ApiError } from "../utils/apiError";
 import { ApiResponse } from "../utils/apiResponse";
-import mongoose from "mongoose";
 import { getAvailableUserName } from "../utils/getAvailableUserName";
 import { uploadOnCloudinary } from "../utils/cloudinary";
 import { sendMail } from "../utils/sendMail";
@@ -123,7 +122,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     }
 
     // email verification
-    const mail = await sendMail(createdUser.email, "VERIFY", createdUser._id);
+    const mail = await sendMail(createdUser.email, "VERIFY");
 
     return res
         .status(201)
@@ -159,7 +158,7 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
 
     // check if the user is verified.
     if (!user?.isVerified) {
-        const mail = await sendMail(user.email, "VERIFY", user._id);
+        const mail = await sendMail(user.email, "VERIFY");
 
         throw new ApiError(
             403,
@@ -215,36 +214,33 @@ const validateUserEmail = asyncHandler(async (req: Request, res: Response) => {
         throw new ApiError(401, "Invalid token or token expired");
     }
 
-    user.isVerified = true;
-    user.verifyToken = undefined;
-    user.verifyTokenExpiry = undefined;
-    await user.save({ validateBeforeSave: false });
+    if (!user.isVerified) {
+        user.isVerified = true;
+        await user.save({ validateBeforeSave: false });
+    }
 
     return res
         .status(200)
         .json(new ApiResponse(200, null, "Email verified successfully"));
 });
 
-const validatePasswordResetToken = asyncHandler(
-    async (req: Request, res: Response) => {
-        const { token }: Token = req.query;
-        if (!token) {
-            throw new ApiError(400, "Invalid token");
-        }
-
-        const user = await User.findOne({
-            resetPasswordToken: token,
-            resetPasswordTokenExpiry: { $gt: Date.now() },
-        });
-        if (!user) {
-            throw new ApiError(401, "Invalid token or token expired");
-        }
-
-        return res
-            .status(200)
-            .json(new ApiResponse(200, token, "Token verified successfully"));
+const forgotPasswordMail = asyncHandler(async (req: Request, res: Response) => {
+    const { email } = req.body as { email: string };
+    if (!email) {
+        throw new ApiError(400, "Email Id is required");
     }
-);
+    const mail = await sendMail(email, "RESET");
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                null,
+                "A reset Password link has been sent to your given email id. Please reset password from there."
+            )
+        );
+});
 
 interface ResetPasswordBody extends Token {
     newPassword?: string;
@@ -254,7 +250,7 @@ interface ResetPasswordBody extends Token {
 const resetPassword = asyncHandler(async (req: Request, res: Response) => {
     const { token, newPassword, confirmPassword }: ResetPasswordBody = req.body;
     if (!token) {
-        throw new ApiError(400, "Invalid token");
+        throw new ApiError(401, "Invalid token");
     }
     if (!newPassword || !confirmPassword) {
         throw new ApiError(
@@ -366,6 +362,6 @@ export {
     logoutUser,
     refreshAccessToken,
     validateUserEmail,
-    validatePasswordResetToken,
+    forgotPasswordMail,
     resetPassword,
 };

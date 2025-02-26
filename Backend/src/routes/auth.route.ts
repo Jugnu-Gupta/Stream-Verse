@@ -7,7 +7,7 @@ import {
     registerUser,
     refreshAccessToken,
     validateUserEmail,
-    validatePasswordResetToken,
+    forgotPasswordMail,
     resetPassword,
 } from "../controllers/auth.controller";
 
@@ -28,8 +28,8 @@ router.route("/login").post(loginUser);
 // Verify email
 router.route("/email-verification").get(validateUserEmail);
 
-// Validate password reset token
-router.route("/password-reset").get(validatePasswordResetToken);
+// send forgot password mail
+router.route("/forgot-password-mail").post(forgotPasswordMail);
 
 // Reset password
 router.route("/password-reset").post(resetPassword);

@@ -10,13 +10,17 @@ import {
 } from "./emailTemplates";
 import { BASE_URL } from "../config/constants/db.constants";
 
-const sendMail = async (email: string, emailType: string, userId: string) => {
+const sendMail = async (email: string, emailType: string) => {
     try {
-        const hashedToken = await bcrypt.hash(userId.toString(), 10);
+        const user = await User.findOne({ email })?.select("id");
+        if (!user) {
+            throw new ApiError(400, "Invalid email Id");
+        }
+        const hashedToken = await bcrypt.hash(user._id.toString(), 10);
         let subject: string, text: string, html: string;
 
         if (emailType === "RESET") {
-            await User.findByIdAndUpdate(userId, {
+            await User.findByIdAndUpdate(user._id, {
                 $set: {
                     resetPasswordToken: hashedToken,
                     resetPasswordTokenExpiry: Date.now() + 3600000,
@@ -26,14 +30,14 @@ const sendMail = async (email: string, emailType: string, userId: string) => {
             subject = "Reset your password";
             text = getPasswordResetText(
                 "Jugnu Gupta",
-                `${BASE_URL}/reset/${hashedToken}`
+                `${BASE_URL}/password-reset?token=${hashedToken}`
             );
             html = getPasswordResetHtml(
                 "Jugnu Gupta",
-                `${BASE_URL}/reset/${hashedToken}`
+                `${BASE_URL}/password-reset?token=${hashedToken}`
             );
         } else if (emailType === "VERIFY") {
-            await User.findByIdAndUpdate(userId, {
+            await User.findByIdAndUpdate(user._id, {
                 $set: {
                     verifyToken: hashedToken,
                     verifyTokenExpiry: Date.now() + 3600000,
