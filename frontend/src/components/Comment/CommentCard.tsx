@@ -76,7 +76,7 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 	}
 
 	const { page, setPage, loading, setLoading, hasMore, setHasMore, lastItemRef } =
-		usePagination(getComments, entityId);
+		usePagination(getComments, entityId, showReplies);
 
 	useEffect(() => {
 		if (textAreaRef.current) {
@@ -205,9 +205,10 @@ const CommentCard: React.FC<CommentProps> = ({ currPath, comment, entityId, enti
 			<div ref={lastItemRef}></div>
 		</div>
 
-		{showReplies && (
+		{(
 			<div className={twMerge(
 				"w-full h-full",
+				showReplies ? "block" : "hidden",
 				currPath.length < 5 ? "pl-4" : "pl-0"
 			)}>
 				{replies?.map((reply: CommentType) =>

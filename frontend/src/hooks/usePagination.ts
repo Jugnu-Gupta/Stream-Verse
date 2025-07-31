@@ -7,7 +7,8 @@ const usePagination = (
 		hasMore: boolean,
 		entityId: string
 	) => void,
-	entityId?: string
+	entityId?: string,
+	visible: boolean = true
 ) => {
 	const [page, setPage] = React.useState<number>(1);
 	const [loading, setLoading] = React.useState<boolean>(false);
@@ -24,6 +25,8 @@ const usePagination = (
 		[page, entityId, loading, hasMore, getData]
 	);
 	useEffect(() => {
+		if (!visible) return;
+
 		if (observer.current) observer.current.disconnect();
 
 		observer.current = new IntersectionObserver(handleObserver, {
@@ -33,7 +36,7 @@ const usePagination = (
 			observer.current.observe(lastItemRef.current);
 		}
 		return () => observer.current?.disconnect();
-	}, [lastItemRef, handleObserver]);
+	}, [lastItemRef, handleObserver, visible]);
 
 	return {
 		page,
