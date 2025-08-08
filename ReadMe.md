@@ -1,8 +1,10 @@
 # Stream Verse
 • Developed a video streaming platform with features like video playback, subscriptions, playlists,
 watch history, liked videos, and user authentication.
+
 • Integrated secure user registration with email verification, reducing fake signups by 80%, and
 built admin-specific dashboards for seamless channel and platform management.
+
 • Built CRUD operations for videos, playlists, tweets, and nested comments, with a fuzzy search
 feature supporting filters by duration, upload date, and sort options.
 
